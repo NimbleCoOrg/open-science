@@ -45,6 +45,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .candidate-img{width:100%;max-width:560px;border-radius:8px;border:2px solid var(--border);margin-bottom:.5rem}
 .candidate-meta{font-family:var(--mono);font-size:.7rem;color:var(--text2);margin-bottom:1rem}
 .candidate-meta .auto-cat{background:var(--surface2);padding:.2rem .5rem;border-radius:4px;margin-left:.4rem}
+.candidate-meta .user-label{background:var(--match);color:#fff;padding:.2rem .5rem;border-radius:4px;margin-left:.4rem;font-weight:600}
+.candidate-meta .user-label.other{background:#e8a735}
+.candidate-meta .skipped-tag{background:var(--surface2);color:var(--text2);padding:.2rem .5rem;border-radius:4px;margin-left:.4rem;font-style:italic}
 .controls{display:flex;gap:1rem;justify-content:center;margin-top:.5rem;flex-wrap:wrap}
 .ctrl-btn{font-family:var(--mono);font-size:.85rem;padding:.6rem 1.8rem;border-radius:8px;border:2px solid var(--border);background:transparent;color:var(--text);cursor:pointer;transition:all .15s;min-width:120px}
 .ctrl-btn:hover{transform:translateY(-1px)}
@@ -115,7 +118,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="controls" id="controls" style="padding:1rem;display:none">
       <button class="ctrl-btn play" onclick="playCandidate()">▶ Play<span class="key-hint">Space</span></button>
       <button class="ctrl-btn match" onclick="matchCandidate()">✓ Match<span class="key-hint">M or →</span></button>
-      <button class="ctrl-btn skip" onclick="nextCandidate()">Skip<span class="key-hint">S or ↓</span></button>
+      <button class="ctrl-btn skip" onclick="skipCandidate()">Skip<span class="key-hint">S or ↓</span></button>
+      <button class="ctrl-btn" onclick="jumpNextUnlabelled()" style="border-color:#e8a735;color:#e8a735">⏭ Next unlabelled<span class="key-hint">N</span></button>
     </div>
   </div>
 </div>
@@ -190,6 +194,7 @@ let state = {
   candidateIndex: 0,
   manifests: {},       // species -> manifest array
   annotations: {},     // species -> category -> [{id, recording, ...}]
+  skips: {},           // species -> category -> Set of skipped IDs (stored as arrays)
   audio: null
 };
 
@@ -212,12 +217,19 @@ async function init() {
     if (saved) state.annotations = JSON.parse(saved);
   } catch(e) {}
   
+  // Load saved skips from localStorage
+  try {
+    const saved = localStorage.getItem('birdsong-skips');
+    if (saved) state.skips = JSON.parse(saved);
+  } catch(e) {}
+  
   selectSpecies('tui');
   updateTotalMatches();
 }
 
 function saveAnnotations() {
   localStorage.setItem('birdsong-annotations', JSON.stringify(state.annotations));
+  localStorage.setItem('birdsong-skips', JSON.stringify(state.skips));
   updateTotalMatches();
 }
 
@@ -339,15 +351,52 @@ function showCandidate() {
   if (state.candidateIndex < 0) state.candidateIndex = candidates.length - 1;
   
   const c = candidates[state.candidateIndex];
-  const isMatched = (state.annotations[state.species]?.[state.category] || []).some(m => m.id === c.id);
+  const isMatchedHere = (state.annotations[state.species]?.[state.category] || []).some(m => m.id === c.id);
+  const isSkipped = (state.skips[state.species]?.[state.category] || []).includes(c.id);
+  
+  // Check if this candidate was labelled in ANY other category by the user
+  let userLabels = [];
+  const spAnns = state.annotations[state.species] || {};
+  for (const [cat, matches] of Object.entries(spAnns)) {
+    if (matches.some(m => m.id === c.id)) {
+      const catName = SPECIES_CONFIG[state.species].categories[cat]?.name || cat;
+      userLabels.push({cat, name: catName, isCurrent: cat === state.category});
+    }
+  }
+  
+  // Build label tags
+  let labelHtml = `<span class="auto-cat">auto: ${c.auto_category}</span>`;
+  if (userLabels.length > 0) {
+    for (const ul of userLabels) {
+      if (ul.isCurrent) {
+        labelHtml += `<span class="user-label">✓ matched here</span>`;
+      } else {
+        labelHtml += `<span class="user-label other">labelled: ${ul.name}</span>`;
+      }
+    }
+  }
+  if (isSkipped && !isMatchedHere) {
+    labelHtml += `<span class="skipped-tag">skipped</span>`;
+  }
+  
+  // Border colour: green if matched here, orange if labelled elsewhere, default otherwise
+  let borderStyle = '';
+  if (isMatchedHere) borderStyle = 'border-color:var(--match)';
+  else if (userLabels.length > 0) borderStyle = 'border-color:#e8a735';
+  
+  // Count unlabelled remaining
+  const unlabelledCount = countUnlabelled();
   
   body.innerHTML = `<div class="candidate-card">
     <img class="candidate-img" src="annotation/${state.species}/${c.id}.png" alt="Candidate spectrogram"
-         style="${isMatched ? 'border-color:var(--match)' : ''}"
+         style="${borderStyle}"
          onclick="showLightbox('annotation/${state.species}/${c.id}.png')">
     <div class="candidate-meta">
       ${c.recording} · ${c.duration_ms}ms · f₀: ${c.f0_hz}Hz · centroid: ${c.centroid_hz}Hz
-      <span class="auto-cat">${isMatched ? '✓ MATCHED' : 'auto: ' + c.auto_category}</span>
+      ${labelHtml}
+    </div>
+    <div style="font-family:var(--mono);font-size:.65rem;color:var(--text2);margin-top:.2rem">
+      ${unlabelledCount} unlabelled remaining for this species+category
     </div>
   </div>`;
   
@@ -363,6 +412,69 @@ function nextCandidate() {
 function prevCandidate() {
   state.candidateIndex--;
   showCandidate();
+}
+
+function skipCandidate() {
+  if (!state.category) { nextCandidate(); return; }
+  const candidates = getCandidates();
+  if (candidates.length === 0) return;
+  const c = candidates[state.candidateIndex];
+  
+  // Record the skip
+  if (!state.skips[state.species]) state.skips[state.species] = {};
+  if (!state.skips[state.species][state.category]) state.skips[state.species][state.category] = [];
+  if (!state.skips[state.species][state.category].includes(c.id)) {
+    state.skips[state.species][state.category].push(c.id);
+    saveAnnotations();
+  }
+  nextCandidate();
+}
+
+function jumpNextUnlabelled() {
+  if (!state.category) return;
+  const candidates = getCandidates();
+  if (candidates.length === 0) return;
+  
+  const matched = state.annotations[state.species]?.[state.category] || [];
+  const matchedIds = new Set(matched.map(m => m.id));
+  const skippedIds = new Set(state.skips[state.species]?.[state.category] || []);
+  
+  // Also collect IDs labelled in ANY category for this species
+  const allLabelledIds = new Set();
+  const spAnns = state.annotations[state.species] || {};
+  for (const matches of Object.values(spAnns)) {
+    for (const m of matches) allLabelledIds.add(m.id);
+  }
+  
+  // Search forward from current position, wrapping around
+  for (let offset = 1; offset <= candidates.length; offset++) {
+    const idx = (state.candidateIndex + offset) % candidates.length;
+    const id = candidates[idx].id;
+    if (!matchedIds.has(id) && !skippedIds.has(id) && !allLabelledIds.has(id)) {
+      state.candidateIndex = idx;
+      showCandidate();
+      return;
+    }
+  }
+  
+  // All labelled or skipped
+  const body = document.getElementById('carousel-body');
+  body.innerHTML = `<div class="empty-state"><h2>All done!</h2><p>Every candidate for this species has been labelled or skipped. Try another category, or reset skips to review again.</p></div>`;
+}
+
+function countUnlabelled() {
+  const candidates = getCandidates();
+  if (!state.category) return candidates.length;
+  
+  const matchedIds = new Set((state.annotations[state.species]?.[state.category] || []).map(m => m.id));
+  const skippedIds = new Set(state.skips[state.species]?.[state.category] || []);
+  const allLabelledIds = new Set();
+  const spAnns = state.annotations[state.species] || {};
+  for (const matches of Object.values(spAnns)) {
+    for (const m of matches) allLabelledIds.add(m.id);
+  }
+  
+  return candidates.filter(c => !matchedIds.has(c.id) && !skippedIds.has(c.id) && !allLabelledIds.has(c.id)).length;
 }
 
 function playCandidate() {
@@ -447,9 +559,10 @@ function updateMatchPile() {
 // ==================== EXPORT/IMPORT ====================
 function exportAnnotations() {
   const data = {
-    version: 1,
+    version: 2,
     exported_at: new Date().toISOString(),
-    annotations: state.annotations
+    annotations: state.annotations,
+    skips: state.skips
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   const a = document.createElement('a');
@@ -471,12 +584,11 @@ function handleImport(event) {
     try {
       const data = JSON.parse(e.target.result);
       if (data.annotations) {
-        // Merge with existing
+        // Merge annotations
         for (const sp in data.annotations) {
           if (!state.annotations[sp]) state.annotations[sp] = {};
           for (const cat in data.annotations[sp]) {
             if (!state.annotations[sp][cat]) state.annotations[sp][cat] = [];
-            // Add new matches (avoid duplicates)
             const existingIds = new Set(state.annotations[sp][cat].map(m => m.id));
             for (const m of data.annotations[sp][cat]) {
               if (!existingIds.has(m.id)) {
@@ -485,8 +597,21 @@ function handleImport(event) {
             }
           }
         }
+        // Merge skips
+        if (data.skips) {
+          for (const sp in data.skips) {
+            if (!state.skips[sp]) state.skips[sp] = {};
+            for (const cat in data.skips[sp]) {
+              if (!state.skips[sp][cat]) state.skips[sp][cat] = [];
+              const existingSkips = new Set(state.skips[sp][cat]);
+              for (const id of data.skips[sp][cat]) {
+                if (!existingSkips.has(id)) state.skips[sp][cat].push(id);
+              }
+            }
+          }
+        }
         saveAnnotations();
-        selectSpecies(state.species); // Refresh
+        selectSpecies(state.species);
         document.getElementById('export-status').textContent = `Imported ${new Date().toLocaleTimeString()}`;
       }
     } catch(e) {
@@ -508,7 +633,8 @@ document.addEventListener('keydown', (e) => {
   switch(e.key) {
     case ' ': e.preventDefault(); playCandidate(); break;
     case 'm': case 'M': case 'ArrowRight': matchCandidate(); break;
-    case 's': case 'S': case 'ArrowDown': nextCandidate(); break;
+    case 's': case 'S': case 'ArrowDown': skipCandidate(); break;
+    case 'n': case 'N': jumpNextUnlabelled(); break;
     case 'ArrowUp': prevCandidate(); break;
     case 'ArrowLeft': prevCandidate(); break;
     case 'Escape': document.getElementById('lightbox').classList.remove('show'); break;
