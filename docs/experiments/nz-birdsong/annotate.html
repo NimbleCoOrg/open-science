@@ -82,6 +82,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:100;cursor:pointer}
 .lightbox.show{display:flex}
 .lightbox img{max-width:95vw;max-height:95vh;border-radius:8px}
+.sync-status{font-family:var(--mono);font-size:.65rem;padding:.2rem .5rem;border-radius:4px;background:var(--surface2);color:var(--text2)}
+.sync-status.synced{background:#1b3a1b;color:var(--match)}
+.sync-status.error{background:#3a1b1b;color:var(--reject)}
+.annotator-tag{font-size:.55rem;font-family:var(--mono);padding:.1rem .3rem;border-radius:3px;background:var(--surface2);color:var(--text2);margin-left:.3rem}
 </style>
 </head>
 <body>
@@ -89,6 +93,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="header">
   <h1>🎵 Syllable Annotation Tool</h1>
   <div class="meta">Match candidate spectrograms to published reference examples · <span id="total-matches">0</span> matches total</div>
+  <div style="display:flex;gap:.5rem;align-items:center">
+    <span class="sync-status" id="sync-status">local only</span>
+    <button class="export-btn" onclick="showSyncPanel()" id="sync-btn" title="Collaboration settings">👥 Collaborate</button>
+  </div>
+</div>
+
+<!-- Sync/collab panel (hidden by default) -->
+<div id="sync-panel" style="display:none;padding:1rem 2rem;border-bottom:1px solid var(--border);background:var(--surface2)">
+  <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap">
+    <div>
+      <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">Your name</label>
+      <input type="text" id="annotator-name" placeholder="e.g. Azure" style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:140px">
+    </div>
+    <div>
+      <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">GitHub token <span style="opacity:.5">(fine-grained, repo contents write)</span></label>
+      <input type="password" id="gh-token" placeholder="github_pat_..." style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:300px">
+    </div>
+    <button class="export-btn" onclick="syncPull()" style="border-color:var(--match);color:var(--match)">⬇ Pull shared</button>
+    <button class="export-btn" onclick="syncPush()" style="border-color:var(--accent);color:var(--accent)">⬆ Push mine</button>
+    <span id="sync-msg" style="font-family:var(--mono);font-size:.7rem;color:var(--text2)"></span>
+  </div>
+  <p style="font-family:var(--mono);font-size:.65rem;color:var(--text2);margin-top:.6rem;line-height:1.6">
+    Pull fetches everyone's annotations from the shared repo (no auth needed). Push merges yours in (needs a GitHub token with contents:write on NimbleCoAI/open-science).
+    Each annotation is tagged with your name so we can see who labelled what. Token is stored in your browser only — never sent anywhere except GitHub's API.
+  </p>
 </div>
 
 <div class="species-bar" id="species-bar">
@@ -225,6 +254,9 @@ async function init() {
   
   selectSpecies('tui');
   updateTotalMatches();
+  
+  // Auto-pull shared annotations from repo
+  autoPull();
 }
 
 function saveAnnotations() {
@@ -507,7 +539,8 @@ function matchCandidate() {
   }
   
   // Add to matches
-  existing.push({...c, matched_at: new Date().toISOString()});
+  const annotator = localStorage.getItem('birdsong-annotator-name') || 'anonymous';
+  existing.push({...c, annotator: annotator, matched_at: new Date().toISOString()});
   saveAnnotations();
   updateMatchPile();
   updateCategoryCount();
@@ -548,10 +581,10 @@ function updateMatchPile() {
   }
   
   grid.innerHTML = matches.map(m => `
-    <div class="match-thumb" title="${m.recording} (${m.duration_ms}ms)">
+    <div class="match-thumb" title="${m.recording} (${m.duration_ms}ms)${m.annotator ? ' — by ' + m.annotator : ''}">
       <img src="annotation/${state.species}/${m.id}.png" alt="${m.id}">
       <div class="remove" onclick="event.stopPropagation(); removeMatch('${m.id}')">×</div>
-      <div class="label">${m.recording}</div>
+      <div class="label">${m.recording}${m.annotator ? ' · ' + m.annotator : ''}</div>
     </div>
   `).join('');
 }
@@ -640,6 +673,248 @@ document.addEventListener('keydown', (e) => {
     case 'Escape': document.getElementById('lightbox').classList.remove('show'); break;
   }
 });
+
+// ==================== COLLABORATION / SYNC ====================
+const SYNC_REPO = 'NimbleCoAI/open-science';
+const SYNC_PATH = 'docs/experiments/nz-birdsong/annotation/shared_annotations.json';
+const SYNC_RAW_URL = `https://raw.githubusercontent.com/${SYNC_REPO}/main/${SYNC_PATH}`;
+
+function showSyncPanel() {
+  const panel = document.getElementById('sync-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  // Restore saved values
+  const savedName = localStorage.getItem('birdsong-annotator-name');
+  const savedToken = localStorage.getItem('birdsong-gh-token');
+  if (savedName) document.getElementById('annotator-name').value = savedName;
+  if (savedToken) document.getElementById('gh-token').value = savedToken;
+}
+
+function getAnnotatorName() {
+  const name = document.getElementById('annotator-name').value.trim() || 'anonymous';
+  localStorage.setItem('birdsong-annotator-name', name);
+  return name;
+}
+
+function getGhToken() {
+  const token = document.getElementById('gh-token').value.trim();
+  if (token) localStorage.setItem('birdsong-gh-token', token);
+  return token;
+}
+
+function setSyncMsg(msg, isError) {
+  const el = document.getElementById('sync-msg');
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--reject)' : 'var(--match)';
+  const status = document.getElementById('sync-status');
+  if (isError) { status.className = 'sync-status error'; status.textContent = 'sync error'; }
+}
+
+// Pull: fetch shared annotations from the repo (no auth needed)
+async function syncPull() {
+  setSyncMsg('Pulling...', false);
+  try {
+    const resp = await fetch(SYNC_RAW_URL + '?t=' + Date.now());
+    if (!resp.ok) {
+      if (resp.status === 404) { setSyncMsg('No shared annotations yet — be the first to push!', false); return; }
+      throw new Error(`HTTP ${resp.status}`);
+    }
+    const shared = await resp.json();
+    
+    // Merge shared into local
+    let added = 0;
+    if (shared.annotations) {
+      for (const sp in shared.annotations) {
+        if (!state.annotations[sp]) state.annotations[sp] = {};
+        for (const cat in shared.annotations[sp]) {
+          if (!state.annotations[sp][cat]) state.annotations[sp][cat] = [];
+          const existingIds = new Set(state.annotations[sp][cat].map(m => m.id));
+          for (const m of shared.annotations[sp][cat]) {
+            if (!existingIds.has(m.id)) {
+              state.annotations[sp][cat].push(m);
+              added++;
+            }
+          }
+        }
+      }
+    }
+    if (shared.skips) {
+      for (const sp in shared.skips) {
+        if (!state.skips[sp]) state.skips[sp] = {};
+        for (const cat in shared.skips[sp]) {
+          if (!state.skips[sp][cat]) state.skips[sp][cat] = [];
+          const existing = new Set(state.skips[sp][cat]);
+          for (const id of shared.skips[sp][cat]) {
+            if (!existing.has(id)) state.skips[sp][cat].push(id);
+          }
+        }
+      }
+    }
+    
+    saveAnnotations();
+    selectSpecies(state.species);
+    
+    const contributors = new Set();
+    if (shared.annotations) {
+      for (const sp in shared.annotations) {
+        for (const cat in shared.annotations[sp]) {
+          for (const m of shared.annotations[sp][cat]) {
+            if (m.annotator) contributors.add(m.annotator);
+          }
+        }
+      }
+    }
+    
+    const status = document.getElementById('sync-status');
+    status.className = 'sync-status synced';
+    status.textContent = `synced · ${contributors.size} contributors`;
+    setSyncMsg(`Pulled! ${added} new annotations merged. Contributors: ${[...contributors].join(', ') || 'none yet'}`, false);
+  } catch(e) {
+    setSyncMsg('Pull failed: ' + e.message, true);
+  }
+}
+
+// Push: commit local annotations to the repo via GitHub API
+async function syncPush() {
+  const token = getGhToken();
+  const annotator = getAnnotatorName();
+  if (!token) { setSyncMsg('Need a GitHub token to push', true); return; }
+  if (annotator === 'anonymous') { setSyncMsg('Please enter your name first', true); return; }
+  
+  setSyncMsg('Pushing...', false);
+  
+  try {
+    // Tag all current annotations with the annotator name
+    const pushData = JSON.parse(JSON.stringify(state.annotations));
+    for (const sp in pushData) {
+      for (const cat in pushData[sp]) {
+        for (const m of pushData[sp][cat]) {
+          if (!m.annotator) m.annotator = annotator;
+        }
+      }
+    }
+    
+    // Also tag local state so future saves carry the name
+    for (const sp in state.annotations) {
+      for (const cat in state.annotations[sp]) {
+        for (const m of state.annotations[sp][cat]) {
+          if (!m.annotator) m.annotator = annotator;
+        }
+      }
+    }
+    saveAnnotations();
+    
+    // Fetch existing shared file (if any) to merge
+    let existing = { annotations: {}, skips: {} };
+    let existingSha = null;
+    try {
+      const apiResp = await fetch(`https://api.github.com/repos/${SYNC_REPO}/contents/${SYNC_PATH}`, {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (apiResp.ok) {
+        const fileData = await apiResp.json();
+        existingSha = fileData.sha;
+        existing = JSON.parse(atob(fileData.content));
+      }
+    } catch(e) {}
+    
+    // Merge: add any annotations from pushData not already in existing
+    let added = 0;
+    for (const sp in pushData) {
+      if (!existing.annotations[sp]) existing.annotations[sp] = {};
+      for (const cat in pushData[sp]) {
+        if (!existing.annotations[sp][cat]) existing.annotations[sp][cat] = [];
+        const existingIds = new Set(existing.annotations[sp][cat].map(m => m.id));
+        for (const m of pushData[sp][cat]) {
+          if (!existingIds.has(m.id)) {
+            existing.annotations[sp][cat].push(m);
+            added++;
+          }
+        }
+      }
+    }
+    
+    // Merge skips
+    for (const sp in state.skips) {
+      if (!existing.skips) existing.skips = {};
+      if (!existing.skips[sp]) existing.skips[sp] = {};
+      for (const cat in state.skips[sp]) {
+        if (!existing.skips[sp][cat]) existing.skips[sp][cat] = [];
+        const existingSet = new Set(existing.skips[sp][cat]);
+        for (const id of state.skips[sp][cat]) {
+          if (!existingSet.has(id)) existing.skips[sp][cat].push(id);
+        }
+      }
+    }
+    
+    existing.version = 3;
+    existing.last_updated = new Date().toISOString();
+    existing.last_pushed_by = annotator;
+    
+    // Commit to GitHub
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
+    const commitResp = await fetch(`https://api.github.com/repos/${SYNC_REPO}/contents/${SYNC_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `annotation: ${annotator} pushed ${added} new annotations`,
+        content: content,
+        sha: existingSha || undefined
+      })
+    });
+    
+    if (!commitResp.ok) {
+      const err = await commitResp.json();
+      throw new Error(err.message || `HTTP ${commitResp.status}`);
+    }
+    
+    const status = document.getElementById('sync-status');
+    status.className = 'sync-status synced';
+    status.textContent = `synced · pushed by ${annotator}`;
+    setSyncMsg(`Pushed! ${added} new annotations committed to the shared repo.`, false);
+  } catch(e) {
+    setSyncMsg('Push failed: ' + e.message, true);
+  }
+}
+
+// Auto-pull on load (silent, no error shown)
+async function autoPull() {
+  try {
+    const resp = await fetch(SYNC_RAW_URL + '?t=' + Date.now());
+    if (!resp.ok) return;
+    const shared = await resp.json();
+    let added = 0;
+    if (shared.annotations) {
+      for (const sp in shared.annotations) {
+        if (!state.annotations[sp]) state.annotations[sp] = {};
+        for (const cat in shared.annotations[sp]) {
+          if (!state.annotations[sp][cat]) state.annotations[sp][cat] = [];
+          const existingIds = new Set(state.annotations[sp][cat].map(m => m.id));
+          for (const m of shared.annotations[sp][cat]) {
+            if (!existingIds.has(m.id)) {
+              state.annotations[sp][cat].push(m);
+              added++;
+            }
+          }
+        }
+      }
+    }
+    if (added > 0) {
+      saveAnnotations();
+      const status = document.getElementById('sync-status');
+      status.className = 'sync-status synced';
+      status.textContent = `synced · ${added} new`;
+    }
+    // Restore saved annotator name
+    const savedName = localStorage.getItem('birdsong-annotator-name');
+    if (savedName) document.getElementById('annotator-name').value = savedName;
+    const savedToken = localStorage.getItem('birdsong-gh-token');
+    if (savedToken) document.getElementById('gh-token').value = savedToken;
+  } catch(e) {}
+}
 
 // ==================== START ====================
 init();
