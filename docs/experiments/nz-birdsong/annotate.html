@@ -107,16 +107,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <input type="text" id="annotator-name" placeholder="e.g. Azure" style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:140px">
     </div>
     <div>
-      <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">GitHub token <span style="opacity:.5">(fine-grained, repo contents write)</span></label>
-      <input type="password" id="gh-token" placeholder="github_pat_..." style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:300px">
+      <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">Push password</label>
+      <input type="password" id="push-password" placeholder="shared password" style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:200px">
     </div>
     <button class="export-btn" onclick="syncPull()" style="border-color:var(--match);color:var(--match)">⬇ Pull shared</button>
     <button class="export-btn" onclick="syncPush()" style="border-color:var(--accent);color:var(--accent)">⬆ Push mine</button>
     <span id="sync-msg" style="font-family:var(--mono);font-size:.7rem;color:var(--text2)"></span>
   </div>
   <p style="font-family:var(--mono);font-size:.65rem;color:var(--text2);margin-top:.6rem;line-height:1.6">
-    Pull fetches everyone's annotations from the shared repo (no auth needed). Push merges yours in (needs a GitHub token with contents:write on NimbleCoAI/open-science).
-    Each annotation is tagged with your name so we can see who labelled what. Token is stored in your browser only — never sent anywhere except GitHub's API.
+    Pull fetches everyone's annotations from the shared repo (no login needed). Push merges yours in — just enter your name and the shared password.
+    Each annotation is tagged with your name so we can see who labelled what.
   </p>
 </div>
 
@@ -679,26 +679,44 @@ const SYNC_REPO = 'NimbleCoAI/open-science';
 const SYNC_PATH = 'docs/experiments/nz-birdsong/annotation/shared_annotations.json';
 const SYNC_RAW_URL = `https://raw.githubusercontent.com/${SYNC_REPO}/main/${SYNC_PATH}`;
 
+// Encrypted PAT — decrypted client-side with the shared password via AES-256-GCM + PBKDF2
+const ENCRYPTED_PAT = {
+  salt: 'pGeowL3RR1V5SwGYnoVQYg==',
+  iv: 'A/Pv7oLBV264nccO',
+  ct: 'IuM6wOboAXHSG54xc3hg9WdffI7N/VmluWVl/nAFpDh4wZohMYM1T//JA11ci1sNda1fXO67vtnzxhJDysv9jAENeQXpO49qjZyhxRBwOBGLZ7vfiY9aseTrh7xRTtXvnTDhMsnlBHNv7Zq2HQ=='
+};
+
+async function decryptPAT(password) {
+  const enc = new TextEncoder();
+  const salt = Uint8Array.from(atob(ENCRYPTED_PAT.salt), c => c.charCodeAt(0));
+  const iv = Uint8Array.from(atob(ENCRYPTED_PAT.iv), c => c.charCodeAt(0));
+  const ct = Uint8Array.from(atob(ENCRYPTED_PAT.ct), c => c.charCodeAt(0));
+  
+  // Derive key with PBKDF2 (must match Python: SHA-256, 100k iterations, 256-bit key)
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+  
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return new TextDecoder().decode(decrypted);
+}
+
 function showSyncPanel() {
   const panel = document.getElementById('sync-panel');
   panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  // Restore saved values
   const savedName = localStorage.getItem('birdsong-annotator-name');
-  const savedToken = localStorage.getItem('birdsong-gh-token');
   if (savedName) document.getElementById('annotator-name').value = savedName;
-  if (savedToken) document.getElementById('gh-token').value = savedToken;
 }
 
 function getAnnotatorName() {
   const name = document.getElementById('annotator-name').value.trim() || 'anonymous';
   localStorage.setItem('birdsong-annotator-name', name);
   return name;
-}
-
-function getGhToken() {
-  const token = document.getElementById('gh-token').value.trim();
-  if (token) localStorage.setItem('birdsong-gh-token', token);
-  return token;
 }
 
 function setSyncMsg(msg, isError) {
@@ -720,7 +738,6 @@ async function syncPull() {
     }
     const shared = await resp.json();
     
-    // Merge shared into local
     let added = 0;
     if (shared.annotations) {
       for (const sp in shared.annotations) {
@@ -773,27 +790,27 @@ async function syncPull() {
   }
 }
 
-// Push: commit local annotations to the repo via GitHub API
+// Push: decrypt PAT with password, then commit to GitHub
 async function syncPush() {
-  const token = getGhToken();
+  const password = document.getElementById('push-password').value.trim();
   const annotator = getAnnotatorName();
-  if (!token) { setSyncMsg('Need a GitHub token to push', true); return; }
+  if (!password) { setSyncMsg('Enter the shared password to push', true); return; }
   if (annotator === 'anonymous') { setSyncMsg('Please enter your name first', true); return; }
+  
+  setSyncMsg('Decrypting...', false);
+  
+  let token;
+  try {
+    token = await decryptPAT(password);
+  } catch(e) {
+    setSyncMsg('Wrong password', true);
+    return;
+  }
   
   setSyncMsg('Pushing...', false);
   
   try {
-    // Tag all current annotations with the annotator name
-    const pushData = JSON.parse(JSON.stringify(state.annotations));
-    for (const sp in pushData) {
-      for (const cat in pushData[sp]) {
-        for (const m of pushData[sp][cat]) {
-          if (!m.annotator) m.annotator = annotator;
-        }
-      }
-    }
-    
-    // Also tag local state so future saves carry the name
+    // Tag all annotations with annotator name
     for (const sp in state.annotations) {
       for (const cat in state.annotations[sp]) {
         for (const m of state.annotations[sp][cat]) {
@@ -803,7 +820,7 @@ async function syncPush() {
     }
     saveAnnotations();
     
-    // Fetch existing shared file (if any) to merge
+    // Fetch existing shared file to merge
     let existing = { annotations: {}, skips: {} };
     let existingSha = null;
     try {
@@ -817,14 +834,14 @@ async function syncPush() {
       }
     } catch(e) {}
     
-    // Merge: add any annotations from pushData not already in existing
+    // Merge annotations
     let added = 0;
-    for (const sp in pushData) {
+    for (const sp in state.annotations) {
       if (!existing.annotations[sp]) existing.annotations[sp] = {};
-      for (const cat in pushData[sp]) {
+      for (const cat in state.annotations[sp]) {
         if (!existing.annotations[sp][cat]) existing.annotations[sp][cat] = [];
         const existingIds = new Set(existing.annotations[sp][cat].map(m => m.id));
-        for (const m of pushData[sp][cat]) {
+        for (const m of state.annotations[sp][cat]) {
           if (!existingIds.has(m.id)) {
             existing.annotations[sp][cat].push(m);
             added++;
@@ -874,13 +891,13 @@ async function syncPush() {
     const status = document.getElementById('sync-status');
     status.className = 'sync-status synced';
     status.textContent = `synced · pushed by ${annotator}`;
-    setSyncMsg(`Pushed! ${added} new annotations committed to the shared repo.`, false);
+    setSyncMsg(`Pushed! ${added} new annotations committed.`, false);
   } catch(e) {
     setSyncMsg('Push failed: ' + e.message, true);
   }
 }
 
-// Auto-pull on load (silent, no error shown)
+// Auto-pull on load (silent)
 async function autoPull() {
   try {
     const resp = await fetch(SYNC_RAW_URL + '?t=' + Date.now());
@@ -908,11 +925,8 @@ async function autoPull() {
       status.className = 'sync-status synced';
       status.textContent = `synced · ${added} new`;
     }
-    // Restore saved annotator name
     const savedName = localStorage.getItem('birdsong-annotator-name');
     if (savedName) document.getElementById('annotator-name').value = savedName;
-    const savedToken = localStorage.getItem('birdsong-gh-token');
-    if (savedToken) document.getElementById('gh-token').value = savedToken;
   } catch(e) {}
 }
 
