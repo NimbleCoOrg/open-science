@@ -773,9 +773,14 @@ tr:hover td{background:var(--surface-2)}
       <div class="card">
         <div class="chart-wrap" style="height:320px"><canvas id="bellbirdSexChart"></canvas></div>
         <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)">
-          Males sing <b>longer</b> (13.4 vs 10.6 syllables) and <b>more varied</b> songs
-          (entropy 1.85 vs 1.56, repertoire 4.5 vs 3.9 types/song); females <b>repeat more</b>
-          (repetition 0.45 vs 0.31). n = 949 male, 648 female songs.
+          Males sing <b>longer</b> (13.4 vs 10.6 syllables) and use <b>more distinct syllable types
+          per song</b> (4.5 vs 3.9, entropy 1.85 vs 1.56); females <b>repeat more</b>
+          (0.45 vs 0.31 of adjacent syllables identical). n = 949 male, 648 female songs.
+          <br><br><b>Length-controlled:</b> "types per song" is partly confounded with length — longer
+          songs have more chances to hit new types. Comparing only the <b>first 8 syllables</b> of each
+          song (matched length), males still lead on distinct types (<b>4.2 vs 3.1</b>) and females still
+          repeat more, so the difference is <b>not</b> merely a length artefact. It is a genuine
+          type-token diversity gap. (A type-token ratio gives the same direction: 0.46 male vs 0.42 female.)
         </div>
       </div>
 
@@ -786,6 +791,22 @@ tr:hover td{background:var(--surface-2)}
         CUV shows the most even (diverse) repertoire.</p></div>
       <div class="card">
         <div class="chart-wrap" style="height:420px"><canvas id="bellbirdSiteChart"></canvas></div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Repertoire by Sex, per Site</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        The same syllable-composition view, split by sex within each site. Bellbirds are one of the
+        rare songbirds where <b>both sexes sing complex song</b> — and Webb et al. (2021) found males and
+        females share only <b>6–26% of syllable types</b> within a site. That sexual divergence shows up
+        here as clearly different category profiles: e.g. at Tawharanui females are 68% Stutter while males
+        spread across Stutter, Pipe and Alarmy. Use the toggle to compare.</p></div>
+      <div class="card">
+        <div style="display:flex;gap:.3rem;margin-bottom:1rem" id="sexsite-toggle">
+          <button class="voc-tab active" onclick="showSexSite('M',this)" style="cursor:pointer">Male</button>
+          <button class="voc-tab" onclick="showSexSite('F',this)" style="cursor:pointer">Female</button>
+        </div>
+        <div class="chart-wrap" style="height:420px"><canvas id="bellbirdSexSiteChart"></canvas></div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:var(--ink-faint);font-family:var(--mono)" id="sexsite-caption"></div>
       </div>
 
       <div class="section-label" style="margin-top:2rem">Per-Recording Breakdown (Xeno-Canto rule-based)</div>
@@ -1688,7 +1709,7 @@ function initBellbirdSong(){
       new Chart(document.getElementById('bellbirdSexChart'),{
         type:'bar',
         data:{
-          labels:['Song length (syls)','Entropy (bits)','Repertoire (types)','Repetition rate'],
+          labels:['Song length (syls)','Entropy (bits)','Types per song','Repetition rate'],
           datasets:[
             {label:'Male (n='+bs.M.n+')',data:[bs.M.length.mean,bs.M.entropy.mean,bs.M.repertoire.mean,bs.M.repetition.mean],backgroundColor:'#2c6c8c'},
             {label:'Female (n='+bs.F.n+')',data:[bs.F.length.mean,bs.F.entropy.mean,bs.F.repertoire.mean,bs.F.repetition.mean],backgroundColor:'#b04a3a'},
@@ -1703,12 +1724,13 @@ function initBellbirdSong(){
 
     // --- Site repertoires stacked % ---
     const sr=D.site_repertoires;
+    const SITE_GEO={TMI:'Tiritiri Matangi',TAW:'Tawharanui',LAI:'Lady Alice I.',PKI:'Poor Knights',LBI:'Hauturu (L. Barrier)',CUV:'Repanga (Cuvier)',BUR:'Mokohinau (Burgess)'};
     if(sr && document.getElementById('bellbirdSiteChart')){
       const sites=Object.keys(sr);
       const datasets=cats.map(c=>({label:c,data:sites.map(s=>sr[s][c]||0),backgroundColor:col[c]||'#888'}));
       new Chart(document.getElementById('bellbirdSiteChart'),{
         type:'bar',
-        data:{labels:sites,datasets},
+        data:{labels:sites.map(s=>SITE_GEO[s]||s),datasets},
         options:{responsive:true,maintainAspectRatio:false,
           plugins:{legend:{position:'bottom',labels:{font:{...chartFont,size:9},usePointStyle:true,pointStyle:'rect',padding:8}},
             tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}},
@@ -1718,6 +1740,36 @@ function initBellbirdSong(){
       });
     }
   }).catch(e=>console.error('bellbird_song.json load failed',e));
+
+  // --- Sex x site repertoire (separate data file) ---
+  fetch('bellbird_sexsite.json').then(r=>r.json()).then(SS=>{
+    window._sexsite=SS;
+    const col={'Pipe':'#2c6c8c','Stutter':'#b07d22','Flatspeak':'#357a5b','Stepup':'#7c5784',
+      'Down':'#bb4a33','Alarmy':'#c0392b','Peaksqueak':'#1f4257','Cough + Click':'#8c4a2c',
+      'Chortle':'#6b8f3a','Cough':'#a4977c'};
+    const chartFont={family:'Spline Sans Mono',size:10}, gridColor='#e2d9c7', tickColor='#a99e89';
+    window.showSexSite=function(sex,btn){
+      document.querySelectorAll('#sexsite-toggle .voc-tab').forEach(b=>b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+      const cats=SS.categories, sites=SS.sites;
+      const datasets=cats.map(c=>({label:c,data:sites.map(s=>s[sex].pct[c]||0),backgroundColor:col[c]||'#888'}));
+      const old=Chart.getChart('bellbirdSexSiteChart'); if(old) old.destroy();
+      new Chart(document.getElementById('bellbirdSexSiteChart'),{
+        type:'bar',
+        data:{labels:sites.map(s=>s.geo),datasets},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'bottom',labels:{font:{...chartFont,size:9},usePointStyle:true,pointStyle:'rect',padding:8}},
+            tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}},
+          scales:{x:{stacked:true,ticks:{font:{...chartFont,size:9},color:tickColor},grid:{display:false}},
+            y:{stacked:true,max:100,ticks:{font:chartFont,color:tickColor,callback:v=>v+'%'},grid:{color:gridColor},
+              title:{display:true,text:'% of '+(sex==='M'?'male':'female')+' repertoire',font:chartFont,color:tickColor}}}}
+      });
+      const cap=document.getElementById('sexsite-caption');
+      if(cap){ cap.textContent=(sex==='M'?'Male':'Female')+' syllables per site: '+
+        sites.map(s=>s.geo.split(' ')[0]+' '+s[sex].n_syl).join(' · '); }
+    };
+    showSexSite('M',document.querySelector('#sexsite-toggle .voc-tab'));
+  }).catch(e=>console.error('bellbird_sexsite.json load failed',e));
 }
 
 window.toggleSamplePlay = function(btn, src) {

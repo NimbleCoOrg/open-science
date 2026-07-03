@@ -1,0 +1,291 @@
+{
+ "categories": [
+  "Pipe",
+  "Stutter",
+  "Flatspeak",
+  "Stepup",
+  "Down",
+  "Alarmy",
+  "Peaksqueak",
+  "Cough + Click",
+  "Chortle",
+  "Cough"
+ ],
+ "sites": [
+  {
+   "code": "PKI",
+   "geo": "Poor Knights",
+   "n_songs": {
+    "F": 40,
+    "M": 233
+   },
+   "M": {
+    "n_syl": 2289,
+    "pct": {
+     "Pipe": 34.7,
+     "Stutter": 31.5,
+     "Flatspeak": 1.3,
+     "Stepup": 6.7,
+     "Down": 1.0,
+     "Alarmy": 2.9,
+     "Peaksqueak": 3.3,
+     "Cough + Click": 5.0,
+     "Chortle": 3.0,
+     "Cough": 10.5
+    }
+   },
+   "F": {
+    "n_syl": 328,
+    "pct": {
+     "Pipe": 41.5,
+     "Stutter": 10.4,
+     "Flatspeak": 0.3,
+     "Stepup": 5.5,
+     "Down": 6.1,
+     "Alarmy": 8.5,
+     "Peaksqueak": 8.2,
+     "Cough + Click": 7.6,
+     "Chortle": 9.8,
+     "Cough": 2.1
+    }
+   }
+  },
+  {
+   "code": "LAI",
+   "geo": "Lady Alice I.",
+   "n_songs": {
+    "F": 71,
+    "M": 49
+   },
+   "M": {
+    "n_syl": 366,
+    "pct": {
+     "Pipe": 26.8,
+     "Stutter": 14.2,
+     "Flatspeak": 3.6,
+     "Stepup": 5.5,
+     "Down": 6.6,
+     "Alarmy": 5.7,
+     "Peaksqueak": 0.0,
+     "Cough + Click": 15.6,
+     "Chortle": 17.5,
+     "Cough": 4.6
+    }
+   },
+   "F": {
+    "n_syl": 429,
+    "pct": {
+     "Pipe": 38.9,
+     "Stutter": 6.1,
+     "Flatspeak": 0.0,
+     "Stepup": 6.1,
+     "Down": 45.2,
+     "Alarmy": 2.3,
+     "Peaksqueak": 0.2,
+     "Cough + Click": 0.5,
+     "Chortle": 0.7,
+     "Cough": 0.0
+    }
+   }
+  },
+  {
+   "code": "LBI",
+   "geo": "Hauturu (L. Barrier)",
+   "n_songs": {
+    "F": 93,
+    "M": 52
+   },
+   "M": {
+    "n_syl": 609,
+    "pct": {
+     "Pipe": 26.3,
+     "Stutter": 34.5,
+     "Flatspeak": 5.7,
+     "Stepup": 10.0,
+     "Down": 4.6,
+     "Alarmy": 3.4,
+     "Peaksqueak": 0.2,
+     "Cough + Click": 6.2,
+     "Chortle": 0.7,
+     "Cough": 8.4
+    }
+   },
+   "F": {
+    "n_syl": 958,
+    "pct": {
+     "Pipe": 44.2,
+     "Stutter": 24.8,
+     "Flatspeak": 0.5,
+     "Stepup": 11.1,
+     "Down": 7.5,
+     "Alarmy": 4.1,
+     "Peaksqueak": 0.6,
+     "Cough + Click": 6.1,
+     "Chortle": 0.0,
+     "Cough": 1.1
+    }
+   }
+  },
+  {
+   "code": "TAW",
+   "geo": "Tawharanui",
+   "n_songs": {
+    "M": 112,
+    "F": 33
+   },
+   "M": {
+    "n_syl": 1679,
+    "pct": {
+     "Pipe": 19.5,
+     "Stutter": 26.7,
+     "Flatspeak": 3.3,
+     "Stepup": 6.1,
+     "Down": 5.8,
+     "Alarmy": 15.8,
+     "Peaksqueak": 0.0,
+     "Cough + Click": 8.5,
+     "Chortle": 6.0,
+     "Cough": 8.2
+    }
+   },
+   "F": {
+    "n_syl": 502,
+    "pct": {
+     "Pipe": 12.4,
+     "Stutter": 67.5,
+     "Flatspeak": 0.0,
+     "Stepup": 5.2,
+     "Down": 9.4,
+     "Alarmy": 2.4,
+     "Peaksqueak": 0.2,
+     "Cough + Click": 2.6,
+     "Chortle": 0.2,
+     "Cough": 0.2
+    }
+   }
+  },
+  {
+   "code": "CUV",
+   "geo": "Repanga (Cuvier)",
+   "n_songs": {
+    "M": 181,
+    "F": 186
+   },
+   "M": {
+    "n_syl": 2937,
+    "pct": {
+     "Pipe": 17.9,
+     "Stutter": 10.1,
+     "Flatspeak": 14.6,
+     "Stepup": 0.4,
+     "Down": 0.1,
+     "Alarmy": 26.7,
+     "Peaksqueak": 6.9,
+     "Cough + Click": 0.5,
+     "Chortle": 8.0,
+     "Cough": 14.7
+    }
+   },
+   "F": {
+    "n_syl": 2079,
+    "pct": {
+     "Pipe": 14.6,
+     "Stutter": 44.0,
+     "Flatspeak": 0.1,
+     "Stepup": 5.3,
+     "Down": 18.8,
+     "Alarmy": 7.3,
+     "Peaksqueak": 0.6,
+     "Cough + Click": 0.1,
+     "Chortle": 9.2,
+     "Cough": 0.0
+    }
+   }
+  },
+  {
+   "code": "TMI",
+   "geo": "Tiritiri Matangi",
+   "n_songs": {
+    "M": 309,
+    "F": 136
+   },
+   "M": {
+    "n_syl": 4750,
+    "pct": {
+     "Pipe": 13.8,
+     "Stutter": 16.6,
+     "Flatspeak": 1.6,
+     "Stepup": 2.3,
+     "Down": 12.6,
+     "Alarmy": 21.9,
+     "Peaksqueak": 2.1,
+     "Cough + Click": 1.4,
+     "Chortle": 14.8,
+     "Cough": 12.9
+    }
+   },
+   "F": {
+    "n_syl": 1911,
+    "pct": {
+     "Pipe": 19.9,
+     "Stutter": 61.7,
+     "Flatspeak": 1.4,
+     "Stepup": 8.6,
+     "Down": 4.9,
+     "Alarmy": 0.3,
+     "Peaksqueak": 1.5,
+     "Cough + Click": 0.4,
+     "Chortle": 1.4,
+     "Cough": 0.0
+    }
+   }
+  },
+  {
+   "code": "BUR",
+   "geo": "Mokohinau (Burgess)",
+   "n_songs": {
+    "F": 89,
+    "M": 13
+   },
+   "M": {
+    "n_syl": 76,
+    "pct": {
+     "Pipe": 28.9,
+     "Stutter": 3.9,
+     "Flatspeak": 13.2,
+     "Stepup": 25.0,
+     "Down": 19.7,
+     "Alarmy": 1.3,
+     "Peaksqueak": 0.0,
+     "Cough + Click": 7.9,
+     "Chortle": 0.0,
+     "Cough": 0.0
+    }
+   },
+   "F": {
+    "n_syl": 636,
+    "pct": {
+     "Pipe": 41.7,
+     "Stutter": 4.9,
+     "Flatspeak": 1.6,
+     "Stepup": 10.1,
+     "Down": 31.1,
+     "Alarmy": 0.8,
+     "Peaksqueak": 0.9,
+     "Cough + Click": 1.6,
+     "Chortle": 0.2,
+     "Cough": 7.2
+    }
+   }
+  }
+ ],
+ "geo": {
+  "TMI": "Tiritiri Matangi",
+  "TAW": "Tawharanui",
+  "LAI": "Lady Alice I.",
+  "PKI": "Poor Knights",
+  "LBI": "Hauturu (L. Barrier)",
+  "CUV": "Repanga (Cuvier)",
+  "BUR": "Mokohinau (Burgess)"
+ }
+}
