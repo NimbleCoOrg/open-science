@@ -716,7 +716,79 @@ tr:hover td{background:var(--surface-2)}
         (<a href="https://doi.org/10.1111/2041-210X.13336">Fukuzawa et al. 2020</a>) was developed specifically for this classification task.</div>
       </div>
 
-      <div class="section-label">Per-Recording Breakdown</div>
+      <!-- ===== SONG STRUCTURE ANALYSIS (Koe dataset, DTW template matching) ===== -->
+      <div class="section-label" style="margin-top:2.5rem">Song Structure — Koe Dataset, Data-Driven Categories</div>
+      <div class="prose" style="margin-bottom:1.5rem">
+        <p>The section above uses a spectral rule-based classifier over Xeno-Canto recordings.
+        This section takes a different, empirically grounded route on the <b>Koe bellbird tutorial dataset</b>
+        (<a href="https://doi.org/10.1111/2041-210X.13336">Fukuzawa et al. 2020</a>) — <b>2,278 songs</b>
+        with <b>21,427 hand-labelled syllable segments</b>. Rather than imposing categories from spectral
+        rules, we let the data define them: 818 syllable clips were embedded via PCA (spike-sorting style),
+        manually clustered by ear and eye into <b>10 categories</b>, then those manual clusters seeded
+        <b>DTW-barycenter templates</b> (dynamic time warping + DBA, <em>tslearn</em>) that classified the
+        remaining 575 syllables. <b>816 of 818</b> syllables carry a category (2 excluded as noise).</p>
+        <p style="font-size:.9rem;color:var(--ink-soft)">This is a first-pass, single-annotator scheme
+        (manual clusters by Azure) meant for structural analysis, not a published taxonomy. Category names
+        are descriptive (<em>Stutter, Pipe, Down…</em>), not drawn from prior literature. "Cough + Click"
+        is a newly separated Cough sub-type with a reliable trailing note.</p>
+      </div>
+
+      <div class="card">
+        <h3>Category Distribution — 10 Data-Driven Types</h3>
+        <div id="bellbird-dtw-bars"></div>
+        <div style="margin-top:1rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)" id="bellbird-dtw-caption">
+          816 syllables · 10 categories · 241 manual (ground truth) + 575 DTW template-matched
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.2rem">
+        <h3>Classification Confidence</h3>
+        <div id="bellbird-conf-bars"></div>
+        <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)">
+          <b>241</b> ground-truth (Azure's manual clusters) · <b>416</b> high-confidence DTW ·
+          <b>96</b> medium · <b>63</b> low (pending review). Manual cluster purity validated at
+          <b>91%</b> overall (Chortle 100%, Down 98%, Stutter 97%).
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Syllable Transitions</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        How syllables follow one another across 19,241 transitions in 2,278 songs. Rows = current syllable,
+        columns = next syllable; each cell is the probability of that transition. Strong diagonal =
+        self-repetition (birds repeat syllables in runs).</p></div>
+      <div class="card">
+        <div style="overflow-x:auto"><table id="bellbird-transition-table" style="width:100%;font-size:.72rem;border-collapse:collapse;font-family:var(--mono)"></table></div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:var(--ink-faint);font-family:var(--mono)">
+          Cell shade ∝ transition probability · self-transitions on the diagonal
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Common Motifs</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        The most frequent stereotyped syllable sequences (4-grams) across all songs. Bellbird song is
+        built largely from repeated runs (Stutter×4, Pipe×4) and alternations (Down–Pipe–Down–Pipe).</p></div>
+      <div class="card"><div id="bellbird-motifs"></div></div>
+
+      <div class="section-label" style="margin-top:2rem">Song Complexity — Sex Differences</div>
+      <div class="card">
+        <div class="chart-wrap" style="height:320px"><canvas id="bellbirdSexChart"></canvas></div>
+        <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)">
+          Males sing <b>longer</b> (13.4 vs 10.6 syllables) and <b>more varied</b> songs
+          (entropy 1.85 vs 1.56, repertoire 4.5 vs 3.9 types/song); females <b>repeat more</b>
+          (repetition 0.45 vs 0.31). n = 949 male, 648 female songs.
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Geographic Repertoires — 7 Sites</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        Percentage composition of each site's repertoire across the 10 syllable categories — the
+        beginnings of <b>vocal dialects</b>. BUR/LAI lean Pipe + Down; TMI favours Stutter + Alarmy;
+        CUV shows the most even (diverse) repertoire.</p></div>
+      <div class="card">
+        <div class="chart-wrap" style="height:420px"><canvas id="bellbirdSiteChart"></canvas></div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Per-Recording Breakdown (Xeno-Canto rule-based)</div>
       <div class="card">
         <div class="chart-wrap" style="height:400px">
           <canvas id="bellbirdPerRecChart"></canvas>
@@ -1438,6 +1510,8 @@ function initSyllables() {
   
   // No species shown by default — user clicks a sub-tab to reveal
 
+  // === BELLBIRD SONG STRUCTURE (Koe dataset, DTW) ===
+  if(!window._bbSongInit){ window._bbSongInit = true; initBellbirdSong(); }
 
   // === PER-RECORDING STACKED BAR CHARTS ===
   const chartFont = {family:'Spline Sans Mono',size:10};
@@ -1525,6 +1599,125 @@ function initSyllables() {
     });
   }
 
+}
+
+// ==================== BELLBIRD SONG STRUCTURE (Koe / DTW) ====================
+function initBellbirdSong(){
+  fetch('bellbird_song.json').then(r=>r.json()).then(D=>{
+    const cats = D.categories;
+    const col = D.colors;
+
+    // --- Category distribution bars ---
+    const bars = document.getElementById('bellbird-dtw-bars');
+    if(bars){
+      const maxC = D.distribution[0].count;
+      D.distribution.forEach(t=>{
+        const row=document.createElement('div'); row.className='syl-bar-row';
+        row.innerHTML=`<div class="syl-label">${t.name}</div>
+          <div class="syl-track"><div class="syl-fill" style="width:${(t.count/maxC*100).toFixed(1)}%;background:${t.color}"></div></div>
+          <div class="syl-val">${t.count.toLocaleString()} <span class="syl-pct">${t.pct}%</span></div>`;
+        bars.appendChild(row);
+      });
+    }
+
+    // --- Confidence bars ---
+    const cb = document.getElementById('bellbird-conf-bars');
+    if(cb){
+      const conf=[
+        {name:'Ground truth (manual)',count:D.confidence.ground_truth,color:'#357a5b'},
+        {name:'High confidence',count:D.confidence.high,color:'#6b8f3a'},
+        {name:'Medium',count:D.confidence.medium,color:'#b07d22'},
+        {name:'Low (pending review)',count:D.confidence.low,color:'#bb4a33'},
+      ];
+      const maxC=Math.max(...conf.map(c=>c.count));
+      conf.forEach(t=>{
+        const row=document.createElement('div'); row.className='syl-bar-row';
+        row.innerHTML=`<div class="syl-label">${t.name}</div>
+          <div class="syl-track"><div class="syl-fill" style="width:${(t.count/maxC*100).toFixed(1)}%;background:${t.color}"></div></div>
+          <div class="syl-val">${t.count.toLocaleString()}</div>`;
+        cb.appendChild(row);
+      });
+    }
+
+    // --- Transition matrix heatmap table ---
+    const tbl = document.getElementById('bellbird-transition-table');
+    if(tbl){
+      const short = s => s==='Cough + Click' ? 'C+Cl' : (s.length>6 ? s.slice(0,5)+'·' : s);
+      let html='<thead><tr><th style="text-align:right;padding:3px 5px;color:var(--ink-faint)">from \\ to</th>';
+      cats.forEach(c=> html+=`<th style="padding:3px 4px;color:${col[c]||'#555'};font-weight:600">${short(c)}</th>`);
+      html+='</tr></thead><tbody>';
+      cats.forEach(r=>{
+        html+=`<tr><td style="text-align:right;padding:3px 5px;color:${col[r]||'#555'};font-weight:600;white-space:nowrap">${short(r)}</td>`;
+        const rowm = D.transition_matrix[r]||{};
+        cats.forEach(c=>{
+          const p = rowm[c]||0;
+          const a = Math.min(1, p*1.6); // shade
+          const diag = r===c;
+          const bg = diag ? `rgba(31,66,87,${(0.12+a*0.8).toFixed(2)})` : `rgba(107,143,58,${a.toFixed(2)})`;
+          const txt = a>0.55 ? '#fff' : 'var(--ink-soft)';
+          html+=`<td style="padding:3px 4px;text-align:center;background:${bg};color:${txt}" title="${r} → ${c}: ${(p*100).toFixed(1)}%">${p>=0.01?(p*100).toFixed(0):'·'}</td>`;
+        });
+        html+='</tr>';
+      });
+      html+='</tbody>';
+      tbl.innerHTML=html;
+    }
+
+    // --- Motifs (4-gram) ---
+    const mv = document.getElementById('bellbird-motifs');
+    if(mv){
+      const grams = (D.motifs['4-gram']||[]).slice(0,8);
+      const maxCt = grams.length?grams[0].count:1;
+      grams.forEach(g=>{
+        const seq = g.pattern.map(p=>`<span style="display:inline-block;padding:2px 7px;border-radius:4px;background:${col[p]||'#888'};color:#fff;font-size:.72rem;font-family:var(--mono);margin-right:3px">${p}</span>`).join('<span style="color:var(--ink-faint);margin-right:3px">›</span>');
+        const row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--rule)';
+        row.innerHTML=`<div style="flex:1">${seq}</div>
+          <div style="font-family:var(--mono);font-size:.8rem;color:var(--ink-soft);white-space:nowrap">${g.count} songs
+          <span style="display:inline-block;width:${(g.count/maxCt*80).toFixed(0)}px;height:6px;background:var(--accent-2);border-radius:3px;margin-left:6px;vertical-align:middle"></span></div>`;
+        mv.appendChild(row);
+      });
+    }
+
+    const chartFont={family:'Spline Sans Mono',size:10};
+    const gridColor='#e2d9c7', tickColor='#a99e89';
+
+    // --- Sex differences grouped bar ---
+    const bs=D.complexity.by_sex;
+    if(bs && document.getElementById('bellbirdSexChart')){
+      new Chart(document.getElementById('bellbirdSexChart'),{
+        type:'bar',
+        data:{
+          labels:['Song length (syls)','Entropy (bits)','Repertoire (types)','Repetition rate'],
+          datasets:[
+            {label:'Male (n='+bs.M.n+')',data:[bs.M.length.mean,bs.M.entropy.mean,bs.M.repertoire.mean,bs.M.repetition.mean],backgroundColor:'#2c6c8c'},
+            {label:'Female (n='+bs.F.n+')',data:[bs.F.length.mean,bs.F.entropy.mean,bs.F.repertoire.mean,bs.F.repetition.mean],backgroundColor:'#b04a3a'},
+          ]
+        },
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'bottom',labels:{font:chartFont,usePointStyle:true,pointStyle:'rect',padding:10}}},
+          scales:{x:{ticks:{font:{...chartFont,size:9},color:tickColor},grid:{display:false}},
+            y:{ticks:{font:chartFont,color:tickColor},grid:{color:gridColor}}}}
+      });
+    }
+
+    // --- Site repertoires stacked % ---
+    const sr=D.site_repertoires;
+    if(sr && document.getElementById('bellbirdSiteChart')){
+      const sites=Object.keys(sr);
+      const datasets=cats.map(c=>({label:c,data:sites.map(s=>sr[s][c]||0),backgroundColor:col[c]||'#888'}));
+      new Chart(document.getElementById('bellbirdSiteChart'),{
+        type:'bar',
+        data:{labels:sites,datasets},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'bottom',labels:{font:{...chartFont,size:9},usePointStyle:true,pointStyle:'rect',padding:8}},
+            tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}}},
+          scales:{x:{stacked:true,ticks:{font:chartFont,color:tickColor},grid:{display:false}},
+            y:{stacked:true,max:100,ticks:{font:chartFont,color:tickColor,callback:v=>v+'%'},grid:{color:gridColor},
+              title:{display:true,text:'% of site repertoire',font:chartFont,color:tickColor}}}}
+      });
+    }
+  }).catch(e=>console.error('bellbird_song.json load failed',e));
 }
 
 window.toggleSamplePlay = function(btn, src) {
