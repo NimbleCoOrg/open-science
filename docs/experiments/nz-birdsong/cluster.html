@@ -59,6 +59,22 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
   </div>
   <div class="sidebar">
     <div>
+      <h3>Color by</h3>
+      <div style="display:flex;gap:4px;margin-bottom:6px">
+        <button class="btn secondary" id="colorByFamily" onclick="setColorMode('family')" style="font-size:10px">Koe family</button>
+        <button class="btn" id="colorByAssigned" onclick="setColorMode('assigned')" style="font-size:10px">Our categories</button>
+        <button class="btn secondary" id="colorByConf" onclick="setColorMode('confidence')" style="font-size:10px">Confidence</button>
+      </div>
+    </div>
+    <div>
+      <h3>Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
+      <div style="display:flex;gap:4px;margin-bottom:4px">
+        <button class="btn" onclick="reviewPrev()" style="font-size:10px">◀ Prev</button>
+        <button class="btn" onclick="reviewNext()" style="font-size:10px">Next ▶</button>
+        <span id="reviewProgress" style="font-size:10px;color:var(--text2);line-height:28px"></span>
+      </div>
+    </div>
+    <div>
       <h3>Families</h3>
       <div id="legend"></div>
     </div>
@@ -353,7 +369,7 @@ class Panel {
         exclPts.push([sx, sy]);
         continue;
       }
-      const col = familyColorMap[p.family] || '#888';
+      const col = getPointColor(p);
       if (selectedIds.has(p.id)) {
         if (!selBuckets[col]) selBuckets[col] = [];
         selBuckets[col].push([sx, sy]);
@@ -468,6 +484,62 @@ let renderPending = false;
 let excludedIds = new Set();
 let hoveredPoint = null;
 let activeAudio = null;
+let colorMode = 'assigned'; // 'family', 'assigned', 'confidence'
+let reviewPoints = [];
+let reviewIndex = -1;
+
+const ASSIGNED_COLORS = {
+  'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
+  'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
+  'Chortle':'#81ecec', 'Cough':'#ff6b6b'
+};
+const CONF_COLORS = {
+  'ground_truth':'#4caf50', 'high':'#6c8cff', 'medium':'#e8a735', 'low':'#ff5252', 'none':'#555'
+};
+
+function getPointColor(p) {
+  if (colorMode === 'assigned' && p.assigned_category) {
+    return ASSIGNED_COLORS[p.assigned_category] || '#888';
+  } else if (colorMode === 'confidence') {
+    return CONF_COLORS[p.assignment_confidence] || '#555';
+  }
+  return familyColorMap[p.family] || '#888';
+}
+
+function setColorMode(mode) {
+  colorMode = mode;
+  document.getElementById('colorByFamily').className = mode==='family' ? 'btn' : 'btn secondary';
+  document.getElementById('colorByAssigned').className = mode==='assigned' ? 'btn' : 'btn secondary';
+  document.getElementById('colorByConf').className = mode==='confidence' ? 'btn' : 'btn secondary';
+  buildLegend();
+  requestRender();
+}
+
+function initReview() {
+  if (!DATA) return;
+  reviewPoints = DATA.points.filter(p => p.assignment_confidence === 'low').map(p => p.id);
+  document.getElementById('reviewCount').textContent = `(${reviewPoints.length} ambiguous)`;
+}
+
+function reviewNext() {
+  if (reviewPoints.length === 0) return;
+  reviewIndex = (reviewIndex + 1) % reviewPoints.length;
+  const pid = reviewPoints[reviewIndex];
+  const p = DATA.pointMap[pid];
+  if (p) { hoveredPoint = p; showPointDetail(p); }
+  document.getElementById('reviewProgress').textContent = `${reviewIndex+1}/${reviewPoints.length}`;
+  requestRender();
+}
+
+function reviewPrev() {
+  if (reviewPoints.length === 0) return;
+  reviewIndex = (reviewIndex - 1 + reviewPoints.length) % reviewPoints.length;
+  const pid = reviewPoints[reviewIndex];
+  const p = DATA.pointMap[pid];
+  if (p) { hoveredPoint = p; showPointDetail(p); }
+  document.getElementById('reviewProgress').textContent = `${reviewIndex+1}/${reviewPoints.length}`;
+  requestRender();
+}
 
 function requestRender() {
   if (renderPending) return;
@@ -481,20 +553,52 @@ function requestRender() {
 function buildLegend() {
   const el = document.getElementById('legend');
   el.innerHTML = '';
-  for (let i = 0; i < DATA.families.length; i++) {
-    const fam = DATA.families[i];
-    const col = familyColorMap[fam];
-    const cnt = DATA.family_counts[fam] || 0;
-    const item = document.createElement('div');
-    item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
-    item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${fam}</span><span class="legend-count">${cnt}</span>`;
-    item.onclick = () => {
-      if (hiddenFamilies.has(fam)) hiddenFamilies.delete(fam);
-      else hiddenFamilies.add(fam);
+  
+  let items;
+  if (colorMode === 'assigned') {
+    // Group by assigned category
+    const catCounts = {};
+    for (const p of DATA.points) {
+      const cat = p.assigned_category || 'unassigned';
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
+    }
+    items = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
+    for (const [cat, cnt] of items) {
+      const col = ASSIGNED_COLORS[cat] || '#888';
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
+      el.appendChild(item);
+    }
+  } else if (colorMode === 'confidence') {
+    const confOrder = ['ground_truth', 'high', 'medium', 'low'];
+    const confLabels = {'ground_truth':'Manual (Azure)', 'high':'High confidence', 'medium':'Medium', 'low':'Low (review)'};
+    for (const conf of confOrder) {
+      const cnt = DATA.points.filter(p => p.assignment_confidence === conf).length;
+      if (cnt === 0) continue;
+      const col = CONF_COLORS[conf];
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${confLabels[conf]}</span><span class="legend-count">${cnt}</span>`;
+      el.appendChild(item);
+    }
+  } else {
+    // Original family colors
+    for (let i = 0; i < DATA.families.length; i++) {
+      const fam = DATA.families[i];
+      const col = familyColorMap[fam];
+      const cnt = DATA.family_counts[fam] || 0;
+      const item = document.createElement('div');
       item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
-      requestRender();
-    };
-    el.appendChild(item);
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${fam}</span><span class="legend-count">${cnt}</span>`;
+      item.onclick = () => {
+        if (hiddenFamilies.has(fam)) hiddenFamilies.delete(fam);
+        else hiddenFamilies.add(fam);
+        item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
+        requestRender();
+      };
+      el.appendChild(item);
+    }
   }
 }
 
@@ -557,12 +661,13 @@ function showPointDetail(p) {
   
   let html = `
     <p><span style="color:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
+    ${p.assigned_category ? `<p style="margin-top:2px">→ <b style="color:${ASSIGNED_COLORS[p.assigned_category]||'#fff'}">${p.assigned_category}</b> <span style="font-size:9px;color:var(--text2)">(${p.assignment_source}, ${p.assignment_confidence}${p.assignment_score ? ', score='+p.assignment_score.toFixed(3) : ''})</span></p>` : ''}
     <p style="color:var(--text2)">${p.wav || 'unknown'}</p>
     <p style="color:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
     ${spectroHtml}
     <p style="margin-top:4px;color:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
     <p style="color:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
-    <div style="display:flex;gap:4px;margin-top:6px">
+    <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
       ${audioUrl ? `<button class="btn" onclick="playPoint('${audioUrl}')" style="background:var(--accent)">▶ Play</button>` : ''}
       <button class="btn" onclick="excludePoint(${p.id})" style="background:var(--reject)">✗ Exclude</button>
       <button class="btn secondary" onclick="hidePointDetail()">Close</button>
@@ -696,6 +801,7 @@ async function init() {
     }
     buildLegend();
     updateClusterList();
+    initReview();
     requestRender();
   });
 }
