@@ -55,7 +55,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 <div class="main">
   <div class="grid-area">
     <div class="grid" id="grid"></div>
-    <div id="status">Scroll to zoom · Drag to pan · Shift+drag to lasso select</div>
+    <div id="status">Scroll to zoom · Drag to pan · Shift+drag to lasso · Click point to inspect/play/exclude</div>
   </div>
   <div class="sidebar">
     <div>
@@ -65,6 +65,10 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     <div>
       <h3>Selection</h3>
       <div class="section" id="selInfo"><p style="color:var(--text2)">Shift+drag to lasso-select points</p></div>
+    </div>
+    <div id="pointDetail" style="display:none">
+      <h3>Point Detail</h3>
+      <div class="section" id="pointDetailContent"></div>
     </div>
     <div>
       <h3>Clusters</h3>
@@ -77,7 +81,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     <div class="btn-row">
       <button class="btn" onclick="exportClusters()">Export Clusters</button>
       <button class="btn secondary" onclick="clearSelection()">Clear Selection</button>
+      <button class="btn secondary" onclick="unexcludeAll()" style="border-color:var(--reject)">Restore excluded</button>
     </div>
+    <div><span id="excludeCount" style="font-size:10px;color:var(--reject)"></span></div>
   </div>
 </div>
 
@@ -230,6 +236,7 @@ class Panel {
       this.dragging = true;
       this.dragStart = pos;
       this.lastMouse = pos;
+      this._clickPos = pos;
     }
   }
 
@@ -254,11 +261,35 @@ class Panel {
   _onUp(e) {
     if (this.lasso && this.lasso.length > 2) {
       this._finishLasso();
+    } else if (this.dragging && this._clickPos) {
+      // Check if it was a click (not a drag)
+      const pos = this._getPos(e);
+      const dx = pos[0] - this._clickPos[0], dy = pos[1] - this._clickPos[1];
+      if (Math.sqrt(dx*dx + dy*dy) < 5) {
+        this._handleClick(pos);
+      }
     }
     this.lasso = null;
     this.dragging = false;
     this.dragStart = null;
+    this._clickPos = null;
     requestRender();
+  }
+
+  _handleClick(pos) {
+    // Find nearest point within 10px
+    let bestDist = 10, bestPt = null;
+    for (const p of DATA.points) {
+      if (hiddenFamilies.has(p.family) || excludedIds.has(p.id)) continue;
+      const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
+      const d = Math.sqrt((sx-pos[0])**2 + (sy-pos[1])**2);
+      if (d < bestDist) { bestDist = d; bestPt = p; }
+    }
+    if (bestPt) {
+      hoveredPoint = bestPt;
+      showPointDetail(bestPt);
+      requestRender();
+    }
   }
 
   _finishLasso() {
@@ -313,10 +344,15 @@ class Panel {
     // Batch by color for performance
     const buckets = {};
     const selBuckets = {};
+    const exclPts = [];
     for (const p of pts) {
       if (hiddenFamilies.has(p.family)) continue;
       const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
       if (sx < margin-5 || sx > w-margin+5 || sy < margin-5 || sy > h-margin+5) continue;
+      if (excludedIds.has(p.id)) {
+        exclPts.push([sx, sy]);
+        continue;
+      }
       const col = familyColorMap[p.family] || '#888';
       if (selectedIds.has(p.id)) {
         if (!selBuckets[col]) selBuckets[col] = [];
@@ -384,6 +420,35 @@ class Panel {
       ctx.fillStyle = 'rgba(108,140,255,0.08)';
       ctx.fill();
     }
+
+    // Draw excluded points as dim X marks
+    if (exclPts.length > 0) {
+      ctx.strokeStyle = '#ff525244';
+      ctx.lineWidth = 1;
+      for (const [sx, sy] of exclPts) {
+        ctx.beginPath();
+        ctx.moveTo(sx-3, sy-3); ctx.lineTo(sx+3, sy+3);
+        ctx.moveTo(sx+3, sy-3); ctx.lineTo(sx-3, sy+3);
+        ctx.stroke();
+      }
+    }
+
+    // Highlight hovered/clicked point
+    if (hoveredPoint && !hiddenFamilies.has(hoveredPoint.family) && !excludedIds.has(hoveredPoint.id)) {
+      const [sx, sy] = this.dataToScreen(hoveredPoint.pc[this.pcX], hoveredPoint.pc[this.pcY]);
+      if (sx >= margin-5 && sx <= w-margin+5 && sy >= margin-5 && sy <= h-margin+5) {
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 8, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.strokeStyle = '#6c8cff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 10, 0, Math.PI*2);
+        ctx.stroke();
+      }
+    }
   }
 }
 
@@ -400,6 +465,10 @@ function pointInPolygon(x, y, poly) {
 }
 
 let renderPending = false;
+let excludedIds = new Set();
+let hoveredPoint = null;
+let activeAudio = null;
+
 function requestRender() {
   if (renderPending) return;
   renderPending = true;
@@ -468,6 +537,77 @@ function updateSelectionInfo() {
   el.innerHTML = html;
 }
 
+function showPointDetail(p) {
+  const panel = document.getElementById('pointDetail');
+  const el = document.getElementById('pointDetailContent');
+  panel.style.display = 'block';
+  
+  const col = familyColorMap[p.family] || '#888';
+  const wavBase = p.wav ? p.wav.replace('.wav','') : '';
+  
+  // Build spectrogram URL if available (from annotation candidates)
+  let spectroHtml = '';
+  // Try to find matching spectrogram in annotation/bellbird/ directory
+  const spectroUrl = `annotation/bellbird/${p.id}.png`;
+  spectroHtml = `<img src="${spectroUrl}" style="width:100%;border-radius:4px;border:1px solid var(--border);margin:4px 0;cursor:pointer" 
+    onerror="this.style.display='none'" onclick="window.open('${spectroUrl}','_blank')">`;
+  
+  // Audio URL
+  const audioUrl = p.wav ? `annotation/bellbird/${p.id}.wav` : '';
+  
+  let html = `
+    <p><span style="color:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
+    <p style="color:var(--text2)">${p.wav || 'unknown'}</p>
+    <p style="color:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
+    ${spectroHtml}
+    <p style="margin-top:4px;color:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
+    <p style="color:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
+    <div style="display:flex;gap:4px;margin-top:6px">
+      ${audioUrl ? `<button class="btn" onclick="playPoint('${audioUrl}')" style="background:var(--accent)">▶ Play</button>` : ''}
+      <button class="btn" onclick="excludePoint(${p.id})" style="background:var(--reject)">✗ Exclude</button>
+      <button class="btn secondary" onclick="hidePointDetail()">Close</button>
+    </div>`;
+  el.innerHTML = html;
+}
+
+function hidePointDetail() {
+  document.getElementById('pointDetail').style.display = 'none';
+  hoveredPoint = null;
+  requestRender();
+}
+
+function playPoint(url) {
+  if (activeAudio) { activeAudio.pause(); activeAudio = null; }
+  activeAudio = new Audio(url);
+  activeAudio.play().catch(e => console.warn('Audio play failed:', e));
+}
+
+function excludePoint(id) {
+  excludedIds.add(id);
+  // Remove from any clusters
+  for (const [name, ids] of Object.entries(clusters)) {
+    ids.delete(id);
+  }
+  // Remove from selection
+  selectedIds.delete(id);
+  hidePointDetail();
+  updateSelectionInfo();
+  updateClusterList();
+  updateExcludeCount();
+  requestRender();
+}
+
+function unexcludeAll() {
+  excludedIds.clear();
+  updateExcludeCount();
+  requestRender();
+}
+
+function updateExcludeCount() {
+  const el = document.getElementById('excludeCount');
+  if (el) el.textContent = excludedIds.size > 0 ? `${excludedIds.size} excluded` : '';
+}
+
 function assignCluster() {
   const name = document.getElementById('clusterName').value.trim();
   if (!name) return;
@@ -506,7 +646,12 @@ function exportClusters() {
   for (const [name, ids] of Object.entries(clusters)) {
     out[name] = [...ids];
   }
-  const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
+  const exportData = {
+    clusters: out,
+    excluded: [...excludedIds],
+    exported_at: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'bellbird_clusters.json';
