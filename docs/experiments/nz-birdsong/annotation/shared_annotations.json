@@ -1,7 +1,224 @@
 {
   "version": 3,
-  "last_updated": "2026-07-03T00:35:21.253Z",
-  "last_pushed_by": "TestBot",
-  "annotations": {},
+  "last_updated": "2026-07-03T02:30:35.962Z",
+  "last_pushed_by": "Azure",
+  "annotations": {
+    "tui": {
+      "harmonic": [
+        {
+          "id": "tui_0000",
+          "recording": "XC927459",
+          "auto_category": "rmnr",
+          "duration_ms": 366.2,
+          "f0_hz": 1013.8,
+          "centroid_hz": 3922.1,
+          "syl_start_ms": 4279.4,
+          "syl_end_ms": 4645.5,
+          "matched_at": "2026-07-02T22:40:07.350Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0032",
+          "recording": "XC321682",
+          "auto_category": "rmnr",
+          "duration_ms": 216.5,
+          "f0_hz": 1172.3,
+          "centroid_hz": 4322.4,
+          "syl_start_ms": 6861.7,
+          "syl_end_ms": 7078.2,
+          "matched_at": "2026-07-02T22:54:27.942Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0035",
+          "recording": "XC321682",
+          "auto_category": "rmnr",
+          "duration_ms": 208.5,
+          "f0_hz": 1140.8,
+          "centroid_hz": 3805.9,
+          "syl_start_ms": 21550.3,
+          "syl_end_ms": 21758.8,
+          "matched_at": "2026-07-02T22:54:43.188Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0061",
+          "recording": "XC500848",
+          "auto_category": "rmnr",
+          "duration_ms": 156.6,
+          "f0_hz": 1373.8,
+          "centroid_hz": 3465.6,
+          "syl_start_ms": 3074.8,
+          "syl_end_ms": 3231.5,
+          "matched_at": "2026-07-02T22:56:05.721Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0062",
+          "recording": "XC500848",
+          "auto_category": "rmnr",
+          "duration_ms": 170.6,
+          "f0_hz": 1341.4,
+          "centroid_hz": 3452.9,
+          "syl_start_ms": 3744.2,
+          "syl_end_ms": 3914.8,
+          "matched_at": "2026-07-02T22:56:10.071Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0063",
+          "recording": "XC500848",
+          "auto_category": "rmnr",
+          "duration_ms": 270.4,
+          "f0_hz": 1361.8,
+          "centroid_hz": 3318,
+          "syl_start_ms": 24187.6,
+          "syl_end_ms": 24458,
+          "matched_at": "2026-07-02T22:56:15.275Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0064",
+          "recording": "XC500848",
+          "auto_category": "rmnr",
+          "duration_ms": 162.6,
+          "f0_hz": 1320,
+          "centroid_hz": 3211.1,
+          "syl_start_ms": 24946,
+          "syl_end_ms": 25108.7,
+          "matched_at": "2026-07-02T22:56:20.322Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0067",
+          "recording": "XC956098",
+          "auto_category": "rmnr",
+          "duration_ms": 146.7,
+          "f0_hz": 1348.8,
+          "centroid_hz": 3482.8,
+          "syl_start_ms": 5683.4,
+          "syl_end_ms": 5830.1,
+          "matched_at": "2026-07-02T22:56:37.244Z",
+          "annotator": "Azure"
+        },
+        {
+          "id": "tui_0076",
+          "recording": "XC1105557",
+          "auto_category": "rmnr",
+          "duration_ms": 256.4,
+          "f0_hz": 856,
+          "centroid_hz": 2145.9,
+          "syl_start_ms": 75362.5,
+          "syl_end_ms": 75619,
+          "matched_at": "2026-07-02T22:57:09.395Z",
+          "annotator": "Azure"
+        }
+      ]
+    },
+    "kaka": {
+      "shraak_woo": [
+        {
+          "id": "kaka_0001",
+          "recording": "XC959271",
+          "auto_category": "snicker",
+          "duration_ms": 730.3,
+          "f0_hz": 2276.8,
+          "centroid_hz": 2832.5,
+          "syl_start_ms": 1053.4,
+          "syl_end_ms": 1783.8,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:20:48.362Z"
+        }
+      ],
+      "shraak": [
+        {
+          "id": "kaka_0002",
+          "recording": "XC959271",
+          "auto_category": "snicker",
+          "duration_ms": 630.6,
+          "f0_hz": 2334.1,
+          "centroid_hz": 2595.4,
+          "syl_start_ms": 2616.4,
+          "syl_end_ms": 3247,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:21:11.840Z"
+        },
+        {
+          "id": "kaka_0003",
+          "recording": "XC959271",
+          "auto_category": "snicker",
+          "duration_ms": 638.5,
+          "f0_hz": 1933.4,
+          "centroid_hz": 2423.6,
+          "syl_start_ms": 4669.2,
+          "syl_end_ms": 5307.8,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:21:18.983Z"
+        },
+        {
+          "id": "kaka_0016",
+          "recording": "XC428663",
+          "auto_category": "snicker",
+          "duration_ms": 500.9,
+          "f0_hz": 1908.1,
+          "centroid_hz": 4915.5,
+          "syl_start_ms": 1173.2,
+          "syl_end_ms": 1674,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:25:08.862Z"
+        },
+        {
+          "id": "kaka_0017",
+          "recording": "XC428663",
+          "auto_category": "snicker",
+          "duration_ms": 604.6,
+          "f0_hz": 1895.7,
+          "centroid_hz": 4806.1,
+          "syl_start_ms": 2560.4,
+          "syl_end_ms": 3165,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:25:23.556Z"
+        },
+        {
+          "id": "kaka_0018",
+          "recording": "XC428663",
+          "auto_category": "snicker",
+          "duration_ms": 654.5,
+          "f0_hz": 2496.8,
+          "centroid_hz": 4045.3,
+          "syl_start_ms": 4309.7,
+          "syl_end_ms": 4964.2,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:25:28.677Z"
+        },
+        {
+          "id": "kaka_0019",
+          "recording": "XC428663",
+          "auto_category": "snicker",
+          "duration_ms": 520.8,
+          "f0_hz": 2494.5,
+          "centroid_hz": 3893.3,
+          "syl_start_ms": 5913.5,
+          "syl_end_ms": 6434.3,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:28:47.663Z"
+        }
+      ],
+      "snicker": [
+        {
+          "id": "kaka_0011",
+          "recording": "XC776552",
+          "auto_category": "snicker",
+          "duration_ms": 65.9,
+          "f0_hz": 1319.6,
+          "centroid_hz": 2324,
+          "syl_start_ms": 17600.7,
+          "syl_end_ms": 17666.6,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-03T02:23:14.135Z"
+        }
+      ]
+    }
+  },
   "skips": {}
 }
