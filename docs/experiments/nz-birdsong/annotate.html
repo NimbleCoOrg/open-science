@@ -206,14 +206,23 @@ const SPECIES_CONFIG = {
   kaka: {
     label: 'Kākā',
     categories: {
-      snicker: {name:'Snicker', desc:'Rapid chattering series of short notes — used during close-range social interactions and copulation (Van Horik 2007). Appears as rapid vertical pulses.', source:'Van Horik et al. 2007'},
-      bark: {name:'Bark', desc:'Short, sharp percussive call — used as alarm/alert signals (Van Horik 2007). Brief broadband burst on spectrogram.', source:'Van Horik et al. 2007'},
-      gurgle: {name:'Gurgle', desc:'Complex low-frequency vocalisation — associated with social bonding (Van Horik 2007). Rich harmonic structure at lower frequencies.', source:'Van Horik et al. 2007'},
-      shraak: {name:'Shraak', desc:'Loud, long-distance contact call — used by widely separated birds for flock coordination (Van Horik 2007). Long, loud broadband call. NOT detected in our XC dataset.', source:'Van Horik et al. 2007'},
-      shraak_woo: {name:'Shraak-woo', desc:'Two-part long-distance call — shraak followed by a descending "woo" element. NOT detected in our XC dataset.', source:'Van Horik et al. 2007'}
+      whistle: {name:'Whistle', desc:'Loud, high-pitched whistle uttered while perched or in flight, singly but may be repeated. Functions as long-distance contact call.', source:'Vaishnav, Shaw & Burns 2026'},
+      screech: {name:'Screech', desc:'Loud, grating single screech uttered mainly while perched but sometimes in flight. Short, sharp burst.', source:'Vaishnav, Shaw & Burns 2026'},
+      long_call: {name:'Long call', desc:'Loud, harsh screech calls uttered in flight, mostly >3 seconds in duration. May correspond to Van Horik\'s "shraak". Indicates direction of flight.', source:'Vaishnav, Shaw & Burns 2026'},
+      croak: {name:'Croak', desc:'Low croaking call uttered while perched. Soft, short-range social call. May correspond to Van Horik\'s "gurgle".', source:'Vaishnav, Shaw & Burns 2026'},
+      warble: {name:'Warble', desc:'Repeating low-pitched whistles uttered in a sequence of 5-6 at a time. Likely associated with courtship behaviour.', source:'Vaishnav, Shaw & Burns 2026'}
     },
-    refImages: [],
-    refCaption: 'Kākā call types from Van Horik, Bell & Burns (2007). Reference sonograms from the paper\'s Figure 1 — not yet digitised.'
+    refImages: [
+      'annotation/references/vaishnav_fig2.png',
+      'annotation/references/kaka_template_whistle.png',
+      'annotation/references/kaka_template_screech_1.png',
+      'annotation/references/kaka_template_screech_2.png',
+      'annotation/references/kaka_template_long_call.png',
+      'annotation/references/kaka_template_croak.png',
+      'annotation/references/kaka_template_warble_1.png',
+      'annotation/references/kaka_template_warble_2.png'
+    ],
+    refCaption: 'Kākā call types from Vaishnav, Shaw & Burns (2026) Figure 2 + template spectrograms from audio provided by Tirth Vaishnav. Van Horik et al. (2007) mapping: croak≈gurgle, long call≈shraak, screech≈bark.'
   }
 };
 
