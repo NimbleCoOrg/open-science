@@ -819,6 +819,51 @@ tr:hover td{background:var(--surface-2)}
         </div>
       </div>
 
+      <!-- ===================== SEX & SONG ===================== -->
+      <div class="section-label" style="margin-top:2.5rem">Sex &amp; Song — is the sex signal real?</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        A naive classifier told male from female song at ~91% — but the same features predicted
+        <b>which island</b> a song came from at ~90%, because sex ratios differ sharply by site. So the
+        naive score could have been reading <i>dialect</i>, not sex. To separate them we trained on some
+        islands and tested on a <b>completely held-out island</b> (leave-one-site-out): a model that had
+        only learned "this island sounds male" would collapse to chance on a new island.</p></div>
+      <div class="card">
+        <div class="chart-wrap" style="height:300px"><canvas id="bbSexTransferChart"></canvas></div>
+        <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)" id="bbSexTransferCaption"></div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Listen: male, female &amp; intermediate song</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        Full songs (not single syllables) from the hand-labelled Koe tutorial set, each scored by a model
+        that <b>never saw its island</b>. P(male) is the model's site-honest estimate that the singer is male.</p></div>
+      <div class="card"><div id="bbSexCanon" style="display:grid;gap:1rem"></div></div>
+
+      <div class="section-label" style="margin-top:2rem">What drives the score — is "intermediate" just song length?</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        Azure's question: are intermediate birds just otherwise sex-typical singers whose songs happen to be
+        longer/shorter, or are they genuinely atypical across many features? Left: the features that most push
+        the score toward male (+) or female (−). Right: an ablation — we drop <b>all</b> length/timing features
+        and re-score. If intermediacy were a length artifact, those birds would snap to a clear sex.</p></div>
+      <div class="card">
+        <div class="chart-wrap" style="height:340px"><canvas id="bbSexCoefChart"></canvas></div>
+        <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)" id="bbSexCoefCaption"></div>
+      </div>
+
+      <div class="section-label" style="margin-top:2rem">Non-binary &amp; sex-atypical individuals</div>
+      <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
+        Aggregating site-honest scores by <b>corrected individual ID</b> (colour-band combo or site-date-code —
+        the earlier catalogue-number IDs were wrong). A bird's position on the male↔female axis is a
+        <b>stable individual trait</b>, repeatability ICC = <b id="bbICC">0.67</b> across its own songs — so
+        intermediacy is not song-to-song noise. Two groups of interest: <b>intermediate</b> birds (reliably
+        mid-axis) and a <b>sex-atypical / "trans"</b> group (song squarely in the opposite sex category to
+        their ID sex).</p></div>
+      <div class="card">
+        <div style="overflow-x:auto"><table id="bbSexIndivTable" style="width:100%;font-size:.8rem;border-collapse:collapse"></table></div>
+      </div>
+      <div class="card" style="margin-top:1rem;border-left:3px solid var(--bellbird)">
+        <div style="font-size:.86rem;color:var(--ink-soft)" id="bbSexCaveat"></div>
+      </div>
+
       <div class="section-label">Representative Samples</div>
       <div id="voc-samples-bellbird"><!-- Populated by JS --></div>
     </div>
@@ -1204,7 +1249,7 @@ tr:hover td{background:var(--surface-2)}
 
     <div class="lit-card match">
       <h4>Sexually Distinct Song Cultures <span class="lit-tag tag-match">Framework</span></h4>
-      <p>Webb et al. (2021) classified 20,700 syllables (702 types) across a six-island bellbird metapopulation,
+      <p>Webb et al. (2021) classified 20,700 syllables (702 types) across a six-island korimako metapopulation,
       showing males and females have distinct song cultures sharing only 6–26% of syllable types within a site.
       This is the classification framework and the sex-difference result our song-structure analysis builds on.</p>
       <a class="lit-ref" href="https://doi.org/10.3389/fevo.2021.755633">Webb, W.H. et al. (2021). Frontiers in Ecology and Evolution, 9, 755633. DOI: 10.3389/fevo.2021.755633 ✓</a>
@@ -1214,14 +1259,14 @@ tr:hover td{background:var(--surface-2)}
       <h4>Developmental Song Production <span class="lit-tag tag-match">Syllable boundary</span></h4>
       <p>Roper et al. (2018) studied developmental changes in song production in free-living male and female
       bellbirds. We adopt their &lt;15ms silence syllable boundary — shorter than the tūī boundary — reflecting
-      bellbird-specific vocal structure.</p>
+      korimako-specific vocal structure.</p>
       <a class="lit-ref" href="https://doi.org/10.1016/j.anbehav.2018.04.003">Roper, M.M. et al. (2018). Animal Behaviour, 140, 57-70. DOI: 10.1016/j.anbehav.2018.04.003 ✓</a>
     </div>
 
     <div class="lit-card match">
       <h4>Koe Classification Software <span class="lit-tag tag-match">Tool + dataset</span></h4>
       <p>Fukuzawa et al. (2020) introduced Koe, web-based software for classifying acoustic units, demonstrated
-      on 21,500 bellbird syllables. Our data-driven song-structure analysis uses the Koe tutorial dataset
+      on 21,500 korimako syllables. Our data-driven song-structure analysis uses the Koe tutorial dataset
       (2,278 songs, 21,427 hand-labelled segments) as its ground-truth source.</p>
       <a class="lit-ref" href="https://doi.org/10.1111/2041-210X.13336">Fukuzawa, Y. et al. (2020). Methods in Ecology and Evolution, 11(3), 431-441. DOI: 10.1111/2041-210X.13336 ✓</a>
     </div>
@@ -1836,6 +1881,94 @@ function initBellbirdSong(){
     };
     showSexSite('M',document.querySelector('#sexsite-toggle .voc-tab'));
   }).catch(e=>console.error('bellbird_sexsite.json load failed',e));
+
+  // --- Sex & Song (site-honest transfer, attribution, individuals) ---
+  if(!window._bbSexSongInit){ window._bbSexSongInit = true; initBellbirdSexSong(); }
+}
+
+function initBellbirdSexSong(){
+  fetch('bellbird_sex_signal.json').then(r=>r.json()).then(D=>{
+    const GEO={TMI:'Tiritiri Matangi',TAW:'Tawharanui',LAI:'Lady Alice',PKI:'Poor Knights',
+      LBI:'Hauturu',CUV:'Repanga',BUR:'Mokohinau'};
+    const male='#2c6c8c', female='#b0623a', tickColor='#8b949e';
+
+    // (A) cross-dialect transfer: per-site held-out accuracy
+    const bySite={};
+    D.per_song.forEach(s=>{ if(s.p_male==null) return; (bySite[s.site]=bySite[s.site]||[]).push(s); });
+    const rows=Object.keys(bySite).map(st=>{
+      const g=bySite[st]; let ok=0; g.forEach(s=>{ const pred=s.p_male>=0.5?'M':'F'; if(pred===s.sex) ok++; });
+      return {site:st, acc:ok/g.length, n:g.length};
+    }).sort((a,b)=>b.acc-a.acc);
+    const tc=document.getElementById('bbSexTransferChart');
+    if(tc){ new Chart(tc,{type:'bar',data:{labels:rows.map(r=>GEO[r.site]||r.site),
+      datasets:[{label:'Held-out accuracy',data:rows.map(r=>+(r.acc*100).toFixed(1)),
+        backgroundColor:male},
+        {label:'Chance (majority)',data:rows.map(()=>+(D.baseline*100).toFixed(1)),type:'line',
+         borderColor:female,borderDash:[6,4],pointRadius:0,fill:false}]},
+      options:{plugins:{legend:{labels:{color:tickColor}}},
+        scales:{y:{beginAtZero:true,max:100,ticks:{color:tickColor,callback:v=>v+'%'},title:{display:true,text:'Accuracy on a never-seen island',color:tickColor}},
+                x:{ticks:{color:tickColor}}}}});
+    }
+    document.getElementById('bbSexTransferCaption').innerHTML=
+      'Mean cross-dialect transfer <b>'+(D.cross_site_transfer_acc*100).toFixed(1)+'%</b> vs chance '+
+      (D.baseline*100).toFixed(1)+'%. Sex stays predictable on islands the model never trained on — '+
+      'the signal is <b>not</b> explained by dialect alone.';
+
+    // (canonical audio)
+    const canon=D.canonical_examples||{};
+    const labels={male:'Clearest male song',female:'Clearest female song',intermediate:'Most intermediate song'};
+    const cont=document.getElementById('bbSexCanon');
+    ['male','female','intermediate'].forEach(role=>{
+      const c=canon[role]; if(!c) return;
+      const div=document.createElement('div'); div.style.cssText='border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem';
+      div.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">'+
+        '<div><b>'+labels[role]+'</b> · ID sex '+(c.sex==='M'?'male':'female')+' · '+(GEO[c.site]||c.site)+
+        '<div style="font-family:var(--mono);font-size:.78rem;color:var(--ink-faint)">site-honest P(male) = '+c.p_male.toFixed(2)+'</div></div>'+
+        '<audio controls preload="none" src="audio/sex_'+role+'.mp3" style="height:34px"></audio></div>';
+      cont.appendChild(div);
+    });
+
+    // (D) feature attribution
+    const fa=D.feature_attribution||{}; const coefs=(fa.top_coefficients||[]).slice(0,10);
+    const cc=document.getElementById('bbSexCoefChart');
+    if(cc){ new Chart(cc,{type:'bar',data:{labels:coefs.map(c=>c.feature),
+      datasets:[{label:'← female    weight    male →',data:coefs.map(c=>c.coef),
+        backgroundColor:coefs.map(c=>c.coef>=0?male:female)}]},
+      options:{indexAxis:'y',plugins:{legend:{labels:{color:tickColor}}},
+        scales:{x:{ticks:{color:tickColor},grid:{color:'rgba(139,148,158,.15)'}},y:{ticks:{color:tickColor}}}}});
+    }
+    document.getElementById('bbSexCoefCaption').innerHTML=
+      'The score is <b>multi-feature</b>: syllable-gap timing, centre frequency, syllable diversity and '+
+      'category mix all contribute, not length alone. Ablation: dropping every length/timing feature makes only '+
+      '<b>'+fa.intermediates_length_driven+' of '+fa.intermediates_total+'</b> intermediate birds snap to a clear '+
+      'sex — so intermediacy is mostly <b>genuine sex-atypicality across features</b>, not a song-length artifact.';
+
+    // (C/E) individuals table
+    if(D.icc_pmale!=null){ const el=document.getElementById('bbICC'); if(el) el.textContent=D.icc_pmale.toFixed(2); }
+    const flagged=(D.verification||[]);
+    const tbl=document.getElementById('bbSexIndivTable');
+    if(tbl){
+      let html='<thead><tr style="text-align:left;border-bottom:1px solid var(--line);color:var(--ink-soft)">'+
+        '<th style="padding:.4rem .5rem">Individual</th><th>Group</th><th>ID sex</th><th>Songs</th>'+
+        '<th>P(male) LR</th><th>P(male) RF</th><th>Classifier agreement</th><th>Audio to audit</th></tr></thead><tbody>';
+      flagged.sort((a,b)=>a.category.localeCompare(b.category)).forEach(r=>{
+        const grp=r.category==='trans'?'sex-atypical':'intermediate';
+        html+='<tr style="border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.76rem">'+
+          '<td style="padding:.35rem .5rem">'+r.indiv+'</td><td>'+grp+'</td><td>'+(r.sex==='M'?'male':'female')+'</td>'+
+          '<td>'+r.n_clean_songs+'</td><td>'+r.lr_mean_pmale.toFixed(2)+' ±'+r.lr_sd.toFixed(2)+'</td>'+
+          '<td>'+r.rf_mean_pmale.toFixed(2)+'</td><td>'+r.classifier_agreement.toFixed(2)+'</td>'+
+          '<td>'+(r.n_audio_available>0?r.n_audio_available:'—')+'</td></tr>';
+      });
+      tbl.innerHTML=html+'</tbody>';
+    }
+    document.getElementById('bbSexCaveat').innerHTML=
+      '<b>Verification &amp; honesty note.</b> These are <b>leads, not conclusions</b>. Each flagged bird was re-scored '+
+      'with a second, independent classifier (random forest, also island-honest): agreement is <b>moderate (0.61–0.80)</b>, '+
+      'not strong — the two models don\'t fully corroborate any single bird yet. None of the flagged individuals have a '+
+      'playable full-song clip in the open tutorial subset, so we <b>cannot yet audio-audit</b> them for mislabels or '+
+      'multi-bird recordings (duet/chorus clips are already auto-excluded). Treat the group-level result (real, repeatable '+
+      'sex signal; ICC 0.67) as solid, and the named individuals as candidates for targeted listening once their audio is sourced.';
+  }).catch(e=>console.error('bellbird_sex_signal.json load failed',e));
 }
 
 window.toggleSamplePlay = function(btn, src) {
