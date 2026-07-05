@@ -401,7 +401,7 @@ tr:hover td{background:var(--surface-2)}
   <header class="masthead">
     <div class="eyebrow">Open Science · Field Report 02</div>
     <h1>Aotearoa Birdsong, <em>Decoded</em></h1>
-    <p class="deck">We downloaded <b>3,096 recordings</b> of New Zealand birds from Xeno-Canto, then classified vocalisations for three species using published literature frameworks: tūī syllables (Hill &amp; Ji 2014), bellbird syllables (Webb 2021), and kākā calls (Van Horik 2007). Here's what automated analysis finds — and where it diverges from manual fieldwork.</p>
+    <p class="deck">We downloaded <b>3,096 recordings</b> of New Zealand birds from Xeno-Canto, then classified vocalisations for three species using published literature frameworks: tūī syllables (Hill &amp; Ji 2014), korimako (bellbird) syllables (Webb 2021), and kākā calls (Van Horik 2007). Here's what automated analysis finds — and where it diverges from manual fieldwork.</p>
     <div class="byline">
       Bioacoustic replication · after <a href="https://doi.org/10.63172/301002sqblid">Hill &amp; Ji (2014)</a> · 177 species · 3,096 recordings<br>
       Source: <a href="https://xeno-canto.org">Xeno-Canto</a> API v3 · Analysis in Python (librosa, scikit-learn) · Full pipeline on <a href="https://github.com/NimbleCoAI/open-science">GitHub</a><br>
@@ -415,13 +415,13 @@ tr:hover td{background:var(--surface-2)}
     <div class="fig"><div class="n">24,185</div><div class="l">Syllables<br>detected</div></div>
     <div class="fig"><div class="n">5</div><div class="l">Syllable<br>types</div></div>
     <div class="fig"><div class="n">116</div><div class="l">Tūī songs<br>analysed</div></div>
-    <div class="fig"><div class="n">47</div><div class="l">Bellbird songs<br>analysed</div></div>
+    <div class="fig"><div class="n">47</div><div class="l">Korimako songs<br>analysed</div></div>
     <div class="fig"><div class="n">25</div><div class="l">Kākā calls<br>analysed</div></div>
   </div>
 
   <div class="note">
     <div class="mark">Scope</div>
-    <div>This is an <b>extended replication</b> of Hill &amp; Ji (2014) using crowd-sourced field recordings. We analysed all <b>116 tūī A-quality songs</b>, <b>47 bellbird</b>, and <b>25 kākā</b> recordings, with geographic variation across 10 regions. Discrepancies with Hill's manual classification are discussed.</div>
+    <div>This is an <b>extended replication</b> of Hill &amp; Ji (2014) using crowd-sourced field recordings. We analysed all <b>116 tūī A-quality songs</b>, <b>47 korimako</b>, and <b>25 kākā</b> recordings, with geographic variation across 10 regions. Discrepancies with Hill's manual classification are discussed.</div>
   </div>
 
   <!-- ============ TAB BAR ============ -->
@@ -440,15 +440,15 @@ tr:hover td{background:var(--surface-2)}
   <div class="panel active" id="panel-overview">
     <div class="lede">
       <span class="drop">E</span>ach species sings its own language. This analysis uses <b>species-specific classification schemes</b> drawn from the published literature — 
-      tūī syllables follow Hill &amp; Ji (2014), bellbird syllables follow Webb et al. (2021) and Roper et al. (2018), and kākā <em>calls</em> 
+      tūī syllables follow Hill &amp; Ji (2014), korimako syllables follow Webb et al. (2021) and Roper et al. (2018), and kākā <em>calls</em> 
       follow Van Horik, Bell &amp; Burns (2007). Categories are never shared across species.
     </div>
     
     <div class="prose">
-      <p><strong>Why separate species?</strong> Tūī and bellbird are both oscine passerines (songbirds) that produce complex learned songs — 
+      <p><strong>Why separate species?</strong> Tūī and korimako are both oscine passerines (songbirds) that produce complex learned songs — 
       but their vocal repertoires are categorised differently in the literature. Tūī research uses 6 syllable categories based on 
-      spectral features. Bellbird researchers found that <b>syllable types</b> (not song types) are the functional units of vocal culture, 
-      because bellbirds flexibly recombine syllables. Kākā are parrots, not songbirds — they produce calls, not songs, and the term 
+      spectral features. Korimako researchers found that <b>syllable types</b> (not song types) are the functional units of vocal culture, 
+      because korimako flexibly recombine syllables. Kākā are parrots, not songbirds — they produce calls, not songs, and the term 
       "syllable" is inappropriate for their vocalisations.</p>
       
       <p><b>v2 classifier improvements:</b> The v1 analysis over-assigned "low-frequency" syllables (55%) due to a threshold-ordering 
@@ -472,7 +472,7 @@ tr:hover td{background:var(--surface-2)}
         </div>
       </div>
       <div class="card" style="border-left:3px solid var(--bellbird)">
-        <h3 style="color:var(--bellbird)">Bellbird — 7 Syllable Families</h3>
+        <h3 style="color:var(--bellbird)">Korimako — 7 Syllable Families</h3>
         <p style="font-size:.88rem;color:var(--ink-soft);line-height:1.55">
           <b>Stutter syllables dominate at 62.8%</b> — rapid repeated elements are the most common family. 
           Click (19.4%), trill (11.7%), complex (3.6%), warble (2.4%), and pipe (0.1%) follow. 
@@ -499,7 +499,7 @@ tr:hover td{background:var(--surface-2)}
       <div class="card">
         <h3>Why Species Must Not Be Lumped</h3>
         <p style="font-size:.92rem;color:var(--ink-soft);line-height:1.55">
-          Tūī and bellbird are both honeyeaters (Meliphagidae) and songbirds, so comparing syllable entropy 
+          Tūī and korimako are both honeyeaters (Meliphagidae) and songbirds, so comparing syllable entropy 
           between them is defensible — with caveats about different classification granularity. But kākā are 
           parrots (Psittaciformes) with fundamentally different vocal learning mechanisms, repertoire size (5 call types 
           vs hundreds of syllable types), and vocal structure. Cross-species comparison between songbirds and parrots 
@@ -507,12 +507,15 @@ tr:hover td{background:var(--surface-2)}
         </p>
       </div>
       <div class="card">
-        <h3>Phase 2 Preview: Unsupervised Clustering</h3>
+        <h3>Interactive Tools — Try It Yourself</h3>
         <p style="font-size:.92rem;color:var(--ink-soft);line-height:1.55">
-          This analysis uses literature-derived categories. The next phase will apply unsupervised clustering 
-          (HDBSCAN, t-SNE) to discover natural groupings from the acoustic features themselves — potentially 
-          revealing sub-types (e.g., "trill-short" vs "trill-long") or categories the published schemes miss. 
-          This data-driven approach complements the theory-driven classification presented here.
+          Beyond the literature-derived categories here, we built two companion tools on the
+          hand-labelled <b>Koe bellbird</b> data. The <a href="cluster.html"><b>PCA clustering tool</b></a>
+          plots 818 syllables spike-sorting style across linked principal-component panels — lasso, inspect
+          spectrograms, play audio, and assign categories. The <a href="annotate.html"><b>annotation tool</b></a>
+          lets collaborators match candidate syllables to reference templates, with password-based sync so
+          multiple people can contribute without a GitHub account. This data-driven work seeded the
+          DTW template-matched categories shown in the Vocalisation Analysis tab.
         </p>
       </div>
     </div>
@@ -589,7 +592,7 @@ tr:hover td{background:var(--surface-2)}
       <b>songs</b> are longer, more complex, often learned vocalisations typically associated with
       territory defence and mate attraction; <b>calls</b> are shorter, simpler, and often innate — used
       for alarm, contact, and flock coordination. In practice the boundary blurs, especially in
-      Southern Hemisphere species, but the distinction matters for analysis: tūī and bellbird produce
+      Southern Hemisphere species, but the distinction matters for analysis: tūī and korimako produce
       <em>songs</em> built from <em>syllables</em>, while kākā produce <em>calls</em> of distinct types.</p>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Song Structure: Syllables, Motifs, and Call Types</h4>
@@ -597,8 +600,8 @@ tr:hover td{background:var(--surface-2)}
       A <b>syllable</b> is the smallest discrete vocal unit — a continuous sound bounded by silence.
       Syllables combine into <b>motifs</b> (repeated stereotyped sequences), and motifs into <b>songs</b>.
       Different species organise these units differently: tūī songs contain hundreds of syllable types
-      in flexible sequences, while bellbird researchers found that <em>syllable types</em> (not song types)
-      are the functional units of vocal culture, because bellbirds flexibly recombine syllables across songs.
+      in flexible sequences, while korimako researchers found that <em>syllable types</em> (not song types)
+      are the functional units of vocal culture, because korimako flexibly recombine syllables across songs.
       Parrots like kākā don't produce songs at all — they use distinct <b>call types</b>, each serving a
       different social function.</p>
 
@@ -617,7 +620,7 @@ tr:hover td{background:var(--surface-2)}
     <!-- Species sub-tabs -->
     <div style="display:flex;gap:.3rem;margin-bottom:2rem;flex-wrap:wrap" id="voc-species-tabs">
       <button class="voc-tab" onclick="showVocSpecies('tui',this)" style="cursor:pointer">Tūī</button>
-      <button class="voc-tab" onclick="showVocSpecies('bellbird',this)" style="cursor:pointer">Bellbird</button>
+      <button class="voc-tab" onclick="showVocSpecies('bellbird',this)" style="cursor:pointer">Korimako</button>
       <button class="voc-tab" onclick="showVocSpecies('kaka',this)" style="cursor:pointer">Kākā</button>
     </div>
 
@@ -677,8 +680,8 @@ tr:hover td{background:var(--surface-2)}
     <div class="voc-species-panel" id="voc-bellbird" style="display:none">
       <div class="prose" style="margin-bottom:1.5rem">
         <p>Classification follows the <b>Webb et al. (2021)</b> and <b>Roper et al. (2018)</b> framework.
-        Unlike many songbirds where "song type" is the functional unit, bellbird researchers found that
-        <b>syllable types are the functional units of vocal culture</b> — bellbirds flexibly recombine syllables
+        Unlike many songbirds where "song type" is the functional unit, korimako researchers found that
+        <b>syllable types are the functional units of vocal culture</b> — korimako flexibly recombine syllables
         into variable songs. Syllable boundaries defined by &lt;15ms silence (Roper 2018). Webb et al. identified
         702 syllable types across 6 sites, grouped into 20 syllable families.</p>
       </div>
@@ -710,7 +713,7 @@ tr:hover td{background:var(--surface-2)}
       <div class="note" style="margin-top:1.5rem">
         <div class="mark">Methodology Note</div>
         <div>The 15ms syllable boundary follows <b>Roper et al. (2018)</b> — this is shorter than the 20ms used for tūī (Hill 2014),
-        reflecting bellbird-specific vocal structure. Webb et al. validated their classification using 74 independent judges
+        reflecting korimako-specific vocal structure. Webb et al. validated their classification using 74 independent judges
         (89.6% average match) and machine learning (96.6% accuracy via t-SNE + supervised algorithms). Our spectral
         rule-based classifier is a simplification of their approach. The Koe bioacoustics software
         (<a href="https://doi.org/10.1111/2041-210X.13336">Fukuzawa et al. 2020</a>) was developed specifically for this classification task.</div>
@@ -765,7 +768,7 @@ tr:hover td{background:var(--surface-2)}
 
       <div class="section-label" style="margin-top:2rem">Common Motifs</div>
       <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
-        The most frequent stereotyped syllable sequences (4-grams) across all songs. Bellbird song is
+        The most frequent stereotyped syllable sequences (4-grams) across all songs. Korimako song is
         built largely from repeated runs (Stutter×4, Pipe×4) and alternations (Down–Pipe–Down–Pipe).</p></div>
       <div class="card"><div id="bellbird-motifs"></div></div>
 
@@ -795,7 +798,7 @@ tr:hover td{background:var(--surface-2)}
 
       <div class="section-label" style="margin-top:2rem">Repertoire by Sex, per Site</div>
       <div class="prose" style="margin-bottom:1rem"><p style="font-size:.92rem">
-        The same syllable-composition view, split by sex within each site. Bellbirds are one of the
+        The same syllable-composition view, split by sex within each site. Korimako are one of the
         rare songbirds where <b>both sexes sing complex song</b> — and Webb et al. (2021) found males and
         females share only <b>6–26% of syllable types</b> within a site. That sexual divergence shows up
         here as clearly different category profiles: e.g. at Tawharanui females are 68% Stutter while males
@@ -893,7 +896,7 @@ tr:hover td{background:var(--surface-2)}
     <div class="map-filters" id="map-filters">
       <div class="map-filter active" data-species="all">All Species</div>
       <div class="map-filter" data-species="Tui">Tūī</div>
-      <div class="map-filter" data-species="New Zealand Bellbird">Bellbird</div>
+      <div class="map-filter" data-species="New Zealand Bellbird">Korimako</div>
       <div class="map-filter" data-species="New Zealand Kaka">Kākā</div>
       <div class="map-filter" data-species="Kea">Kea</div>
       <div class="map-filter" data-species="Morepork">Morepork</div>
@@ -903,7 +906,7 @@ tr:hover td{background:var(--surface-2)}
     
     <div class="map-legend">
       <span style="color:var(--tui)">● Tūī</span> · 
-      <span style="color:var(--bellbird)">● Bellbird</span> · 
+      <span style="color:var(--bellbird)">● Korimako</span> · 
       <span style="color:var(--kaka)">● Kākā</span> · 
       <span style="color:var(--kea)">● Kea</span> · 
       <span style="color:#8b949e">● Other species</span>
@@ -1003,15 +1006,15 @@ tr:hover td{background:var(--surface-2)}
 
     <!-- BELLBIRD REGIONAL -->
     <div class="geo-species-section" data-geo-species="New Zealand Bellbird">
-    <div class="section-label" style="margin-top:2.5rem">Bellbird — Regional Variation</div>
+    <div class="section-label" style="margin-top:2.5rem">Korimako — Regional Variation</div>
     
     <div class="card">
-      <h3>Bellbird Syllable Mix by Region</h3>
+      <h3>Korimako Syllable Mix by Region</h3>
       <div class="chart-wrap" style="height:320px">
         <canvas id="bellbirdRegionalChart"></canvas>
       </div>
       <div style="font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);margin-top:.5rem">
-        46 geotagged bellbird recordings across 12 regions
+        46 geotagged korimako recordings across 12 regions
       </div>
     </div>
     </div><!-- /geo-species Bellbird -->
@@ -1113,7 +1116,7 @@ tr:hover td{background:var(--surface-2)}
           Shaded bands: ±1 SD from 100 random subsamples at each N · All three species plateau well before their full sample size
         </div>
       </div>
-      <p>All three species reach stable entropy by ~15–20 recordings. Tūī (116 recordings) and bellbird (40) are well into the plateau. 
+      <p>All three species reach stable entropy by ~15–20 recordings. Tūī (116 recordings) and korimako (40) are well into the plateau. 
       Kākā (25 recordings) also plateaus, though the lower entropy reflects its simpler 3-type repertoire (snicker/bark/gurgle). 
       This confirms that our sample sizes are adequate for characterising the <em>proportional distribution</em> of vocalisation types — 
       though not necessarily for capturing rare types (e.g., the absent shraak calls).</p>
@@ -1130,10 +1133,10 @@ tr:hover td{background:var(--surface-2)}
       <div class="pbar-row"><div class="pbar-label">XC API Query</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--pos)"></div></div><div class="pbar-val">3,096</div></div>
       <div class="pbar-row"><div class="pbar-label">Species Identified</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--accent)"></div></div><div class="pbar-val">177</div></div>
       <div class="pbar-row"><div class="pbar-label">Tūī Songs Analysed</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--tui)"></div></div><div class="pbar-val">116</div></div>
-      <div class="pbar-row"><div class="pbar-label">Bellbird Songs Analysed</div><div class="pbar-track"><div class="pbar-fill" style="width:40.5%;background:var(--bellbird)"></div></div><div class="pbar-val">47</div></div>
+      <div class="pbar-row"><div class="pbar-label">Korimako Songs Analysed</div><div class="pbar-track"><div class="pbar-fill" style="width:40.5%;background:var(--bellbird)"></div></div><div class="pbar-val">47</div></div>
       <div class="pbar-row"><div class="pbar-label">Kākā Calls Analysed</div><div class="pbar-track"><div class="pbar-fill" style="width:21.6%;background:var(--kaka)"></div></div><div class="pbar-val">25</div></div>
       <div class="pbar-row"><div class="pbar-label">Total Syllables</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--accent-2)"></div></div><div class="pbar-val">24,185</div></div>
-      <div class="pbar-row"><div class="pbar-label">Citations Verified</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--pos)"></div></div><div class="pbar-val">5/5</div></div>
+      <div class="pbar-row"><div class="pbar-label">Citations DOI-Verified</div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--pos)"></div></div><div class="pbar-val">8/8</div></div>
     </div>
   </div>
 
@@ -1185,18 +1188,74 @@ tr:hover td{background:var(--surface-2)}
       <a class="lit-ref" href="#">Hill, S.D. et al. (2013). Notornis, 60, 222-229 ✓</a>
     </div>
 
+    <div class="section-label" style="margin-top:2.5rem">Korimako (Bellbird) — Anthornis melanura</div>
+    <div class="prose" style="margin-bottom:1.5rem">
+      <p>Korimako syllable classification follows the Massey University group (Brunton, Roper, Webb, Fukuzawa).
+      Their framework treats <b>syllable types</b>, not song types, as the functional units of vocal culture.
+      Citations verified against Crossref.</p>
+    </div>
+
+    <div class="lit-card match">
+      <h4>Sexually Distinct Song Cultures <span class="lit-tag tag-match">Framework</span></h4>
+      <p>Webb et al. (2021) classified 20,700 syllables (702 types) across a six-island bellbird metapopulation,
+      showing males and females have distinct song cultures sharing only 6–26% of syllable types within a site.
+      This is the classification framework and the sex-difference result our song-structure analysis builds on.</p>
+      <a class="lit-ref" href="https://doi.org/10.3389/fevo.2021.755633">Webb, W.H. et al. (2021). Frontiers in Ecology and Evolution, 9, 755633. DOI: 10.3389/fevo.2021.755633 ✓</a>
+    </div>
+
+    <div class="lit-card match">
+      <h4>Developmental Song Production <span class="lit-tag tag-match">Syllable boundary</span></h4>
+      <p>Roper et al. (2018) studied developmental changes in song production in free-living male and female
+      bellbirds. We adopt their &lt;15ms silence syllable boundary — shorter than the tūī boundary — reflecting
+      bellbird-specific vocal structure.</p>
+      <a class="lit-ref" href="https://doi.org/10.1016/j.anbehav.2018.04.003">Roper, M.M. et al. (2018). Animal Behaviour, 140, 57-70. DOI: 10.1016/j.anbehav.2018.04.003 ✓</a>
+    </div>
+
+    <div class="lit-card match">
+      <h4>Koe Classification Software <span class="lit-tag tag-match">Tool + dataset</span></h4>
+      <p>Fukuzawa et al. (2020) introduced Koe, web-based software for classifying acoustic units, demonstrated
+      on 21,500 bellbird syllables. Our data-driven song-structure analysis uses the Koe tutorial dataset
+      (2,278 songs, 21,427 hand-labelled segments) as its ground-truth source.</p>
+      <a class="lit-ref" href="https://doi.org/10.1111/2041-210X.13336">Fukuzawa, Y. et al. (2020). Methods in Ecology and Evolution, 11(3), 431-441. DOI: 10.1111/2041-210X.13336 ✓</a>
+    </div>
+
+    <div class="section-label" style="margin-top:2.5rem">Kākā — Nestor meridionalis</div>
+    <div class="prose" style="margin-bottom:1.5rem">
+      <p>Kākā are parrots, not songbirds — they produce calls, not songs. Two frameworks are relevant.</p>
+    </div>
+
+    <div class="lit-card match">
+      <h4>Kākā Vocal Ethology <span class="lit-tag tag-match">Call types</span></h4>
+      <p>Van Horik, Bell &amp; Burns (2007) identified five distinctive kākā call types through 500 hours of field
+      observation and spectrographic analysis. This is the classifier applied to our Xeno-Canto kākā recordings
+      (snicker, bark, gurgle, shraak, shraak-woo).</p>
+      <a class="lit-ref" href="https://doi.org/10.1080/03014220709510093">Van Horik, J., Bell, B. &amp; Burns, K.C. (2007). New Zealand Journal of Zoology, 34(4), 337-345. DOI: 10.1080/03014220709510093 ✓</a>
+    </div>
+
+    <div class="lit-card match">
+      <h4>Partial Nocturnality &amp; Call Repertoire <span class="lit-tag tag-match">Current scheme</span></h4>
+      <p>Vaishnav, Shaw &amp; Burns (2026) describe kākā vocal behaviour including a five-call-type scheme
+      (whistle, screech, long call, croak, warble). Our annotation and template-matching tools use this newer
+      scheme, with audio templates provided by the lead author (Burns lab, VUW).</p>
+      <a class="lit-ref" href="https://doi.org/10.5751/JFO-00813-970208">Vaishnav, T., Shaw, R. &amp; Burns, K. (2026). Journal of Field Ornithology, 97(2), art8. DOI: 10.5751/JFO-00813-970208 ✓</a>
+    </div>
+
     <div class="section-label" style="margin-top:2.5rem">What We've Done &amp; What's Next</div>
     <div class="prose">
       <p><b>✓ Full tūī analysis:</b> All 116 A-quality song recordings analysed — 17,554 syllables across 5 types.</p>
-      <p><b>✓ Bellbird comparison:</b> 47 A-quality recordings, 5,251 syllables. Confirmed tūī's dramatically richer high-frequency repertoire.</p>
+      <p><b>✓ Korimako comparison:</b> 47 A-quality recordings, 5,251 syllables. Confirmed tūī's dramatically richer high-frequency repertoire.</p>
       <p><b>✓ Kākā comparison:</b> 25 A-quality recordings, 1,380 syllables. Simpler call-dominated repertoire vs honeyeater song.</p>
       <p><b>✓ Geographic variation:</b> 10 regions compared. Auckland tūī most diverse, Southland simplest, Otago the harmonic outlier.</p>
-      <p><b>✓ Unsupervised clustering:</b> HDBSCAN on 32-dim MFCC+spectral features. Resolved the low-frequency 
-      discrepancy: 93.9% of "low-frequency" syllables have centroids above 2kHz — it's a threshold-ordering 
+      <p><b>✓ Unsupervised clustering:</b> HDBSCAN on 32-dim MFCC+spectral features. Resolved the low-frequency
+      discrepancy: 93.9% of "low-frequency" syllables have centroids above 2kHz — it's a threshold-ordering
       artefact in our rule-based classifier, not a biological disagreement with Hill.</p>
+      <p><b>✓ Data-driven korimako categories:</b> On the Koe dataset, 818 syllables were PCA-embedded (spike-sorting
+      style), manually clustered into 10 categories, then DTW-barycenter templates classified the rest — feeding
+      the song-structure analysis (transitions, motifs, sex &amp; site differences). Explore it via the
+      <a href="cluster.html">PCA clustering tool</a> and <a href="annotate.html">annotation tool</a>.</p>
       <p><b>Future work — temporal analysis:</b> How has the XC archive's tūī song changed over decades? Do more recent recordings capture different repertoires? Seasonal and temporal patterns will be explored in a future species-specific analysis.</p>
-      <p><b>Next — refined clustering:</b> UMAP dimensionality reduction + HDBSCAN with tuned parameters 
-      to define data-driven syllable categories. Early results suggest 3 natural groups at mcs=20.</p>
+      <p><b>Next — tūī template matching:</b> Apply the same PCA → manual-cluster → DTW-template pipeline used for
+      korimako to tūī, and extend to additional species (tīeke, kōkako) and datasets (AviaNZ kiwi).</p>
     </div>
   </div>
 
@@ -2094,7 +2153,7 @@ function initRarefaction() {
   const chartFont = {family:'Spline Sans Mono',size:10};
   const species = [
     {key:'tui', label:'Tūī (116 recordings)', color:'#5f7a3a', bg:'rgba(95,122,58,0.12)'},
-    {key:'bellbird', label:'Bellbird (40 recordings)', color:'#2c6c8c', bg:'rgba(44,108,140,0.12)'},
+    {key:'bellbird', label:'Korimako (40 recordings)', color:'#2c6c8c', bg:'rgba(44,108,140,0.12)'},
     {key:'kaka', label:'Kākā (25 recordings)', color:'#b04a3a', bg:'rgba(176,74,58,0.12)'}
   ];
   
@@ -2384,7 +2443,7 @@ const GameEngine = {
     document.getElementById('q-context').textContent = 'Listen carefully — each species has a distinct vocal signature.';
     document.getElementById('q-audio').innerHTML = `<button class="game-play-btn" onclick="GameEngine.playAudio('${q.audio}',this)"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play</button>`;
     const speciesNames = {
-      tui: 'Tūī', bellbird: 'Bellbird (Korimako)', kaka: 'Kākā',
+      tui: 'Tūī', bellbird: 'Korimako', kaka: 'Kākā',
       kea: 'Kea', morepork: 'Morepork (Ruru)', fantail: 'Fantail (Pīwakawaka)', warbler: 'Grey Warbler (Riroriro)'
     };
     // Always show 4 options including the correct one
@@ -2530,7 +2589,7 @@ const GameEngine = {
       feedbackText += `<div style="margin-top:.8rem"><img src="${q.spectrogram}" alt="Spectrogram" style="max-width:100%;border-radius:4px;border:1px solid var(--rule)"></div>`;
     } else if (q.type === 'species') {
       correct = this.state.selected === q.species;
-      const names = { tui: 'Tūī', bellbird: 'Bellbird (Korimako)', kaka: 'Kākā', kea: 'Kea', morepork: 'Morepork (Ruru)', fantail: 'Fantail (Pīwakawaka)', warbler: 'Grey Warbler (Riroriro)' };
+      const names = { tui: 'Tūī', bellbird: 'Korimako', kaka: 'Kākā', kea: 'Kea', morepork: 'Morepork (Ruru)', fantail: 'Fantail (Pīwakawaka)', warbler: 'Grey Warbler (Riroriro)' };
       feedbackText = correct
         ? `Correct! That was a ${names[q.species]}.`
         : `That was a ${names[q.species]}, not a ${names[this.state.selected]}.`;
