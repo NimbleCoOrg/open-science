@@ -10,6 +10,9 @@
   --text:#e0ddd4; --text2:#9995aa; --accent:#6c8cff; --match:#4caf50; --reject:#ff5252;
   --mono:'Menlo','Monaco','Courier New',monospace;
 }
+* {
+  --colour: var(--text);
+}
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--bg); color:var(--text); font-family:var(--mono); overflow:hidden; height:100vh; display:flex; flex-direction:column; }
 header { padding:12px 20px; border-bottom:1px solid var(--border); background:var(--surface); }
@@ -71,13 +74,13 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     <div>
       <h3>Colour by</h3>
       <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap">
-        <button class="btn secondary" id="colorByOriginal" onclick="setColorMode('original')" style="font-size:10px">Original</button>
-        <button class="btn" id="colorByAssigned" onclick="setColorMode('assigned')" style="font-size:10px">Our categories</button>
-        <button class="btn secondary" id="colorByConf" onclick="setColorMode('confidence')" style="font-size:10px">Confidence</button>
+        <button class="btn secondary" id="colourByOriginal" onclick="setColourMode('original')" style="font-size:10px">Original</button>
+        <button class="btn" id="colourByAssigned" onclick="setColourMode('assigned')" style="font-size:10px">Our categories</button>
+        <button class="btn secondary" id="colourByConf" onclick="setColourMode('confidence')" style="font-size:10px">Confidence</button>
       </div>
     </div>
     <div>
-      <h3>Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
+      <h3 id="reviewHeader">Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
       <div style="display:flex;gap:4px;margin-bottom:4px">
         <button class="btn" onclick="reviewPrev()" style="font-size:10px">◀ Prev</button>
         <button class="btn" onclick="reviewNext()" style="font-size:10px">Next ▶</button>
@@ -560,7 +563,9 @@ function updateColourButtonStates() {
 function initReview() {
   if (!DATA) return;
   reviewPoints = DATA.points.filter(p => p.assignment_confidence === 'low').map(p => p.id);
-  document.getElementById('reviewCount').textContent = `(${reviewPoints.length} ambiguous)`;
+  const unit = currentSpecies === 'kaka' ? 'ambiguous calls' : 'ambiguous syllables';
+  document.getElementById('reviewHeader').textContent = `Review ${unit} `;
+  document.getElementById('reviewCount').textContent = `(${reviewPoints.length})`;
 }
 
 function reviewNext() {
