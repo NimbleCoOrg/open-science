@@ -1,7 +1,7 @@
 {
   "version": 3,
-  "last_updated": "2026-07-03T02:30:35.962Z",
-  "last_pushed_by": "Azure",
+  "last_updated": "2026-07-05T01:53:24.081240+00:00",
+  "last_pushed_by": "Matilde (merge of Azure export 2026-07-05)",
   "annotations": {
     "tui": {
       "harmonic": [
@@ -112,6 +112,156 @@
           "syl_end_ms": 75619,
           "matched_at": "2026-07-02T22:57:09.395Z",
           "annotator": "Azure"
+        },
+        {
+          "id": "tui_0011",
+          "recording": "XC979569",
+          "auto_category": "harmonic",
+          "duration_ms": 48.9,
+          "f0_hz": 881.7,
+          "centroid_hz": 2900.1,
+          "syl_start_ms": 37628.7,
+          "syl_end_ms": 37677.6,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:35:48.213Z"
+        }
+      ],
+      "trill": [
+        {
+          "id": "tui_0001",
+          "recording": "XC927459",
+          "auto_category": "rmnr",
+          "duration_ms": 116.7,
+          "f0_hz": 871.7,
+          "centroid_hz": 2507.9,
+          "syl_start_ms": 25182,
+          "syl_end_ms": 25298.8,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:32:52.516Z"
+        },
+        {
+          "id": "tui_0004",
+          "recording": "XC927459",
+          "auto_category": "rmnr",
+          "duration_ms": 93.8,
+          "f0_hz": 678.4,
+          "centroid_hz": 2059.1,
+          "syl_start_ms": 77461.8,
+          "syl_end_ms": 77555.6,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:33:34.064Z"
+        },
+        {
+          "id": "tui_0054",
+          "recording": "XC926289",
+          "auto_category": "rmnr",
+          "duration_ms": 135.7,
+          "f0_hz": 4837.8,
+          "centroid_hz": 5130.7,
+          "syl_start_ms": 1956.3,
+          "syl_end_ms": 2092,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:41:15.940Z"
+        },
+        {
+          "id": "tui_0055",
+          "recording": "XC926289",
+          "auto_category": "rmnr",
+          "duration_ms": 153.7,
+          "f0_hz": 4769.6,
+          "centroid_hz": 5097.3,
+          "syl_start_ms": 16108.8,
+          "syl_end_ms": 16262.5,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:41:21.098Z"
+        }
+      ],
+      "harsh": [
+        {
+          "id": "tui_0007",
+          "recording": "XC979569",
+          "auto_category": "rmnr",
+          "duration_ms": 141.7,
+          "f0_hz": 806.2,
+          "centroid_hz": 2323.4,
+          "syl_start_ms": 10930.8,
+          "syl_end_ms": 11072.5,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:34:35.013Z"
+        },
+        {
+          "id": "tui_0042",
+          "recording": "XC958850",
+          "auto_category": "harmonic",
+          "duration_ms": 35.9,
+          "f0_hz": 1164,
+          "centroid_hz": 4087.1,
+          "syl_start_ms": 63.9,
+          "syl_end_ms": 99.8,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:40:01.955Z"
+        }
+      ],
+      "rmnr": [
+        {
+          "id": "tui_0008",
+          "recording": "XC979569",
+          "auto_category": "harmonic",
+          "duration_ms": 38.9,
+          "f0_hz": 3434.2,
+          "centroid_hz": 3904.1,
+          "syl_start_ms": 12637.5,
+          "syl_end_ms": 12676.4,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:34:56.317Z"
+        },
+        {
+          "id": "tui_0020",
+          "recording": "XC843914",
+          "auto_category": "rmnr",
+          "duration_ms": 39.9,
+          "f0_hz": 3496.4,
+          "centroid_hz": 5558.5,
+          "syl_start_ms": 13771.4,
+          "syl_end_ms": 13811.3,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:37:31.418Z"
+        },
+        {
+          "id": "tui_0024",
+          "recording": "XC842652",
+          "auto_category": "rmnr",
+          "duration_ms": 304.3,
+          "f0_hz": 1605.8,
+          "centroid_hz": 3092.4,
+          "syl_start_ms": 780.2,
+          "syl_end_ms": 1084.5,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:37:45.526Z"
+        },
+        {
+          "id": "tui_0027",
+          "recording": "XC842652",
+          "auto_category": "rmnr",
+          "duration_ms": 276.4,
+          "f0_hz": 1257.9,
+          "centroid_hz": 3468.8,
+          "syl_start_ms": 24011.6,
+          "syl_end_ms": 24288,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:38:16.522Z"
+        },
+        {
+          "id": "tui_0037",
+          "recording": "XC958028",
+          "auto_category": "trill",
+          "duration_ms": 234.5,
+          "f0_hz": 2744.8,
+          "centroid_hz": 5129.7,
+          "syl_start_ms": 14516.8,
+          "syl_end_ms": 14751.3,
+          "annotator": "anonymous",
+          "matched_at": "2026-07-05T01:39:11.327Z"
         }
       ]
     },
