@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bellbird Syllable Clustering — PCA Feature Space</title>
+<title>NZ Birdsong Clustering — PCA Feature Space</title>
 <style>
 :root {
   --bg:#0f0f1a; --surface:#1a1a2e; --surface2:#252540; --border:#333355;
@@ -14,6 +14,7 @@
 body { background:var(--bg); color:var(--text); font-family:var(--mono); overflow:hidden; height:100vh; display:flex; flex-direction:column; }
 header { padding:12px 20px; border-bottom:1px solid var(--border); background:var(--surface); }
 header h1 { font-size:16px; color:var(--accent); font-weight:600; }
+header .controls { display:flex;justify-content:space-between;align-items:center;margin-bottom:8px; }
 header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 .main { display:flex; flex:1; overflow:hidden; }
 .grid-area { flex:1; display:flex; flex-direction:column; padding:8px; gap:8px; min-width:0; }
@@ -42,14 +43,23 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 .cluster-item .cl-remove { color:var(--reject); cursor:pointer; font-size:13px; }
 .btn-row { display:flex; gap:6px; }
 .btn.secondary { background:var(--surface2); border:1px solid var(--border); }
+.btn.disabled { opacity:0.5; cursor:not-allowed; }
 #status { color:var(--text2); font-size:10px; padding:4px 8px; }
 .fisher-bar { display:flex; align-items:center; gap:4px; margin:1px 0; }
 .fisher-bar-fill { height:8px; border-radius:2px; }
+#speciesSelector { background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px;padding:6px 8px;font-family:var(--mono);cursor:pointer; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Bellbird Syllable Clustering — PCA Feature Space</h1>
+  <div class="controls">
+    <h1>NZ Birdsong Clustering — PCA Feature Space</h1>
+    <select id="speciesSelector" onchange="switchSpecies(this.value)">
+      <option value="bellbird">Korimako (Bellbird)</option>
+      <option value="tui">Tūī</option>
+      <option value="kaka">Kākā</option>
+    </select>
+  </div>
   <div class="sub" id="headerSub">Loading data...</div>
 </header>
 <div class="main">
@@ -59,9 +69,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
   </div>
   <div class="sidebar">
     <div>
-      <h3>Color by</h3>
-      <div style="display:flex;gap:4px;margin-bottom:6px">
-        <button class="btn secondary" id="colorByFamily" onclick="setColorMode('family')" style="font-size:10px">Koe family</button>
+      <h3>Colour by</h3>
+      <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap">
+        <button class="btn secondary" id="colorByOriginal" onclick="setColorMode('original')" style="font-size:10px">Original</button>
         <button class="btn" id="colorByAssigned" onclick="setColorMode('assigned')" style="font-size:10px">Our categories</button>
         <button class="btn secondary" id="colorByConf" onclick="setColorMode('confidence')" style="font-size:10px">Confidence</button>
       </div>
@@ -71,7 +81,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
       <div style="display:flex;gap:4px;margin-bottom:4px">
         <button class="btn" onclick="reviewPrev()" style="font-size:10px">◀ Prev</button>
         <button class="btn" onclick="reviewNext()" style="font-size:10px">Next ▶</button>
-        <span id="reviewProgress" style="font-size:10px;color:var(--text2);line-height:28px"></span>
+        <span id="reviewProgress" style="font-size:10px;colour:var(--text2);line-height:28px"></span>
       </div>
     </div>
     <div>
@@ -80,7 +90,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     </div>
     <div>
       <h3>Selection</h3>
-      <div class="section" id="selInfo"><p style="color:var(--text2)">Shift+drag to lasso-select points</p></div>
+      <div class="section" id="selInfo"><p style="colour:var(--text2)">Shift+drag to lasso-select points</p></div>
     </div>
     <div id="pointDetail" style="display:none">
       <h3>Point Detail</h3>
@@ -97,9 +107,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     <div class="btn-row">
       <button class="btn" onclick="exportClusters()">Export Clusters</button>
       <button class="btn secondary" onclick="clearSelection()">Clear Selection</button>
-      <button class="btn secondary" onclick="unexcludeAll()" style="border-color:var(--reject)">Restore excluded</button>
+      <button class="btn secondary" onclick="unexcludeAll()" style="border-colour:var(--reject)">Restore excluded</button>
     </div>
-    <div><span id="excludeCount" style="font-size:10px;color:var(--reject)"></span></div>
+    <div><span id="excludeCount" style="font-size:10px;colour:var(--reject)"></span></div>
   </div>
 </div>
 
@@ -110,25 +120,24 @@ const FAMILY_COLORS = [
 ];
 
 let DATA = null;
-// Species selection via ?species=tui|bellbird|kaka (default bellbird — preserves existing behaviour)
-const SPECIES = (new URLSearchParams(location.search).get('species') || 'bellbird').toLowerCase();
+let currentSpecies = 'bellbird';
 const SPECIES_CFG = {
   bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird',
-    familyMode: 'Koe family',
+    originalColourMode: 'Koe family', hasOriginalCategories: true,
     categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
       'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
       'Chortle':'#81ecec', 'Cough':'#ff6b6b' } },
   tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui',
-    familyMode: 'Hill category',
+    originalColourMode: 'Hill category', hasOriginalCategories: false,
     categories: { 'rmnr':'#a29bfe', 'harmonic':'#55efc4', 'trill':'#fd79a8', 'high_frequency':'#74b9ff',
       'low_frequency':'#fab1a0', 'harsh':'#ff6b6b' } },
   kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka',
-    familyMode: 'Van Horik/Vaishnav',
+    originalColourMode: 'Van Horik/Vaishnav', hasOriginalCategories: false,
     categories: { 'whistle':'#a29bfe', 'screech':'#fd79a8', 'long_call':'#74b9ff', 'croak':'#fab1a0',
       'warble':'#55efc4', 'snicker':'#fdcb6e', 'bark':'#ff6b6b', 'gurgle':'#81ecec' } },
 };
-const SP = SPECIES_CFG[SPECIES] || SPECIES_CFG.bellbird;
-let familyColorMap = {};
+let SP = SPECIES_CFG.bellbird;
+let familyColourMap = {};
 let hiddenFamilies = new Set();
 let selectedIds = new Set();
 let clusters = {}; // name -> Set of ids
@@ -375,7 +384,7 @@ class Panel {
 
     // Draw unselected points first, then selected on top
     const pts = DATA.points;
-    // Batch by color for performance
+    // Batch by colour for performance
     const buckets = {};
     const selBuckets = {};
     const exclPts = [];
@@ -387,7 +396,7 @@ class Panel {
         exclPts.push([sx, sy]);
         continue;
       }
-      const col = getPointColor(p);
+      const col = getPointColour(p);
       if (selectedIds.has(p.id)) {
         if (!selBuckets[col]) selBuckets[col] = [];
         selBuckets[col].push([sx, sy]);
@@ -412,7 +421,7 @@ class Panel {
     for (const col in selBuckets) {
       // Glow
       ctx.fillStyle = col;
-      ctx.shadowColor = col;
+      ctx.shadowColour = col;
       ctx.shadowBlur = 6;
       ctx.beginPath();
       for (const [sx, sy] of selBuckets[col]) {
@@ -502,32 +511,50 @@ let renderPending = false;
 let excludedIds = new Set();
 let hoveredPoint = null;
 let activeAudio = null;
-let colorMode = 'assigned'; // 'family', 'assigned', 'confidence'
+let colourMode = 'assigned'; // 'original', 'assigned', 'confidence'
 let reviewPoints = [];
 let reviewIndex = -1;
 
 // Quick-assign category palette — species-specific (from SP.categories set at load)
-const ASSIGNED_COLORS = Object.assign({}, SP.categories);
-const CONF_COLORS = {
+let ASSIGNED_COLOURS = {};
+const CONF_COLOURS = {
   'ground_truth':'#4caf50', 'high':'#6c8cff', 'medium':'#e8a735', 'low':'#ff5252', 'none':'#555'
 };
 
-function getPointColor(p) {
-  if (colorMode === 'assigned' && p.assigned_category) {
-    return ASSIGNED_COLORS[p.assigned_category] || '#888';
-  } else if (colorMode === 'confidence') {
-    return CONF_COLORS[p.assignment_confidence] || '#555';
+function getPointColour(p) {
+  if (colourMode === 'assigned' && p.assigned_category) {
+    return ASSIGNED_COLOURS[p.assigned_category] || '#888';
+  } else if (colourMode === 'confidence') {
+    return CONF_COLOURS[p.assignment_confidence] || '#555';
   }
-  return familyColorMap[p.family] || '#888';
+  return familyColourMap[p.family] || '#888';
 }
 
-function setColorMode(mode) {
-  colorMode = mode;
-  document.getElementById('colorByFamily').className = mode==='family' ? 'btn' : 'btn secondary';
-  document.getElementById('colorByAssigned').className = mode==='assigned' ? 'btn' : 'btn secondary';
-  document.getElementById('colorByConf').className = mode==='confidence' ? 'btn' : 'btn secondary';
+function setColourMode(mode) {
+  colourMode = mode;
+  updateColourButtonStates();
   buildLegend();
   requestRender();
+}
+
+function updateColourButtonStates() {
+  const originalBtn = document.getElementById('colourByOriginal');
+  const assignedBtn = document.getElementById('colourByAssigned');
+  const confBtn = document.getElementById('colourByConf');
+  
+  // Hide original button if dataset has no original categories
+  if (!SP.hasOriginalCategories) {
+    originalBtn.classList.add('disabled');
+    originalBtn.disabled = true;
+  } else {
+    originalBtn.classList.remove('disabled');
+    originalBtn.disabled = false;
+  }
+  
+  // Update button active states
+  document.getElementById('colourByOriginal').className = colourMode==='original' ? 'btn' : 'btn secondary';
+  document.getElementById('colourByAssigned').className = colourMode==='assigned' ? 'btn' : 'btn secondary';
+  document.getElementById('colourByConf').className = colourMode==='confidence' ? 'btn' : 'btn secondary';
 }
 
 function initReview() {
@@ -570,7 +597,7 @@ function buildLegend() {
   el.innerHTML = '';
   
   let items;
-  if (colorMode === 'assigned') {
+  if (colourMode === 'assigned') {
     // Group by assigned category
     const catCounts = {};
     for (const p of DATA.points) {
@@ -579,29 +606,29 @@ function buildLegend() {
     }
     items = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
     for (const [cat, cnt] of items) {
-      const col = ASSIGNED_COLORS[cat] || '#888';
+      const col = ASSIGNED_COLOURS[cat] || '#888';
       const item = document.createElement('div');
       item.className = 'legend-item';
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
       el.appendChild(item);
     }
-  } else if (colorMode === 'confidence') {
+  } else if (colourMode === 'confidence') {
     const confOrder = ['ground_truth', 'high', 'medium', 'low'];
     const confLabels = {'ground_truth':'Manual (Azure)', 'high':'High confidence', 'medium':'Medium', 'low':'Low (review)'};
     for (const conf of confOrder) {
       const cnt = DATA.points.filter(p => p.assignment_confidence === conf).length;
       if (cnt === 0) continue;
-      const col = CONF_COLORS[conf];
+      const col = CONF_COLOURS[conf];
       const item = document.createElement('div');
       item.className = 'legend-item';
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${confLabels[conf]}</span><span class="legend-count">${cnt}</span>`;
       el.appendChild(item);
     }
   } else {
-    // Original family colors
+    // Original family colours
     for (let i = 0; i < DATA.families.length; i++) {
       const fam = DATA.families[i];
-      const col = familyColorMap[fam];
+      const col = familyColourMap[fam];
       const cnt = DATA.family_counts[fam] || 0;
       const item = document.createElement('div');
       item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
@@ -620,7 +647,7 @@ function buildLegend() {
 function updateSelectionInfo() {
   const el = document.getElementById('selInfo');
   if (selectedIds.size === 0) {
-    el.innerHTML = '<p style="color:var(--text2)">Shift+drag to lasso-select points</p>';
+    el.innerHTML = '<p style="colour:var(--text2)">Shift+drag to lasso-select points</p>';
     return;
   }
   const selPts = DATA.points.filter(p => selectedIds.has(p.id));
@@ -643,15 +670,15 @@ function updateSelectionInfo() {
   const maxBin = Math.max(...fisherBins, 1);
 
   let html = `<p><b>${selectedIds.size}</b> points selected</p>`;
-  html += `<p style="margin-top:6px;color:var(--text2)">Family breakdown:</p>`;
+  html += `<p style="margin-top:6px;colour:var(--text2)">Family breakdown:</p>`;
   for (const [fam, cnt] of Object.entries(famBreak).sort((a,b)=>b[1]-a[1])) {
-    const col = familyColorMap[fam];
-    html += `<p><span style="color:${col}">■</span> ${fam}: ${cnt}</p>`;
+    const col = familyColourMap[fam];
+    html += `<p><span style="colour:${col}">■</span> ${fam}: ${cnt}</p>`;
   }
-  html += `<p style="margin-top:6px;color:var(--text2)">Fisher score: ${fisherMin.toFixed(2)} – ${fisherMax.toFixed(2)} (μ=${(fisherSum/selPts.length).toFixed(2)})</p>`;
+  html += `<p style="margin-top:6px;colour:var(--text2)">Fisher score: ${fisherMin.toFixed(2)} – ${fisherMax.toFixed(2)} (μ=${(fisherSum/selPts.length).toFixed(2)})</p>`;
   for (let i = 0; i < 5; i++) {
     const pct = (fisherBins[i]/maxBin*100);
-    html += `<div class="fisher-bar"><span style="width:24px;text-align:right;color:var(--text2)">${fisherLabels[i]}</span><div class="fisher-bar-fill" style="width:${pct}%;background:var(--accent);min-width:${fisherBins[i]?2:0}px"></div><span style="color:var(--text2)">${fisherBins[i]}</span></div>`;
+    html += `<div class="fisher-bar"><span style="width:24px;text-align:right;colour:var(--text2)">${fisherLabels[i]}</span><div class="fisher-bar-fill" style="width:${pct}%;background:var(--accent);min-width:${fisherBins[i]?2:0}px"></div><span style="colour:var(--text2)">${fisherBins[i]}</span></div>`;
   }
   el.innerHTML = html;
 }
@@ -661,7 +688,7 @@ function showPointDetail(p) {
   const el = document.getElementById('pointDetailContent');
   panel.style.display = 'block';
   
-  const col = familyColorMap[p.family] || '#888';
+  const col = familyColourMap[p.family] || '#888';
   const wavBase = p.wav ? p.wav.replace('.wav','') : '';
   
   // Build spectrogram URL if available (from annotation candidates)
@@ -675,23 +702,23 @@ function showPointDetail(p) {
   const audioUrl = p.wav ? `${SP.assetDir}/${p.id}.wav` : '';
   
   let html = `
-    <p><span style="color:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
-    ${p.assigned_category ? `<p style="margin-top:2px">→ <b style="color:${ASSIGNED_COLORS[p.assigned_category]||'#fff'}">${p.assigned_category}</b> <span style="font-size:9px;color:var(--text2)">(${p.assignment_source}, ${p.assignment_confidence}${p.assignment_score ? ', score='+p.assignment_score.toFixed(3) : ''})</span></p>` : ''}
-    <p style="color:var(--text2)">${p.wav || 'unknown'}</p>
-    <p style="color:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
+    <p><span style="colour:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
+    ${p.assigned_category ? `<p style="margin-top:2px">→ <b style="colour:${ASSIGNED_COLOURS[p.assigned_category]||'#fff'}">${p.assigned_category}</b> <span style="font-size:9px;colour:var(--text2)">(${p.assignment_source}, ${p.assignment_confidence}${p.assignment_score ? ', score='+p.assignment_score.toFixed(3) : ''})</span></p>` : ''}
+    <p style="colour:var(--text2)">${p.wav || 'unknown'}</p>
+    <p style="colour:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
     ${spectroHtml}
-    <p style="margin-top:4px;color:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
-    <p style="color:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
+    <p style="margin-top:4px;colour:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
+    <p style="colour:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
     <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
       ${audioUrl ? `<button class="btn" onclick="playPoint('${audioUrl}')" style="background:var(--accent)">▶ Play</button>` : ''}
       <button class="btn" onclick="excludePoint(${JSON.stringify(p.id)})" style="background:var(--reject)">✗ Exclude</button>
       <button class="btn secondary" onclick="hidePointDetail()">Close</button>
     </div>
     <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
-      <p style="color:var(--text2);font-size:10px;margin-bottom:4px">Quick assign:</p>
+      <p style="colour:var(--text2);font-size:10px;margin-bottom:4px">Quick assign:</p>
       <div style="display:flex;gap:3px;flex-wrap:wrap">
-        ${Object.keys(ASSIGNED_COLORS).filter(c => c !== 'unassigned').map(cat => 
-          `<button class="btn" onclick="quickAssign(${JSON.stringify(p.id)},${JSON.stringify(cat)})" style="background:${ASSIGNED_COLORS[cat]};color:#fff;padding:2px 6px;font-size:9px">${cat}</button>`
+        ${Object.keys(ASSIGNED_COLOURS).filter(c => c !== 'unassigned').map(cat => 
+          `<button class="btn" onclick="quickAssign(${JSON.stringify(p.id)},${JSON.stringify(cat)})" style="background:${ASSIGNED_COLOURS[cat]};colour:#fff;padding:2px 6px;font-size:9px">${cat}</button>`
         ).join('')}
       </div>
     </div>`;
@@ -775,7 +802,7 @@ function updateClusterList() {
   for (const [name, ids] of Object.entries(clusters)) {
     html += `<div class="cluster-item"><span class="cl-name">${name}</span><span>${ids.size} pts</span><span class="cl-remove" onclick="deleteCluster('${name}')">&times;</span></div>`;
   }
-  if (!html) html = '<p style="color:var(--text2)">No clusters defined</p>';
+  if (!html) html = '<p style="colour:var(--text2)">No clusters defined</p>';
   el.innerHTML = html;
 }
 
@@ -804,8 +831,32 @@ function exportClusters() {
   const blob = new Blob([JSON.stringify(exportData, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `${SPECIES}_clusters.json`;
+  a.download = `${currentSpecies}_clusters.json`;
   a.click();
+}
+
+function switchSpecies(species) {
+  currentSpecies = species;
+  SP = SPECIES_CFG[species];
+  ASSIGNED_COLOURS = Object.assign({}, SP.categories);
+  
+  // Reset state for new species
+  panels = [];
+  familyColourMap = {};
+  hiddenFamilies = new Set();
+  selectedIds = new Set();
+  clusters = {};
+  excludedIds = new Set();
+  hoveredPoint = null;
+  colourMode = 'assigned';
+  reviewIndex = -1;
+  
+  // Clear grid
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  
+  // Load new data
+  init();
 }
 
 async function init() {
@@ -821,19 +872,21 @@ async function init() {
   DATA.pointMap = {};
   for (const p of DATA.points) DATA.pointMap[p.id] = p;
 
-  // Assign colors
+  // Assign colours
   for (let i = 0; i < DATA.families.length; i++) {
-    familyColorMap[DATA.families[i]] = FAMILY_COLORS[i % FAMILY_COLORS.length];
+    familyColourMap[DATA.families[i]] = FAMILY_COLORS[i % FAMILY_COLORS.length];
   }
 
   // Header
   const totalVar = DATA.explained_variance.reduce((a,b)=>a+b,0);
-  const unit = SPECIES === 'kaka' ? 'call segments' : 'syllable segments';
+  const unit = currentSpecies === 'kaka' ? 'call segments' : 'syllable segments';
   document.querySelector('h1').textContent = `${SP.label} Clustering — PCA Feature Space`;
   document.title = `${SP.label} Clustering — PCA Feature Space`;
-  document.getElementById('colorByFamily').textContent = SP.familyMode;
   document.getElementById('headerSub').textContent =
     `${DATA.n_points} ${unit} · ${DATA.families.length} families · ${DATA.n_components} PCs (${(totalVar*100).toFixed(1)}% variance explained)`;
+
+  // Update species selector
+  document.getElementById('speciesSelector').value = currentSpecies;
 
   // Build panels
   const grid = document.getElementById('grid');
@@ -848,6 +901,7 @@ async function init() {
       p._resize();
       p.resetView();
     }
+    updateColourButtonStates();
     buildLegend();
     updateClusterList();
     initReview();
