@@ -421,7 +421,7 @@ tr:hover td{background:var(--surface-2)}
 
   <div class="note">
     <div class="mark">Scope</div>
-    <div>This is an <b>extended replication</b> of Hill &amp; Ji (2014) using crowd-sourced field recordings. We analysed all <b>116 tūī A-quality songs</b>, <b>47 korimako</b>, and <b>25 kākā</b> recordings, with geographic variation across 10 regions. Discrepancies with Hill's manual classification are discussed.</div>
+    <div>This is an <b>extended replication</b> of Hill &amp; Ji (2014) using crowd-sourced field recordings. We analysed all <b>116 tūī A-quality songs</b>, <b>46 korimako</b>, and <b>25 kākā</b> recordings, with geographic variation across 10 regions. Discrepancies with Hill's manual classification are discussed.</div>
   </div>
 
   <!-- ============ TAB BAR ============ -->
@@ -1295,7 +1295,7 @@ tr:hover td{background:var(--surface-2)}
     <div class="section-label" style="margin-top:2.5rem">What We've Done &amp; What's Next</div>
     <div class="prose">
       <p><b>✓ Full tūī analysis:</b> All 116 A-quality song recordings analysed — 17,554 syllables across 5 types.</p>
-      <p><b>✓ Korimako comparison:</b> 47 A-quality recordings, 5,251 syllables. Confirmed tūī's dramatically richer high-frequency repertoire.</p>
+      <p><b>✓ Korimako comparison:</b> 46 A-quality recordings, 6,388 syllables. Confirmed tūī's dramatically richer high-frequency repertoire.</p>
       <p><b>✓ Kākā comparison:</b> 25 A-quality recordings, 1,380 syllables. Simpler call-dominated repertoire vs honeyeater song.</p>
       <p><b>✓ Geographic variation:</b> 10 regions compared. Auckland tūī most diverse, Southland simplest, Otago the harmonic outlier.</p>
       <p><b>✓ Unsupervised clustering:</b> HDBSCAN on 32-dim MFCC+spectral features. Resolved the low-frequency
@@ -1305,6 +1305,12 @@ tr:hover td{background:var(--surface-2)}
       style), manually clustered into 10 categories, then DTW-barycenter templates classified the rest — feeding
       the song-structure analysis (transitions, motifs, sex &amp; site differences). Explore it via the
       <a href="cluster.html?species=tui">PCA clustering tool</a> and <a href="annotate.html">annotation tool</a>.</p>
+      <p><b>✓ Korimako sex &amp; song:</b> Site-honest sex classifier (leave-one-island-out) shows the male↔female
+      song difference generalises across dialects — 80.5% on never-seen islands vs 59.5% chance — so it isn't a
+      site artefact. A bird's position on that axis is a stable individual trait (repeatability ICC = 0.67);
+      feature attribution + a length ablation show intermediacy is genuine multi-feature sex-atypicality, not song
+      length. Flags a small non-binary group and a rarer sex-atypical ("trans") group as leads for audio audit.
+      See the <b>Sex &amp; Song</b> section under Vocalisation → Korimako.</p>
       <p><b>Future work — temporal analysis:</b> How has the XC archive's tūī song changed over decades? Do more recent recordings capture different repertoires? Seasonal and temporal patterns will be explored in a future species-specific analysis.</p>
       <p><b>Next — tūī template matching:</b> Apply the same PCA → manual-cluster → DTW-template pipeline used for
       korimako to tūī, and extend to additional species (tīeke, kōkako) and datasets (AviaNZ kiwi).</p>
