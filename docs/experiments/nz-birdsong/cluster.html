@@ -113,9 +113,19 @@ let DATA = null;
 // Species selection via ?species=tui|bellbird|kaka (default bellbird — preserves existing behaviour)
 const SPECIES = (new URLSearchParams(location.search).get('species') || 'bellbird').toLowerCase();
 const SPECIES_CFG = {
-  bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird' },
-  tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui' },
-  kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka' },
+  bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird',
+    familyMode: 'Koe family',
+    categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
+      'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
+      'Chortle':'#81ecec', 'Cough':'#ff6b6b' } },
+  tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui',
+    familyMode: 'Hill category',
+    categories: { 'rmnr':'#a29bfe', 'harmonic':'#55efc4', 'trill':'#fd79a8', 'high_frequency':'#74b9ff',
+      'low_frequency':'#fab1a0', 'harsh':'#ff6b6b' } },
+  kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka',
+    familyMode: 'Van Horik/Vaishnav',
+    categories: { 'whistle':'#a29bfe', 'screech':'#fd79a8', 'long_call':'#74b9ff', 'croak':'#fab1a0',
+      'warble':'#55efc4', 'snicker':'#fdcb6e', 'bark':'#ff6b6b', 'gurgle':'#81ecec' } },
 };
 const SP = SPECIES_CFG[SPECIES] || SPECIES_CFG.bellbird;
 let familyColorMap = {};
@@ -496,11 +506,8 @@ let colorMode = 'assigned'; // 'family', 'assigned', 'confidence'
 let reviewPoints = [];
 let reviewIndex = -1;
 
-const ASSIGNED_COLORS = {
-  'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
-  'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
-  'Chortle':'#81ecec', 'Cough':'#ff6b6b'
-};
+// Quick-assign category palette — species-specific (from SP.categories set at load)
+const ASSIGNED_COLORS = Object.assign({}, SP.categories);
 const CONF_COLORS = {
   'ground_truth':'#4caf50', 'high':'#6c8cff', 'medium':'#e8a735', 'low':'#ff5252', 'none':'#555'
 };
@@ -823,6 +830,7 @@ async function init() {
   const unit = SPECIES === 'kaka' ? 'call segments' : 'syllable segments';
   document.querySelector('h1').textContent = `${SP.label} Clustering — PCA Feature Space`;
   document.title = `${SP.label} Clustering — PCA Feature Space`;
+  document.getElementById('colorByFamily').textContent = SP.familyMode;
   document.getElementById('headerSub').textContent =
     `${DATA.n_points} ${unit} · ${DATA.families.length} families · ${DATA.n_components} PCs (${(totalVar*100).toFixed(1)}% variance explained)`;
 
