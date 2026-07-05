@@ -110,6 +110,14 @@ const FAMILY_COLORS = [
 ];
 
 let DATA = null;
+// Species selection via ?species=tui|bellbird|kaka (default bellbird — preserves existing behaviour)
+const SPECIES = (new URLSearchParams(location.search).get('species') || 'bellbird').toLowerCase();
+const SPECIES_CFG = {
+  bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird' },
+  tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui' },
+  kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka' },
+};
+const SP = SPECIES_CFG[SPECIES] || SPECIES_CFG.bellbird;
 let familyColorMap = {};
 let hiddenFamilies = new Set();
 let selectedIds = new Set();
@@ -652,12 +660,12 @@ function showPointDetail(p) {
   // Build spectrogram URL if available (from annotation candidates)
   let spectroHtml = '';
   // Try to find matching spectrogram in annotation/bellbird/ directory
-  const spectroUrl = `annotation/bellbird/${p.id}.png`;
+  const spectroUrl = `${SP.assetDir}/${p.id}.png`;
   spectroHtml = `<img src="${spectroUrl}" style="width:100%;border-radius:4px;border:1px solid var(--border);margin:4px 0;cursor:pointer" 
     onerror="this.style.display='none'" onclick="window.open('${spectroUrl}','_blank')">`;
   
   // Audio URL
-  const audioUrl = p.wav ? `annotation/bellbird/${p.id}.wav` : '';
+  const audioUrl = p.wav ? `${SP.assetDir}/${p.id}.wav` : '';
   
   let html = `
     <p><span style="color:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
@@ -788,13 +796,13 @@ function exportClusters() {
   const blob = new Blob([JSON.stringify(exportData, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'bellbird_clusters.json';
+  a.download = `${SPECIES}_clusters.json`;
   a.click();
 }
 
 async function init() {
   try {
-    const resp = await fetch('annotation/bellbird_pca_data.json');
+    const resp = await fetch(SP.dataUrl);
     DATA = await resp.json();
   } catch(e) {
     document.getElementById('headerSub').textContent = 'Error loading data: ' + e.message;
@@ -812,8 +820,11 @@ async function init() {
 
   // Header
   const totalVar = DATA.explained_variance.reduce((a,b)=>a+b,0);
+  const unit = SPECIES === 'kaka' ? 'call segments' : 'syllable segments';
+  document.querySelector('h1').textContent = `${SP.label} Clustering — PCA Feature Space`;
+  document.title = `${SP.label} Clustering — PCA Feature Space`;
   document.getElementById('headerSub').textContent =
-    `${DATA.n_points} syllable segments · ${DATA.families.length} families · ${DATA.n_components} PCs (${(totalVar*100).toFixed(1)}% variance explained)`;
+    `${DATA.n_points} ${unit} · ${DATA.families.length} families · ${DATA.n_components} PCs (${(totalVar*100).toFixed(1)}% variance explained)`;
 
   // Build panels
   const grid = document.getElementById('grid');
