@@ -133,29 +133,48 @@ const CONF_COLOURS_CB = {
 let DATA = null;
 let REGION_MAP = null; // XC_ID -> region name, loaded once, shared across species
 let currentSpecies = 'bellbird';
+// Colours for the global "Dataset" (data-source) colour-by mode — one entry per
+// distinct provenance across all species, so the legend/colours stay stable as
+// species are switched. Colourblind-safe (Okabe-Ito derived).
+const SOURCE_COLOURS = {
+  'Xeno-canto': '#4477AA',
+  'Koe (Tutira)': '#EE6677',
+  'Vaishnav (ground truth)': '#228833',
+};
 const SPECIES_CFG = {
   bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird',
-    originalColourMode: 'Koe family', hasOriginalCategories: true,
     categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
       'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
       'Chortle':'#81ecec', 'Cough':'#ff6b6b' },
     // Manually-annotated source datasets, shown as their own colour-by tabs after "Categories".
-    // Each has a match function against a point to test membership (ground-truth provenance).
+    // `match` tests membership; `ownCategories` colours each point in this dataset by ITS OWN
+    // family/category label (not our reconciled assigned_category) — so this dataset's tab lets
+    // you contrast the original annotator's categories against "Categories" directly.
     datasets: [
-      { key: 'koe', label: 'Koe', match: p => p.assignment_source === 'manual' || p.assignment_confidence === 'ground_truth' }
-    ] },
+      { key: 'koe', label: 'Koe', match: p => p.assignment_source === 'manual' || p.assignment_confidence === 'ground_truth',
+        ownCategories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatsqueak':'#fd79a8', 'Stepup':'#74b9ff',
+          'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Chortle':'#81ecec', 'Cough':'#ff6b6b' } }
+    ],
+    // Every bellbird point currently comes from the Koe (Tutira) manual corpus — no XC bellbird
+    // audio is integrated into this PCA yet, so the "Dataset" view will show one colour only
+    // until that integration lands (tracked separately).
+    sourceOf: p => 'Koe (Tutira)' },
   tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui',
-    originalColourMode: 'Hill category', hasOriginalCategories: false,
     categories: { 'rmnr':'#a29bfe', 'harmonic':'#55efc4', 'trill':'#fd79a8', 'high_frequency':'#74b9ff',
       'low_frequency':'#fab1a0', 'harsh':'#ff6b6b' },
-    datasets: [] },
+    datasets: [],
+    sourceOf: p => 'Xeno-canto' },
   kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka',
-    originalColourMode: 'Van Horik/Vaishnav', hasOriginalCategories: false,
     categories: { 'whistle':'#a29bfe', 'screech':'#fd79a8', 'long_call':'#74b9ff', 'croak':'#fab1a0',
       'warble':'#55efc4', 'snicker':'#fdcb6e', 'bark':'#ff6b6b', 'gurgle':'#81ecec' },
     datasets: [
-      { key: 'tirth', label: 'Vaishnav', match: p => p.recording === 'tirth_template' || String(p.id).toLowerCase().includes('tirth') }
-    ] },
+      { key: 'tirth', label: 'Vaishnav', match: p => p.recording === 'tirth_template' || String(p.id).toLowerCase().includes('tirth'),
+        ownCategories: { 'Croak':'#fab1a0', 'Long':'#74b9ff', 'Screech':'#fd79a8', 'Warble':'#55efc4', 'Whistle':'#a29bfe' } }
+    ],
+    // Kākā mixes two sources: the ~7 Tirth Vaishnav ground-truth template points, and
+    // everything else pulled from Xeno-canto (recording IDs starting "XC").
+    sourceOf: p => (p.recording === 'tirth_template' || String(p.id).toLowerCase().includes('tirth'))
+      ? 'Vaishnav (ground truth)' : 'Xeno-canto' },
 };
 let SP = SPECIES_CFG.bellbird;
 let familyColourMap = {};
@@ -554,16 +573,23 @@ function getPointColour(p) {
   } else if (colourMode === 'region') {
     const region = getPointRegion(p);
     return region ? (regionColourMap[region] || '#888') : '#555';
+  } else if (colourMode === 'source') {
+    const src = SP.sourceOf ? SP.sourceOf(p) : null;
+    return src ? (SOURCE_COLOURS[src] || '#888') : '#555';
   } else if (colourMode.startsWith('dataset:')) {
     const key = colourMode.slice(8);
     const ds = (SP.datasets || []).find(d => d.key === key);
-    if (ds && ds.match(p)) return ASSIGNED_COLOURS[p.assigned_category] || '#4477AA';
+    // Each dataset tab colours ITS OWN points by their own (original annotator's) category —
+    // e.g. Koe's Pipe/Stutter/etc, or Vaishnav's Croak/Long/Screech/Warble/Whistle — so it can
+    // be visually contrasted against the "Categories" (assigned_category) tab.
+    if (ds && ds.match(p)) return (ds.ownCategories && ds.ownCategories[p.family]) || '#4477AA';
     return '#33333366'; // dim everything not in this dataset
   }
   return familyColourMap[p.family] || '#888';
 }
 
-// Colour-by tab order (fixed, per Azure 2026-07-19): Original -> Categories -> [datasets...] -> Region -> Confidence
+// Colour-by tab order (fixed, per Azure 2026-07-19 redesign): Categories -> [per-dataset own-category
+// tabs, e.g. Koe/Vaishnav] -> Dataset (data-source-of-origin) -> Region -> Confidence
 function setColourMode(mode) {
   colourMode = mode;
   updateColourButtonStates();
@@ -585,11 +611,11 @@ function buildColourByButtons() {
     el.appendChild(b);
     return b;
   };
-  mkBtn('colourByOriginal', 'original', 'Original', !SP.hasOriginalCategories);
   mkBtn('colourByAssigned', 'assigned', 'Categories', false);
   for (const ds of (SP.datasets || [])) {
     mkBtn('colourByDataset_' + ds.key, 'dataset:' + ds.key, ds.label, false);
   }
+  mkBtn('colourBySource', 'source', 'Dataset', !SP.sourceOf);
   mkBtn('colourByRegion', 'region', 'Region', !REGION_MAP);
   mkBtn('colourByConf', 'confidence', 'Confidence', false);
 }
@@ -599,8 +625,8 @@ function updateColourButtonStates() {
   for (const btn of el.children) {
     if (btn.disabled) continue;
     const isActive =
-      (btn.id === 'colourByOriginal' && colourMode === 'original') ||
       (btn.id === 'colourByAssigned' && colourMode === 'assigned') ||
+      (btn.id === 'colourBySource' && colourMode === 'source') ||
       (btn.id === 'colourByRegion' && colourMode === 'region') ||
       (btn.id === 'colourByConf' && colourMode === 'confidence') ||
       (btn.id.startsWith('colourByDataset_') && colourMode === 'dataset:' + btn.id.slice(17));
@@ -691,17 +717,40 @@ function buildLegend() {
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${region}</span><span class="legend-count">${cnt}</span>`;
       el.appendChild(item);
     }
+  } else if (colourMode === 'source') {
+    const srcCounts = {};
+    for (const p of DATA.points) {
+      const s = SP.sourceOf ? (SP.sourceOf(p) || 'Unknown') : 'Unknown';
+      srcCounts[s] = (srcCounts[s] || 0) + 1;
+    }
+    const sorted = Object.entries(srcCounts).sort((a,b) => b[1]-a[1]);
+    for (const [src, cnt] of sorted) {
+      const col = SOURCE_COLOURS[src] || '#888';
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${src}</span><span class="legend-count">${cnt}</span>`;
+      el.appendChild(item);
+    }
   } else if (colourMode.startsWith('dataset:')) {
     const key = colourMode.slice(8);
     const ds = (SP.datasets || []).find(d => d.key === key);
-    const inSet = ds ? DATA.points.filter(p => ds.match(p)).length : 0;
-    const item1 = document.createElement('div');
-    item1.className = 'legend-item';
-    item1.innerHTML = `<div class="legend-swatch" style="background:#4477AA"></div><span class="legend-label">${ds ? ds.label : key} (ground truth)</span><span class="legend-count">${inSet}</span>`;
-    el.appendChild(item1);
+    // Legend shows this dataset's OWN category breakdown (Pipe/Stutter/... or Croak/Long/...),
+    // matching the per-point colouring in getPointColour, so it can be read side-by-side
+    // against the "Categories" legend.
+    const inSetPts = ds ? DATA.points.filter(p => ds.match(p)) : [];
+    const catCounts = {};
+    for (const p of inSetPts) catCounts[p.family] = (catCounts[p.family] || 0) + 1;
+    const sorted = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
+    for (const [cat, cnt] of sorted) {
+      const col = (ds.ownCategories && ds.ownCategories[cat]) || '#4477AA';
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
+      el.appendChild(item);
+    }
     const item2 = document.createElement('div');
     item2.className = 'legend-item';
-    item2.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Other points</span><span class="legend-count">${DATA.points.length - inSet}</span>`;
+    item2.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Other points (not in ${ds ? ds.label : key})</span><span class="legend-count">${DATA.points.length - inSetPts.length}</span>`;
     el.appendChild(item2);
   } else {
     // Original family colours
