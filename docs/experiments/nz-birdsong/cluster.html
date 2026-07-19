@@ -75,7 +75,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
       <h3>Colour by</h3>
       <div id="colourByButtons" style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap"></div>
     </div>
-    <div>
+    <div id="reviewSection">
       <h3 id="reviewHeader">Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
       <div style="display:flex;gap:4px;margin-bottom:4px">
         <button class="btn" onclick="reviewPrev()" style="font-size:10px">◀ Prev</button>
@@ -109,6 +109,14 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
       <button class="btn secondary" onclick="unexcludeAll()" style="border-colour:var(--reject)">Restore excluded</button>
     </div>
     <div><span id="excludeCount" style="font-size:10px;colour:var(--reject)"></span></div>
+    <div id="extrapolateSection" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <button class="btn" id="extrapolateBtn" onclick="startExtrapolate()" style="width:100%">Extrapolate</button>
+      <div id="extrapolatePasswordRow" style="display:none;margin-top:4px;gap:4px;display:flex">
+        <input type="password" id="extrapolatePassword" placeholder="Shared password..." style="flex:1;font-size:11px">
+        <button class="btn" onclick="submitExtrapolate()" style="font-size:10px">Go</button>
+      </div>
+      <div id="extrapolateStatus" style="font-size:10px;colour:var(--text2);margin-top:4px"></div>
+    </div>
   </div>
 </div>
 
@@ -588,13 +596,21 @@ function getPointColour(p) {
   return familyColourMap[p.family] || '#888';
 }
 
-// Colour-by tab order (fixed, per Azure 2026-07-19 redesign): Categories -> [per-dataset own-category
+// Colour-by tab order (fixed, per Azure 2026-07-19 redesign): Create -> [per-dataset own-category
 // tabs, e.g. Koe/Vaishnav] -> Dataset (data-source-of-origin) -> Region -> Confidence
 function setColourMode(mode) {
   colourMode = mode;
   updateColourButtonStates();
   buildLegend();
+  updateReviewVisibility();
   requestRender();
+}
+
+// Review (ambiguous-point cycling) only makes sense while looking at "Create" (our assigned
+// categories) — that's the only mode being actively modified/refined. Hide it elsewhere.
+function updateReviewVisibility() {
+  const el = document.getElementById('reviewSection');
+  if (el) el.style.display = (colourMode === 'assigned') ? '' : 'none';
 }
 
 function buildColourByButtons() {
@@ -611,7 +627,7 @@ function buildColourByButtons() {
     el.appendChild(b);
     return b;
   };
-  mkBtn('colourByAssigned', 'assigned', 'Categories', false);
+  mkBtn('colourByAssigned', 'assigned', 'Create', false);
   for (const ds of (SP.datasets || [])) {
     mkBtn('colourByDataset_' + ds.key, 'dataset:' + ds.key, ds.label, false);
   }
@@ -640,6 +656,7 @@ function initReview() {
   const unit = currentSpecies === 'kaka' ? 'ambiguous calls' : 'ambiguous syllables';
   document.getElementById('reviewHeader').textContent = `Review ${unit} `;
   document.getElementById('reviewCount').textContent = `(${reviewPoints.length})`;
+  updateReviewVisibility();
 }
 
 function reviewNext() {
@@ -963,6 +980,98 @@ function exportClusters() {
   a.click();
 }
 
+// ==================== EXTRAPOLATE (DTW template-match, triggered via GitHub Actions) ====================
+// Takes the current manual clusters (same data as Export Clusters) and dispatches the
+// dtw-extrapolate.yml workflow, which runs the same DTW-barycenter classifier used for
+// bellbird (scripts/dtw_classify.py) against the *current* species, then merges confidence
+// scores back into <species>_pca_data.json and pushes. Reuses the encrypted-PAT + shared-
+// password pattern from annotate.html's sync feature (same repo, same trust model).
+//
+// SETUP NOTE: EXTRAPOLATE_PAT below must be filled in with a PAT encrypted the same way as
+// annotate.html's ENCRYPTED_PAT, but with 'workflow' scope added (required to dispatch a
+// GitHub Actions workflow — 'contents' scope alone is not enough). Until that's set up this
+// button will show a clear "not configured" message rather than fail silently.
+const EXTRAPOLATE_REPO = 'NimbleCoAI/open-science';
+const EXTRAPOLATE_WORKFLOW = 'dtw-extrapolate.yml';
+const EXTRAPOLATE_PAT = null; // { salt, iv, ct } — set up by Juni/Azure once workflow-scope PAT exists
+
+async function decryptExtrapolatePAT(password) {
+  const enc = new TextEncoder();
+  const salt = Uint8Array.from(atob(EXTRAPOLATE_PAT.salt), c => c.charCodeAt(0));
+  const iv = Uint8Array.from(atob(EXTRAPOLATE_PAT.iv), c => c.charCodeAt(0));
+  const ct = Uint8Array.from(atob(EXTRAPOLATE_PAT.ct), c => c.charCodeAt(0));
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return new TextDecoder().decode(decrypted);
+}
+
+function setExtrapolateStatus(msg, isError) {
+  const el = document.getElementById('extrapolateStatus');
+  el.textContent = msg;
+  el.style.colour = isError ? 'var(--reject)' : 'var(--text2)';
+}
+
+function startExtrapolate() {
+  if (!EXTRAPOLATE_PAT) {
+    setExtrapolateStatus('Not configured yet — needs a workflow-scope PAT set up by Juni/Azure.', true);
+    return;
+  }
+  if (Object.keys(clusters).length === 0) {
+    setExtrapolateStatus('No manual clusters yet — assign some categories first.', true);
+    return;
+  }
+  document.getElementById('extrapolatePasswordRow').style.display = 'flex';
+  document.getElementById('extrapolatePassword').focus();
+}
+
+async function submitExtrapolate() {
+  const password = document.getElementById('extrapolatePassword').value.trim();
+  if (!password) return;
+  setExtrapolateStatus('Authenticating...');
+  let token;
+  try {
+    token = await decryptExtrapolatePAT(password);
+  } catch (e) {
+    setExtrapolateStatus('Wrong password', true);
+    return;
+  }
+
+  const out = {};
+  for (const [name, ids] of Object.entries(clusters)) out[name] = [...ids];
+  const exportData = { clusters: out, excluded: [...excludedIds], exported_at: new Date().toISOString() };
+  const b64 = btoa(JSON.stringify(exportData));
+
+  setExtrapolateStatus(`Dispatching DTW classification for ${currentSpecies}...`);
+  try {
+    const resp = await fetch(
+      `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/workflows/${EXTRAPOLATE_WORKFLOW}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main', inputs: { species: currentSpecies, clusters_json_b64: b64 } }),
+      }
+    );
+    if (resp.status === 204) {
+      setExtrapolateStatus(`Started — this takes a few minutes (DTW template build + full re-classify). Reload the page after it lands.`);
+      document.getElementById('extrapolatePasswordRow').style.display = 'none';
+      document.getElementById('extrapolatePassword').value = '';
+    } else {
+      const body = await resp.text();
+      setExtrapolateStatus(`Failed to start (${resp.status}): ${body.slice(0,200)}`, true);
+    }
+  } catch (e) {
+    setExtrapolateStatus(`Network error: ${e.message}`, true);
+  }
+}
+
 function switchSpecies(species) {
   currentSpecies = species;
   SP = SPECIES_CFG[species];
@@ -975,6 +1084,7 @@ function switchSpecies(species) {
   selectedIds = new Set();
   clusters = {};
   excludedIds = new Set();
+
   hoveredPoint = null;
   colourMode = 'assigned';
   reviewIndex = -1;
