@@ -73,11 +73,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
   <div class="sidebar">
     <div>
       <h3>Colour by</h3>
-      <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap">
-        <button class="btn secondary" id="colourByOriginal" onclick="setColourMode('original')" style="font-size:10px">Original</button>
-        <button class="btn" id="colourByAssigned" onclick="setColourMode('assigned')" style="font-size:10px">Our categories</button>
-        <button class="btn secondary" id="colourByConf" onclick="setColourMode('confidence')" style="font-size:10px">Confidence</button>
-      </div>
+      <div id="colourByButtons" style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap"></div>
     </div>
     <div>
       <h3 id="reviewHeader">Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
@@ -122,25 +118,48 @@ const FAMILY_COLORS = [
   '#00cec9','#fab1a0','#74b9ff','#55efc4','#fdcb6e'
 ];
 
+// Colourblind-friendly palette (avoids red/green as a distinguishing pair;
+// based on Okabe-Ito + Paul Tol qualitative extensions, safe for deuteranopia/protanopia/tritanopia)
+const REGION_COLORS = [
+  '#4477AA','#EE6677','#228833','#CCBB44','#66CCEE','#AA3377','#BBBBBB',
+  '#004488','#DDAA33','#BB5566','#000000','#994455','#6699CC','#997700',
+  '#EE99AA','#332288','#117733','#88CCEE','#CC6677','#DDCC77'
+];
+const CONF_COLOURS_CB = {
+  // Blue (secure) -> orange (uncertain) ramp instead of red/green — colourblind-safe
+  'ground_truth':'#004488', 'high':'#4477AA', 'medium':'#DDAA33', 'low':'#EE6677', 'none':'#888'
+};
+
 let DATA = null;
+let REGION_MAP = null; // XC_ID -> region name, loaded once, shared across species
 let currentSpecies = 'bellbird';
 const SPECIES_CFG = {
   bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird',
     originalColourMode: 'Koe family', hasOriginalCategories: true,
     categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
       'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
-      'Chortle':'#81ecec', 'Cough':'#ff6b6b' } },
+      'Chortle':'#81ecec', 'Cough':'#ff6b6b' },
+    // Manually-annotated source datasets, shown as their own colour-by tabs after "Categories".
+    // Each has a match function against a point to test membership (ground-truth provenance).
+    datasets: [
+      { key: 'koe', label: 'Koe', match: p => p.assignment_source === 'manual' || p.assignment_confidence === 'ground_truth' }
+    ] },
   tui:      { label: 'Tūī',                  dataUrl: 'annotation/tui_pca_data.json',      assetDir: 'annotation/tui',
     originalColourMode: 'Hill category', hasOriginalCategories: false,
     categories: { 'rmnr':'#a29bfe', 'harmonic':'#55efc4', 'trill':'#fd79a8', 'high_frequency':'#74b9ff',
-      'low_frequency':'#fab1a0', 'harsh':'#ff6b6b' } },
+      'low_frequency':'#fab1a0', 'harsh':'#ff6b6b' },
+    datasets: [] },
   kaka:     { label: 'Kākā',                 dataUrl: 'annotation/kaka_pca_data.json',     assetDir: 'annotation/kaka',
     originalColourMode: 'Van Horik/Vaishnav', hasOriginalCategories: false,
     categories: { 'whistle':'#a29bfe', 'screech':'#fd79a8', 'long_call':'#74b9ff', 'croak':'#fab1a0',
-      'warble':'#55efc4', 'snicker':'#fdcb6e', 'bark':'#ff6b6b', 'gurgle':'#81ecec' } },
+      'warble':'#55efc4', 'snicker':'#fdcb6e', 'bark':'#ff6b6b', 'gurgle':'#81ecec' },
+    datasets: [
+      { key: 'tirth', label: 'Vaishnav', match: p => p.recording === 'tirth_template' || String(p.id).toLowerCase().includes('tirth') }
+    ] },
 };
 let SP = SPECIES_CFG.bellbird;
 let familyColourMap = {};
+let regionColourMap = {};
 let hiddenFamilies = new Set();
 let selectedIds = new Set();
 let clusters = {}; // name -> Set of ids
@@ -514,25 +533,37 @@ let renderPending = false;
 let excludedIds = new Set();
 let hoveredPoint = null;
 let activeAudio = null;
-let colourMode = 'assigned'; // 'original', 'assigned', 'confidence'
+let colourMode = 'assigned'; // 'original', 'assigned', <dataset key>, 'region', 'confidence'
 let reviewPoints = [];
 let reviewIndex = -1;
 
 // Quick-assign category palette — species-specific (from SP.categories set at load)
 let ASSIGNED_COLOURS = {};
-const CONF_COLOURS = {
-  'ground_truth':'#4caf50', 'high':'#6c8cff', 'medium':'#e8a735', 'low':'#ff5252', 'none':'#555'
-};
+const CONF_COLOURS = CONF_COLOURS_CB;
+
+function getPointRegion(p) {
+  if (!REGION_MAP || !p.recording) return null;
+  return REGION_MAP[p.recording] || null;
+}
 
 function getPointColour(p) {
   if (colourMode === 'assigned' && p.assigned_category) {
     return ASSIGNED_COLOURS[p.assigned_category] || '#888';
   } else if (colourMode === 'confidence') {
     return CONF_COLOURS[p.assignment_confidence] || '#555';
+  } else if (colourMode === 'region') {
+    const region = getPointRegion(p);
+    return region ? (regionColourMap[region] || '#888') : '#555';
+  } else if (colourMode.startsWith('dataset:')) {
+    const key = colourMode.slice(8);
+    const ds = (SP.datasets || []).find(d => d.key === key);
+    if (ds && ds.match(p)) return ASSIGNED_COLOURS[p.assigned_category] || '#4477AA';
+    return '#33333366'; // dim everything not in this dataset
   }
   return familyColourMap[p.family] || '#888';
 }
 
+// Colour-by tab order (fixed, per Azure 2026-07-19): Original -> Categories -> [datasets...] -> Region -> Confidence
 function setColourMode(mode) {
   colourMode = mode;
   updateColourButtonStates();
@@ -540,24 +571,41 @@ function setColourMode(mode) {
   requestRender();
 }
 
-function updateColourButtonStates() {
-  const originalBtn = document.getElementById('colourByOriginal');
-  const assignedBtn = document.getElementById('colourByAssigned');
-  const confBtn = document.getElementById('colourByConf');
-  
-  // Hide original button if dataset has no original categories
-  if (!SP.hasOriginalCategories) {
-    originalBtn.classList.add('disabled');
-    originalBtn.disabled = true;
-  } else {
-    originalBtn.classList.remove('disabled');
-    originalBtn.disabled = false;
+function buildColourByButtons() {
+  const el = document.getElementById('colourByButtons');
+  el.innerHTML = '';
+  const mkBtn = (id, mode, label, disabled) => {
+    const b = document.createElement('button');
+    b.className = 'btn secondary';
+    b.id = id;
+    b.style.fontSize = '10px';
+    b.textContent = label;
+    b.onclick = () => setColourMode(mode);
+    if (disabled) { b.classList.add('disabled'); b.disabled = true; }
+    el.appendChild(b);
+    return b;
+  };
+  mkBtn('colourByOriginal', 'original', 'Original', !SP.hasOriginalCategories);
+  mkBtn('colourByAssigned', 'assigned', 'Categories', false);
+  for (const ds of (SP.datasets || [])) {
+    mkBtn('colourByDataset_' + ds.key, 'dataset:' + ds.key, ds.label, false);
   }
-  
-  // Update button active states
-  document.getElementById('colourByOriginal').className = colourMode==='original' ? 'btn' : 'btn secondary';
-  document.getElementById('colourByAssigned').className = colourMode==='assigned' ? 'btn' : 'btn secondary';
-  document.getElementById('colourByConf').className = colourMode==='confidence' ? 'btn' : 'btn secondary';
+  mkBtn('colourByRegion', 'region', 'Region', !REGION_MAP);
+  mkBtn('colourByConf', 'confidence', 'Confidence', false);
+}
+
+function updateColourButtonStates() {
+  const el = document.getElementById('colourByButtons');
+  for (const btn of el.children) {
+    if (btn.disabled) continue;
+    const isActive =
+      (btn.id === 'colourByOriginal' && colourMode === 'original') ||
+      (btn.id === 'colourByAssigned' && colourMode === 'assigned') ||
+      (btn.id === 'colourByRegion' && colourMode === 'region') ||
+      (btn.id === 'colourByConf' && colourMode === 'confidence') ||
+      (btn.id.startsWith('colourByDataset_') && colourMode === 'dataset:' + btn.id.slice(17));
+    btn.className = isActive ? 'btn' : 'btn secondary';
+  }
 }
 
 function initReview() {
@@ -629,6 +677,32 @@ function buildLegend() {
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${confLabels[conf]}</span><span class="legend-count">${cnt}</span>`;
       el.appendChild(item);
     }
+  } else if (colourMode === 'region') {
+    const regionCounts = {};
+    for (const p of DATA.points) {
+      const r = getPointRegion(p) || 'Unknown / no coordinates';
+      regionCounts[r] = (regionCounts[r] || 0) + 1;
+    }
+    const sorted = Object.entries(regionCounts).sort((a,b) => b[1]-a[1]);
+    for (const [region, cnt] of sorted) {
+      const col = region === 'Unknown / no coordinates' ? '#555' : (regionColourMap[region] || '#888');
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${region}</span><span class="legend-count">${cnt}</span>`;
+      el.appendChild(item);
+    }
+  } else if (colourMode.startsWith('dataset:')) {
+    const key = colourMode.slice(8);
+    const ds = (SP.datasets || []).find(d => d.key === key);
+    const inSet = ds ? DATA.points.filter(p => ds.match(p)).length : 0;
+    const item1 = document.createElement('div');
+    item1.className = 'legend-item';
+    item1.innerHTML = `<div class="legend-swatch" style="background:#4477AA"></div><span class="legend-label">${ds ? ds.label : key} (ground truth)</span><span class="legend-count">${inSet}</span>`;
+    el.appendChild(item1);
+    const item2 = document.createElement('div');
+    item2.className = 'legend-item';
+    item2.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Other points</span><span class="legend-count">${DATA.points.length - inSet}</span>`;
+    el.appendChild(item2);
   } else {
     // Original family colours
     for (let i = 0; i < DATA.families.length; i++) {
@@ -873,6 +947,22 @@ async function init() {
     return;
   }
 
+  // Load region map once, shared across all species (XC_ID -> region name)
+  if (!REGION_MAP) {
+    try {
+      const rresp = await fetch('annotation/xc_region_map.json');
+      REGION_MAP = await rresp.json();
+      const regionSet = [...new Set(Object.values(REGION_MAP).filter(Boolean))].sort();
+      regionColourMap = {};
+      for (let i = 0; i < regionSet.length; i++) {
+        regionColourMap[regionSet[i]] = REGION_COLORS[i % REGION_COLORS.length];
+      }
+    } catch(e) {
+      console.warn('Region map not available:', e.message);
+      REGION_MAP = {};
+    }
+  }
+
   // Build point lookup
   DATA.pointMap = {};
   for (const p of DATA.points) DATA.pointMap[p.id] = p;
@@ -906,6 +996,7 @@ async function init() {
       p._resize();
       p.resetView();
     }
+    buildColourByButtons();
     updateColourButtonStates();
     buildLegend();
     updateClusterList();
