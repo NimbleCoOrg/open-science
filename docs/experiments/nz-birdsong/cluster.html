@@ -115,6 +115,12 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
         <input type="password" id="extrapolatePassword" placeholder="Shared password..." style="flex:1;font-size:11px">
         <button class="btn" onclick="submitExtrapolate()" style="font-size:10px">Go</button>
       </div>
+      <div id="extrapolateProgressWrap" style="display:none;margin-top:6px">
+        <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden">
+          <div id="extrapolateProgressBar" style="background:var(--accent);height:100%;width:0%;transition:width 0.4s"></div>
+        </div>
+        <div id="extrapolateProgressLabel" style="font-size:10px;colour:var(--text2);margin-top:3px"></div>
+      </div>
       <div id="extrapolateStatus" style="font-size:10px;colour:var(--text2);margin-top:4px"></div>
     </div>
   </div>
@@ -1015,6 +1021,15 @@ function setExtrapolateStatus(msg, isError) {
   el.style.colour = isError ? 'var(--reject)' : 'var(--text2)';
 }
 
+function setExtrapolateProgress(pct, label) {
+  const wrap = document.getElementById('extrapolateProgressWrap');
+  wrap.style.display = pct === null ? 'none' : 'block';
+  if (pct !== null) {
+    document.getElementById('extrapolateProgressBar').style.width = `${pct}%`;
+    document.getElementById('extrapolateProgressLabel').textContent = label || '';
+  }
+}
+
 function startExtrapolate() {
   if (!EXTRAPOLATE_PAT) {
     setExtrapolateStatus('Not configured yet — needs a workflow-scope PAT set up by Juni/Azure.', true);
@@ -1024,6 +1039,16 @@ function startExtrapolate() {
     setExtrapolateStatus('No manual clusters yet — assign some categories first.', true);
     return;
   }
+  const nManual = Object.values(clusters).reduce((a, ids) => a + ids.length, 0);
+  const ok = confirm(
+    `Extrapolate ${SP.label} categories?\n\n` +
+    `This builds DTW templates from your ${nManual} manually-clustered points and ` +
+    `classifies every remaining candidate against them. It runs on GitHub's servers ` +
+    `and typically takes a few minutes. If someone else is extrapolating the same ` +
+    `species right now, this run will wait its turn rather than clash with theirs.\n\n` +
+    `Continue?`
+  );
+  if (!ok) return;
   document.getElementById('extrapolatePasswordRow').style.display = 'flex';
   document.getElementById('extrapolatePassword').focus();
 }
@@ -1045,7 +1070,9 @@ async function submitExtrapolate() {
   const exportData = { clusters: out, excluded: [...excludedIds], exported_at: new Date().toISOString() };
   const b64 = btoa(JSON.stringify(exportData));
 
+  const dispatchedAt = new Date().toISOString();
   setExtrapolateStatus(`Dispatching DTW classification for ${currentSpecies}...`);
+  setExtrapolateProgress(3, 'Requesting run from GitHub...');
   try {
     const resp = await fetch(
       `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/workflows/${EXTRAPOLATE_WORKFLOW}/dispatches`,
@@ -1060,17 +1087,98 @@ async function submitExtrapolate() {
       }
     );
     if (resp.status === 204) {
-      setExtrapolateStatus(`Started — this takes a few minutes (DTW template build + full re-classify). Reload the page after it lands.`);
       document.getElementById('extrapolatePasswordRow').style.display = 'none';
       document.getElementById('extrapolatePassword').value = '';
+      pollExtrapolateRun(token, dispatchedAt);
     } else {
       const body = await resp.text();
       setExtrapolateStatus(`Failed to start (${resp.status}): ${body.slice(0,200)}`, true);
+      setExtrapolateProgress(null);
     }
   } catch (e) {
     setExtrapolateStatus(`Network error: ${e.message}`, true);
+    setExtrapolateProgress(null);
   }
 }
+
+// Roughly maps the workflow's known steps (see .github/workflows/dtw-extrapolate.yml) to a
+// progress percentage, since GitHub doesn't give a single 0-100 number directly.
+const EXTRAPOLATE_STEP_PCT = {
+  'Set up job': 5,
+  'Checkout': 10,
+  'actions/checkout@v4': 10,
+  'Set up Python': 15,
+  'actions/setup-python@v5': 15,
+  'Install dependencies': 25,
+  'Decode cluster export': 30,
+  'Run DTW template-match classifier': 75,
+  'Merge results into deployed PCA data': 90,
+  'Commit and push updated PCA data': 97,
+  'Complete job': 100,
+  'Post Checkout': 98,
+};
+
+async function pollExtrapolateRun(token, dispatchedAt) {
+  setExtrapolateStatus('Waiting for the run to appear...');
+  setExtrapolateProgress(5, 'Queued...');
+  const headers = { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' };
+  let runId = null;
+  // Find the run: list recent runs for this workflow, match one created after we dispatched.
+  for (let attempt = 0; attempt < 15 && !runId; attempt++) {
+    await new Promise(r => setTimeout(r, 3000));
+    try {
+      const listResp = await fetch(
+        `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/workflows/${EXTRAPOLATE_WORKFLOW}/runs?event=workflow_dispatch&per_page=5`,
+        { headers }
+      );
+      if (!listResp.ok) continue;
+      const listData = await listResp.json();
+      const candidate = (listData.workflow_runs || []).find(r => new Date(r.created_at) >= new Date(dispatchedAt) - 5000);
+      if (candidate) runId = candidate.id;
+    } catch (e) { /* keep trying */ }
+  }
+  if (!runId) {
+    setExtrapolateStatus('Dispatched, but could not find the run to track progress. Check the Actions tab on GitHub.');
+    setExtrapolateProgress(null);
+    return;
+  }
+
+  // Poll the run's jobs/steps for progress until it completes.
+  for (let i = 0; i < 200; i++) {
+    await new Promise(r => setTimeout(r, 4000));
+    try {
+      const jobsResp = await fetch(
+        `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/runs/${runId}/jobs`,
+        { headers }
+      );
+      if (!jobsResp.ok) continue;
+      const jobsData = await jobsResp.json();
+      const job = (jobsData.jobs || [])[0];
+      if (!job) continue;
+
+      if (job.status === 'completed') {
+        if (job.conclusion === 'success') {
+          setExtrapolateProgress(100, 'Done');
+          setExtrapolateStatus(`Extrapolation complete for ${currentSpecies}. Reload the page to see updated confidence scores.`);
+        } else {
+          setExtrapolateProgress(null);
+          setExtrapolateStatus(`Run finished with status "${job.conclusion}" — check the Actions tab for the log.`, true);
+        }
+        return;
+      }
+
+      const steps = job.steps || [];
+      const running = steps.find(s => s.status === 'in_progress');
+      const lastDone = [...steps].reverse().find(s => s.status === 'completed');
+      const label = running ? running.name : (lastDone ? lastDone.name : 'Starting...');
+      const pct = EXTRAPOLATE_STEP_PCT[label] || (lastDone ? (EXTRAPOLATE_STEP_PCT[lastDone.name] || 10) : 5);
+      setExtrapolateProgress(pct, running ? `Running: ${label}` : `Just finished: ${label}`);
+      setExtrapolateStatus(`In progress — ${currentSpecies} extrapolation running on GitHub...`);
+    } catch (e) { /* keep polling */ }
+  }
+  setExtrapolateStatus('Still running after a while — check the Actions tab on GitHub directly.');
+}
+
 
 function switchSpecies(species) {
   currentSpecies = species;
