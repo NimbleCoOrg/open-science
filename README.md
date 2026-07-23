@@ -6,8 +6,8 @@ Open science experiments from NimbleCo — data visualizations, community report
 
 | Experiment | Description | Live |
 |-----------|-------------|------|
-| [peptide-reporting](experiments/peptide-reporting/) | Peptide Pharmacovigilance: Community Self-Reports with Valence | [View](https://nimblecoai.github.io/open-science/experiments/peptide-reporting/) |
-| [nz-birdsong](docs/experiments/nz-birdsong/) | New Zealand Birdsong: vocalisation analysis of tūī, korimako & kākā from Xeno-Canto open data — spectral syllable classification, template matching, geographic variation, plus interactive annotation & PCA clustering tools and a Te Reo Manu learning game | [View](https://nimblecoai.github.io/open-science/experiments/nz-birdsong/) |
+| [peptide-reporting](experiments/peptide-reporting/) | Peptide Pharmacovigilance: Community Self-Reports with Valence | [View](https://nimblecoorg.github.io/open-science/experiments/peptide-reporting/) |
+| [nz-birdsong](docs/experiments/nz-birdsong/) | New Zealand Birdsong: vocalisation analysis of tūī, korimako & kākā from Xeno-Canto open data — spectral syllable classification, template matching, geographic variation, plus interactive annotation & PCA clustering tools and a Te Reo Manu learning game | [View](https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/) |
 
 ## Structure
 

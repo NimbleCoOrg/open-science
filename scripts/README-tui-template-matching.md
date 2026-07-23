@@ -14,7 +14,7 @@ colour only, not ground truth.
 
 ## Stage 2 — Manual clustering (AZURE)
 Open the tūī clustering tool:
-  https://nimblecoai.github.io/open-science/experiments/nz-birdsong/cluster.html?species=tui
+  https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/cluster.html?species=tui
 
 - Lasso groups of similar syllables across the linked PC panels (spike-sorting style),
   OR click individual points and use the Quick-assign buttons (Hill categories).
