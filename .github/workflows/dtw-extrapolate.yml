@@ -1,0 +1,90 @@
+name: Extrapolate categories (DTW template match)
+
+# Triggered by the "Extrapolate" button in cluster.html (Create tab).
+# Takes the current manual clusters for one species, builds DTW-barycenter
+# templates from them (tslearn), classifies every remaining candidate clip
+# against those templates, and merges confidence-scored results back into
+# the deployed <species>_pca_data.json so the Confidence tab + Review list
+# populate. Mirrors the human-in-the-loop pipeline already used for bellbird
+# (see scripts/dtw_classify.py and scripts/README-tui-template-matching.md).
+
+on:
+  workflow_dispatch:
+    inputs:
+      species:
+        description: 'Species key (bellbird | tui | kaka)'
+        required: true
+      clusters_json_b64:
+        description: 'Base64-encoded cluster export from cluster.html (Export Clusters)'
+        required: true
+
+# Least privilege: the job only needs to push the regenerated PCA data file.
+permissions:
+  contents: write
+
+# Guard against two people extrapolating the SAME species at once: a second run for the
+# same species queues behind the first instead of racing to git-push the same output file.
+# Different species can still run concurrently (they touch different files).
+concurrency:
+  group: extrapolate-${{ github.event.inputs.species }}
+  cancel-in-progress: false
+
+jobs:
+  extrapolate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Validate the species against a hard allowlist BEFORE it is ever used in a
+      # path or command. The dispatch trigger is a PAT embedded in a public page, so
+      # treat every input as attacker-controlled. Passing inputs via env (never inline
+      # ${{ }} interpolation in run: blocks) closes the Actions script-injection hole.
+      - name: Validate species
+        env:
+          SPECIES: ${{ github.event.inputs.species }}
+        run: |
+          case "$SPECIES" in
+            bellbird|tui|kaka) echo "species ok: $SPECIES" ;;
+            *) echo "::error::invalid species '$SPECIES' (allowed: bellbird, tui, kaka)"; exit 1 ;;
+          esac
+
+      - name: Decode cluster export
+        env:
+          CLUSTERS_B64: ${{ github.event.inputs.clusters_json_b64 }}
+        run: |
+          mkdir -p /tmp/extrapolate
+          printf '%s' "$CLUSTERS_B64" | base64 -d > /tmp/extrapolate/clusters.json
+
+      - name: Install dependencies
+        run: pip install numpy librosa tslearn soundfile
+
+      - name: Run DTW template-match classifier
+        env:
+          SPECIES: ${{ github.event.inputs.species }}
+        run: |
+          mkdir -p template_matching
+          python3 scripts/dtw_classify.py "$SPECIES" /tmp/extrapolate/clusters.json
+
+      - name: Merge results into deployed PCA data
+        env:
+          SPECIES: ${{ github.event.inputs.species }}
+        run: |
+          python3 scripts/merge_dtw_results.py "$SPECIES"
+
+      - name: Commit and push updated PCA data
+        env:
+          SPECIES: ${{ github.event.inputs.species }}
+        run: |
+          git config user.name "matilde-extrapolate-bot"
+          git config user.email "actions@github.com"
+          git add "docs/experiments/nz-birdsong/annotation/${SPECIES}_pca_data.json"
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "Extrapolate ${SPECIES}: DTW template-match re-classification (via cluster.html button)"
+          # pull --rebase first in case main moved since checkout (belt-and-braces on top of
+          # the concurrency guard above, which already serialises same-species runs)
+          git pull --rebase origin main
+          git push
