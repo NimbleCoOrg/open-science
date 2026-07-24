@@ -1047,7 +1047,12 @@ function toggleClusterDropdown() {
     dsContainer.innerHTML = '';
     for (const ds of (SP.datasets || [])) {
       const dsPts = DATA.points.filter(p => ds.match(p));
-      const gtPts = dsPts.filter(p => p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null);
+      // Count points with either assigned_category or family label
+      const gtPts = dsPts.filter(p => {
+        const cat = p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null && p.assigned_category !== '?';
+        const fam = p.family && p.family !== 'unassigned' && p.family !== '?' && p.family !== '';
+        return cat || fam;
+      });
       const item = document.createElement('div');
       item.style.cssText = 'padding:4px;cursor:pointer;font-size:11px';
       item.innerHTML = ds.label + ' <span style="color:var(--text2);font-size:9px">(' + gtPts.length + ' labelled points)</span>';
@@ -1068,24 +1073,42 @@ function autoClusterFromDataset(dsKey) {
   document.getElementById('clusterDropdown').style.display = 'none';
   const ds = (SP.datasets || []).find(d => d.key === dsKey);
   if (!ds) return;
-  const dsPts = DATA.points.filter(p => ds.match(p) && p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null);
-  if (dsPts.length === 0) {
+  const dsPts = DATA.points.filter(p => ds.match(p));
+  // Use assigned_category if available, otherwise fall back to family
+  // (Vaishnav ground-truth stores labels in 'family', not 'assigned_category')
+  const labelled = dsPts.filter(p => {
+    const cat = p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null && p.assigned_category !== '?';
+    const fam = p.family && p.family !== 'unassigned' && p.family !== '?' && p.family !== '';
+    return cat || fam;
+  });
+  if (labelled.length === 0) {
     alert('No labelled points found in ' + ds.label + '.');
     return;
   }
   clusters = {};
-  for (const p of dsPts) {
-    const cat = p.assigned_category;
+  for (const p of labelled) {
+    // Prefer assigned_category, fall back to family
+    let cat = p.assigned_category;
+    if (!cat || cat === 'unassigned' || cat === '' || cat === null || cat === '?') {
+      cat = p.family;
+    }
+    if (!cat || cat === '?' || cat === '') continue;
     if (!clusters[cat]) clusters[cat] = new Set();
     clusters[cat].add(p.id);
     if (!ASSIGNED_COLOURS[cat]) {
-      const palette = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#42d4f4','#f032e6','#469990','#9A6324'];
-      ASSIGNED_COLOURS[cat] = palette[Object.keys(ASSIGNED_COLOURS).length % palette.length];
+      // Use ownCategories colour if available, otherwise palette
+      if (ds.ownCategories && ds.ownCategories[cat]) {
+        ASSIGNED_COLOURS[cat] = ds.ownCategories[cat];
+      } else {
+        const palette = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#42d4f4','#f032e6','#469990','#9A6324'];
+        ASSIGNED_COLOURS[cat] = palette[Object.keys(ASSIGNED_COLOURS).length % palette.length];
+      }
     }
   }
   updateClusterList();
   requestRender();
-  alert('Auto-clustered ' + dsPts.length + ' points from ' + ds.label + ' into ' + Object.keys(clusters).length + ' categories.\n\nYou can now hit Extrapolate to classify the remaining points.');
+  const summary = Object.entries(clusters).map(([name, ids]) => '  ' + name + ': ' + ids.size).join('\n');
+  alert('Auto-clustered ' + labelled.length + ' points from ' + ds.label + ' into ' + Object.keys(clusters).length + ' categories:\n\n' + summary + '\n\nYou can now hit Extrapolate to classify the remaining points.');
 }
 
 function autoClusterFromManual() {
