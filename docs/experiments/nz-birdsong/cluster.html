@@ -999,7 +999,7 @@ function exportClusters() {
 // button will show a clear "not configured" message rather than fail silently.
 const EXTRAPOLATE_REPO = 'NimbleCoOrg/open-science';
 const EXTRAPOLATE_WORKFLOW = 'dtw-extrapolate.yml';
-const EXTRAPOLATE_PAT = null; // { salt, iv, ct } — set up by Juni/Azure once workflow-scope PAT exists
+const EXTRAPOLATE_PAT = { salt: 'QvngB1y4p0RKvaEap/oEoA==', iv: 'NWea+aUiMwD+QjB9', ct: 'OjNWTx1N5wyDcQvwWALgbQFu0uSD6/FRHKQsG4nb4Qo57oYeY5NsBSfJNScwQAEBnm5ZGy24XEKNiXrB8WA7FpC0RN6TUQKguZ8cde0yC+pQvgenBMChC4fhKGlSXLv9MPrB/o1kuJ/Elh7R/A==' }; // { salt, iv, ct } — set up by Juni/Azure once workflow-scope PAT exists
 
 async function decryptExtrapolatePAT(password) {
   const enc = new TextEncoder();
