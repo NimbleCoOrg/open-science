@@ -942,6 +942,13 @@ function assignCluster() {
   if (selectedIds.size === 0) return;
   if (!clusters[name]) clusters[name] = new Set();
   for (const id of selectedIds) clusters[name].add(id);
+  // If this is a new category name, add it to ASSIGNED_COLOURS so it appears as a quick-assign button
+  if (!ASSIGNED_COLOURS[name]) {
+    // Generate a colour from a palette for the new category
+    const palette = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#42d4f4','#f032e6','#469990','#9A6324','#800000','#809fff','#000075','#a9a9a9','#aaffc3','#ffd8b1'];
+    const existingCount = Object.keys(ASSIGNED_COLOURS).length;
+    ASSIGNED_COLOURS[name] = palette[existingCount % palette.length];
+  }
   document.getElementById('clusterName').value = '';
   updateClusterList();
   requestRender();
