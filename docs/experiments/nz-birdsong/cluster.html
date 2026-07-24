@@ -105,6 +105,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     </div>
     <div class="btn-row">
       <button class="btn" onclick="exportClusters()">Export Clusters</button>
+      <button class="btn secondary" onclick="autoClusterFromAnnotations()" title="Auto-populate clusters from existing ground-truth labels" style="font-size:10px">Auto-Cluster from Annotations</button>
       <button class="btn secondary" onclick="clearSelection()">Clear Selection</button>
       <button class="btn secondary" onclick="unexcludeAll()" style="border-colour:var(--reject)">Restore excluded</button>
     </div>
@@ -194,6 +195,22 @@ let SP = SPECIES_CFG.bellbird;
 let familyColourMap = {};
 let regionColourMap = {};
 let hiddenFamilies = new Set();
+let hiddenDatasets = new Set(); // dataset keys (koe, tirth, xc) that are hidden
+
+function getPointDatasetKey(p) {
+  // Returns the dataset key for a point, or null if no dataset match
+  for (const ds of (SP.datasets || [])) {
+    if (ds.match(p)) return ds.key;
+  }
+  return null;
+}
+
+function isPointHidden(p) {
+  if (hiddenFamilies.has(p.family) || excludedIds.has(p.id)) return true;
+  const dsKey = getPointDatasetKey(p);
+  if (dsKey && hiddenDatasets.has(dsKey)) return true;
+  return false;
+}
 let selectedIds = new Set();
 let clusters = {}; // name -> Set of ids
 let panels = [];
@@ -378,7 +395,7 @@ class Panel {
     // Find nearest point within 10px
     let bestDist = 10, bestPt = null;
     for (const p of DATA.points) {
-      if (hiddenFamilies.has(p.family) || excludedIds.has(p.id)) continue;
+      if (isPointHidden(p)) continue;
       const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
       const d = Math.sqrt((sx-pos[0])**2 + (sy-pos[1])**2);
       if (d < bestDist) { bestDist = d; bestPt = p; }
@@ -393,7 +410,7 @@ class Panel {
   _finishLasso() {
     const newSel = new Set();
     for (const p of DATA.points) {
-      if (hiddenFamilies.has(p.family)) continue;
+      if (isPointHidden(p)) continue;
       const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
       if (pointInPolygon(sx, sy, this.lasso)) {
         newSel.add(p.id);
@@ -444,7 +461,7 @@ class Panel {
     const selBuckets = {};
     const exclPts = [];
     for (const p of pts) {
-      if (hiddenFamilies.has(p.family)) continue;
+      if (isPointHidden(p)) continue;
       const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
       if (sx < margin-5 || sx > w-margin+5 || sy < margin-5 || sy > h-margin+5) continue;
       if (excludedIds.has(p.id)) {
@@ -491,7 +508,7 @@ class Panel {
     for (const [cname, cids] of Object.entries(clusters)) {
       for (const id of cids) {
         const p = DATA.pointMap[id];
-        if (!p || hiddenFamilies.has(p.family)) continue;
+        if (!p || isPointHidden(p)) continue;
         const [sx, sy] = this.dataToScreen(p.pc[this.pcX], p.pc[this.pcY]);
         if (sx < margin-5 || sx > w-margin+5 || sy < margin-5 || sy > h-margin+5) continue;
         ctx.strokeStyle = '#fff';
@@ -532,7 +549,7 @@ class Panel {
     }
 
     // Highlight hovered/clicked point
-    if (hoveredPoint && !hiddenFamilies.has(hoveredPoint.family) && !excludedIds.has(hoveredPoint.id)) {
+    if (hoveredPoint && !isPointHidden(hoveredPoint)) {
       const [sx, sy] = this.dataToScreen(hoveredPoint.pc[this.pcX], hoveredPoint.pc[this.pcY]);
       if (sx >= margin-5 && sx <= w-margin+5 && sy >= margin-5 && sy <= h-margin+5) {
         ctx.strokeStyle = '#fff';
@@ -777,6 +794,42 @@ function buildLegend() {
     el.appendChild(item2);
   } else {
     // Original family colours
+    // First, dataset toggles (if any datasets exist)
+    if ((SP.datasets || []).length > 0) {
+      const dsHeader = document.createElement('div');
+      dsHeader.style.cssText = 'font-size:9px;color:var(--text2);margin-top:4px;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px';
+      dsHeader.textContent = 'Datasets';
+      el.appendChild(dsHeader);
+      for (const ds of (SP.datasets || [])) {
+        const dsPts = DATA.points.filter(p => ds.match(p));
+        const item = document.createElement('div');
+        item.className = 'legend-item' + (hiddenDatasets.has(ds.key) ? ' hidden' : '');
+        const dsCol = Object.values(ds.ownCategories || {})[0] || '#888';
+        item.innerHTML = `<div class="legend-swatch" style="background:${dsCol}"></div><span class="legend-label">${ds.label}</span><span class="legend-count">${dsPts.length}</span>`;
+        item.onclick = () => {
+          if (hiddenDatasets.has(ds.key)) hiddenDatasets.delete(ds.key);
+          else hiddenDatasets.add(ds.key);
+          updateLegend();
+          requestRender();
+        };
+        el.appendChild(item);
+      }
+      // Also add XC toggle if there are XC points
+      const xcPts = DATA.points.filter(p => !getPointDatasetKey(p));
+      if (xcPts.length > 0) {
+        const item = document.createElement('div');
+        item.className = 'legend-item' + (hiddenDatasets.has('xc') ? ' hidden' : '');
+        item.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Xeno-canto</span><span class="legend-count">${xcPts.length}</span>`;
+        item.onclick = () => {
+          if (hiddenDatasets.has('xc')) hiddenDatasets.delete('xc');
+          else hiddenDatasets.add('xc');
+          updateLegend();
+          requestRender();
+        };
+        el.appendChild(item);
+      }
+    }
+    // Family colours
     for (let i = 0; i < DATA.families.length; i++) {
       const fam = DATA.families[i];
       const col = familyColourMap[fam];
@@ -974,6 +1027,35 @@ function clearSelection() {
   selectedIds.clear();
   updateSelectionInfo();
   requestRender();
+}
+
+function autoClusterFromAnnotations() {
+  // Auto-populate clusters from existing ground-truth assigned_category labels.
+  let count = 0;
+  const gtPoints = DATA.points.filter(p =>
+    p.assigned_category &&
+    p.assigned_category !== 'unassigned' &&
+    p.assigned_category !== '' &&
+    p.assigned_category !== null
+  );
+  if (gtPoints.length === 0) {
+    alert('No ground-truth annotated points found in this dataset.\n\nAuto-cluster works when points already have assigned_category labels with confidence=ground_truth (e.g. Koe manual annotations).');
+    return;
+  }
+  clusters = {};
+  for (const p of gtPoints) {
+    const cat = p.assigned_category;
+    if (!clusters[cat]) clusters[cat] = new Set();
+    clusters[cat].add(p.id);
+    if (!ASSIGNED_COLOURS[cat]) {
+      const palette = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#42d4f4','#f032e6','#469990','#9A6324'];
+      ASSIGNED_COLOURS[cat] = palette[Object.keys(ASSIGNED_COLOURS).length % palette.length];
+    }
+    count++;
+  }
+  updateClusterList();
+  requestRender();
+  alert('Auto-clustered ' + count + ' ground-truth points into ' + Object.keys(clusters).length + ' categories.\n\nYou can now hit Extrapolate to classify the remaining points.');
 }
 
 function exportClusters() {
@@ -1196,6 +1278,7 @@ function switchSpecies(species) {
   panels = [];
   familyColourMap = {};
   hiddenFamilies = new Set();
+  hiddenDatasets = new Set();
   selectedIds = new Set();
   clusters = {};
   excludedIds = new Set();
