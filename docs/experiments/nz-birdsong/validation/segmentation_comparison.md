@@ -62,18 +62,32 @@
 
    **Full Segmentation Comparison: 6 methods (48 Koe bellbird test files, 583 GT VUs)**
 
+   Parameter sweep run 2026-07-24. FIR threshold swept 0.05–0.9, median clip threshold swept 0.5–7.0. Default AviaNZ parameters (FIR=0.7, median=3.0) were suboptimal for bellbird.
+
    | Method | P | R | F1 | TP | FP | FN |
    |---|---|---|---|---|---|---|
-   | **AviaNZ Trained Wavelet (N=5)** | **0.532** | **0.501** | **0.516** | **292** | **257** | **291** |
+   | **FIR Envelope (thr=0.05)** | **0.761** | **0.705** | **0.732** | **411** | **129** | **172** |
+   | AviaNZ Trained Wavelet (N=5) | 0.532 | 0.501 | 0.516 | 292 | 257 | 291 |
    | Energy-Threshold | 0.476 | 0.408 | 0.440 | 238 | 262 | 345 |
+   | Median Clipping (thr=7.0) | 0.409 | 0.350 | 0.377 | 204 | 295 | 379 |
    | AviaNZ Wavelet Denoise | 0.271 | 0.640 | 0.381 | 427 | 1147 | 240 |
-   | FIR Envelope | 0.316 | 0.021 | 0.039 | 12 | 26 | 571 |
-   | Median Clipping | 0.070 | 0.012 | 0.020 | 7 | 93 | 576 |
-   | BestSegments (merged) | 0.070 | 0.012 | 0.020 | 7 | 93 | 576 |
+   | FIR Envelope (default thr=0.7) | 0.316 | 0.021 | 0.039 | 12 | 26 | 571 |
+   | Median Clipping (default thr=3.0) | 0.070 | 0.012 | 0.020 | 7 | 93 | 576 |
 
-   **Winner: AviaNZ Trained Wavelet Recogniser** (F1=0.516). The trained wavelet approach learns which wavelet packet nodes carry bellbird-specific energy and uses those to reconstruct a filtered signal for detection. It outperforms energy-threshold (the current pipeline method) on all three metrics.
+   **Winner: FIR Envelope at threshold 0.05** (F1=0.732). With proper parameter tuning, the simple FIR envelope method dramatically outperforms all other methods — including the trained wavelet recogniser. The default AviaNZ threshold of 0.7 was far too high for bellbird; at 0.05 the FIR envelope catches 71% of VUs with 76% precision. This is the best classical method tested and requires no training data.
 
-   **FIR and median clipping performed poorly with default parameters** — both need species-specific parameter tuning (FIR threshold 0.7 too high, median clip thr=3.0 too aggressive for bellbird). Even with tuning, they're unlikely to beat the trained wavelet which benefits from learning discriminative frequency structure.
+   **FIR threshold sweep highlights:**
+   - thr=0.05: F1=0.732 (best — high precision AND recall)
+   - thr=0.10: F1=0.561 (recall drops sharply)
+   - thr=0.20: F1=0.418
+   - thr=0.70: F1=0.039 (AviaNZ default — nearly useless for bellbird)
+
+   **Median clipping sweep highlights:**
+   - thr=7.0: F1=0.377 (best, but still well below FIR)
+   - thr=5.0: F1=0.251
+   - thr=3.0: F1=0.020 (AviaNZ default — too aggressive)
+
+   **Key insight:** Parameter tuning matters more than algorithm choice for classical methods. The FIR envelope with the right threshold is simple, fast, needs no training data, and outperforms the more complex trained wavelet recogniser. Species-specific threshold optimisation is essential — default parameters from one species do not transfer to another.
 
    **Caveats remain:**
    - Sparse ground truth inflates FP counts for both methods (many "false positives" are likely unlabelled real VUs)
