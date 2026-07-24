@@ -44,7 +44,7 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 .cluster-item { display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid var(--border); align-items:center; }
 .cluster-item .cl-name { color:var(--match); }
 .cluster-item .cl-remove { color:var(--reject); cursor:pointer; font-size:13px; }
-.btn-row { display:flex; gap:6px; }
+.btn-row { display:flex; gap:6px; flex-wrap:wrap; }
 .btn.secondary { background:var(--surface2); border:1px solid var(--border); }
 .btn.disabled { opacity:0.5; cursor:not-allowed; }
 #status { color:var(--text2); font-size:10px; padding:4px 8px; }
@@ -644,6 +644,7 @@ function buildColourByButtons() {
     b.className = 'btn secondary';
     b.id = id;
     b.style.fontSize = '10px';
+    b.style.whiteSpace = 'nowrap';
     b.textContent = label;
     b.onclick = () => setColourMode(mode);
     if (disabled) { b.classList.add('disabled'); b.disabled = true; }
@@ -668,7 +669,7 @@ function updateColourButtonStates() {
       (btn.id === 'colourBySource' && colourMode === 'source') ||
       (btn.id === 'colourByRegion' && colourMode === 'region') ||
       (btn.id === 'colourByConf' && colourMode === 'confidence') ||
-      (btn.id.startsWith('colourByDataset_') && colourMode === 'dataset:' + btn.id.slice(17));
+      (btn.id.startsWith('colourByDataset_') && colourMode === 'dataset:' + btn.id.slice(16));
     btn.className = isActive ? 'btn' : 'btn secondary';
   }
 }
