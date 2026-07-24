@@ -105,7 +105,16 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     </div>
     <div class="btn-row">
       <button class="btn" onclick="exportClusters()">Export Clusters</button>
-      <button class="btn secondary" onclick="autoClusterFromAnnotations()" title="Auto-populate clusters from existing ground-truth labels" style="font-size:10px">Auto-Cluster from Annotations</button>
+      <div style="position:relative;display:inline-block">
+        <button class="btn secondary" onclick="toggleClusterDropdown()" style="font-size:10px">Auto-Cluster from &#9662;</button>
+        <div id="clusterDropdown" style="display:none;position:absolute;top:100%;left:0;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px;min-width:180px;z-index:100">
+          <div style="font-size:9px;color:var(--text2);padding:2px 4px;text-transform:uppercase;letter-spacing:0.5px">Ground-truth datasets</div>
+          <div id="clusterDropdownDatasets"></div>
+          <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+          <div style="font-size:9px;color:var(--text2);padding:2px 4px;text-transform:uppercase;letter-spacing:0.5px">Manual clusters</div>
+          <div id="clusterDropdownManual" style="padding:4px;cursor:pointer;font-size:11px" onclick="autoClusterFromManual()">From drawn clusters <span style="color:var(--text2);font-size:9px">(use what you've circled)</span></div>
+        </div>
+      </div>
       <button class="btn secondary" onclick="clearSelection()">Clear Selection</button>
       <button class="btn secondary" onclick="unexcludeAll()" style="border-colour:var(--reject)">Restore excluded</button>
     </div>
@@ -651,7 +660,7 @@ function buildColourByButtons() {
     el.appendChild(b);
     return b;
   };
-  mkBtn('colourByAssigned', 'assigned', 'Create', false);
+  mkBtn('colourByAssigned', 'assigned', 'Manual', false);
   for (const ds of (SP.datasets || [])) {
     mkBtn('colourByDataset_' + ds.key, 'dataset:' + ds.key, ds.label, false);
   }
@@ -1030,21 +1039,42 @@ function clearSelection() {
   requestRender();
 }
 
-function autoClusterFromAnnotations() {
-  // Auto-populate clusters from existing ground-truth assigned_category labels.
-  let count = 0;
-  const gtPoints = DATA.points.filter(p =>
-    p.assigned_category &&
-    p.assigned_category !== 'unassigned' &&
-    p.assigned_category !== '' &&
-    p.assigned_category !== null
-  );
-  if (gtPoints.length === 0) {
-    alert('No ground-truth annotated points found in this dataset.\n\nAuto-cluster works when points already have assigned_category labels with confidence=ground_truth (e.g. Koe manual annotations).');
+function toggleClusterDropdown() {
+  const dd = document.getElementById('clusterDropdown');
+  if (dd.style.display === 'none') {
+    // Build dataset options
+    const dsContainer = document.getElementById('clusterDropdownDatasets');
+    dsContainer.innerHTML = '';
+    for (const ds of (SP.datasets || [])) {
+      const dsPts = DATA.points.filter(p => ds.match(p));
+      const gtPts = dsPts.filter(p => p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null);
+      const item = document.createElement('div');
+      item.style.cssText = 'padding:4px;cursor:pointer;font-size:11px';
+      item.innerHTML = ds.label + ' <span style="color:var(--text2);font-size:9px">(' + gtPts.length + ' labelled points)</span>';
+      item.onclick = () => { autoClusterFromDataset(ds.key); };
+      dsContainer.appendChild(item);
+    }
+    // Also show XC if it has categories (shouldn't normally, but just in case)
+    if ((SP.datasets || []).length === 0) {
+      dsContainer.innerHTML = '<div style="padding:4px;color:var(--text2);font-size:10px">No annotated datasets for this species</div>';
+    }
+    dd.style.display = 'block';
+  } else {
+    dd.style.display = 'none';
+  }
+}
+
+function autoClusterFromDataset(dsKey) {
+  document.getElementById('clusterDropdown').style.display = 'none';
+  const ds = (SP.datasets || []).find(d => d.key === dsKey);
+  if (!ds) return;
+  const dsPts = DATA.points.filter(p => ds.match(p) && p.assigned_category && p.assigned_category !== 'unassigned' && p.assigned_category !== '' && p.assigned_category !== null);
+  if (dsPts.length === 0) {
+    alert('No labelled points found in ' + ds.label + '.');
     return;
   }
   clusters = {};
-  for (const p of gtPoints) {
+  for (const p of dsPts) {
     const cat = p.assigned_category;
     if (!clusters[cat]) clusters[cat] = new Set();
     clusters[cat].add(p.id);
@@ -1052,11 +1082,22 @@ function autoClusterFromAnnotations() {
       const palette = ['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#42d4f4','#f032e6','#469990','#9A6324'];
       ASSIGNED_COLOURS[cat] = palette[Object.keys(ASSIGNED_COLOURS).length % palette.length];
     }
-    count++;
   }
   updateClusterList();
   requestRender();
-  alert('Auto-clustered ' + count + ' ground-truth points into ' + Object.keys(clusters).length + ' categories.\n\nYou can now hit Extrapolate to classify the remaining points.');
+  alert('Auto-clustered ' + dsPts.length + ' points from ' + ds.label + ' into ' + Object.keys(clusters).length + ' categories.\n\nYou can now hit Extrapolate to classify the remaining points.');
+}
+
+function autoClusterFromManual() {
+  document.getElementById('clusterDropdown').style.display = 'none';
+  // Use whatever clusters have been manually drawn via lasso + assign
+  if (Object.keys(clusters).length === 0) {
+    alert('No manual clusters yet. Draw some clusters first (shift+drag to lasso, then assign a name).');
+    return;
+  }
+  // Already populated — just confirm
+  const n = Object.values(clusters).reduce((a, ids) => a + ids.size, 0);
+  alert('Using ' + Object.keys(clusters).length + ' manual clusters with ' + n + ' points.\n\nHit Extrapolate to classify the remaining points.');
 }
 
 function exportClusters() {
