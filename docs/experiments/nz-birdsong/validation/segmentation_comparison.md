@@ -60,18 +60,20 @@
    - 5 training examples is sufficient — same nodes selected as N=10
    - Script: `/opt/data/train_avianz_recogniser.py`
 
-   **Results: Energy-Threshold vs AviaNZ Trained Wavelet Recogniser (48 Koe bellbird test files, 583 GT VUs)**
+   **Full Segmentation Comparison: 6 methods (48 Koe bellbird test files, 583 GT VUs)**
 
-   | Metric | Energy-Threshold | AviaNZ Trained (N=5) | AviaNZ Trained (N=10) |
-   |---|---|---|---|
-   | Precision | 0.476 | **0.532** | 0.532 |
-   | Recall | 0.408 | **0.501** | 0.501 |
-   | F1 | 0.440 | **0.516** | 0.516 |
-   | TP | 238 | 292 | 292 |
-   | FP | 262 | 257 | 257 |
-   | FN | 345 | 291 | 291 |
+   | Method | P | R | F1 | TP | FP | FN |
+   |---|---|---|---|---|---|---|
+   | **AviaNZ Trained Wavelet (N=5)** | **0.532** | **0.501** | **0.516** | **292** | **257** | **291** |
+   | Energy-Threshold | 0.476 | 0.408 | 0.440 | 238 | 262 | 345 |
+   | AviaNZ Wavelet Denoise | 0.271 | 0.640 | 0.381 | 427 | 1147 | 240 |
+   | FIR Envelope | 0.316 | 0.021 | 0.039 | 12 | 26 | 571 |
+   | Median Clipping | 0.070 | 0.012 | 0.020 | 7 | 93 | 576 |
+   | BestSegments (merged) | 0.070 | 0.012 | 0.020 | 7 | 93 | 576 |
 
-   **Key finding:** The trained AviaNZ wavelet recogniser outperforms our energy-threshold method on all three metrics (F1: 0.516 vs 0.440). The wavelet packet reconstruction from learned discriminative nodes captures bellbird vocalisation structure better than simple energy thresholding. 5 training examples is sufficient for node selection.
+   **Winner: AviaNZ Trained Wavelet Recogniser** (F1=0.516). The trained wavelet approach learns which wavelet packet nodes carry bellbird-specific energy and uses those to reconstruct a filtered signal for detection. It outperforms energy-threshold (the current pipeline method) on all three metrics.
+
+   **FIR and median clipping performed poorly with default parameters** — both need species-specific parameter tuning (FIR threshold 0.7 too high, median clip thr=3.0 too aggressive for bellbird). Even with tuning, they're unlikely to beat the trained wavelet which benefits from learning discriminative frequency structure.
 
    **Caveats remain:**
    - Sparse ground truth inflates FP counts for both methods (many "false positives" are likely unlabelled real VUs)
