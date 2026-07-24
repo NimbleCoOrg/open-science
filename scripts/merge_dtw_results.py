@@ -23,9 +23,11 @@ if len(sys.argv) < 2:
     print(__doc__); sys.exit(1)
 
 SPECIES = sys.argv[1].lower()
-BASE = os.path.join(os.path.dirname(__file__), '..', 'docs', 'experiments', 'nz-birdsong', 'annotation')
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+BASE = os.path.join(REPO_ROOT, 'docs', 'experiments', 'nz-birdsong', 'annotation')
 PCA_PATH = os.path.join(BASE, f'{SPECIES}_pca_data.json')
-LABELS_PATH = f'/opt/data/template_matching/{SPECIES}_v2/combined_labels.json'
+LABELS_PATH = os.path.join(REPO_ROOT, 'template_matching', f'{SPECIES}_v2', 'combined_labels.json')
 
 with open(PCA_PATH) as f:
     pca = json.load(f)

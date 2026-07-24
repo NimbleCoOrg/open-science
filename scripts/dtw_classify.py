@@ -34,10 +34,13 @@ if len(sys.argv) < 3:
 SPECIES = sys.argv[1].lower()
 CLUSTERS_FILE = sys.argv[2]
 
-BASE = '/opt/data/open-science/docs/experiments/nz-birdsong/annotation'
-PCA_DATA = f'{BASE}/{SPECIES}_pca_data.json' if SPECIES != 'bellbird' else f'{BASE}/bellbird_pca_data.json'
-CLIPS_DIR = f'{BASE}/{SPECIES}'
-OUTPUT_DIR = f'/opt/data/template_matching/{SPECIES}_v2'
+# Use repo-relative paths so the script works both locally and in GitHub Actions
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+BASE = os.path.join(REPO_ROOT, 'docs', 'experiments', 'nz-birdsong', 'annotation')
+PCA_DATA = os.path.join(BASE, f'{SPECIES}_pca_data.json') if SPECIES != 'bellbird' else os.path.join(BASE, 'bellbird_pca_data.json')
+CLIPS_DIR = os.path.join(BASE, SPECIES)
+OUTPUT_DIR = os.path.join(REPO_ROOT, 'template_matching', f'{SPECIES}_v2')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 SR = 22050
