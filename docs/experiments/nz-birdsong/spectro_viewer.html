@@ -5,22 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spectrogram Viewer</title>
 <style>
-  body { margin:0; background:#1a1a1a; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:system-ui,sans-serif }
-  img { max-width:90vw; max-height:80vh; image-rendering:pixelated; border:2px solid #444; border-radius:8px }
-  #info { color:#ccc; font-size:14px; margin:12px 0; text-align:center }
+  * { box-sizing:border-box }
+  body { margin:0; background:#1a1a1a; overflow:hidden; font-family:system-ui,sans-serif; user-select:none }
+  #info { position:fixed; top:0; left:0; right:0; color:#ccc; font-size:13px; padding:8px 16px; background:rgba(0,0,0,0.7); z-index:10; text-align:center }
   #info b { color:#fff }
+  #info .hint { color:#888; font-size:11px; margin-left:12px }
+  #controls { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:10 }
+  #controls button { background:#333; color:#fff; border:1px solid #555; border-radius:6px; width:40px; height:40px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center }
+  #controls button:hover { background:#555 }
+  #zoomLevel { position:fixed; bottom:20px; right:16px; color:#aaa; font-size:12px; z-index:10; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:4px }
+  #container { width:100vw; height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:grab }
+  #container.dragging { cursor:grabbing }
+  #spectro { transform-origin:center; transition:transform 0.1s ease-out; image-rendering:pixelated; border:1px solid #333 }
+  #spectro.no-transition { transition:none }
 </style>
 </head>
 <body>
   <div id="info"></div>
-  <img id="spectro">
+  <div id="container">
+    <img id="spectro" class="no-transition">
+  </div>
+  <div id="controls">
+    <button onclick="zoomBy(1.5)" title="Zoom in">+</button>
+    <button onclick="zoomBy(0.67)" title="Zoom out">−</button>
+    <button onclick="resetZoom()" title="Reset">⤢</button>
+  </div>
+  <div id="zoomLevel">1x</div>
   <script>
     const params = new URLSearchParams(location.search);
     const src = params.get('src');
     const title = params.get('title') || 'Spectrogram';
-    document.getElementById('spectro').src = src;
-    document.getElementById('info').innerHTML = `<b>${title}</b><br><span style="font-size:12px;color:#888">${src}</span>`;
+    const img = document.getElementById('spectro');
+    const container = document.getElementById('container');
+    const zoomLabel = document.getElementById('zoomLevel');
+
+    img.src = src;
+    document.getElementById('info').innerHTML = `<b>${title}</b><span class="hint">scroll to zoom · drag to pan · double-click to reset</span>`;
     document.title = title;
+
+    let zoom = 1;
+    let panX = 0, panY = 0;
+    let isDragging = false, dragStart = null;
+
+    function updateTransform() {
+      img.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+      zoomLabel.textContent = zoom.toFixed(1) + 'x';
+    }
+
+    function zoomBy(factor) {
+      zoom = Math.max(0.5, Math.min(50, zoom * factor));
+      updateTransform();
+    }
+
+    function resetZoom() {
+      zoom = 1; panX = 0; panY = 0;
+      updateTransform();
+    }
+
+    // Scroll to zoom
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.2 : 0.83;
+      zoomBy(factor);
+    }, { passive: false });
+
+    // Double-click to reset
+    container.addEventListener('dblclick', resetZoom);
+
+    // Drag to pan
+    container.addEventListener('mousedown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      isDragging = true;
+      dragStart = { x: e.clientX - panX, y: e.clientY - panY };
+      container.classList.add('dragging');
+      img.classList.add('no-transition');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      panX = e.clientX - dragStart.x;
+      panY = e.clientY - dragStart.y;
+      updateTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      container.classList.remove('dragging');
+    });
+
+    // Keyboard zoom
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '+' || e.key === '=') zoomBy(1.5);
+      else if (e.key === '-') zoomBy(0.67);
+      else if (e.key === '0' || e.key === 'Escape') resetZoom();
+    });
+
+    // Start at 3x so the small image is actually visible
+    img.onload = () => {
+      zoom = 3;
+      updateTransform();
+    };
   </script>
 </body>
 </html>
