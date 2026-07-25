@@ -1087,12 +1087,15 @@ function autoClusterFromDataset(dsKey) {
   }
   clusters = {};
   for (const p of labelled) {
-    // Prefer assigned_category, fall back to family
-    let cat = p.assigned_category;
-    if (!cat || cat === 'unassigned' || cat === '' || cat === null || cat === '?') {
-      cat = p.family;
+    // For ground-truth points, family is the authoritative label
+    // (assigned_category can be corrupted by DTW test runs)
+    let cat;
+    if (p.assignment_confidence === 'ground_truth' || p.assignment_source === 'manual' || p.assignment_source === 'tirth') {
+      cat = p.family || p.assigned_category;
+    } else {
+      cat = p.assigned_category || p.family;
     }
-    if (!cat || cat === '?' || cat === '') continue;
+    if (!cat || cat === '?' || cat === '' || cat === 'unassigned') continue;
     if (!clusters[cat]) clusters[cat] = new Set();
     clusters[cat].add(p.id);
     if (!ASSIGNED_COLOURS[cat]) {
