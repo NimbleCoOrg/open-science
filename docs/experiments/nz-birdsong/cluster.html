@@ -950,7 +950,7 @@ function showPointDetail(p) {
   // Try to find matching spectrogram in annotation/bellbird/ directory
   const spectroUrl = `${SP.assetDir}/${p.id}.png`;
   spectroHtml = `<img src="${spectroUrl}" style="width:100%;border-radius:4px;border:1px solid var(--border);margin:4px 0;cursor:pointer" 
-    onerror="this.style.display='none'" onclick="window.open('${spectroUrl}','_blank')">`;
+    onerror="this.style.display='none'" onclick="window.open('spectro_viewer.html?src=${encodeURIComponent(spectroUrl)}&title=${encodeURIComponent(p.id + ' (' + (p.family||'?') + ')')}', '_blank')">`;
   
   // Audio URL
   const audioUrl = p.wav ? `${SP.assetDir}/${p.id}.wav` : '';
