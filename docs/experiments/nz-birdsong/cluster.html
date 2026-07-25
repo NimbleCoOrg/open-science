@@ -215,7 +215,28 @@ function getPointDatasetKey(p) {
 }
 
 function isPointHidden(p) {
-  if (hiddenFamilies.has(p.family) || excludedIds.has(p.id)) return true;
+  if (excludedIds.has(p.id)) return true;
+  if (colourMode === 'assigned') {
+    // In Manual mode, toggle by assigned_category
+    const cat = p.assigned_category || 'unassigned';
+    if (hiddenFamilies.has(cat)) return true;
+  } else if (colourMode === 'confidence') {
+    if (hiddenFamilies.has(p.assignment_confidence)) return true;
+  } else if (colourMode === 'region') {
+    const region = getPointRegion(p) || 'Unknown / no coordinates';
+    if (hiddenFamilies.has(region)) return true;
+  } else if (colourMode === 'source') {
+    const src = SP.sourceOf ? (SP.sourceOf(p) || 'Unknown') : 'Unknown';
+    if (hiddenFamilies.has(src)) return true;
+  } else if (colourMode.startsWith('dataset:')) {
+    // In dataset mode, toggle by family within that dataset
+    const key = colourMode.slice(8);
+    const ds = (SP.datasets || []).find(d => d.key === key);
+    if (ds && ds.match(p) && hiddenFamilies.has(p.family)) return true;
+  } else {
+    // Default: toggle by family
+    if (hiddenFamilies.has(p.family)) return true;
+  }
   const dsKey = getPointDatasetKey(p);
   if (dsKey && hiddenDatasets.has(dsKey)) return true;
   return false;
@@ -632,6 +653,7 @@ function getPointColour(p) {
 // tabs, e.g. Koe/Vaishnav] -> Dataset (data-source-of-origin) -> Region -> Confidence
 function setColourMode(mode) {
   colourMode = mode;
+  hiddenFamilies = new Set(); // clear toggles when switching modes (keys differ per mode)
   updateColourButtonStates();
   buildLegend();
   updateReviewVisibility();
@@ -737,8 +759,14 @@ function buildLegend() {
     for (const [cat, cnt] of items) {
       const col = ASSIGNED_COLOURS[cat] || '#888';
       const item = document.createElement('div');
-      item.className = 'legend-item';
+      item.className = 'legend-item' + (hiddenFamilies.has(cat) ? ' hidden' : '');
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
+      item.onclick = () => {
+        if (hiddenFamilies.has(cat)) hiddenFamilies.delete(cat);
+        else hiddenFamilies.add(cat);
+        item.className = 'legend-item' + (hiddenFamilies.has(cat) ? ' hidden' : '');
+        requestRender();
+      };
       el.appendChild(item);
     }
   } else if (colourMode === 'confidence') {
@@ -749,8 +777,14 @@ function buildLegend() {
       if (cnt === 0) continue;
       const col = CONF_COLOURS[conf];
       const item = document.createElement('div');
-      item.className = 'legend-item';
+      item.className = 'legend-item' + (hiddenFamilies.has(conf) ? ' hidden' : '');
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${confLabels[conf]}</span><span class="legend-count">${cnt}</span>`;
+      item.onclick = () => {
+        if (hiddenFamilies.has(conf)) hiddenFamilies.delete(conf);
+        else hiddenFamilies.add(conf);
+        item.className = 'legend-item' + (hiddenFamilies.has(conf) ? ' hidden' : '');
+        requestRender();
+      };
       el.appendChild(item);
     }
   } else if (colourMode === 'region') {
@@ -763,8 +797,14 @@ function buildLegend() {
     for (const [region, cnt] of sorted) {
       const col = region === 'Unknown / no coordinates' ? '#555' : (regionColourMap[region] || '#888');
       const item = document.createElement('div');
-      item.className = 'legend-item';
+      item.className = 'legend-item' + (hiddenFamilies.has(region) ? ' hidden' : '');
       item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${region}</span><span class="legend-count">${cnt}</span>`;
+      item.onclick = () => {
+        if (hiddenFamilies.has(region)) hiddenFamilies.delete(region);
+        else hiddenFamilies.add(region);
+        item.className = 'legend-item' + (hiddenFamilies.has(region) ? ' hidden' : '');
+        requestRender();
+      };
       el.appendChild(item);
     }
   } else if (colourMode === 'source') {
@@ -1393,6 +1433,7 @@ async function init() {
   for (const p of DATA.points) DATA.pointMap[p.id] = p;
 
   // Assign colours
+  ASSIGNED_COLOURS = Object.assign({}, SP.categories);
   for (let i = 0; i < DATA.families.length; i++) {
     familyColourMap[DATA.families[i]] = FAMILY_COLORS[i % FAMILY_COLORS.length];
   }
