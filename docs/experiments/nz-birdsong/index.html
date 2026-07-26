@@ -531,8 +531,8 @@ tr:hover td{background:var(--surface-2)}
 
     <div class="game-area" id="game-area">
       <div class="game-intro" id="game-intro">
-        <p>The tūī is Aotearoa's most complex vocalist — 36,268 syllables across five types, combined in patterns that are 44.2% predictable (v2 classifier; not directly comparable to prior estimates — see Methodology).</p>
-        <p>Can you learn to read its language?</p>
+        <p>Aotearoa's birds each sing their own language. The tūī is the most complex vocalist — 36,268 syllables across five types, combined in patterns that are 44.2% predictable (v2 classifier; not directly comparable to prior estimates — see Methodology).</p>
+        <p>Can you learn to read the language of birds?</p>
         <button class="start-btn" onclick="GameEngine.startLevel(1)">Begin · Level 1</button>
       </div>
       <div id="game-question" class="game-question-card" style="display:none">
@@ -2771,8 +2771,8 @@ const GAME_DATA = {
     "Hawke's Bay":{H:1.40,recordings:4, syllables:1158, type_pcts:{LF:69.9,H:19.1,HF:1.7,R:5.4,T:3.9}}
   },
   level_config: [
-    {name:'Ngā Oro',    mi:'The Sounds',        total:15, pass:12, desc:'Identify the five syllable types by ear'},
     {name:'Ko Wai?',    mi:'Who Is This?',       total:8,  pass:6,  desc:'Recognise the tūī among NZ birds'},
+    {name:'Ngā Oro',    mi:'The Sounds',        total:15, pass:12, desc:'Identify the five syllable types by ear'},
     {name:'E Whai Ake', mi:'What Comes Next?',   total:15, pass:8,  desc:'Predict tūī song transitions'},
     {name:'Waiata',     mi:'Compose the Song',   total:6,  pass:3,  desc:'Build a plausible tūī phrase'},
     {name:'Te Rohe',    mi:'Regional Dialects',  total:8,  pass:5,  desc:'Read tūī dialect geography'}
@@ -2781,7 +2781,7 @@ const GAME_DATA = {
 
 const GameEngine = {
   state: { level: 0, qIndex: 0, score: 0, selected: null, questions: [], answered: false, composing: [] },
-  progress: { levels: {}, version: 1 },
+  progress: { levels: {}, version: 2 },
 
   init() {
     this.loadProgress();
@@ -2854,7 +2854,15 @@ const GameEngine = {
   generateQuestions(level) {
     const questions = [];
     if (level === 1) {
-      // Level 1: Listen & Identify — one question per sample, shuffled
+      // Level 1: Species ID — play a clip, identify species (the intro level)
+      const allClips = [];
+      for (const [sp, clips] of Object.entries(GAME_DATA.species_clips)) {
+        for (const id of clips) allClips.push({ species: sp, audio: `audio/${id}.mp3` });
+      }
+      this.shuffle(allClips);
+      for (let i = 0; i < allClips.length; i++) questions.push({ type: 'species', ...allClips[i] });
+    } else if (level === 2) {
+      // Level 2: Listen & Identify syllables — one question per sample, shuffled
       const types = GAME_DATA.syllable_types;
       for (const type of types) {
         const key = GAME_DATA.sample_keys[type];
@@ -2863,14 +2871,6 @@ const GameEngine = {
         }
       }
       this.shuffle(questions);
-    } else if (level === 2) {
-      // Level 2: Species ID — play a clip, identify species
-      const allClips = [];
-      for (const [sp, clips] of Object.entries(GAME_DATA.species_clips)) {
-        for (const id of clips) allClips.push({ species: sp, audio: `audio/${id}.mp3` });
-      }
-      this.shuffle(allClips);
-      for (let i = 0; i < allClips.length; i++) questions.push({ type: 'species', ...allClips[i] });
     } else if (level === 3) {
       // Level 3: What comes next — given a syllable, predict most likely successor
       const types = GAME_DATA.syllable_types;
