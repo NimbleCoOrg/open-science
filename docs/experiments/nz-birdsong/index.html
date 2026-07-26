@@ -1530,7 +1530,8 @@ const SPECIES_DATA = [
   {en:"New Zealand Kaka",teReo:"Kākā",sci:"Nestor meridionalis",recs:55,qa:25,songs:10,calls:43,xcId:326938,
    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Scrapping_kaka.jpg/500px-Scrapping_kaka.jpg",
    note:"Mostly calls (43) vs songs (10). Different vocal structure from honeyeaters."},
-  {en:"North Island Robin",teReo:"Toutouwai",sci:"Petroica longipes",recs:0,qa:0,songs:0,calls:0,xcId:0,
+  {en:"North Island Robin",teReo:"Toutouwai",sci:"Petroica longipes",recs:126,qa:126,songs:126,calls:0,xcId:0,
+   audioFile:"toutouwai_sample.mp3",
    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/NZ_North_Island_Robin-3.jpg/500px-NZ_North_Island_Robin-3.jpg",
    note:"Donald dataset: 28 individually named birds at Zealandia. 11,879 annotated phrases across 73 types. Open-ended vocal learner — Shaw Lab, VUW."},
   {en:"Kea",teReo:"Kea",sci:"Nestor notabilis",recs:15,qa:8,songs:0,calls:15,xcId:405529,
@@ -1639,7 +1640,7 @@ document.querySelectorAll('.map-filter').forEach(btn => {
 let currentAudio = null;
 let currentBtn = null;
 
-function togglePlay(btn, xcId) {
+function togglePlay(btn, xcId, audioFile) {
   const playIcon = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
   const stopIcon = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
   
@@ -1657,7 +1658,8 @@ function togglePlay(btn, xcId) {
   btn.innerHTML = stopIcon + ' Playing…';
   currentBtn = btn;
   
-  const audio = new Audio(`audio/${xcId}.mp3`);
+  const audioSrc = audioFile ? `audio/${audioFile}` : `audio/${xcId}.mp3`;
+  const audio = new Audio(audioSrc);
   currentAudio = audio;
   
   audio.addEventListener('ended', () => {
@@ -1670,7 +1672,9 @@ function togglePlay(btn, xcId) {
   audio.addEventListener('error', () => {
     btn.classList.remove('playing');
     btn.innerHTML = playIcon + ' Listen';
-    window.open(`https://xeno-canto.org/${xcId}`, '_blank');
+    if (xcId !== 'AUDIOFILE' && xcId > 0) {
+      window.open(`https://xeno-canto.org/${xcId}`, '_blank');
+    }
     currentAudio = null;
     currentBtn = null;
   });
@@ -1696,10 +1700,16 @@ function togglePlay(btn, xcId) {
         <div class="sci">${s.sci}</div>
         <div class="stats">${s.recs} recordings · ${s.qa} A-quality<br>${s.songs} songs · ${s.calls} calls</div>
         <div style="margin-top:.4rem;font-size:.82rem;color:var(--ink-soft);font-style:italic">${s.note}</div>
-        <div class="play-btn" onclick="togglePlay(this, ${s.xcId})">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Listen
-        </div>
-        <a class="xc-link" href="https://xeno-canto.org/${s.xcId}" target="_blank">XC${s.xcId} on Xeno-Canto →</a>
+        ${s.audioFile 
+          ? `<div class="play-btn" onclick="togglePlay(this, 'AUDIOFILE', '${s.audioFile}')">
+               <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Listen
+             </div>`
+          : `<div class="play-btn" onclick="togglePlay(this, ${s.xcId})">
+               <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Listen
+             </div>`}
+        ${s.xcId 
+          ? `<a class="xc-link" href="https://xeno-canto.org/${s.xcId}" target="_blank">XC${s.xcId} on Xeno-Canto →</a>`
+          : `<div style="font-family:var(--mono);font-size:.62rem;color:var(--ink-faint);margin-top:.3rem">Donald dataset · Shaw Lab, VUW</div>`}
       </div>`;
     g.appendChild(card);
   });
