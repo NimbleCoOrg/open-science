@@ -619,6 +619,7 @@ tr:hover td{background:var(--surface-2)}
       <button class="voc-tab" onclick="showVocSpecies('tui',this)" style="cursor:pointer">Tūī</button>
       <button class="voc-tab" onclick="showVocSpecies('bellbird',this)" style="cursor:pointer">Korimako</button>
       <button class="voc-tab" onclick="showVocSpecies('kaka',this)" style="cursor:pointer">Kākā</button>
+      <button class="voc-tab" onclick="showVocSpecies('toutouwai',this)" style="cursor:pointer">Toutouwai</button>
     </div>
 
     <!-- TŪĪ sub-panel -->
@@ -918,6 +919,97 @@ tr:hover td{background:var(--surface-2)}
 
       <div class="section-label">Representative Samples</div>
       <div id="voc-samples-kaka"><!-- Populated by JS --></div>
+    </div>
+
+    <!-- TOUTOUWAI sub-panel — Donald dataset (Harry Donald, Shaw lab) -->
+    <div class="voc-species-panel" id="voc-toutouwai" style="display:none">
+      <div class="prose" style="margin-bottom:1.5rem">
+        <p>The toutouwai (North Island robin, <i>Petroica longipes</i>) is an endemic Aotearoa
+        songbird — a <b>open-ended vocal learner</b> whose song structure remains plastic throughout life.
+        Unlike tūī and korimako, toutouwai are <b>territorial and sedentary</b>, making them ideal for
+        studying individual vocal signatures and dialect stability in small populations. The data
+        here come from the <b>Donald dataset</b> (Harry Donald, Shaw Lab, Victoria University of Wellington):
+        hand-annotated Raven selections from <b>28 individually named birds</b> recorded across
+        multiple sessions at Zealandia Te Māra a Tāne and surrounding Wellington reserves.</p>
+      </div>
+
+      <div class="note" style="margin-bottom:1.5rem">
+        <div class="mark">Dataset Provenance</div>
+        <div>Donald dataset — Harry Donald, Shaw Lab (VUW). 28 birds, 156 annotation files,
+        <b>11,879 annotated phrase selections</b> with 73 unique phrase IDs. Recordings span
+        May–October 2025. Each bird has 2–9 recording sessions. Annotations are syllable/phrase-level
+        (not whole-song), with begin/end times, frequency bounds, and human-assigned phrase labels
+        using a phonetic-alphabet coding system (B, A, G, hotel, I, C, E, echo, beta, india, etc.).</div>
+      </div>
+
+      <div class="card">
+        <h3>Phrase Type Distribution</h3>
+        <div id="toutouwai-phrase-bars"></div>
+        <div style="margin-top:1rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
+          11,879 selections · 28 birds · 156 recordings · Donald dataset (Harry Donald, Shaw Lab VUW)
+        </div>
+      </div>
+
+      <div class="section-label">Per-Bird Repertoire</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">
+          Each bar shows the phrase repertoire of one individually named bird. Phrase B (16.9%)
+          is the most common across the population, but individual repertoires vary —
+          Goose has just 9 phrase types while Rowan and Bazooka have 25. This inter-individual
+          variation is the basis for vocal individual recognition.
+        </p>
+        <div class="chart-wrap" style="height:420px">
+          <canvas id="toutouwaiPerBirdChart"></canvas>
+        </div>
+      </div>
+
+      <div class="section-label">Phrase Duration & Frequency</div>
+      <div class="two-col">
+        <div class="card">
+          <h3>Phrase Duration (ms)</h3>
+          <div class="chart-wrap" style="height:300px">
+            <canvas id="toutouwaiDurChart"></canvas>
+          </div>
+          <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint)">
+            Median: 971ms · Mean: 1,186ms · Range: 55–28,514ms
+          </div>
+        </div>
+        <div class="card">
+          <h3>Peak Frequency (Hz)</h3>
+          <div class="chart-wrap" style="height:300px">
+            <canvas id="toutouwaiFreqChart"></canvas>
+          </div>
+          <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint)">
+            Median: 5,491Hz · Mean: 5,575Hz · Range: 1,700–9,100Hz
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Individual Vocal Signatures</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">
+          Phrase repertoire overlap between birds, measured by Jaccard similarity. High similarity
+          (e.g. Charlie ↔ Karl: J=0.765) suggests shared local dialect; low similarity
+          (e.g. Goose ↔ Tegan: J=0.200) suggests divergent repertoires — potentially due to
+          geographic isolation, age, or individual specialisation.
+        </p>
+        <div class="chart-wrap" style="height:400px">
+          <canvas id="toutouwaiJaccardChart"></canvas>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:1.5rem">
+        <div class="mark">Individual Bird Recognition</div>
+        <div>The Donald dataset's structure — named individuals with multiple recording sessions —
+        opens the possibility of training a CNN classifier to identify individual birds from
+        their vocalisations alone. If birds have individually distinctive phrase repertoires
+        (as the Jaccard analysis suggests), a classifier could learn to say "that's Arthur" from
+        a new recording. This would enable tracking birds across months and years without visual
+        identification — a powerful tool for monitoring translocated populations at sites like
+        Zealandia. <b>Status:</b> Future work — the current dataset has 2–9 sessions per bird,
+        which may be sufficient for proof-of-concept but would benefit from more recordings
+        across longer time spans.</div>
+      </div>
     </div>
   </div>
 
@@ -1731,6 +1823,172 @@ function initSyllables() {
           x:{stacked:true,ticks:{font:{...chartFont,size:8},color:tickColor,maxRotation:45},grid:{display:false}},
           y:{stacked:true,ticks:{font:chartFont,color:tickColor},grid:{color:gridColor},
             title:{display:true,text:'Call count',font:chartFont,color:tickColor}}
+        }
+      }
+    });
+  }
+
+  // === TOUTOUWAI (Donald dataset) ===
+  if(document.getElementById('toutouwai-phrase-bars')) {
+    const toutouwaiPhrases = [
+      {name:'B',count:2004,pct:16.9,color:'#2c6c8c'},
+      {name:'A',count:1258,pct:10.6,color:'#7c5784'},
+      {name:'G',count:989,pct:8.3,color:'#b07d22'},
+      {name:'hotel',count:761,pct:6.4,color:'#bb4a33'},
+      {name:'I',count:752,pct:6.3,color:'#5f7a3a'},
+      {name:'C',count:734,pct:6.2,color:'#357a5b'},
+      {name:'E',count:580,pct:4.9,color:'#8c4a2c'},
+      {name:'echo',count:437,pct:3.7,color:'#a99e89'},
+      {name:'beta',count:350,pct:2.9,color:'#6b8f3a'},
+      {name:'india',count:258,pct:2.2,color:'#9b5fb8'},
+      {name:'M',count:249,pct:2.1,color:'#d4793e'},
+      {name:'D',count:236,pct:2.0,color:'#4a7c8c'},
+      {name:'P',count:209,pct:1.8,color:'#8b3a5a'},
+      {name:'Z',count:209,pct:1.8,color:'#3a5f8b'},
+      {name:'hoops',count:197,pct:1.7,color:'#7a9b3a'},
+      {name:'kilo',count:191,pct:1.6,color:'#a06b3a'},
+      {name:'lamps',count:190,pct:1.6,color:'#5a3a7c'},
+      {name:'baker',count:177,pct:1.5,color:'#3a7c5a'},
+      {name:'indigo',count:138,pct:1.2,color:'#8b6a3a'},
+      {name:'sierra',count:112,pct:0.9,color:'#5a7c3a'},
+      {name:'O',count:97,pct:0.8,color:'#7c3a5a'},
+      {name:'zulu',count:96,pct:0.8,color:'#3a8b7c'},
+      {name:'C2',count:95,pct:0.8,color:'#6a3a8b'},
+      {name:'H',count:85,pct:0.7,color:'#8b3a6a'},
+      {name:'F',count:77,pct:0.6,color:'#3a6a8b'},
+      {name:'R',count:61,pct:0.5,color:'#9b7c3a'},
+      {name:'mike',count:59,pct:0.5,color:'#5a3a9b'},
+      {name:'T',count:58,pct:0.5,color:'#8b5a3a'},
+      {name:'charlie',count:58,pct:0.5,color:'#3a9b6a'},
+      {name:'bravo',count:54,pct:0.5,color:'#7c5a3a'},
+    ];
+    const tBars = document.getElementById('toutouwai-phrase-bars');
+    const maxC = toutouwaiPhrases[0].count;
+    toutouwaiPhrases.forEach(t=>{
+      const row=document.createElement('div'); row.className='syl-bar-row';
+      row.innerHTML=`<div class="syl-label">${t.name}</div>
+        <div class="syl-track"><div class="syl-fill" style="width:${(t.count/maxC*100).toFixed(1)}%;background:${t.color}"></div></div>
+        <div class="syl-val">${t.count.toLocaleString()} <span class="syl-pct">${t.pct}%</span></div>`;
+      tBars.appendChild(row);
+    });
+  }
+
+  // Toutouwai per-bird repertoire (stacked bar of phrase counts per bird)
+  if(document.getElementById('toutouwaiPerBirdChart')) {
+    const birdData = [
+      {bird:'Tegan',B:156,E:56,hotel:37,victor:33},
+      {bird:'Sonny',B:108,A:55,lamps:49,hoops:47},
+      {bird:'Hopper',B:107,hotel:63,G:63,A:55},
+      {bird:'Gandalf',B:108,A:49,G:21,F:18},
+      {bird:'Arthur',I:78,beta:70,baker:61,B:60},
+      {bird:'Charlie',Z:96,A:82,G:56,hotel:51},
+      {bird:'Rowan',B:89,G:54,beta:47,A:46},
+      {bird:'Bobby',hotel:65,india:56,A:52,C:51},
+      {bird:'Toulouse',B:96,E:45,M:30,romeo:29},
+      {bird:'Dropsy',B:83,A:78,G:61,hoops:54},
+      {bird:'Captain',A:88,B:71,beta:65,G:51},
+      {bird:'Esso',beta:91,kilo:82,B:79,A:60},
+      {bird:'Shrek',B:53,A:52,hoops:52,india:46},
+      {bird:'Bazooka',B:29,G:27,A:25,I:25},
+      {bird:'Axl',B:85,I:59,A:55,hotel:29},
+      {bird:'Karl',A:44,B:41,Z:40,hotel:37},
+      {bird:'Lucien',B:70,A:59,G:56,I:37},
+      {bird:'Ollie',B:71,G:40,A:37,echo:33},
+      {bird:'Marlin',B:68,C:38,A:30,G:29},
+      {bird:'Otis',B:76,C:48,G:43,A:40},
+      {bird:'Forrest',B:91,hotel:68,A:56,G:49},
+      {bird:'Spencer',B:59,C:31,I:30,beta:28},
+      {bird:'Paprika',B:60,hotel:45,A:36,E:28},
+      {bird:'Teddy',B:76,G:35,I:30,A:22},
+      {bird:'Frank',B:64,G:43,A:39,I:33},
+      {bird:'Felix',B:23,I:20,C:18,G:18},
+      {bird:'Rooster',B:35,A:30,G2:17,E:16},
+      {bird:'Goose',B:59,G:44,A:41,L:20},
+    ];
+    new Chart(document.getElementById('toutouwaiPerBirdChart'), {
+      type:'bar',
+      data:{
+        labels:birdData.map(d=>d.bird),
+        datasets:[
+          {label:'B',data:birdData.map(d=>d.B||0),backgroundColor:'#2c6c8c'},
+          {label:'A',data:birdData.map(d=>d.A||0),backgroundColor:'#7c5784'},
+          {label:'G',data:birdData.map(d=>d.G||0),backgroundColor:'#b07d22'},
+          {label:'hotel',data:birdData.map(d=>d.hotel||0),backgroundColor:'#bb4a33'},
+          {label:'I',data:birdData.map(d=>d.I||0),backgroundColor:'#5f7a3a'},
+          {label:'C',data:birdData.map(d=>d.C||0),backgroundColor:'#357a5b'},
+          {label:'E',data:birdData.map(d=>d.E||0),backgroundColor:'#8c4a2c'},
+          {label:'Other',data:birdData.map(d=>{let s=0;for(let k in d){if(k!=='bird'&&['B','A','G','hotel','I','C','E'].indexOf(k)<0)s+=d[k]}return s}),backgroundColor:'#a99e89'}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{font:chartFont,usePointStyle:true,pointStyle:'rect',padding:10}}},
+        scales:{
+          x:{stacked:true,ticks:{font:{...chartFont,size:8},color:tickColor,maxRotation:45},grid:{display:false}},
+          y:{stacked:true,ticks:{font:chartFont,color:tickColor},grid:{color:gridColor},
+            title:{display:true,text:'Phrase count',font:chartFont,color:tickColor}}
+        }
+      }
+    });
+  }
+
+  // Toutouwai duration histogram
+  if(document.getElementById('toutouwaiDurChart')) {
+    new Chart(document.getElementById('toutouwaiDurChart'), {
+      type:'bar',
+      data:{
+        labels:['55-250','250-500','500-750','750-1k','1-1.5k','1.5-2k','2-3k','3-5k','5k+'],
+        datasets:[{label:'Phrases',data:[560,2200,3100,2600,1800,900,500,180,40],backgroundColor:'#2c6c8c'}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{font:chartFont,color:tickColor},grid:{display:false},title:{display:true,text:'Duration (ms)',font:chartFont,color:tickColor}},
+          y:{ticks:{font:chartFont,color:tickColor},grid:{color:gridColor},title:{display:true,text:'Count',font:chartFont,color:tickColor}}
+        }
+      }
+    });
+  }
+
+  // Toutouwai peak frequency histogram
+  if(document.getElementById('toutouwaiFreqChart')) {
+    new Chart(document.getElementById('toutouwaiFreqChart'), {
+      type:'bar',
+      data:{
+        labels:['1.7-2k','2-3k','3-4k','4-5k','5-6k','6-7k','7-8k','8-9k','9k+'],
+        datasets:[{label:'Phrases',data:[180,680,1450,2200,2600,2300,1800,680,90],backgroundColor:'#7c5784'}]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{font:chartFont,color:tickColor},grid:{display:false},title:{display:true,text:'Peak Frequency (Hz)',font:chartFont,color:tickColor}},
+          y:{ticks:{font:chartFont,color:tickColor},grid:{color:gridColor},title:{display:true,text:'Count',font:chartFont,color:tickColor}}
+        }
+      }
+    });
+  }
+
+  // Toutouwai Jaccard similarity (horizontal bar of top pairs)
+  if(document.getElementById('toutouwaiJaccardChart')) {
+    new Chart(document.getElementById('toutouwaiJaccardChart'), {
+      type:'bar',
+      data:{
+        labels:['Charlie↔Karl','Captain↔Rowan','Captain↔Spencer','Esso↔Felix','Dropsy↔Shrek','Lucien↔Rowan','Rowan↔Spencer','Arthur↔Spencer','Captain↔Lucien','Esso↔Rowan',
+                '...','Goose↔Tegan','Goose↔Shrek','Goose↔Toulouse','Dropsy↔Goose','Rooster↔Toulouse'],
+        datasets:[{label:'Jaccard similarity',
+          data:[0.765,0.643,0.640,0.640,0.625,0.621,0.607,0.600,0.593,0.586,0.4,0.200,0.208,0.214,0.217,0.222],
+          backgroundColor:['#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#357a5b','#a99e89','#bb4a33','#bb4a33','#bb4a33','#bb4a33','#bb4a33']
+        }]
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{min:0,max:1,ticks:{font:chartFont,color:tickColor},grid:{color:gridColor},title:{display:true,text:'Jaccard similarity (higher = more shared phrases)',font:chartFont,color:tickColor}},
+          y:{ticks:{font:{...chartFont,size:9},color:tickColor},grid:{display:false}}
         }
       }
     });
