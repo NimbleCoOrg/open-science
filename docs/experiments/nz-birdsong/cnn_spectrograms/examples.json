@@ -33,23 +33,23 @@
   },
   {
     "species": "bellbird",
-    "file": "CUV_2016_11_04_WHW010_04_M.VG.CUV_2016_11_04_WHW010A.3Coughs.wav",
-    "image": "cnn_spectrograms/bellbird_CUV_2016_11_04_WHW010_04_M.VG.CUV_2016_11_04_WHW010A.3Coughs.png",
-    "n_gt": 3,
+    "file": "CUV_2016_11_04_DHB029_05_M.EX.CUV_2016_11_04_DHB029A.LongSeqRepClicks.wav",
+    "image": "cnn_spectrograms/bellbird_CUV_2016_11_04_DHB029_05_M.EX.CUV_2016_11_04_DHB029A.LongSeqRepClicks.png",
+    "n_gt": 86,
     "n_pred": 0
   },
   {
     "species": "bellbird",
-    "file": "CUV_2016_11_05_WHW012_02_M.EX.CUV_2016_11_05_WHW012A..wav",
-    "image": "cnn_spectrograms/bellbird_CUV_2016_11_05_WHW012_02_M.EX.CUV_2016_11_05_WHW012A..png",
-    "n_gt": 1,
+    "file": "CUV_2016_11_04_AMH036_01_F.EX.CUV_2016_11_04_AMH036A.3RepeatsStutterTypCuvSong.wav",
+    "image": "cnn_spectrograms/bellbird_CUV_2016_11_04_AMH036_01_F.EX.CUV_2016_11_04_AMH036A.3RepeatsStutterTypCuvSong.png",
+    "n_gt": 51,
     "n_pred": 0
   },
   {
     "species": "bellbird",
-    "file": "CUV_2016_11_06_WHW024_01_F.EX.CUV_2016_11_06_WHW022A.ClearClose.wav",
-    "image": "cnn_spectrograms/bellbird_CUV_2016_11_06_WHW024_01_F.EX.CUV_2016_11_06_WHW022A.ClearClose.png",
-    "n_gt": 18,
+    "file": "CUV_2016_11_04_DHB030_03_M.EX.CUV_2016_11_04_DHB029A.LongSeqRepClicks.wav",
+    "image": "cnn_spectrograms/bellbird_CUV_2016_11_04_DHB030_03_M.EX.CUV_2016_11_04_DHB029A.LongSeqRepClicks.png",
+    "n_gt": 41,
     "n_pred": 0
   }
 ]
