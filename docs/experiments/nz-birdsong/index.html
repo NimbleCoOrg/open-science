@@ -1293,11 +1293,35 @@ tr:hover td{background:var(--surface-2)}
       </ul>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Segmentation Demonstration</h4>
-      <p>The spectrograms below show the CNN's boundary detection on unseen test recordings, with ground-truth
-      annotations overlaid. Coloured bands mark each vocalisation unit found by the model; the category label
-      (when annotated ground truth is available) appears above each unit.</p>
+      <p>The spectrograms below show vocalisation units with ground-truth annotations (top bands) and CNN
+      predicted boundaries (bottom bands). Category labels appear above each unit. These examples come from
+      unseen test recordings — the model has not been trained on them.</p>
       <div id="cnn-spectrograms" style="margin:1.5rem 0">
-        <p style="color:var(--ink-faint);font-size:.9rem"><em>CNN segmentation visualisations will appear here once training completes.</em></p>
+        <div class="card" style="margin-bottom:1rem">
+          <h3>Toutouwai — Felix (Donald dataset)</h3>
+          <img src="cnn_spectrograms/toutouwai_Felix.png" alt="Toutouwai spectrogram with CNN boundaries — Felix"
+               style="width:100%;border-radius:4px;border:1px solid var(--border)">
+          <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
+            10s excerpt · 500–10kHz · Ground truth (top) vs CNN prediction (bottom)
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <h3>Toutouwai — Captain (Donald dataset)</h3>
+          <img src="cnn_spectrograms/toutouwai_Captain.png" alt="Toutouwai spectrogram with CNN boundaries — Captain"
+               style="width:100%;border-radius:4px;border:1px solid var(--border)">
+          <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
+            10s excerpt · 500–10kHz · Ground truth (top) vs CNN prediction (bottom)
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <h3>Korimako — Koe bellbird (studio recording)</h3>
+          <img src="cnn_spectrograms/bellbird_CUV_2016_11_05_WHW012_02_M.EX.CUV_2016_11_05_WHW012A..png" alt="Bellbird spectrogram with CNN boundaries"
+               style="width:100%;border-radius:4px;border:1px solid var(--border)">
+          <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
+            10s excerpt · 500–10kHz · Ground truth (top) vs CNN prediction (bottom)
+          </div>
+        </div>
+        <p style="color:var(--ink-faint);font-size:.9rem"><em>CNN overlays will be added once training completes. Ground-truth annotations shown above.</em></p>
       </div>
 
       <div class="note" style="margin:1.5rem 0">
