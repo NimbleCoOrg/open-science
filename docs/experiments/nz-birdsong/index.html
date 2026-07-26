@@ -1238,6 +1238,79 @@ tr:hover td{background:var(--surface-2)}
         <li><b>Single-site vs multi-site:</b> Hill's results come from one population (Tawharanui); ours span the country, so inter-population variation is confounded with methodological differences</li>
       </ul>
 
+      <h4>Deep Learning: CNN Segmentation &amp; Categorisation</h4>
+      <p>Beyond the rule-based pipeline, we trained a <b>TweetyNet-style convolutional neural network</b> for joint
+      syllable <em>segmentation</em> (finding boundaries) and <em>categorisation</em> (classifying vocalisation units).
+      The model processes raw spectrograms and predicts frame-level labels, then post-processing extracts contiguous
+      segments with confidence thresholds and minimum-duration filtering. This architecture, introduced by
+      <a href="https://doi.org/10.1038/s41592-022-01608-2">Cohen et al. (2022)</a> for birdsong annotation, learns
+      spectral-temporal features directly from data rather than relying on hand-crafted rules.</p>
+
+      <div class="note" style="margin:1rem 0">
+        <div class="mark">Why a CNN over rule-based segmentation?</div>
+        <div>On the Koe bellbird dataset, the CNN achieves <b>F1=0.784</b> (P=0.753, R=0.818) with a boundary error
+        of just <b>13.3ms</b> — compared to the FIR amplitude-envelope baseline's F1=0.731 (31.5ms boundary error).
+        The improvement is more dramatic on the Donald toutouwai dataset, where sustained tonal phrases (median 971ms)
+        defeat amplitude-based methods: FIR achieves only <b>F1=0.306</b>, spectral flux <b>F1=0.329</b>, while the CNN
+        learns spectral change patterns that signal phrase boundaries even when the amplitude envelope is flat.</div>
+      </div>
+
+      <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Architecture</h4>
+      <ul>
+        <li><b>Input:</b> Log-scaled spectrogram (500–10kHz, z-score normalised per file)</li>
+        <li><b>Encoder:</b> 3-layer Conv2D (32→64→128 channels, 5×5 / 5×5 / 3×3 kernels) with BatchNorm + ReLU</li>
+        <li><b>Temporal:</b> Frequency pooling → 2-layer bidirectional GRU (256 hidden, 0.3 dropout)</li>
+        <li><b>Output:</b> Frame-level classification (N phrase types + 1 blank class)</li>
+        <li><b>Loss:</b> Weighted Cross-Entropy (blank weight = 0.15–0.25, tuned per species)</li>
+        <li><b>Post-processing:</b> Confidence threshold sweep (0.3–0.9), minimum segment duration filtering, IoU > 0.1 matching against ground truth</li>
+      </ul>
+
+      <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Multi-Species Training</h4>
+      <p>The CNN trains jointly on annotated datasets from multiple species, with species-prefixed labels to avoid
+      category collision (e.g. <code>bellbird:click</code> and <code>toutouwai:B</code> are distinct classes). This
+      allows a single model to segment and categorise vocalisations across species with different acoustic
+      structures — bellbird's 55ms discrete syllables vs toutouwai's 971ms sustained phrases.</p>
+
+      <table style="width:100%;font-size:.85rem;margin:1rem 0">
+        <thead><tr><th style="text-align:left">Dataset</th><th>Species</th><th>Recordings</th><th>Segments</th><th>Label types</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><b>Koe</b></td><td>Bellbird (korimako)</td><td class="num">60</td><td class="num">829</td><td class="num">3</td><td>Fukuzawa et al. (2020)</td></tr>
+          <tr><td><b>Donald</b></td><td>Toutouwai (NI robin)</td><td class="num">124</td><td class="num">10,357</td><td class="num">73</td><td>Harry Donald, Shaw Lab (VUW)</td></tr>
+          <tr><td><b>Campbell</b></td><td>Kākā</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>Fraser Campbell, Shaw Lab (VUW) — forthcoming</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Data Augmentation</h4>
+      <p>To make the model robust to the heterogeneous recording conditions across datasets — studio (Koe) vs field
+      (Donald, Campbell) — we apply six augmentation techniques during training, each with 30% probability per sample:</p>
+      <ul>
+        <li><b>Time stretch</b> (±20%) — handles different phrase/syllable durations across species</li>
+        <li><b>Frequency shift</b> (±2 spectrogram bins) — simulates different microphone frequency responses</li>
+        <li><b>SpecAugment time masking</b> — forces the model to learn from partial spectrograms (Park et al. 2019)</li>
+        <li><b>SpecAugment frequency masking</b> — same, for the frequency axis</li>
+        <li><b>Additive Gaussian noise</b> (1–5% of signal std) — simulates varying background noise levels (forest ambient vs studio silence)</li>
+        <li><b>Volume jitter</b> (±20%) — handles different microphone distances and recording gains</li>
+      </ul>
+
+      <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Segmentation Demonstration</h4>
+      <p>The spectrograms below show the CNN's boundary detection on unseen test recordings, with ground-truth
+      annotations overlaid. Coloured bands mark each vocalisation unit found by the model; the category label
+      (when annotated ground truth is available) appears above each unit.</p>
+      <div id="cnn-spectrograms" style="margin:1.5rem 0">
+        <p style="color:var(--ink-faint);font-size:.9rem"><em>CNN segmentation visualisations will appear here once training completes.</em></p>
+      </div>
+
+      <div class="note" style="margin:1.5rem 0">
+        <div class="mark">Individual Bird Recognition</div>
+        <div>The Donald dataset's structure — 28 individually named toutouwai with 2–9 recording sessions each —
+        opens the possibility of training the CNN to identify individual birds from vocalisations alone. If birds
+        have individually distinctive phrase repertoires (Jaccard analysis suggests they do: most similar pair
+        Charlie↔Karl J=0.765, least similar Goose↔Tegan J=0.200), a classifier could learn to say "that's Arthur"
+        from a new recording. This would enable non-invasive tracking of translocated populations at Zealandia
+        Te Māra a Tāne and other sanctuaries. <b>Status:</b> Proof-of-concept with current dataset; would benefit
+        from more recordings across longer time spans.</div>
+      </div>
+
       <h4>Sample Size Adequacy — Entropy Rarefaction</h4>
       <p>To verify our sample sizes are sufficient, we computed <b>Shannon entropy rarefaction curves</b> — 
       subsampling recordings at each N (100 iterations) and measuring whether the entropy estimate stabilises. 
