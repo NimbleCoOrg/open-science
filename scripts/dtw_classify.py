@@ -46,6 +46,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 SR = 22050
 N_MFCC = 13
 MIN_MEMBERS = 2          # need >=2 clips to average a template
+# Fewer templates than this and a margin-based confidence tier is
+# meaningless (see the guard below).
+MIN_TEMPLATES_FOR_CONFIDENCE = 2
+# Reported instead of a high/medium/low tier when the tier cannot mean
+# anything. 'high' on a one-class classifier is not a weaker claim, it is
+# a false one.
+SINGLE_TEMPLATE_CONFIDENCE = "unranked"
+# Pins DBA's random initialisation so published labels are regenerable.
+DBA_RANDOM_STATE = 42
 HIGH_MARGIN = 0.03       # confidence thresholds (same calibration as bellbird v2)
 MED_MARGIN = 0.01
 
@@ -106,7 +115,13 @@ for cat_name, cat_ids in clusters.items():
         print(f"  {cat_name}: only {len(mfccs)} valid clip(s) — skipping (need >={MIN_MEMBERS})")
         continue
     dataset = to_time_series_dataset(mfccs)
-    barycenter = dtw_barycenter_averaging(dataset, n_init=1, max_iter=5, verbose=False)
+    # random_state pins DBA's random init: without it the published labels
+    # cannot be regenerated (two runs over the same clusters gave different
+    # score distributions). max_iter was 5 against tslearn's default of 30,
+    # so the barycenters were very likely not converged.
+    barycenter = dtw_barycenter_averaging(dataset, n_init=1, max_iter=30,
+                                          random_state=DBA_RANDOM_STATE,
+                                          verbose=False)
     templates[cat_name] = {'barycenter': barycenter, 'members': valid_ids, 'n_members': len(valid_ids)}
     print(f"  {cat_name}: {len(valid_ids)} clips → template {barycenter.shape}")
 
@@ -114,12 +129,45 @@ if not templates:
     print("\nNo category had >=2 valid clips — cannot build templates. "
           "Cluster a few more points per category and re-export.")
     sys.exit(1)
+
+# A margin-based confidence tier needs a runner-up to take a margin against.
+# With a single template `second` is 0.0, so margin == score and every clip
+# reads as confident — which is exactly how 1796/1797 kaka clips were published
+# in one category with 1265 of them labelled "High confidence". Refuse rather
+# than emit a tier that measures nothing.
+if len(templates) < MIN_TEMPLATES_FOR_CONFIDENCE:
+    print(f"\nERROR: only {len(templates)} template(s) built "
+          f"({', '.join(sorted(templates))}).")
+    print("  Confidence tiers are a margin against the runner-up, so with fewer "
+          f"than {MIN_TEMPLATES_FOR_CONFIDENCE} templates every clip would be "
+          "reported as high-confidence regardless of fit.")
+    print("  Cluster at least one more category by hand and re-export, or run "
+          "with --allow-unranked to emit assignments with "
+          f"confidence='{SINGLE_TEMPLATE_CONFIDENCE}'.")
+    if "--allow-unranked" not in sys.argv:
+        sys.exit(2)
+    print("  --allow-unranked given: continuing with unranked confidence.")
 print(f"\n  Built {len(templates)} templates")
 
 # ------------------------------------------------------------
 print("\n" + "=" * 60)
 print(f"CLASSIFYING {len(unclustered_ids)} UNCLUSTERED CANDIDATES")
 print("=" * 60)
+
+def _confidence_tier(margin, n_templates):
+    """Margin-based tier, or "unranked" when a margin cannot mean anything.
+
+    With a single template the runner-up score is 0.0, so margin == score and
+    every clip would be graded "high" no matter how poorly it fits. Reporting
+    "unranked" is the honest output; it is not a weaker claim than "high", it is
+    the absence of a claim we are not entitled to make.
+    """
+    if n_templates < MIN_TEMPLATES_FOR_CONFIDENCE:
+        return SINGLE_TEMPLATE_CONFIDENCE
+    if margin > HIGH_MARGIN:
+        return 'high'
+    return 'medium' if margin > MED_MARGIN else 'low'
+
 
 results, skipped = [], 0
 for i, pid in enumerate(unclustered_ids):
@@ -144,7 +192,7 @@ for i, pid in enumerate(unclustered_ids):
         'best_score': round(float(best_score), 4),
         'margin': round(float(margin), 4),
         'scores': scores,
-        'confidence': 'high' if margin > HIGH_MARGIN else ('medium' if margin > MED_MARGIN else 'low'),
+        'confidence': _confidence_tier(margin, len(templates)),
     })
     if (i + 1) % 50 == 0:
         print(f"  {i+1}/{len(unclustered_ids)} ({skipped} skipped)...")
@@ -173,7 +221,11 @@ output = {
     'species': SPECIES,
     'n_templates': len(templates),
     'n_classified': len(results),
-    'confidence_counts': {'high': len(high), 'medium': len(medium), 'low': len(low)},
+    'confidence_counts': {'high': len(high), 'medium': len(medium),
+                          'low': len(low),
+                          SINGLE_TEMPLATE_CONFIDENCE: len(
+                              [r for r in results if r['confidence']
+                               == SINGLE_TEMPLATE_CONFIDENCE])},
     'template_members': {k: v['n_members'] for k, v in templates.items()},
     'results': results,
     'manual_clusters': clusters,
