@@ -10,9 +10,6 @@
   --text:#e0ddd4; --text2:#9995aa; --accent:#6c8cff; --match:#4caf50; --reject:#ff5252;
   --mono:'Menlo','Monaco','Courier New',monospace;
 }
-* {
-  --colour: var(--text);
-}
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--bg); color:var(--text); font-family:var(--mono); overflow:hidden; height:100vh; display:flex; flex-direction:column; }
 header { padding:12px 20px; border-bottom:1px solid var(--border); background:var(--surface); }
@@ -32,6 +29,8 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 .sidebar h3 { font-size:12px; color:var(--accent); border-bottom:1px solid var(--border); padding-bottom:4px; }
 .legend-item { display:flex; align-items:center; gap:6px; cursor:pointer; padding:2px 0; user-select:none; }
 .legend-item.hidden { opacity:0.3; }
+.legend-item.empty { opacity:0.45; cursor:default; font-style:italic; }
+.legend-item.empty .legend-label { color:var(--text2); }
 .legend-swatch { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 .legend-label { flex:1; }
 .legend-count { color:var(--text2); }
@@ -74,22 +73,23 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     <div>
       <h3>Colour by</h3>
       <div id="colourByButtons" style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap"></div>
+      <div id="colourByNote" style="font-size:10px;color:var(--text2);margin-bottom:6px;line-height:1.4;display:none"></div>
     </div>
     <div id="reviewSection">
       <h3 id="reviewHeader">Review <span id="reviewCount" style="color:var(--reject);font-size:11px"></span></h3>
       <div style="display:flex;gap:4px;margin-bottom:4px">
         <button class="btn" onclick="reviewPrev()" style="font-size:10px">◀ Prev</button>
         <button class="btn" onclick="reviewNext()" style="font-size:10px">Next ▶</button>
-        <span id="reviewProgress" style="font-size:10px;colour:var(--text2);line-height:28px"></span>
+        <span id="reviewProgress" style="font-size:10px;color:var(--text2);line-height:28px"></span>
       </div>
     </div>
     <div>
-      <h3>Families</h3>
+      <h3 id="legendHeader">Legend</h3>
       <div id="legend"></div>
     </div>
     <div>
       <h3>Selection</h3>
-      <div class="section" id="selInfo"><p style="colour:var(--text2)">Shift+drag to lasso-select points</p></div>
+      <div class="section" id="selInfo"><p style="color:var(--text2)">Shift+drag to lasso-select points</p></div>
     </div>
     <div id="pointDetail" style="display:none">
       <h3>Point Detail</h3>
@@ -116,9 +116,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
         </div>
       </div>
       <button class="btn secondary" onclick="clearSelection()">Clear Selection</button>
-      <button class="btn secondary" onclick="unexcludeAll()" style="border-colour:var(--reject)">Restore excluded</button>
+      <button class="btn secondary" onclick="unexcludeAll()" style="border-color:var(--reject)">Restore excluded</button>
     </div>
-    <div><span id="excludeCount" style="font-size:10px;colour:var(--reject)"></span></div>
+    <div><span id="excludeCount" style="font-size:10px;color:var(--reject)"></span></div>
     <div id="extrapolateSection" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
       <button class="btn" id="extrapolateBtn" onclick="startExtrapolate()" style="width:100%">Extrapolate</button>
       <div id="extrapolatePasswordRow" style="display:none;margin-top:4px;gap:4px;display:flex">
@@ -129,9 +129,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
         <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden">
           <div id="extrapolateProgressBar" style="background:var(--accent);height:100%;width:0%;transition:width 0.4s"></div>
         </div>
-        <div id="extrapolateProgressLabel" style="font-size:10px;colour:var(--text2);margin-top:3px"></div>
+        <div id="extrapolateProgressLabel" style="font-size:10px;color:var(--text2);margin-top:3px"></div>
       </div>
-      <div id="extrapolateStatus" style="font-size:10px;colour:var(--text2);margin-top:4px"></div>
+      <div id="extrapolateStatus" style="font-size:10px;color:var(--text2);margin-top:4px"></div>
     </div>
   </div>
 </div>
@@ -167,7 +167,7 @@ const SOURCE_COLOURS = {
 };
 const SPECIES_CFG = {
   bellbird: { label: 'Korimako (Bellbird)', dataUrl: 'annotation/bellbird_pca_data.json', assetDir: 'annotation/bellbird',
-    categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatspeak':'#fd79a8', 'Stepup':'#74b9ff',
+    categories: { 'Pipe':'#a29bfe', 'Stutter':'#55efc4', 'Flatsqueak':'#fd79a8', 'Stepup':'#74b9ff',
       'Down':'#fab1a0', 'Alarmy':'#00cec9', 'Peaksqueak':'#fdcb6e', 'Cough + Click':'#e17055',
       'Chortle':'#81ecec', 'Cough':'#ff6b6b' },
     // Manually-annotated source datasets, shown as their own colour-by tabs after "Categories".
@@ -214,29 +214,12 @@ function getPointDatasetKey(p) {
   return null;
 }
 
+
 function isPointHidden(p) {
   if (excludedIds.has(p.id)) return true;
-  if (colourMode === 'assigned') {
-    // In Manual mode, toggle by assigned_category
-    const cat = p.assigned_category || 'unassigned';
-    if (hiddenFamilies.has(cat)) return true;
-  } else if (colourMode === 'confidence') {
-    if (hiddenFamilies.has(p.assignment_confidence)) return true;
-  } else if (colourMode === 'region') {
-    const region = getPointRegion(p) || 'Unknown / no coordinates';
-    if (hiddenFamilies.has(region)) return true;
-  } else if (colourMode === 'source') {
-    const src = SP.sourceOf ? (SP.sourceOf(p) || 'Unknown') : 'Unknown';
-    if (hiddenFamilies.has(src)) return true;
-  } else if (colourMode.startsWith('dataset:')) {
-    // In dataset mode, toggle by family within that dataset
-    const key = colourMode.slice(8);
-    const ds = (SP.datasets || []).find(d => d.key === key);
-    if (ds && ds.match(p) && hiddenFamilies.has(p.family)) return true;
-  } else {
-    // Default: toggle by family
-    if (hiddenFamilies.has(p.family)) return true;
-  }
+  // Same bucketing the legend and the colours use, so a legend toggle always
+  // hides exactly the points that legend entry accounts for.
+  if (hiddenFamilies.has(colourScheme().bucketOf(p))) return true;
   const dsKey = getPointDatasetKey(p);
   if (dsKey && hiddenDatasets.has(dsKey)) return true;
   return false;
@@ -626,27 +609,119 @@ function getPointRegion(p) {
   return REGION_MAP[p.recording] || null;
 }
 
-function getPointColour(p) {
-  if (colourMode === 'assigned' && p.assigned_category) {
-    return ASSIGNED_COLOURS[p.assigned_category] || '#888';
-  } else if (colourMode === 'confidence') {
-    return CONF_COLOURS[p.assignment_confidence] || '#555';
-  } else if (colourMode === 'region') {
-    const region = getPointRegion(p);
-    return region ? (regionColourMap[region] || '#888') : '#555';
-  } else if (colourMode === 'source') {
-    const src = SP.sourceOf ? SP.sourceOf(p) : null;
-    return src ? (SOURCE_COLOURS[src] || '#888') : '#555';
-  } else if (colourMode.startsWith('dataset:')) {
-    const key = colourMode.slice(8);
-    const ds = (SP.datasets || []).find(d => d.key === key);
-    // Each dataset tab colours ITS OWN points by their own (original annotator's) category —
-    // e.g. Koe's Pipe/Stutter/etc, or Vaishnav's Croak/Long/Screech/Warble/Whistle — so it can
-    // be visually contrasted against the "Categories" (assigned_category) tab.
-    if (ds && ds.match(p)) return (ds.ownCategories && ds.ownCategories[p.family]) || '#4477AA';
-    return '#33333366'; // dim everything not in this dataset
+// ---------------------------------------------------------------------------
+// SINGLE SOURCE OF TRUTH for the "Colour by" modes.
+//
+// getPointColour(), buildLegend() and isPointHidden() used to re-implement the
+// bucketing independently, and they disagreed: tui has no assigned_category on
+// any of its 400 points, so the plot drew them in five *family* colours while
+// the legend bucketed all 400 into one grey "unassigned" entry. All three are
+// now derived from colourScheme(), so they cannot disagree by construction.
+//
+// A scheme is { bucketOf(p) -> key, buckets: [{key,label,colour,count,empty,fixed}] }.
+// `empty: true` marks a category the scheme *declares* but no point occupies —
+// rendered greyed with an explicit (0) rather than silently omitted, so an
+// unreachable category is visible as unreachable.
+// ---------------------------------------------------------------------------
+const EMPTY_SWATCH = '#3a3a4a';
+
+// True when this species has any pipeline-assigned categories at all. When it
+// does not, the "Manual" (assigned) and "Confidence" views have nothing to show
+// and are disabled rather than rendered as one meaningless grey bucket.
+function speciesHasAssignments() {
+  return !!(DATA && DATA.points && DATA.points.some(p => p.assigned_category));
+}
+
+function colourScheme() {
+  const pts = (DATA && DATA.points) || [];
+  const tally = (bucketOf, declared) => {
+    const counts = Object.create(null);
+    for (const k of (declared || [])) counts[k] = 0;
+    for (const p of pts) { const k = bucketOf(p); counts[k] = (counts[k] || 0) + 1; }
+    return counts;
+  };
+  const byCountDesc = counts => Object.keys(counts)
+    .sort((a, b) => (counts[b] - counts[a]) || String(a).localeCompare(String(b)));
+
+  if (colourMode === 'assigned') {
+    const bucketOf = p => p.assigned_category || 'unassigned';
+    // Declared categories are seeded at 0 so ones the classifier never reaches
+    // still appear, greyed, with their (0).
+    const counts = tally(bucketOf, Object.keys(SP.categories || {}));
+    const buckets = byCountDesc(counts).map(k => ({
+      key: k, label: k, count: counts[k], empty: counts[k] === 0,
+      colour: counts[k] === 0 ? EMPTY_SWATCH : (ASSIGNED_COLOURS[k] || '#888')
+    }));
+    return { bucketOf, buckets };
   }
-  return familyColourMap[p.family] || '#888';
+
+  if (colourMode === 'confidence') {
+    const order = ['ground_truth', 'high', 'medium', 'low'];
+    const labels = { 'ground_truth': 'Manual (ground truth)', 'high': 'High confidence',
+                     'medium': 'Medium', 'low': 'Low (review)', 'none': 'No assignment' };
+    const bucketOf = p => p.assignment_confidence || 'none';
+    const counts = tally(bucketOf, order);
+    const keys = order.concat(byCountDesc(counts).filter(k => order.indexOf(k) < 0));
+    const buckets = keys.filter(k => counts[k] > 0).map(k => ({
+      key: k, label: labels[k] || k, count: counts[k], empty: false,
+      colour: CONF_COLOURS[k] || '#555'
+    }));
+    return { bucketOf, buckets };
+  }
+
+  if (colourMode === 'region') {
+    const bucketOf = p => getPointRegion(p) || 'Unknown / no coordinates';
+    const counts = tally(bucketOf, null);
+    const buckets = byCountDesc(counts).map(k => ({
+      key: k, label: k, count: counts[k], empty: false,
+      colour: k === 'Unknown / no coordinates' ? '#555' : (regionColourMap[k] || '#888')
+    }));
+    return { bucketOf, buckets };
+  }
+
+  if (colourMode === 'source') {
+    const bucketOf = p => (SP.sourceOf ? (SP.sourceOf(p) || 'Unknown') : 'Unknown');
+    const counts = tally(bucketOf, null);
+    const buckets = byCountDesc(counts).map(k => ({
+      key: k, label: k, count: counts[k], empty: false,
+      colour: SOURCE_COLOURS[k] || '#888'
+    }));
+    return { bucketOf, buckets };
+  }
+
+  if (colourMode.startsWith('dataset:')) {
+    const dsKey = colourMode.slice(8);
+    const ds = (SP.datasets || []).find(d => d.key === dsKey);
+    const OTHER = '\u0000other';
+    // Each dataset tab colours ITS OWN points by their own (original annotator's)
+    // category, so it can be read against the "Manual" tab. Everything else is dimmed.
+    const bucketOf = p => (ds && ds.match(p)) ? p.family : OTHER;
+    const counts = tally(bucketOf, null);
+    const buckets = byCountDesc(counts).filter(k => k !== OTHER).map(k => ({
+      key: k, label: k, count: counts[k], empty: false,
+      colour: (ds && ds.ownCategories && ds.ownCategories[k]) || '#4477AA'
+    }));
+    buckets.push({ key: OTHER, count: counts[OTHER] || 0, empty: false, fixed: true,
+                   label: 'Other points (not in ' + (ds ? ds.label : dsKey) + ')',
+                   colour: '#33333366' });
+    return { bucketOf, buckets };
+  }
+
+  // 'original' — the annotators'/pipeline's own family labels.
+  const bucketOf = p => p.family;
+  const counts = tally(bucketOf, DATA ? (DATA.families || []) : []);
+  const buckets = (DATA ? (DATA.families || []) : [])
+    .concat(byCountDesc(counts).filter(k => (DATA.families || []).indexOf(k) < 0))
+    .map(k => ({ key: k, label: k, count: counts[k] || 0, empty: !counts[k],
+                 colour: !counts[k] ? EMPTY_SWATCH : (familyColourMap[k] || '#888') }));
+  return { bucketOf, buckets };
+}
+
+function getPointColour(p) {
+  const scheme = colourScheme();
+  const key = scheme.bucketOf(p);
+  const b = scheme.buckets.find(x => x.key === key);
+  return b ? b.colour : '#888';
 }
 
 // Colour-by tab order (fixed, per Azure 2026-07-19 redesign): Create -> [per-dataset own-category
@@ -682,13 +757,32 @@ function buildColourByButtons() {
     el.appendChild(b);
     return b;
   };
-  mkBtn('colourByAssigned', 'assigned', 'Manual', false);
+  // A species with no assigned_category has nothing to show in the "Manual"
+  // (assigned) or "Confidence" views. Disable them and say why, instead of
+  // opening on a view that renders every point as one grey "unassigned" bucket.
+  const hasAssign = speciesHasAssignments();
+  mkBtn('colourByOriginal', 'original', 'Families', false);
+  mkBtn('colourByAssigned', 'assigned', 'Manual', !hasAssign);
   for (const ds of (SP.datasets || [])) {
     mkBtn('colourByDataset_' + ds.key, 'dataset:' + ds.key, ds.label, false);
   }
   mkBtn('colourBySource', 'source', 'Dataset', !SP.sourceOf);
   mkBtn('colourByRegion', 'region', 'Region', !REGION_MAP);
-  mkBtn('colourByConf', 'confidence', 'Confidence', false);
+  mkBtn('colourByConf', 'confidence', 'Confidence', !hasAssign);
+
+  const note = document.getElementById('colourByNote');
+  if (note) {
+    if (hasAssign) {
+      note.style.display = 'none';
+      note.textContent = '';
+    } else {
+      note.style.display = '';
+      note.textContent = 'No clustering pass has been run for ' + SP.label
+        + ' yet, so there are no assigned categories or confidence scores — '
+        + 'Manual and Confidence are disabled and points are coloured by their '
+        + 'original family labels.';
+    }
+  }
 }
 
 function updateColourButtonStates() {
@@ -696,6 +790,7 @@ function updateColourButtonStates() {
   for (const btn of el.children) {
     if (btn.disabled) continue;
     const isActive =
+      (btn.id === 'colourByOriginal' && colourMode === 'original') ||
       (btn.id === 'colourByAssigned' && colourMode === 'assigned') ||
       (btn.id === 'colourBySource' && colourMode === 'source') ||
       (btn.id === 'colourByRegion' && colourMode === 'region') ||
@@ -743,165 +838,68 @@ function requestRender() {
   });
 }
 
+
 function buildLegend() {
   const el = document.getElementById('legend');
   el.innerHTML = '';
-  
-  let items;
-  if (colourMode === 'assigned') {
-    // Group by assigned category
-    const catCounts = {};
-    for (const p of DATA.points) {
-      const cat = p.assigned_category || 'unassigned';
-      catCounts[cat] = (catCounts[cat] || 0) + 1;
-    }
-    items = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
-    for (const [cat, cnt] of items) {
-      const col = ASSIGNED_COLOURS[cat] || '#888';
+
+  // In "original" (family) mode the dataset toggles sit above the family list.
+  // These toggle hiddenDatasets, a separate mechanism from the colour buckets.
+  if (colourMode === 'original' && (SP.datasets || []).length > 0) {
+    const dsHeader = document.createElement('div');
+    dsHeader.style.cssText = 'font-size:9px;color:var(--text2);margin-top:4px;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px';
+    dsHeader.textContent = 'Datasets';
+    el.appendChild(dsHeader);
+    const mkDsToggle = (key, label, colour, count) => {
       const item = document.createElement('div');
-      item.className = 'legend-item' + (hiddenFamilies.has(cat) ? ' hidden' : '');
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
+      item.className = 'legend-item' + (hiddenDatasets.has(key) ? ' hidden' : '');
+      item.innerHTML = `<div class="legend-swatch" style="background:${colour}"></div><span class="legend-label">${label}</span><span class="legend-count">${count}</span>`;
       item.onclick = () => {
-        if (hiddenFamilies.has(cat)) hiddenFamilies.delete(cat);
-        else hiddenFamilies.add(cat);
-        item.className = 'legend-item' + (hiddenFamilies.has(cat) ? ' hidden' : '');
+        if (hiddenDatasets.has(key)) hiddenDatasets.delete(key); else hiddenDatasets.add(key);
+        buildLegend();
         requestRender();
       };
       el.appendChild(item);
+    };
+    for (const ds of (SP.datasets || [])) {
+      mkDsToggle(ds.key, ds.label, Object.values(ds.ownCategories || {})[0] || '#888',
+                 DATA.points.filter(p => ds.match(p)).length);
     }
-  } else if (colourMode === 'confidence') {
-    const confOrder = ['ground_truth', 'high', 'medium', 'low'];
-    const confLabels = {'ground_truth':'Manual (Azure)', 'high':'High confidence', 'medium':'Medium', 'low':'Low (review)'};
-    for (const conf of confOrder) {
-      const cnt = DATA.points.filter(p => p.assignment_confidence === conf).length;
-      if (cnt === 0) continue;
-      const col = CONF_COLOURS[conf];
-      const item = document.createElement('div');
-      item.className = 'legend-item' + (hiddenFamilies.has(conf) ? ' hidden' : '');
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${confLabels[conf]}</span><span class="legend-count">${cnt}</span>`;
+    const xcPts = DATA.points.filter(p => !getPointDatasetKey(p));
+    if (xcPts.length > 0) mkDsToggle('xc', 'Xeno-canto', '#33333366', xcPts.length);
+    const famHeader = document.createElement('div');
+    famHeader.style.cssText = 'font-size:9px;color:var(--text2);margin-top:6px;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px';
+    famHeader.textContent = 'Families';
+    el.appendChild(famHeader);
+  }
+
+  for (const b of colourScheme().buckets) {
+    const item = document.createElement('div');
+    const cls = () => 'legend-item'
+      + (b.empty ? ' empty' : '')
+      + (hiddenFamilies.has(b.key) ? ' hidden' : '');
+    item.className = cls();
+    const suffix = b.empty ? ' <span class="legend-count" style="font-style:normal">(0)</span>' : '';
+    item.innerHTML = `<div class="legend-swatch" style="background:${b.colour}"></div>`
+      + `<span class="legend-label">${b.label}</span>`
+      + (b.empty ? suffix : `<span class="legend-count">${b.count}</span>`);
+    if (b.empty) {
+      item.title = 'Declared in the category scheme but no point is assigned to it — unreachable in this run.';
+    } else if (!b.fixed) {
       item.onclick = () => {
-        if (hiddenFamilies.has(conf)) hiddenFamilies.delete(conf);
-        else hiddenFamilies.add(conf);
-        item.className = 'legend-item' + (hiddenFamilies.has(conf) ? ' hidden' : '');
+        if (hiddenFamilies.has(b.key)) hiddenFamilies.delete(b.key); else hiddenFamilies.add(b.key);
+        item.className = cls();
         requestRender();
       };
-      el.appendChild(item);
     }
-  } else if (colourMode === 'region') {
-    const regionCounts = {};
-    for (const p of DATA.points) {
-      const r = getPointRegion(p) || 'Unknown / no coordinates';
-      regionCounts[r] = (regionCounts[r] || 0) + 1;
-    }
-    const sorted = Object.entries(regionCounts).sort((a,b) => b[1]-a[1]);
-    for (const [region, cnt] of sorted) {
-      const col = region === 'Unknown / no coordinates' ? '#555' : (regionColourMap[region] || '#888');
-      const item = document.createElement('div');
-      item.className = 'legend-item' + (hiddenFamilies.has(region) ? ' hidden' : '');
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${region}</span><span class="legend-count">${cnt}</span>`;
-      item.onclick = () => {
-        if (hiddenFamilies.has(region)) hiddenFamilies.delete(region);
-        else hiddenFamilies.add(region);
-        item.className = 'legend-item' + (hiddenFamilies.has(region) ? ' hidden' : '');
-        requestRender();
-      };
-      el.appendChild(item);
-    }
-  } else if (colourMode === 'source') {
-    const srcCounts = {};
-    for (const p of DATA.points) {
-      const s = SP.sourceOf ? (SP.sourceOf(p) || 'Unknown') : 'Unknown';
-      srcCounts[s] = (srcCounts[s] || 0) + 1;
-    }
-    const sorted = Object.entries(srcCounts).sort((a,b) => b[1]-a[1]);
-    for (const [src, cnt] of sorted) {
-      const col = SOURCE_COLOURS[src] || '#888';
-      const item = document.createElement('div');
-      item.className = 'legend-item';
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${src}</span><span class="legend-count">${cnt}</span>`;
-      el.appendChild(item);
-    }
-  } else if (colourMode.startsWith('dataset:')) {
-    const key = colourMode.slice(8);
-    const ds = (SP.datasets || []).find(d => d.key === key);
-    // Legend shows this dataset's OWN category breakdown (Pipe/Stutter/... or Croak/Long/...),
-    // matching the per-point colouring in getPointColour, so it can be read side-by-side
-    // against the "Categories" legend.
-    const inSetPts = ds ? DATA.points.filter(p => ds.match(p)) : [];
-    const catCounts = {};
-    for (const p of inSetPts) catCounts[p.family] = (catCounts[p.family] || 0) + 1;
-    const sorted = Object.entries(catCounts).sort((a,b) => b[1]-a[1]);
-    for (const [cat, cnt] of sorted) {
-      const col = (ds.ownCategories && ds.ownCategories[cat]) || '#4477AA';
-      const item = document.createElement('div');
-      item.className = 'legend-item';
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${cat}</span><span class="legend-count">${cnt}</span>`;
-      el.appendChild(item);
-    }
-    const item2 = document.createElement('div');
-    item2.className = 'legend-item';
-    item2.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Other points (not in ${ds ? ds.label : key})</span><span class="legend-count">${DATA.points.length - inSetPts.length}</span>`;
-    el.appendChild(item2);
-  } else {
-    // Original family colours
-    // First, dataset toggles (if any datasets exist)
-    if ((SP.datasets || []).length > 0) {
-      const dsHeader = document.createElement('div');
-      dsHeader.style.cssText = 'font-size:9px;color:var(--text2);margin-top:4px;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.5px';
-      dsHeader.textContent = 'Datasets';
-      el.appendChild(dsHeader);
-      for (const ds of (SP.datasets || [])) {
-        const dsPts = DATA.points.filter(p => ds.match(p));
-        const item = document.createElement('div');
-        item.className = 'legend-item' + (hiddenDatasets.has(ds.key) ? ' hidden' : '');
-        const dsCol = Object.values(ds.ownCategories || {})[0] || '#888';
-        item.innerHTML = `<div class="legend-swatch" style="background:${dsCol}"></div><span class="legend-label">${ds.label}</span><span class="legend-count">${dsPts.length}</span>`;
-        item.onclick = () => {
-          if (hiddenDatasets.has(ds.key)) hiddenDatasets.delete(ds.key);
-          else hiddenDatasets.add(ds.key);
-          updateLegend();
-          requestRender();
-        };
-        el.appendChild(item);
-      }
-      // Also add XC toggle if there are XC points
-      const xcPts = DATA.points.filter(p => !getPointDatasetKey(p));
-      if (xcPts.length > 0) {
-        const item = document.createElement('div');
-        item.className = 'legend-item' + (hiddenDatasets.has('xc') ? ' hidden' : '');
-        item.innerHTML = `<div class="legend-swatch" style="background:#33333366"></div><span class="legend-label">Xeno-canto</span><span class="legend-count">${xcPts.length}</span>`;
-        item.onclick = () => {
-          if (hiddenDatasets.has('xc')) hiddenDatasets.delete('xc');
-          else hiddenDatasets.add('xc');
-          updateLegend();
-          requestRender();
-        };
-        el.appendChild(item);
-      }
-    }
-    // Family colours
-    for (let i = 0; i < DATA.families.length; i++) {
-      const fam = DATA.families[i];
-      const col = familyColourMap[fam];
-      const cnt = DATA.family_counts[fam] || 0;
-      const item = document.createElement('div');
-      item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
-      item.innerHTML = `<div class="legend-swatch" style="background:${col}"></div><span class="legend-label">${fam}</span><span class="legend-count">${cnt}</span>`;
-      item.onclick = () => {
-        if (hiddenFamilies.has(fam)) hiddenFamilies.delete(fam);
-        else hiddenFamilies.add(fam);
-        item.className = 'legend-item' + (hiddenFamilies.has(fam) ? ' hidden' : '');
-        requestRender();
-      };
-      el.appendChild(item);
-    }
+    el.appendChild(item);
   }
 }
 
 function updateSelectionInfo() {
   const el = document.getElementById('selInfo');
   if (selectedIds.size === 0) {
-    el.innerHTML = '<p style="colour:var(--text2)">Shift+drag to lasso-select points</p>';
+    el.innerHTML = '<p style="color:var(--text2)">Shift+drag to lasso-select points</p>';
     return;
   }
   const selPts = DATA.points.filter(p => selectedIds.has(p.id));
@@ -924,15 +922,15 @@ function updateSelectionInfo() {
   const maxBin = Math.max(...fisherBins, 1);
 
   let html = `<p><b>${selectedIds.size}</b> points selected</p>`;
-  html += `<p style="margin-top:6px;colour:var(--text2)">Family breakdown:</p>`;
+  html += `<p style="margin-top:6px;color:var(--text2)">Family breakdown:</p>`;
   for (const [fam, cnt] of Object.entries(famBreak).sort((a,b)=>b[1]-a[1])) {
     const col = familyColourMap[fam];
-    html += `<p><span style="colour:${col}">■</span> ${fam}: ${cnt}</p>`;
+    html += `<p><span style="color:${col}">■</span> ${fam}: ${cnt}</p>`;
   }
-  html += `<p style="margin-top:6px;colour:var(--text2)">Fisher score: ${fisherMin.toFixed(2)} – ${fisherMax.toFixed(2)} (μ=${(fisherSum/selPts.length).toFixed(2)})</p>`;
+  html += `<p style="margin-top:6px;color:var(--text2)">Fisher score: ${fisherMin.toFixed(2)} – ${fisherMax.toFixed(2)} (μ=${(fisherSum/selPts.length).toFixed(2)})</p>`;
   for (let i = 0; i < 5; i++) {
     const pct = (fisherBins[i]/maxBin*100);
-    html += `<div class="fisher-bar"><span style="width:24px;text-align:right;colour:var(--text2)">${fisherLabels[i]}</span><div class="fisher-bar-fill" style="width:${pct}%;background:var(--accent);min-width:${fisherBins[i]?2:0}px"></div><span style="colour:var(--text2)">${fisherBins[i]}</span></div>`;
+    html += `<div class="fisher-bar"><span style="width:24px;text-align:right;color:var(--text2)">${fisherLabels[i]}</span><div class="fisher-bar-fill" style="width:${pct}%;background:var(--accent);min-width:${fisherBins[i]?2:0}px"></div><span style="color:var(--text2)">${fisherBins[i]}</span></div>`;
   }
   el.innerHTML = html;
 }
@@ -955,23 +953,23 @@ function showPointDetail(p) {
   const audioUrl = p.wav ? `${SP.assetDir}/${p.id}.wav` : '';
   
   let html = `
-    <p><span style="colour:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
-    ${p.assigned_category ? `<p style="margin-top:2px">→ <b style="colour:${ASSIGNED_COLOURS[p.assigned_category]||'#fff'}">${p.assigned_category}</b> <span style="font-size:9px;colour:var(--text2)">(${p.assignment_source}, ${p.assignment_confidence}${p.assignment_score ? ', score='+p.assignment_score.toFixed(3) : ''})</span></p>` : ''}
-    <p style="colour:var(--text2)">${p.wav || 'unknown'}</p>
-    <p style="colour:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
+    <p><span style="color:${col}">■</span> <b>${p.family}</b> · ID: ${p.id}</p>
+    ${p.assigned_category ? `<p style="margin-top:2px">→ <b style="color:${ASSIGNED_COLOURS[p.assigned_category]||'#fff'}">${p.assigned_category}</b> <span style="font-size:9px;color:var(--text2)">(${p.assignment_source}, ${p.assignment_confidence}${p.assignment_score ? ', score='+p.assignment_score.toFixed(3) : ''})</span></p>` : ''}
+    <p style="color:var(--text2)">${p.wav || 'unknown'}</p>
+    <p style="color:var(--text2)">${p.start_ms}–${p.end_ms}ms (${p.duration_ms}ms)</p>
     ${spectroHtml}
-    <p style="margin-top:4px;colour:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
-    <p style="colour:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
+    <p style="margin-top:4px;color:var(--text2)">Fisher: ${p.fisher_score?.toFixed(2) || '?'} · Nearest: ${p.nearest_other || '?'}</p>
+    <p style="color:var(--text2)">Centroid: ${p.spectral?.centroid?.toFixed(0) || '?'}Hz · BW: ${p.spectral?.bandwidth?.toFixed(0) || '?'}Hz</p>
     <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
       ${audioUrl ? `<button class="btn" onclick="playPoint('${audioUrl}')" style="background:var(--accent)">▶ Play</button>` : ''}
       <button class="btn" onclick="excludePoint(${JSON.stringify(p.id)})" style="background:var(--reject)">✗ Exclude</button>
       <button class="btn secondary" onclick="hidePointDetail()">Close</button>
     </div>
     <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
-      <p style="colour:var(--text2);font-size:10px;margin-bottom:4px">Quick assign:</p>
+      <p style="color:var(--text2);font-size:10px;margin-bottom:4px">Quick assign:</p>
       <div style="display:flex;gap:3px;flex-wrap:wrap">
         ${Object.keys(ASSIGNED_COLOURS).filter(c => c !== 'unassigned').map(cat => 
-          `<button class="btn" onclick="quickAssign(${JSON.stringify(p.id)},${JSON.stringify(cat)})" style="background:${ASSIGNED_COLOURS[cat]};colour:#fff;padding:2px 6px;font-size:9px">${cat}</button>`
+          `<button class="btn" onclick="quickAssign(${JSON.stringify(p.id)},${JSON.stringify(cat)})" style="background:${ASSIGNED_COLOURS[cat]};color:#fff;padding:2px 6px;font-size:9px">${cat}</button>`
         ).join('')}
       </div>
     </div>`;
@@ -1062,7 +1060,7 @@ function updateClusterList() {
   for (const [name, ids] of Object.entries(clusters)) {
     html += `<div class="cluster-item"><span class="cl-name">${name}</span><span>${ids.size} pts</span><span class="cl-remove" onclick="deleteCluster('${name}')">&times;</span></div>`;
   }
-  if (!html) html = '<p style="colour:var(--text2)">No clusters defined</p>';
+  if (!html) html = '<p style="color:var(--text2)">No clusters defined</p>';
   el.innerHTML = html;
 }
 
@@ -1376,6 +1374,21 @@ async function pollExtrapolateRun(token, dispatchedAt) {
 }
 
 
+// `DATA.families` is not always one taxonomy. For kaka it concatenates the three
+// lowercase Van Horik call classes auto-assigned to the Xeno-canto clips with the
+// five Vaishnav reference-template names (7 clips), so "8 families" counted two
+// schemes as one. Report them separately.
+function taxonomySummary() {
+  const fams = (DATA && DATA.families) || [];
+  const refDs = (SP.datasets || []).find(d => d.key === 'tirth');
+  if (!refDs) return `${fams.length} families`;
+  const refPts = DATA.points.filter(p => refDs.match(p));
+  const refFams = new Set(refPts.map(p => p.family));
+  const mainFams = fams.filter(f => !refFams.has(f));
+  return `${mainFams.length} auto-assigned call classes over ${DATA.points.length - refPts.length} `
+    + `Xeno-canto clips · ${refFams.size} ${refDs.label} reference templates (${refPts.length} clips)`;
+}
+
 function switchSpecies(species) {
   currentSpecies = species;
   SP = SPECIES_CFG[species];
@@ -1431,6 +1444,11 @@ async function init() {
   DATA.pointMap = {};
   for (const p of DATA.points) DATA.pointMap[p.id] = p;
 
+  // A species with no assigned_category (tui) must not open on the "assigned"
+  // view: getPointColour would fall through to family colours while the legend
+  // showed one grey "unassigned" bucket. Open on the families view instead.
+  if (colourMode === 'assigned' && !speciesHasAssignments()) colourMode = 'original';
+
   // Assign colours
   ASSIGNED_COLOURS = Object.assign({}, SP.categories);
   for (let i = 0; i < DATA.families.length; i++) {
@@ -1438,12 +1456,19 @@ async function init() {
   }
 
   // Header
-  const totalVar = DATA.explained_variance.reduce((a,b)=>a+b,0);
+  const ev = DATA.explained_variance;
+  const totalVar = ev.reduce((a,b)=>a+b,0);
   const unit = currentSpecies === 'kaka' ? 'call segments' : 'syllable segments';
   document.querySelector('h1').textContent = `${SP.label} Clustering — PCA Feature Space`;
   document.title = `${SP.label} Clustering — PCA Feature Space`;
+  // Headline the two PCs actually plotted in the main panel. Summing all
+  // n_components PCs and printing that next to a 2-PC scatter overstated what a
+  // reader can see (bellbird: 49.2% on screen vs 81.9% claimed).
+  const [ax, ay] = DEFAULTS[0];
+  const shownVar = (ev[ax] + ev[ay]) * 100;
   document.getElementById('headerSub').textContent =
-    `${DATA.n_points} ${unit} · ${DATA.families.length} families · ${DATA.n_components} PCs (${(totalVar*100).toFixed(1)}% variance explained)`;
+    `${DATA.n_points} ${unit} · ${taxonomySummary()} · PC${ax+1}+PC${ay+1} (plotted below) explain `
+    + `${shownVar.toFixed(1)}% of variance — all ${DATA.n_components} PCs together: ${(totalVar*100).toFixed(1)}%`;
 
   // Update species selector
   document.getElementById('speciesSelector').value = currentSpecies;

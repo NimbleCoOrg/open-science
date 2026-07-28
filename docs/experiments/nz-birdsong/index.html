@@ -405,7 +405,7 @@ tr:hover td{background:var(--surface-2)}
     <div class="byline">
       Bioacoustic replication · after <a href="https://doi.org/10.63172/301002sqblid">Hill &amp; Ji (2014)</a> · 177 species · 3,096 recordings<br>
       Source: <a href="https://xeno-canto.org">Xeno-Canto</a> API v3 · Analysis in Python (librosa, scikit-learn) · Full pipeline on <a href="https://github.com/NimbleCoOrg/open-science">GitHub</a><br>
-      Compiled by <a class="who" href="https://github.com/NimbleCoAI/Matilde" target="_blank">Matilde</a> &amp; <a class="who" href="https://nimbleco.ai">NimbleCo AI</a> · June 2026
+      Compiled by <a class="who" href="https://github.com/NimbleCoOrg/Matilde" target="_blank">Matilde</a> &amp; <a class="who" href="https://nimbleco.ai">NimbleCo AI</a> · June 2026
     </div>
   </header>
 
@@ -747,9 +747,52 @@ tr:hover td{background:var(--surface-2)}
         <h3>Classification Confidence</h3>
         <div id="bellbird-conf-bars"></div>
         <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)">
-          <b>241</b> ground-truth (Azure's manual clusters) · <b>416</b> high-confidence DTW ·
-          <b>96</b> medium · <b>63</b> low (pending review). Manual cluster purity validated at
-          <b>91%</b> overall (Chortle 100%, Down 98%, Stutter 97%).
+          <b>241</b> ground-truth (manual clusters) · <b>416</b> high-confidence DTW ·
+          <b>96</b> medium · <b>63</b> low (pending review).
+
+          <p style="margin:.8rem 0 0"><b>Correction (27 July 2026).</b> This panel previously read
+          &ldquo;manual cluster purity validated at 91% overall (Chortle 100%, Down 98%, Stutter 97%)&rdquo;.
+          <b>None of those three per-category numbers reproduce, and neither does the 91%.</b> Recomputed
+          directly from the deployed <code>bellbird_pca_data.json</code> over its 241 manually clustered points,
+          purity against the Koe/Webb family labels is <b>99.6% (240/241)</b>: Chortle 100% (24/24),
+          Down 100% (36/36), Stutter 100% (79/79), Flatsqueak 100% (25/25), Peaksqueak 100% (19/19),
+          Cough 100% (12/12), Cough&nbsp;+&nbsp;Click 100% (12/12), Alarmy 100% (9/9), Stepup 100% (7/7),
+          and Pipe 94.4% (17/18) — one Pipe point carries the family label Alarmy, and it is the only
+          disagreement. We are also downgrading the word &ldquo;validated&rdquo;: the manual clusters were drawn
+          with the family labels visible, so near-perfect purity is close to a tautology and carries almost no
+          information about whether the categories are real.</p>
+
+          <p style="margin:.8rem 0 0"><b>The figure that does carry information — seed-label agreement.</b>
+          For the <b>575</b> clips the DTW template matcher labelled on its own, agreement between its assignment
+          and the clip's original Koe/Webb family label is <b>35.8% (206/575)</b>. Broken out by the category the
+          matcher assigned:</p>
+          <div style="overflow-x:auto"><table style="width:100%;font-size:.8rem;margin:.6rem 0;font-family:var(--mono)">
+            <thead><tr><th style="text-align:left">Assigned category</th><th style="text-align:right">Agreement</th><th style="text-align:right">n assigned</th></tr></thead>
+            <tbody>
+              <tr><td><b>Stepup</b></td><td class="num"><b>7%</b></td><td class="num">114</td></tr>
+              <tr><td>Pipe</td><td class="num">29%</td><td class="num">133</td></tr>
+              <tr><td>Flatsqueak</td><td class="num">29%</td><td class="num">99</td></tr>
+              <tr><td>Stutter</td><td class="num">45%</td><td class="num">67</td></tr>
+              <tr><td>Chortle</td><td class="num">53%</td><td class="num">17</td></tr>
+              <tr><td>Peaksqueak</td><td class="num">58%</td><td class="num">33</td></tr>
+              <tr><td>Alarmy</td><td class="num">58%</td><td class="num">53</td></tr>
+              <tr><td>Cough + Click</td><td class="num">63%</td><td class="num">30</td></tr>
+              <tr><td>Down</td><td class="num">77%</td><td class="num">26</td></tr>
+              <tr><td>Cough</td><td class="num">100%</td><td class="num">3</td></tr>
+            </tbody>
+          </table></div>
+          <p style="margin:0">In the pipeline's own words this is a <b>&ldquo;sanity, not accuracy&rdquo;</b>
+          check, and that hedge is correct: the template categories and the Koe/Webb families are different
+          schemes, so disagreement is not automatically error. But <b>Stepup agreeing on 7% of the 114 clips it
+          was assigned</b> is the single most useful number on this page, and it was being computed on every run
+          and never shown. It says the Stepup template is very likely matching something other than Stepup, and
+          that those 114 labels should not be relied on. Treat every category above as provisional in proportion
+          to its agreement.</p>
+          <p style="margin:.6rem 0 0;font-size:.92em">Method note: agreement counts
+          <em>Flatspeak</em>&nbsp;→&nbsp;<em>Flatsqueak</em> as a match (they are the same call type — see the
+          spelling correction) and <em>Cough&nbsp;+&nbsp;Click</em>&nbsp;→&nbsp;<em>Cough</em> (Cough&nbsp;+&nbsp;Click
+          is a Cough sub-type). Compared as raw strings without those two equivalences the overall figure is
+          <b>27.5% (158/575)</b>, which is what <code>dtw_classify.py</code> prints today.</p>
         </div>
       </div>
 
@@ -1247,12 +1290,70 @@ tr:hover td{background:var(--surface-2)}
       spectral-temporal features directly from data rather than relying on hand-crafted rules.</p>
 
       <div class="note" style="margin:1rem 0">
-        <div class="mark">Why a CNN over rule-based segmentation?</div>
-        <div>On the Koe bellbird dataset, the CNN achieves <b>F1=0.784</b> (P=0.753, R=0.818) with a boundary error
-        of just <b>13.3ms</b> — compared to the FIR amplitude-envelope baseline's F1=0.731 (31.5ms boundary error).
-        The improvement is more dramatic on the Donald toutouwai dataset, where sustained tonal phrases (median 971ms)
-        defeat amplitude-based methods: FIR achieves only <b>F1=0.306</b>, spectral flux <b>F1=0.329</b>, while the CNN
-        learns spectral change patterns that signal phrase boundaries even when the amplitude envelope is flat.</div>
+        <div class="mark">Correction (27 July 2026) — what the CNN numbers do and do not show</div>
+        <div>
+        <p style="margin:0 0 .7rem">An earlier version of this section claimed the CNN's advantage was
+        &ldquo;more dramatic on the Donald toutouwai dataset&rdquo;, and that the CNN &ldquo;learns spectral change
+        patterns that signal phrase boundaries even when the amplitude envelope is flat&rdquo;.
+        <b>No measurement supported that claim when it was published</b> — no CNN toutouwai evaluation existed
+        at the time. The claim is withdrawn. What we can actually say is below.</p>
+
+        <p style="margin:0 0 .7rem"><b>Toutouwai: the CNN has not yet been validly evaluated, and on the one weak
+        evaluation that does exist it loses to both classical baselines.</b> The multi-species augmented model
+        (the architecture described below) scores <b>F1=0.262</b> (P=0.311, R=0.226) on toutouwai over
+        <b>13 test files</b> — against FIR <b>F1=0.306</b> and spectral flux <b>F1=0.329</b>. On the evidence
+        we have, <b>the classical baselines currently win on toutouwai.</b> That 0.262 is itself a weak
+        measurement: 13 test files, and the confidence threshold was chosen by taking the argmax over a sweep
+        run on the very files being scored, so it is not a held-out estimate either. Read it as
+        &ldquo;not yet properly measured, and no sign of an advantage&rdquo; — not as a firm ranking in either
+        direction. The hypothesis that a CNN should handle toutouwai's sustained tonal phrases (median 971ms)
+        better than amplitude-envelope methods remains <b>untested</b>.</p>
+
+        <p style="margin:0 0 .7rem"><b>Bellbird (Koe): F1=0.784</b> (P=0.753, R=0.818, median boundary error
+        13.3ms) — from a <b>bellbird-only run, 100 epochs</b>
+        (<code>cnn_segmentation_results_v3.json</code>). This is <b>not a held-out estimate.</b> That file
+        contains a configuration, a six-point confidence-threshold sweep, and the argmax over that sweep. There
+        is no validation split, so the threshold was selected on the same data the score is reported on. 0.784
+        is an optimistic upper bound on that configuration, and for the same reason it is <b>not directly
+        comparable</b> to the FIR amplitude-envelope baseline (F1=0.731, 31.5ms boundary error), which had no
+        equivalent tuning freedom.</p>
+
+        <p style="margin:0 0 .7rem"><b>The head-to-head against the FIR baseline is withdrawn: the two were not
+        scored the same way, and on the fairest comparison available the classical method is not behind.</b>
+        The CNN counts a detection as correct at <code>IoU &gt; 0.1</code>
+        (<code>tweetynet_v3.py:188</code>); the FIR baseline was held to
+        <code>IoU &ge; 0.3 or 50% overlap</code> (<code>validate_fir_segmentation.py:201</code>, recorded in its
+        own output as <code>matching_criteria</code>). The quoted 0.731 is also FIR's <i>test-split</i> row
+        (376 ground-truth segments), while the CNN's 0.784 is over a different split (499 segments). Scored
+        across the <b>full 829-segment dataset</b> at its stricter threshold, FIR reaches <b>F1=0.786</b>
+        (P=0.857, R=0.725) &mdash; level with the CNN's 0.784 while being judged more harshly. Until both are
+        re-scored on one split under one matching criterion, treat the CNN as <b>not demonstrated to beat the
+        classical baseline</b> on bellbird.</p>
+
+        <p style="margin:0"><b>Reproducibility: the artifact behind 0.784 no longer exists, and the number does
+        not reproduce.</b> None of the training scripts set a torch seed &mdash; only the file-level split is
+        seeded &mdash; so weight initialisation and batch shuffling differ on every run. On 27 July 2026 the
+        same script was re-run on the same data and wrote to the same filename, replacing the artifact this
+        figure was read from; the re-run scored <b>F1=0.767</b> (P=0.726, R=0.814) at the same selected
+        threshold of 0.3. The originally published values survive only in a snapshot taken minutes beforehand.
+        We report this rather than quietly restating the new number, because the honest content of the finding
+        is that <b>this measurement has a run-to-run spread we never characterised</b>, and that results were
+        being overwritten in place instead of written to run-stamped paths.</p>
+
+        <p style="margin:0 0 .7rem"><b>Our two bellbird runs disagree and we cannot yet reconcile them.</b>
+        A separate 50-epoch bellbird run over 15 test files (<code>cnn_bellbird_large.json</code>) gives
+        <b>F1=0.361</b> (P=0.638, R=0.251, median boundary error 49.7ms) on the same dataset. The two runs differ
+        in epoch count, spectrogram settings and minimum-segment duration, and share no defined test split, so
+        neither supersedes the other. Until a run with a proper held-out split settles it, treat bellbird
+        segmentation performance as <b>unresolved between 0.361 and 0.784</b>, and treat 0.784 as the most
+        favourable configuration we have run rather than as the headline result.</p>
+
+        <p style="margin:0"><b>The multi-species architecture below is a different, worse model — do not
+        attach 0.784 to it.</b> The joint multi-species training and augmentation described in the rest of this
+        section correspond to <code>cnn_multispecies_augmented.json</code>, whose combined score is
+        <b>F1=0.259</b> (P=0.311, R=0.222): bellbird F1=0.308 on 2 test files, toutouwai F1=0.262 on 13.
+        The 0.784 figure came from the bellbird-only model and says nothing about this configuration.</p>
+        </div>
       </div>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Architecture</h4>
@@ -1293,35 +1394,43 @@ tr:hover td{background:var(--surface-2)}
       </ul>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Segmentation Demonstration</h4>
-      <p>The spectrograms below show vocalisation units with ground-truth annotations (top bands) and CNN
-      predicted boundaries (bottom bands). Category labels appear above each unit. These examples come from
-      unseen test recordings — the model has not been trained on them.</p>
+      <p>The spectrograms below show <b>ground-truth annotations only</b> — the top bands, dotted boundary
+      lines and category labels are all human annotation. <b>They contain no CNN output.</b> The figure generator
+      stamped every image with a &ldquo;CNN prediction (bottom)&rdquo; legend entry unconditionally, but the run
+      that produced these images emitted <b>zero</b> predicted segments on all seven examples:
+      <code>cnn_spectrograms/examples.json</code> records <code>n_pred = 0</code> for every entry (toutouwai
+      Felix, for instance, is <code>n_gt = 61, n_pred = 0</code>). <b>The legend printed inside the images is
+      therefore false</b> — the captions below are the correct description, and the generator has been fixed
+      so that future figures only claim a prediction band when one exists. CNN overlays will be added when a run
+      actually produces segments on these files. These examples come from recordings held out of training.</p>
       <div id="cnn-spectrograms" style="margin:1.5rem 0">
         <div class="card" style="margin-bottom:1rem">
           <h3>Toutouwai — Felix (Donald dataset)</h3>
-          <img src="cnn_spectrograms/toutouwai_Felix.png" alt="Toutouwai spectrogram with CNN boundaries — Felix"
+          <img src="cnn_spectrograms/toutouwai_Felix.png" alt="Toutouwai spectrogram, ground-truth annotations only — Felix"
                style="width:100%;border-radius:4px;border:1px solid var(--border)">
           <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
-            10s excerpt · 500–10kHz · Ground truth (top) vs CNN prediction (bottom)
+            10s excerpt · 500–10kHz · Ground-truth annotations only · no CNN overlay (this run produced 0 predicted segments)
           </div>
         </div>
         <div class="card" style="margin-bottom:1rem">
           <h3>Toutouwai — Captain (Donald dataset)</h3>
-          <img src="cnn_spectrograms/toutouwai_Captain.png" alt="Toutouwai spectrogram with CNN boundaries — Captain"
+          <img src="cnn_spectrograms/toutouwai_Captain.png" alt="Toutouwai spectrogram, ground-truth annotations only — Captain"
                style="width:100%;border-radius:4px;border:1px solid var(--border)">
           <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
-            10s excerpt · 500–10kHz · Ground truth (top) vs CNN prediction (bottom)
+            10s excerpt · 500–10kHz · Ground-truth annotations only · no CNN overlay (this run produced 0 predicted segments)
           </div>
         </div>
         <div class="card" style="margin-bottom:1rem">
           <h3>Korimako — Koe bellbird (studio recording)</h3>
-          <img src="cnn_spectrograms/bellbird_CUV_2016_11_04_AMH036_01_F.EX.CUV_2016_11_04_AMH036A.3RepeatsStutterTypCuvSong.png" alt="Bellbird spectrogram with CNN boundaries"
+          <img src="cnn_spectrograms/bellbird_CUV_2016_11_04_AMH036_01_F.EX.CUV_2016_11_04_AMH036A.3RepeatsStutterTypCuvSong.png" alt="Bellbird spectrogram, ground-truth annotations only"
                style="width:100%;border-radius:4px;border:1px solid var(--border)">
           <div style="margin-top:.5rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
-            15s excerpt · 500–10kHz · 51 annotated syllables · Ground truth (top) vs CNN prediction (bottom)
+            15s excerpt · 500–10kHz · 51 annotated syllables · Ground-truth annotations only · no CNN overlay (this run produced 0 predicted segments)
           </div>
         </div>
-        <p style="color:var(--ink-faint);font-size:.9rem"><em>CNN overlays will be added once training completes. Ground-truth annotations shown above.</em></p>
+        <p style="color:var(--ink-faint);font-size:.9rem"><em>Ground-truth annotations only, above. Training has
+        in fact completed — the reason there are no overlays is that the completed run predicted no segments at
+        all on these seven files, not that it has not been run yet.</em></p>
       </div>
 
       <div class="note" style="margin:1.5rem 0">
@@ -1366,7 +1475,7 @@ tr:hover td{background:var(--surface-2)}
       The Python venv uses librosa for audio analysis and scikit-learn for clustering. All Xeno-Canto recordings are publicly available via their API.</p>
       
       <h4>Process Transparency</h4>
-      <p>This dashboard was compiled by <a href="https://github.com/NimbleCoAI/Matilde">Matilde</a>, an agentic open-science research assistant. 
+      <p>This dashboard was compiled by <a href="https://github.com/NimbleCoOrg/Matilde">Matilde</a>, an agentic open-science research assistant. 
       The full chain-of-thought trace — every API call, every decision, every error and retry — is published alongside the dashboard for 
       complete reproducibility. This is not a black-box result.</p>
       
@@ -1512,7 +1621,7 @@ tr:hover td{background:var(--surface-2)}
   <div class="wrap">
     <div class="big">"The tūī's vocal repertoire is among the most complex of any passerine."</div>
     Aotearoa Birdsong Analysis · Data: <a href="https://xeno-canto.org">Xeno-Canto</a> (API v3) · 
-    Analysis: <a href="https://nimbleco.ai">NimbleCo AI</a> / <a href="https://github.com/NimbleCoAI/Matilde">Matilde</a><br>
+    Analysis: <a href="https://nimbleco.ai">NimbleCo AI</a> / <a href="https://github.com/NimbleCoOrg/Matilde">Matilde</a><br>
     Generated June 2026 · All citations verified via Crossref · 
     <a href="https://github.com/NimbleCoOrg/open-science">Source &amp; trace on GitHub</a>
   </div>
