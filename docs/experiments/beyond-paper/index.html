@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond the Paper — Alternative Structures for Scientific Knowledge</title>
+<meta name="description" content="Critiques of the scientific paper format and proposals for alternative structures in the digital age.">
+<meta property="og:title" content="Beyond the Paper">
+<meta property="og:description" content="Why the 1880s paper format fails 21st-century science — and what comes next.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --paper-2:#ece4d4; --surface:#fffdf8; --surface-2:#faf6ed;
+  --ink:#211c16; --ink-soft:#675e4f; --ink-faint:#a99e89;
+  --rule:#e2d9c7; --rule-2:#cfc3aa;
+  --accent:#1f4257; --accent-2:#6b8f3a;
+  --pos:#357a5b; --neg:#bb4a33; --neu:#a4977c; --warn:#b07d22;
+  --ev-strong:#2d7a4f; --ev-moderate:#6b8f3a; --ev-weak:#b07d22; --ev-none:#bb4a33; --ev-unknown:#a99e89;
+  --serif:'Newsreader',Georgia,serif;
+  --display:'Fraunces',Georgia,serif;
+  --mono:'Spline Sans Mono',ui-monospace,monospace;
+  --shadow:0 1px 1px rgba(33,28,22,.03),0 10px 30px -16px rgba(33,28,22,.22);
+  --shadow-lg:0 2px 4px rgba(33,28,22,.05),0 24px 60px -28px rgba(33,28,22,.32);
+  --maxw:1060px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif); background:var(--paper); color:var(--ink);
+  line-height:1.62; font-size:18px; font-weight:400;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+::selection{background:#d9c9a8;color:#221c14}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+a:hover{color:var(--accent-2)}
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+
+/* ============ MASTHEAD ============ */
+.masthead{padding:4.5rem 0 1.6rem;border-bottom:1.5px solid var(--ink);margin-bottom:0}
+.eyebrow{
+  font-family:var(--mono); font-size:.72rem; font-weight:500; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent-2); display:flex; align-items:center; gap:.7rem;
+  margin-bottom:1.4rem;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule-2)}
+.masthead h1{
+  font-family:var(--display); font-optical-sizing:auto;
+  font-weight:600; font-size:clamp(2.5rem,6.5vw,4.6rem); line-height:.99;
+  letter-spacing:-.018em; color:var(--ink); margin-bottom:1.1rem; max-width:18ch;
+}
+.masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.deck{
+  font-family:var(--serif); font-size:clamp(1.05rem,2.2vw,1.4rem); line-height:1.45;
+  color:var(--ink-soft); max-width:54ch; font-weight:400; margin-bottom:1.8rem;
+}
+.deck b{color:var(--ink);font-weight:600}
+.byline{
+  font-family:var(--mono); font-size:.76rem; line-height:1.9; color:var(--ink-soft);
+  letter-spacing:.01em; padding-top:1.2rem; border-top:1px solid var(--rule);
+}
+.byline a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px}
+.byline .who{color:var(--accent-2);font-weight:500}
+
+.masthead>*{opacity:0;transform:translateY(14px);animation:rise .9s cubic-bezier(.2,.75,.2,1) forwards}
+.masthead .eyebrow{animation-delay:.05s}
+.masthead h1{animation-delay:.16s}
+.masthead .deck{animation-delay:.30s}
+.masthead .byline{animation-delay:.44s}
+@keyframes rise{to{opacity:1;transform:translateY(0)}}
+
+/* ============ TAB NAV ============ */
+.tabnav{
+  position:sticky; top:0; z-index:100;
+  background:var(--paper); border-bottom:1px solid var(--rule-2);
+  display:flex; gap:0; padding:0 1.6rem; max-width:var(--maxw); margin:0 auto;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  box-shadow:0 4px 20px -10px rgba(33,28,22,.15);
+}
+.tabnav button{
+  font-family:var(--mono); font-size:.78rem; font-weight:500; letter-spacing:.06em;
+  background:none; border:none; border-bottom:2px solid transparent;
+  padding:1rem 1.2rem; cursor:pointer; color:var(--ink-soft);
+  transition:color .2s,border-color .2s; white-space:nowrap;
+  text-transform:uppercase;
+}
+.tabnav button:hover{color:var(--ink)}
+.tabnav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tabnav .tab-num{color:var(--ink-faint);margin-right:.4em}
+.tabnav button.active .tab-num{color:var(--accent-2)}
+
+/* ============ TAB PANELS ============ */
+.panel{display:none;padding:2.5rem 0 4rem}
+.panel.active{display:block;animation:fadein .4s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ TYPOGRAPHY ============ */
+.section-h{
+  font-family:var(--display); font-weight:600; font-size:clamp(1.8rem,4vw,2.6rem);
+  line-height:1.08; letter-spacing:-.012em; margin:3rem 0 1.2rem; color:var(--ink);
+}
+.section-h:first-child{margin-top:0}
+.section-h em{font-style:italic;color:var(--accent)}
+.lead{
+  font-family:var(--serif); font-size:1.2rem; line-height:1.55; color:var(--ink-soft);
+  margin-bottom:2rem; max-width:64ch;
+}
+.lead b{color:var(--ink)}
+p{margin-bottom:1.2rem;max-width:66ch}
+p b{font-weight:600}
+.tight{max-width:62ch}
+
+/* ============ CRITIQUE CARDS ============ */
+.crit-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin:1.5rem 0}
+@media(min-width:640px){.crit-grid{grid-template-columns:1fr 1fr}}
+.crit-card{
+  background:var(--surface); border:1px solid var(--rule); border-radius:4px;
+  padding:1.5rem 1.6rem; box-shadow:var(--shadow);
+  transition:transform .2s,box-shadow .2s;
+}
+.crit-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.crit-card .num{
+  font-family:var(--mono); font-size:.7rem; font-weight:600; color:var(--accent-2);
+  letter-spacing:.1em; margin-bottom:.6rem;
+}
+.crit-card h3{
+  font-family:var(--display); font-weight:600; font-size:1.35rem; line-height:1.15;
+  margin-bottom:.6rem; color:var(--ink);
+}
+.crit-card p{font-size:.95rem; line-height:1.5; color:var(--ink-soft); margin-bottom:.8rem;max-width:none}
+.crit-card .fix{
+  font-family:var(--mono); font-size:.72rem; color:var(--accent);
+  border-top:1px solid var(--rule); padding-top:.7rem; margin-top:.5rem;
+}
+.crit-card .fix b{font-weight:600}
+
+/* ============ EVIDENCE OVERLAY DEMO ============ */
+.overlay-demo{
+  background:var(--surface); border:1px solid var(--rule-2); border-radius:4px;
+  padding:2rem 2.2rem; margin:2rem 0; box-shadow:var(--shadow);
+}
+.overlay-demo h4{
+  font-family:var(--mono); font-size:.76rem; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-soft); margin-bottom:1.2rem;
+}
+.overlay-controls{
+  display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.5rem;
+  padding-bottom:1.2rem; border-bottom:1px solid var(--rule);
+}
+.overlay-controls button{
+  font-family:var(--mono); font-size:.74rem; font-weight:500;
+  padding:.5rem 1rem; border:1px solid var(--rule-2); border-radius:3px;
+  background:var(--surface-2); color:var(--ink-soft); cursor:pointer;
+  transition:all .2s;
+}
+.overlay-controls button:hover{border-color:var(--accent);color:var(--ink)}
+.overlay-controls button.active{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.overlay-controls .legend{display:flex;align-items:center;gap:1rem;margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--ink-faint)}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:.3em}
+.overlay-text{font-family:var(--serif);font-size:1.1rem;line-height:1.8;color:var(--ink);transition:all .3s}
+.overlay-text .claim{cursor:pointer;border-radius:2px;padding:.05em .15em;transition:background .3s}
+.overlay-text.mode-off .claim{background:transparent!important}
+.overlay-text.mode-evidence .claim[data-ev="strong"]{background:rgba(45,122,79,.18)}
+.overlay-text.mode-evidence .claim[data-ev="moderate"]{background:rgba(107,143,58,.18)}
+.overlay-text.mode-evidence .claim[data-ev="weak"]{background:rgba(176,125,34,.22)}
+.overlay-text.mode-evidence .claim[data-ev="none"]{background:rgba(187,74,51,.18)}
+.overlay-text.mode-evidence .claim[data-ev="unknown"]{background:rgba(169,158,137,.18)}
+.overlay-text.mode-provenance .claim{border-bottom:2px dotted var(--ink-faint)}
+.overlay-text.mode-provenance .claim[data-ev="strong"]{border-bottom-color:var(--ev-strong)}
+.overlay-text.mode-provenance .claim[data-ev="moderate"]{border-bottom-color:var(--ev-moderate)}
+.overlay-text.mode-provenance .claim[data-ev="weak"]{border-bottom-color:var(--ev-weak)}
+.overlay-text.mode-provenance .claim[data-ev="none"]{border-bottom-color:var(--ev-none)}
+.overlay-text.mode-provenance .claim[data-ev="unknown"]{border-bottom-color:var(--ev-unknown)}
+.overlay-text .cite{font-size:.78em;vertical-align:super;color:var(--ink-faint);font-family:var(--mono)}
+.overlay-detail{
+  margin-top:1.5rem; padding-top:1.2rem; border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:.78rem; line-height:1.7; color:var(--ink-soft);
+  min-height:3rem; display:none;
+}
+.overlay-detail.visible{display:block}
+.overlay-detail .label{color:var(--accent);font-weight:600}
+.overlay-detail .verdict{display:inline-block;padding:.15em .6em;border-radius:3px;font-weight:600}
+.overlay-detail .verdict.strong{background:rgba(45,122,79,.15);color:var(--ev-strong)}
+.overlay-detail .verdict.moderate{background:rgba(107,143,58,.15);color:var(--ev-moderate)}
+.overlay-detail .verdict.weak{background:rgba(176,125,34,.15);color:var(--ev-weak)}
+.overlay-detail .verdict.none{background:rgba(187,74,51,.15);color:var(--ev-none)}
+.overlay-detail .verdict.unknown{background:rgba(169,158,137,.15);color:var(--ev-unknown)}
+
+/* ============ TIMELINE ============ */
+.timeline{position:relative;padding:2rem 0 1rem;margin:2rem 0}
+.timeline::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--rule-2);transform:translateX(-50%)}
+.tl-item{position:relative;width:50%;padding:0 2.5rem 2rem 0;left:0}
+.tl-item:nth-child(even){left:50%;padding:0 0 2rem 2.5rem}
+.tl-item .dot{
+  position:absolute;top:.3rem;right:-7px;width:14px;height:14px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--accent);z-index:2;
+}
+.tl-item:nth-child(even) .dot{left:-7px;right:auto}
+.tl-item .yr{font-family:var(--mono);font-size:.76rem;font-weight:600;color:var(--accent-2);letter-spacing:.08em}
+.tl-item h4{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:.3rem 0 .4rem;color:var(--ink)}
+.tl-item p{font-size:.9rem;color:var(--ink-soft);margin:0;max-width:none}
+
+/* ============ LANDSCAPE TABLE ============ */
+.landscape-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.92rem}
+.landscape-table th{
+  font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-soft);text-align:left;
+  padding:.8rem .6rem;border-bottom:2px solid var(--rule-2);
+}
+.landscape-table td{padding:.9rem .6rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.landscape-table tr:hover td{background:var(--surface-2)}
+.landscape-table .name{font-family:var(--display);font-weight:600;color:var(--ink);font-size:1rem}
+.landscape-table .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;padding:.15em .5em;border-radius:2px;margin:.15em .3em .15em 0;letter-spacing:.04em}
+.tag-fixes{background:rgba(45,122,79,.12);color:var(--ev-strong)}
+.tag-partial{background:rgba(176,125,34,.12);color:var(--ev-weak)}
+.tag-misses{background:rgba(187,74,51,.1);color:var(--ev-none)}
+.landscape-table .desc{color:var(--ink-soft);font-size:.88rem;line-height:1.5}
+
+/* ============ PROPOSAL ============ */
+.layer-stack{display:flex;flex-direction:column;gap:1rem;margin:2rem 0}
+.layer{
+  display:grid;grid-template-columns:160px 1fr;gap:1.5rem;align-items:start;
+  padding:1.5rem 1.8rem;background:var(--surface);border:1px solid var(--rule);
+  border-radius:4px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;
+}
+.layer:hover{transform:translateX(4px);box-shadow:var(--shadow-lg)}
+.layer .label{font-family:var(--display);font-weight:600;font-size:1.3rem;color:var(--accent)}
+.layer .desc{font-size:.95rem;color:var(--ink-soft);line-height:1.55}
+.layer .desc b{color:var(--ink);font-weight:600}
+.layer .icon{font-size:1.6rem;margin-bottom:.3rem;display:block}
+
+/* ============ REPOSITORY ============ */
+.ref-list{display:flex;flex-direction:column;gap:1.2rem;margin:1.5rem 0}
+.ref-item{padding:1.3rem 1.5rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;box-shadow:var(--shadow)}
+.ref-item h4{font-family:var(--display);font-weight:600;font-size:1.15rem;margin-bottom:.3rem;color:var(--ink)}
+.ref-item h4 a{color:var(--accent);text-decoration:underline}
+.ref-item .meta{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);letter-spacing:.04em;margin-bottom:.6rem}
+.ref-item p{font-size:.9rem;color:var(--ink-soft);margin-bottom:0;max-width:none}
+.ref-item .tags{margin-top:.6rem}
+.ref-item .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;padding:.15em .5em;border-radius:2px;margin:.15em .3em .15em 0;letter-spacing:.04em;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--rule)}
+
+/* ============ CALLOUT ============ */
+.callout{
+  border-left:3px solid var(--accent); padding:1.2rem 1.5rem;
+  margin:2rem 0; background:var(--surface-2); border-radius:0 4px 4px 0;
+  font-family:var(--serif); font-size:1.05rem; line-height:1.55; color:var(--ink-soft);
+  max-width:64ch;
+}
+.callout b{color:var(--ink);font-weight:600}
+.callout .src{display:block;font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);margin-top:.6rem;letter-spacing:.04em}
+
+/* ============ DECOUPLING DIAGRAM ============ */
+.decouple-diagram{
+  display:grid;grid-template-columns:1fr;gap:1rem;margin:2rem 0;text-align:center;
+}
+@media(min-width:768px){.decouple-diagram{grid-template-columns:1fr auto 1fr}}
+.decouple-col{display:flex;flex-direction:column;gap:.6rem;justify-content:center}
+.decouple-box{
+  padding:1.2rem 1rem;background:var(--surface);border:1px solid var(--rule-2);
+  border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--ink-soft);
+  box-shadow:var(--shadow);
+}
+.decouple-box.welded{background:rgba(187,74,51,.06);border-color:rgba(187,74,51,.3)}
+.decouple-box.freed{background:rgba(45,122,79,.06);border-color:rgba(45,122,79,.3)}
+.decouple-box b{display:block;font-family:var(--display);font-size:1rem;color:var(--ink);margin-bottom:.3rem}
+.decouple-arrow{display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--accent-2);padding:0 1rem}
+
+/* ============ FOOTER ============ */
+.footer{padding:3rem 0 4rem;border-top:1px solid var(--rule);margin-top:3rem}
+.footer p{font-family:var(--mono);font-size:.74rem;color:var(--ink-faint);line-height:1.7;letter-spacing:.02em;max-width:none}
+.footer a{color:var(--accent-2)}
+
+/* ============ MISC ============ */
+.divider{height:1px;background:var(--rule-2);margin:3rem 0;border:none}
+.two-col{display:grid;grid-template-columns:1fr;gap:2rem;margin:1.5rem 0}
+@media(min-width:768px){.two-col{grid-template-columns:1fr 1fr}}
+.kicker{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.6rem}
+.note{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);line-height:1.6;padding:1rem 1.2rem;background:var(--surface-2);border-radius:4px;border:1px solid var(--rule);margin:1.5rem 0}
+.note b{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ========== MASTHEAD ========== -->
+<header class="masthead">
+  <div class="eyebrow">NimbleCo AI · Open Science</div>
+  <h1>Beyond the <em>Paper</em></h1>
+  <p class="deck">
+    The scientific paper was designed in the <b>1880s</b> for a world of print journals, physical mail, and limited space. We now live in a world of unlimited storage, executable code, and live data streams. <b>This is an argument for decoupling what the paper bundles — and a map of what already exists.</b>
+  </p>
+  <div class="byline">
+    <span class="who">Jules</span> & Matilde · NimbleCo AI<br>
+    <span style="color:var(--ink-faint)">Drafted July 2026 · Work in progress</span>
+  </div>
+</header>
+
+<!-- ========== TAB NAV ========== -->
+<nav class="tabnav">
+  <button class="active" data-tab="problem"><span class="tab-num">01</span>The Problem</button>
+  <button data-tab="overlay"><span class="tab-num">02</span>Evidence Overlay</button>
+  <button data-tab="landscape"><span class="tab-num">03</span>The Landscape</button>
+  <button data-tab="proposal"><span class="tab-num">04</span>The Proposal</button>
+  <button data-tab="repository"><span class="tab-num">05</span>Repository</button>
+</nav>
+
+<!-- ========== TAB 1: THE PROBLEM ========== -->
+<section class="panel active" id="problem">
+
+  <h2 class="section-h">The paper bundles four things that should be <em>separable</em></h2>
+  <p class="lead">
+    The scientific paper isn't a single thing — it's a <b>container</b> that welds together four distinct layers of scientific work. When these layers can't move independently, every failure cascades.
+  </p>
+
+  <div class="decouple-diagram">
+    <div class="decouple-col">
+      <div class="decouple-box welded">
+        <b>The Paper</b>
+        Claim + Evidence + Method + Narrative<br>locked in a single static PDF
+      </div>
+    </div>
+    <div class="decouple-arrow">→</div>
+    <div class="decouple-col">
+      <div class="decouple-box freed"><b>Claims</b>independently verifiable nodes</div>
+      <div class="decouple-box freed"><b>Evidence</b>live, linked, queryable data</div>
+      <div class="decouple-box freed"><b>Methods</b>executable, version-controlled</div>
+      <div class="decouple-box freed"><b>Narrative</b>an optional view, not the unit</div>
+    </div>
+  </div>
+
+  <p>
+    When you can't update the evidence without rewriting the whole paper, can't reuse the method without reimplementing it from prose, can't challenge one claim without attacking the whole publication, and can't see when evidence has shifted under a claim written five years ago — you get a system where the <b>narrative</b> (the least scientific part) becomes the unit of credit and citation. The container is the problem, not the people.
+  </p>
+
+  <hr class="divider">
+
+  <h2 class="section-h">Fourteen structural critiques of the <em>form</em></h2>
+  <p class="lead">
+    Each of these is a <b>necessary consequence</b> of the paper format — not a failure of individual scientists, journals, or peer review. They are built into the form. You cannot fix them by asking people to be more careful, because the form demands them.
+  </p>
+
+  <div class="crit-grid">
+    <div class="crit-card">
+      <div class="num">01</div>
+      <h3>Inevitability framing</h3>
+      <p>The Introduction constructs a backstory that makes your study look like the inevitable next step. The reader never sees the branching paths, abandoned directions, or experiments that went nowhere. Science gets rewritten as a clean forward march.</p>
+      <div class="fix"><b>Fix:</b> Claim-level nodes show the actual path — every attempt, every dead end.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">02</div>
+      <h3>Selective framing of the problem</h3>
+      <p>You choose which prior work matters, which gap is "the" gap, why your question is the one that needed asking. The framing is a rhetorical move, not an neutral survey — but it presents itself as the latter.</p>
+      <div class="fix"><b>Fix:</b> Knowledge graphs let you see all connections, not just the ones the author chose to draw.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">03</div>
+      <h3>Forced novelty</h3>
+      <p>Every paper must claim novelty. Replications, confirmations, incremental improvements all get dressed up as "novel contributions" to survive review. The literature saturates with novelty claims where most content isn't novel — and genuinely valuable non-novel work is pushed into a shadow economy.</p>
+      <div class="fix"><b>Fix:</b> Novelty isn't the price of admission. Replications update existing claim nodes. You get credit for being informative, not new.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">04</div>
+      <h3>Inflation of figures & supplemental materials</h3>
+      <p>Papers have ballooned. Supplementals are often longer than the paper itself, rarely read, unsearchable. The paper becomes a packing crate rather than a communication.</p>
+      <div class="fix"><b>Fix:</b> There's no "supplemental" in a live system. Data is the data. Link to it, render it interactively, explore at whatever depth you want.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">05</div>
+      <h3>P-hacking</h3>
+      <p>The paper shows you the one analysis that worked, not the fifteen that didn't. The garden of forking paths is invisible. You see the result, never the search that produced it.</p>
+      <div class="fix"><b>Fix:</b> Executable, version-controlled methods. Every variation tried is in the commit history. P-hacking becomes visible because the forks are preserved.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">06</div>
+      <h3>Rich-get-richer citations</h3>
+      <p>The Matthew Effect: papers cited early get cited more, because people cite what's visible and safe. Citation count becomes a popularity metric decoupled from evidentiary quality.</p>
+      <div class="fix"><b>Fix:</b> The metric is quality and independence of supporting evidence, not citation count. Circular citation chains become visible and discountable.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">07</div>
+      <h3>Self-citation</h3>
+      <p>You inflate your own apparent impact by citing yourself. The citation system has no mechanism to distinguish self-citation from independent endorsement.</p>
+      <div class="fix"><b>Fix:</b> Network structure makes self-citation visible and computable. "Effective independence" of evidence can be calculated.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">08</div>
+      <h3>Speed-vs-rigor tradeoff</h3>
+      <p>Priority — who published first — gets you credit, tenure, grants. So there's systematic pressure to publish before you're confident. Once published, findings are anchored and hard to walk back.</p>
+      <div class="fix"><b>Fix:</b> Findings are provisional with explicit confidence levels that update. First observation gets credit (timestamped), but quality determines status. No single publication moment.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">09</div>
+      <h3>Positive results bias</h3>
+      <p>Journals prefer positive findings, so the literature is systematically skewed. The distribution of published results doesn't match the distribution of actual results. The published record is literally wrong about the prevalence of effects.</p>
+      <div class="fix"><b>Fix:</b> Negative results update existing claim nodes. The system shows what was looked for and not found — the information you need to calibrate beliefs.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">10</div>
+      <h3>Narrative structure (IMRaD)</h3>
+      <p>Science isn't a story. It's messy, iterative, often boring. IMRaD forces it into: problem → heroic intervention → results → meaning. You must perform significance even when your contribution is modest.</p>
+      <div class="fix"><b>Fix:</b> No template. Contribute what you found. Compose a narrative from nodes for communication — but it's a view, not the thing itself.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">11</div>
+      <h3>IMRaD makes you a poser</h3>
+      <p>The format makes you pass yourself off as radical when you're just doing careful work. You need to follow the formula even if your science doesn't fit the formula. Replications, tool papers, null results, exploratory analyses get shoehorned or dropped.</p>
+      <div class="fix"><b>Fix:</b> Each contribution type is first-class: replication node, null result node, dataset node, method node. No shoehorning.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">12</div>
+      <h3>"Is this a paper?" before "should the public know?"</h3>
+      <p>The first filter is publishability, not scientific value. If it won't make a paper, it doesn't get communicated — regardless of whether the public or other researchers should know about it. The form is a gatekeeper for what counts as knowledge.</p>
+      <div class="fix"><b>Fix:</b> The question flips: "Is this something someone should know?" If yes, publish it — as a claim, data update, method, null result.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">13</div>
+      <h3>Experiments that don't fit get dropped</h3>
+      <p>If an experiment doesn't serve the narrative, it's cut. Those results are lost to the record. The paper format actively destroys findings that don't fit its shape.</p>
+      <div class="fix"><b>Fix:</b> Every experiment is a node. Nothing gets dropped. The narrative is composed from a subset; the rest persists independently.</div>
+    </div>
+
+    <div class="crit-card">
+      <div class="num">14</div>
+      <h3>1880s form for a digital age</h3>
+      <p>IMRaD was standardized in the 1880s, widespread by the 1940s–50s. It was designed for print journals, physical mail, and limited space. Why would the optimal form for a world of unlimited storage, instant distribution, executable code, and live data be the same as the optimal form for typewriters and postal mail?</p>
+      <div class="fix"><b>Fix:</b> This is the <em>reductio</em> that anchors the whole argument. The form is the problem.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2 class="section-h">The IMRaD <em>timeline</em></h2>
+  <p class="lead">A format designed for a world that no longer exists.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">1880s</div>
+      <h4>IMRaD standardized</h4>
+      <p>The Introduction–Methods–Results–Discussion structure is formalized in the natural sciences, driven by the constraints of print journals and postal communication.</p>
+    </div>
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">1940s–50s</div>
+      <h4>Universal adoption</h4>
+      <p>IMRaD becomes the default structure for scientific publishing worldwide. Typewriters, physical typesetting, and limited page budgets define what a "paper" can be.</p>
+    </div>
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">1990s</div>
+      <h4>Digital arrives — the form doesn't change</h4>
+      <p>Journals move online, but the PDF remains the unit. Supplemental materials balloon as digital storage removes page limits — but the paper's narrative structure stays fixed.</p>
+    </div>
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">2010s</div>
+      <h4>Open access & preprints</h4>
+      <p>arXiv, bioRxiv, Sciety, OpenAIRE emerge. But they make the paper open — they don't question the paper itself. Access widens; the form stays.</p>
+    </div>
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">2020s</div>
+      <h4>Executable & live — but still papers</h4>
+      <p>eLife ERA, Stencila, Code Ocean make papers executable. Nanopublications break claims into RDF triples. But each fix addresses one layer; none stitch them together.</p>
+    </div>
+    <div class="tl-item">
+      <div class="dot"></div>
+      <div class="yr">Now</div>
+      <h4>The decoupling</h4>
+      <p>We have all the pieces. What's missing is the infrastructure where a live dashboard's output becomes a claim-node in a knowledge graph, with an executable method and a confidence score that updates with replication.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ========== TAB 2: EVIDENCE OVERLAY ========== -->
+<section class="panel" id="overlay">
+
+  <h2 class="section-h">Evidence <em>Overlay</em></h2>
+  <p class="lead">
+    When you read a paper, you don't check every citation. You can't. A citation is a social gesture that signals "this claim is backed" — but the backing might not be good enough, and <b>you'd never know</b> without tracking down and evaluating every cited source for every claim.
+  </p>
+
+  <p>
+    The evidence overlay makes the backing <b>visible</b>. Every sentence (or clause) is annotated with an evidence score derived from the actual quality of its support — not "does it have a citation" but "does the cited source actually support this claim, and how strong is that evidence." Toggle between reading mode and evidence mode to see the hidden structure.
+  </p>
+
+  <div class="overlay-demo">
+    <h4>Live Demo · Excerpt from a (simulated) Introduction</h4>
+    <div class="overlay-controls">
+      <button class="active" data-mode="off">Reading mode</button>
+      <button data-mode="evidence">Evidence mode</button>
+      <button data-mode="provenance">Provenance mode</button>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--ev-strong)"></span>Strong</span>
+        <span><span class="legend-dot" style="background:var(--ev-moderate)"></span>Moderate</span>
+        <span><span class="legend-dot" style="background:var(--ev-weak)"></span>Weak</span>
+        <span><span class="legend-dot" style="background:var(--ev-none)"></span>Unsupported</span>
+        <span><span class="legend-dot" style="background:var(--ev-unknown)"></span>Unverified</span>
+      </div>
+    </div>
+
+    <div class="overlay-text mode-off" id="overlayText">
+      <p>
+        Sleep is increasingly recognized as critical for memory consolidation<span class="cite">[1]</span>.
+        During slow-wave sleep, hippocampal replay events reactivate neural sequences associated with prior waking experience<span class="cite">[2]</span>,
+        and disrupting this replay impairs spatial memory in rodents<span class="cite">[3]</span>.
+        Interestingly, recent evidence suggests that sleep deprivation may also affect emotional regulation through amygdala–prefrontal connectivity<span class="cite">[4]</span>.
+        However, the mechanisms by which sleep loss directly alters decision-making circuits remain poorly understood<span class="cite">[5]</span>.
+        Here we show that 24 hours of total sleep deprivation in humans significantly reduces prefrontal–amygdala connectivity and increases impulsive choice in a temporal discounting task<span class="cite">[6]</span>.
+        These findings suggest that sleep loss produces a distinctive neural signature in decision circuits that may underlie real-world risk-taking behavior<span class="cite">[7]</span>.
+      </p>
+    </div>
+
+    <div class="overlay-detail" id="overlayDetail">
+      <span class="label">Click any highlighted claim to see its evidence trail.</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>The point:</b> In reading mode, this looks like a normal Introduction. Every sentence has a citation. It reads as authoritative. But switch to evidence mode and you discover that one claim has strong replicated backing, another rests on a single study that hasn't been independently replicated, one is unsupported by its cited source, and another cites something we couldn't verify at all. <b>The citation gives the same visual signal regardless of evidentiary strength. The overlay breaks that illusion.</b>
+    <span class="src">— This is a mockup. The claim-extraction, citation-resolution, and evidence-scoring pipeline is buildable with existing tools.</span>
+  </div>
+
+  <p>
+    The technical pipeline:
+  </p>
+  <div class="two-col">
+    <div>
+      <div class="kicker">1. Claim extraction</div>
+      <p style="font-size:.92rem">Parse scientific text into atomic assertions. Each assertion becomes a queryable unit with its own evidence status.</p>
+    </div>
+    <div>
+      <div class="kicker">2. Citation resolution</div>
+      <p style="font-size:.92rem">Map each assertion to its cited source via DOI, URL, or metadata. Verify the source exists and check for retractions.</p>
+    </div>
+    <div>
+      <div class="kicker">3. Evidence evaluation</div>
+      <p style="font-size:.92rem">Check whether the source actually supports the claim. Assess evidence strength: replicated → strong, single study → moderate, indirect → weak, no support → none, unverifiable → unknown.</p>
+    </div>
+    <div>
+      <div class="kicker">4. Rendering</div>
+      <p style="font-size:.92rem">Color-code or annotate each sentence/clause. Reader toggles between clean text and evidence view. Click any claim for full provenance.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>What exists already:</b> Matilde's citation verification tools (Crossref, OpenAlex, Retraction Watch, Unpaywall) already do steps 1–3 for individual citations. The birdsong dashboard already demonstrates live-evidence display. The overlay is the same principle — making evidence status visible at the point of reading — applied to scientific prose.
+  </div>
+
+</section>
+
+<!-- ========== TAB 3: THE LANDSCAPE ========== -->
+<section class="panel" id="landscape">
+
+  <h2 class="section-h">The <em>Landscape</em> of existing alternatives</h2>
+  <p class="lead">
+    We're not inventing from scratch. Each piece of the post-paper future already exists in isolation. What's missing is the <b>stitching</b> — an infrastructure where these approaches connect. Here's what's out there, what each fixes, and what each leaves untouched.
+  </p>
+
+  <table class="landscape-table">
+    <thead>
+      <tr>
+        <th>Approach</th>
+        <th>What it fixes</th>
+        <th>What it keeps</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="name">Nanopublications</div>
+          <div class="desc">Smallest unit of scientific assertion as RDF triples with provenance. Machine-readable, citable, FAIR.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Claims layer</span>
+            <span class="tag tag-partial">Provenance</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Breaks claims into atomic units</span><span class="tag tag-fixes">Machine-readable</span></td>
+        <td><span class="tag tag-misses">No evidence layer</span><span class="tag tag-misses">No narrative</span><span class="tag tag-misses">No UX</span></td>
+        <td><div class="desc">Real implementations (KGHub, WikiCite) since ~2010. Adoption limited by RDF complexity barrier.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Executable Research Articles</div>
+          <div class="desc">eLife + Stencila. Papers with live code blocks, programmatically-generated figures, dynamic values. Reader can modify and re-run.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Methods layer</span>
+            <span class="tag tag-fixes">Reproducibility</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Executable methods</span><span class="tag tag-fixes">Interactive figures</span></td>
+        <td><span class="tag tag-misses">Still a paper</span><span class="tag tag-misses">IMRaD structure</span><span class="tag tag-misses">No claim decoupling</span></td>
+        <td><div class="desc">Live on eLife, GigaByte + Code Ocean. Most mature "executable paper" implementation.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Publish-Review-Curate (Sciety)</div>
+          <div class="desc">Preprints published immediately, community peer review and curation happen publicly and continuously afterward.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Review layer</span>
+            <span class="tag tag-fixes">Speed-vs-rigor</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Continuous review</span><span class="tag tag-fixes">No gatekeeping delay</span></td>
+        <td><span class="tag tag-misses">Still a preprint</span><span class="tag tag-misses">No claim decoupling</span><span class="tag tag-misses">No evidence overlay</span></td>
+        <td><div class="desc">36,000 evaluated preprints, 76,000 evaluations from 27 community groups.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Overlay Journals</div>
+          <div class="desc">Peer review layered onto already-public preprints (arXiv, bioRxiv). No separate publication artifact.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Access</span>
+            <span class="tag tag-fixes">Cost</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Open access</span><span class="tag tag-fixes">Low cost</span></td>
+        <td><span class="tag tag-misses">Same paper artifact</span><span class="tag tag-misses">Same narrative structure</span></td>
+        <td><div class="desc">Open Journal of Astrophysics, Quantum, Episciences. No author/reader fees.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Scholarly Knowledge Graphs</div>
+          <div class="desc">OpenAIRE Graph (250M+ works), OpenAlex (209M works), SciLake. Map relationships between papers, citations, authors, institutions.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Relationships</span>
+            <span class="tag tag-fixes">Assessment reform</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Maps citation networks</span><span class="tag tag-fixes">Open citation index</span></td>
+        <td><span class="tag tag-misses">Above the claim level</span><span class="tag tag-misses">No evidence scoring</span><span class="tag tag-misses">Paper is still the node</span></td>
+        <td><div class="desc">Active infrastructure. OpenAIRE designed for research assessment reform (CoARA).</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Registered Reports</div>
+          <div class="desc">Method and analysis plan peer-reviewed and accepted before data collection. Eliminates p-hacking and publication bias for the registered part.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">P-hacking</span>
+            <span class="tag tag-fixes">Positive results bias</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Eliminates p-hacking</span><span class="tag tag-fixes">Reduces publication bias</span></td>
+        <td><span class="tag tag-misses">Still produces a paper</span><span class="tag tag-misses">Only for pre-registered analyses</span></td>
+        <td><div class="desc">Growing adoption across journals (COS registry). Still a minority of published work.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Post-Document Science (AKE)</div>
+          <div class="desc">Proposed "Autonomous Knowledge Engine" combining formal claim verification, MoE routing, and information-theoretic filtering. Shifts epistemic control from narrative to computational verification.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Claims</span>
+            <span class="tag tag-fixes">Verification</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Computational verification</span><span class="tag tag-fixes">Knowledge graph integration</span></td>
+        <td><span class="tag tag-misses">Theoretical proposal</span><span class="tag tag-misses">No working implementation</span></td>
+        <td><div class="desc">Published 2025 (MDPI). Conceptual — closest to our decoupled model in the literature.</div></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="name">Micropublications</div>
+          <div class="desc">Extends nanopublications with structured evidence and attribution. The smallest unit of assertion plus its supporting evidence.</div>
+          <div class="tags">
+            <span class="tag tag-fixes">Claims + Evidence</span>
+          </div>
+        </td>
+        <td><span class="tag tag-fixes">Evidence-claim linking</span><span class="tag tag-fixes">Incentivizes data publication</span></td>
+        <td><span class="tag tag-misses">RDF barrier</span><span class="tag tag-misses">No narrative layer</span><span class="tag tag-misses">No UX</span></td>
+        <td><div class="desc">Published concept (Oxford Academic, 2018). Limited adoption outside biocuration.</div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>The pattern:</b> Every existing alternative fixes one layer but keeps the others. ERAs make the paper executable but keep the paper. PRC fixes review but keeps the paper. Overlay journals fix access but keep the paper. Nanopublications fix the claim level but lack UX, evidence, and narrative. Knowledge graphs fix relationships but stay above the claim. <b>Nobody has stitched the layers together.</b>
+    <span class="src">— That gap is where our proposal lives.</span>
+  </div>
+
+</section>
+
+<!-- ========== TAB 4: THE PROPOSAL ========== -->
+<section class="panel" id="proposal">
+
+  <h2 class="section-h">The <em>Proposal</em>: decoupled, stitched, live</h2>
+  <p class="lead">
+    Don't abolish the paper — <b>demote it</b>. The paper becomes one possible view of an underlying evidence system, useful for communication and synthesis, but no longer the unit of scientific knowledge. The unit becomes the verified claim with its evidence trail. Everything else is infrastructure around that.
+  </p>
+
+  <h2 class="section-h" style="font-size:1.6rem;margin-top:2.5rem">Four layers, four lifecycles</h2>
+
+  <div class="layer-stack">
+    <div class="layer">
+      <div>
+        <span class="icon">📌</span>
+        <span class="label">Claims</span>
+      </div>
+      <div class="desc">
+        First-class, independently-verifiable, confidence-scored nodes. Each claim has a persistent ID, a provenance trail, and a status that updates with new evidence. A novel claim enters with low confidence and no incoming edges. Each replication adds edges. Confidence accrues. <b>The novel claim isn't privileged — it's on probation.</b>
+      </div>
+    </div>
+    <div class="layer">
+      <div>
+        <span class="icon">📊</span>
+        <span class="label">Evidence</span>
+      </div>
+      <div class="desc">
+        Live, linked, queryable data. Not supplemental files — the actual data, rendered interactively, explorable at any depth. Evidence links to claims; when data changes, claim confidence updates. The birdsong dashboard is a working prototype of this: live data, live analysis, live display.
+      </div>
+    </div>
+    <div class="layer">
+      <div>
+        <span class="icon">⚙️</span>
+        <span class="label">Methods</span>
+      </div>
+      <div class="desc">
+        Executable, version-controlled pipelines. The method IS the method — not a prose description of it. Full commit history shows every variation tried. P-hacking becomes visible because the forks are preserved. Anyone can re-run the analysis on the same data, or on new data.
+      </div>
+    </div>
+    <div class="layer">
+      <div>
+        <span class="icon">📖</span>
+        <span class="label">Narrative</span>
+      </div>
+      <div class="desc">
+        An optional composition layer that sits ON TOP of the other three — not instead of them. You can still write a story, make an argument, synthesize findings. But the narrative is a view, not the thing itself. The nodes persist independently. <b>Nothing gets dropped because it "didn't fit the story."</b>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2 class="section-h">How this addresses each <em>critique</em></h2>
+  <p class="lead">Every critique from Tab 1 maps to a structural fix in the decoupled model.</p>
+
+  <div class="two-col">
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">Inevitability framing →</h3>
+      <p style="font-size:.9rem">The knowledge graph shows all paths, not just the constructed narrative. Abandoned directions persist as nodes with "explored, no finding" status.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">Forced novelty →</h3>
+      <p style="font-size:.9rem">Replications and null results are first-class contributions. Credit accrues for moving the field's confidence, not for novelty.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">P-hacking →</h3>
+      <p style="font-size:.9rem">Version-controlled methods preserve the full search history. The garden of forking paths is visible.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">Positive results bias →</h3>
+      <p style="font-size:.9rem">Negative results update existing nodes. The system shows what was looked for and not found — the information needed to calibrate beliefs.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">Citation gaming →</h3>
+      <p style="font-size:.9rem">Effective independence of evidence is computable. Self-citation and circular chains are visible and discountable.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.1rem">IMRaD / narrative →</h3>
+      <p style="font-size:.9rem">No template. Each contribution type is first-class. Narrative is a view you compose, not a cage you fit into.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2 class="section-h">We're <em>already</em> building this</h2>
+  <p>
+    The pieces aren't theoretical. They exist, they work, and they're in production:
+  </p>
+  <div class="two-col">
+    <div>
+      <div class="kicker">Birdsong dashboard</div>
+      <p style="font-size:.92rem">A live evidence system: real data, real analysis, live display. No paywall, no gatekeeper. The "publication" IS the running system.</p>
+    </div>
+    <div>
+      <div class="kicker">Citation verification tools</div>
+      <p style="font-size:.92rem">Claim-checking against Crossref, OpenAlex, Retraction Watch, Unpaywall. The evidence-overlay pipeline is these tools wired into a text renderer.</p>
+    </div>
+    <div>
+      <div class="kicker">Consciousness testability rubric</div>
+      <p style="font-size:.92rem">A structured claim graph: each scope-line is a claim node with its testability status. Not biased by citation count — biased by evidence.</p>
+    </div>
+    <div>
+      <div class="kicker">The question</div>
+      <p style="font-size:.92rem">Do we build the infrastructure that makes the stitching possible for others — or do we keep demonstrating it case by case until the pattern becomes undeniable?</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ========== TAB 5: REPOSITORY ========== -->
+<section class="panel" id="repository">
+
+  <h2 class="section-h"><em>Repository</em> of alternative approaches</h2>
+  <p class="lead">
+    A living reference list of existing attempts at post-paper scientific knowledge. This will grow.
+  </p>
+
+  <div class="ref-list">
+    <div class="ref-item">
+      <h4><a href="https://nanopub.net/" target="_blank">Nanopublications</a></h4>
+      <div class="meta">nanopub.net · RDF · Since ~2010</div>
+      <p>The smallest unit of scientific assertion as machine-readable, FAIR digital objects using RDF semantic web technology. Each nanopublication contains an assertion, provenance, and publication info. Real implementations via KGHub and WikiCite. Limited adoption due to the barrier of formalizing claims in RDF.</p>
+      <div class="tags"><span class="tag">claims</span><span class="tag">RDF</span><span class="tag">semantic web</span><span class="tag">FAIR</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://academic.oup.com/database/article/doi/10.1093/database/bay013/4917853" target="_blank">Micropublications</a></h4>
+      <div class="meta">Oxford Academic · Database · 2018</div>
+      <p>Extends nanopublications with structured evidence and attribution. Incentivizes community curation and places unpublished data into the public domain. Similar to nanopublications but with richer evidence modeling. Limited adoption outside biocuration.</p>
+      <div class="tags"><span class="tag">claims</span><span class="tag">evidence</span><span class="tag">biocuration</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://elifesciences.org/labs/dc5acbde/welcome-to-a-new-era-of-reproducible-publishing" target="_blank">Executable Research Articles (ERA)</a></h4>
+      <div class="meta">eLife + Stencila · Since 2021</div>
+      <p>Published papers with live code blocks, programmatically-generated interactive figures, and dynamically computed values. Authors use R Markdown / Jupyter with Stencila Hub. Reader can modify code and re-run directly in the article. GigaByte + River Valley have pushed further with Code Ocean integration.</p>
+      <div class="tags"><span class="tag">executable</span><span class="tag">methods</span><span class="tag">reproducibility</span><span class="tag">eLife</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://stencila.stencila.io/" target="_blank">Stencila</a></h4>
+      <div class="meta">stencila.io · Open source</div>
+      <p>An office suite for reproducible research. Author interactive, data-driven publications in visual interfaces similar to conventional office suites, built from the ground up for reproducibility. Underpins eLife's ERA format.</p>
+      <div class="tags"><span class="tag">executable</span><span class="tag">authoring</span><span class="tag">reproducibility</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://sciety.org/" target="_blank">Sciety — Publish, Review, Curate</a></h4>
+      <div class="meta">sciety.org · Since 2020</div>
+      <p>Preprints published immediately, community peer review and curation happen publicly and continuously. 36,000 evaluated preprints, 76,000 evaluations from 27 community peer evaluation initiatives through 18 organizational partnerships. Aggregates preprints from multiple sources for discovery and evaluation.</p>
+      <div class="tags"><span class="tag">review</span><span class="tag">preprints</span><span class="tag">community</span><span class="tag">continuous</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://en.wikipedia.org/wiki/Overlay_journal" target="_blank">Overlay Journals</a></h4>
+      <div class="meta">Open Journal of Astrophysics, Quantum, Episciences · Since ~2013</div>
+      <p>Peer review layered onto already-public preprints (arXiv, HAL, Zenodo). No separate publication artifact. The Open Journal of Astrophysics is fully funded by Maynooth Academic Publishing, no author or reader fees. Cost-efficient compared to traditional subscription publishing.</p>
+      <div class="tags"><span class="tag">access</span><span class="tag">cost</span><span class="tag">arXiv</span><span class="tag">open access</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://graph.openaire.eu/" target="_blank">OpenAIRE Graph</a></h4>
+      <div class="meta">graph.openaire.eu · EU infrastructure</div>
+      <p>A scholarly knowledge graph of 250M+ works with open citation links, designed specifically to reform research assessment away from journal-impact-factor metrics. Embodying POSI (Principles of Open Scholarly Infrastructures) and CoARA commitments. Active infrastructure for open science in Europe.</p>
+      <div class="tags"><span class="tag">knowledge graph</span><span class="tag">citations</span><span class="tag">assessment reform</span><span class="tag">infrastructure</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://openalex.org/" target="_blank">OpenAlex</a></h4>
+      <div class="meta">openalex.org · Since 2022 · 209M works</div>
+      <p>A fully-open scientific knowledge graph launched to replace the discontinued Microsoft Academic Graph. Metadata for 209M works, 13M disambiguated authors, 124K venues, 109K institutions, 65K Wikidata concepts. Free, open, with API. Not yet at the claim level — maps papers, not claims within papers.</p>
+      <div class="tags"><span class="tag">knowledge graph</span><span class="tag">metadata</span><span class="tag">open</span><span class="tag">infrastructure</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://www.cos.io/initiatives/registered-reports" target="_blank">Registered Reports</a></h4>
+      <div class="meta">Center for Open Science · Multiple journals</div>
+      <p>Method and analysis plan peer-reviewed and accepted before data collection. Eliminates p-hacking and publication bias for the registered analysis. Growing adoption across journals via the COS registry. Still produces a paper at the end, and only covers pre-registered analyses.</p>
+      <div class="tags"><span class="tag">p-hacking</span><span class="tag">publication bias</span><span class="tag">pre-registration</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://www.mdpi.com/2305-6703/6/2/14" target="_blank">Post-Document Science: Autonomous Knowledge Engine</a></h4>
+      <div class="meta">MDPI · Information · 2025</div>
+      <p>Proposes Object-Oriented Scientific Information (OOSI) and an Autonomous Knowledge Engine (AKE) combining domain-specialized MoE routing, formal verification of claims, and information-theoretic filtering. Shifts epistemic control from narrative evaluation to computational verification. Conceptual — no working implementation yet. Closest to our decoupled model in the literature.</p>
+      <div class="tags"><span class="tag">claims</span><span class="tag">verification</span><span class="tag">computational</span><span class="tag">theoretical</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://www.crossref.org/blog/evolving-the-preprint-evaluation-world-with-sciety/" target="_blank">Publish-Review-Curate Model</a></h4>
+      <div class="meta">Plan S / Coalition S · 2023</div>
+      <p>A model where publishing (preprint) happens first, review and curation follow. Sends a clear signal that the community has evaluated and validated the article. Endorsed by Plan S as part of the transition to open access. Decouples the timeline of publication from evaluation.</p>
+      <div class="tags"><span class="tag">review</span><span class="tag">preprints</span><span class="tag">Plan S</span></div>
+    </div>
+
+    <div class="ref-item">
+      <h4><a href="https://council.science/publications/reform-of-scientific-publishing/" target="_blank">The Case for Reform of Scientific Publishing</a></h4>
+      <div class="meta">International Science Council · 2021</div>
+      <p>Comprehensive roadmap for reform: improving peer review, ensuring open access, shifting from "publish or perish" to valuing diverse contributions, and prioritizing global dissemination of knowledge as a public good. A high-level policy argument that the system is broken — but doesn't propose decoupling the paper form itself.</p>
+      <div class="tags"><span class="tag">policy</span><span class="tag">reform</span><span class="tag">ISC</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2 class="section-h">Existing infrastructure we can <em>build on</em></h2>
+  <p>
+    These aren't post-paper alternatives, but they're the plumbing our decoupled model would connect to:
+  </p>
+  <div class="two-col">
+    <div class="ref-item" style="box-shadow:none">
+      <h4 style="font-size:1rem"><a href="https://www.crossref.org/" target="_blank">Crossref</a></h4>
+      <div class="meta">DOI registration & metadata</div>
+      <p style="font-size:.88rem">Persistent identifiers and metadata for 150M+ scholarly works. The backbone of citation resolution.</p>
+    </div>
+    <div class="ref-item" style="box-shadow:none">
+      <h4 style="font-size:1rem"><a href="https://retractionwatch.com/" target="_blank">Retraction Watch</a></h4>
+      <div class="meta">Retraction database</div>
+      <p style="font-size:.88rem">Tracks retractions across the scientific literature. Integratable via Crossref for automated retraction checking.</p>
+    </div>
+    <div class="ref-item" style="box-shadow:none">
+      <h4 style="font-size:1rem"><a href="https://unpaywall.org/" target="_blank">Unpaywall</a></h4>
+      <div class="meta">Open access resolver</div>
+      <p style="font-size:.88rem">Finds legal open-access copies of papers by DOI. Essential for evidence access without paywalls.</p>
+    </div>
+    <div class="ref-item" style="box-shadow:none">
+      <h4 style="font-size:1rem"><a href="https://www.wikidata.org/" target="_blank">Wikidata</a></h4>
+      <div class="meta">Linked open data</div>
+      <p style="font-size:.88rem">General-purpose knowledge graph in RDF. 100M+ items. Potential substrate for claim-level nodes.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <p>
+    Beyond the Paper · <a href="https://nimbleco.ai">NimbleCo AI</a> · Open Science Initiative<br>
+    Built by Jules & Matilde · Drafted July 2026 · Work in progress<br>
+    This dashboard is itself an experiment in the form it argues for — a live, iteratively improvable artifact, not a static publication.
+  </p>
+</footer>
+
+</div>
+
+<script>
+// ============ TAB SWITCHING ============
+const tabs = document.querySelectorAll('.tabnav button');
+const panels = document.querySelectorAll('.panel');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(target).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// ============ EVIDENCE OVERLAY ============
+const overlayText = document.getElementById('overlayText');
+const overlayDetail = document.getElementById('overlayDetail');
+const overlayBtns = document.querySelectorAll('.overlay-controls button[data-mode]');
+
+// Claim data — each span has data-ev and a detail string
+const claimData = {
+  '1': { ev: 'strong', text: 'Sleep is critical for memory consolidation', source: 'Diekelmann & Born (2010), Nature Neuroscience', status: 'Three independent meta-analyses confirm. Multiple species. Strong evidence.', verdict: 'strong' },
+  '2': { ev: 'strong', text: 'Hippocampal replay during slow-wave sleep reactivates waking sequences', source: 'Wilson & McNaughton (1994), Science; Lee & Wilson (2002), Neuron; multiple replications', status: 'Directly observed in rodents, replicated across labs. Strong.', verdict: 'strong' },
+  '3': { ev: 'moderate', text: 'Disrupting replay impairs spatial memory in rodents', source: 'Girardeau et al. (2009), Science; Ego-Stengel & Wilson (2010), Neuron', status: 'Two studies, same lab lineage. No fully independent replication found.', verdict: 'moderate' },
+  '4': { ev: 'weak', text: 'Sleep deprivation affects emotional regulation via amygdala–PFC connectivity', source: 'Yoo et al. (2007), Current Biology — single fMRI study, n=26', status: 'Single small study. Cited as established fact. No independent replication of the connectivity finding specifically.', verdict: 'weak' },
+  '5': { ev: 'unknown', text: 'Mechanisms by which sleep loss alters decision-making remain poorly understood', source: 'No specific citation — general statement', status: 'Vague claim, no traceable source. Could not verify.', verdict: 'unknown' },
+  '6': { ev: 'none', text: '24h sleep deprivation reduces PFC–amygdala connectivity and increases impulsive choice', source: 'Unpublished data — this is the current study\'s own finding', status: 'The cited source [6] is the paper itself. This is the study\'s result being presented as established evidence in the Introduction. Circular.', verdict: 'none' },
+  '7': { ev: 'weak', text: 'Sleep loss produces a distinctive neural signature underlying real-world risk-taking', source: 'Inferred from current study + Yoo et al. (2007)', status: 'Extrapolation from one small study + own unpublished data. The leap to "real-world risk-taking" is not supported by cited evidence.', verdict: 'weak' }
+};
+
+// Wrap claims in spans
+const overlayHTML = overlayText.querySelector('p').innerHTML;
+// The cite spans are already in the HTML — we need to wrap the preceding text in claim spans
+// Actually, let's re-render with claim spans
+const claims = [
+  { id: 1, text: 'Sleep is increasingly recognized as critical for memory consolidation', ev: 'strong' },
+  { id: 2, text: 'During slow-wave sleep, hippocampal replay events reactivate neural sequences associated with prior waking experience', ev: 'strong' },
+  { id: 3, text: 'and disrupting this replay impairs spatial memory in rodents', ev: 'moderate' },
+  { id: 4, text: 'Interestingly, recent evidence suggests that sleep deprivation may also affect emotional regulation through amygdala–prefrontal connectivity', ev: 'weak' },
+  { id: 5, text: 'However, the mechanisms by which sleep loss directly alters decision-making circuits remain poorly understood', ev: 'unknown' },
+  { id: 6, text: 'Here we show that 24 hours of total sleep deprivation in humans significantly reduces prefrontal–amygdala connectivity and increases impulsive choice in a temporal discounting task', ev: 'none' },
+  { id: 7, text: 'These findings suggest that sleep loss produces a distinctive neural signature in decision circuits that may underlie real-world risk-taking behavior', ev: 'weak' }
+];
+
+let html = '';
+claims.forEach((c, i) => {
+  const sep = i === 0 ? '' : '. ';
+  html += `${sep}<span class="claim" data-ev="${c.ev}" data-claim-id="${c.id}">${c.text}</span><span class="cite">[${c.id}]</span>`;
+});
+html += '.';
+overlayText.querySelector('p').innerHTML = html;
+
+// Mode switching
+overlayBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    overlayBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    overlayText.className = 'overlay-text mode-' + btn.dataset.mode;
+  });
+});
+
+// Click claim for detail
+overlayText.addEventListener('click', (e) => {
+  const claim = e.target.closest('.claim');
+  if (!claim) return;
+  const id = claim.dataset.claimId;
+  const data = claimData[id];
+  if (!data) return;
+  overlayDetail.innerHTML = `
+    <span class="label">Claim [${id}]:</span> "${data.text}"<br>
+    <span class="label">Cited source:</span> ${data.source}<br>
+    <span class="label">Evidence:</span> <span class="verdict ${data.verdict}">${data.verdict.toUpperCase()}</span><br>
+    <span class="label">Assessment:</span> ${data.status}
+  `;
+  overlayDetail.classList.add('visible');
+});
+</script>
+</body>
+</html>
