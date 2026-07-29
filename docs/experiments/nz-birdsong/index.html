@@ -1281,13 +1281,47 @@ tr:hover td{background:var(--surface-2)}
         <li><b>Single-site vs multi-site:</b> Hill's results come from one population (Tawharanui); ours span the country, so inter-population variation is confounded with methodological differences</li>
       </ul>
 
-      <h4>Deep Learning: CNN Segmentation &amp; Categorisation</h4>
-      <p>Beyond the rule-based pipeline, we trained a <b>TweetyNet-style convolutional neural network</b> for joint
-      syllable <em>segmentation</em> (finding boundaries) and <em>categorisation</em> (classifying vocalisation units).
+      <h4>Deep Learning: CNN Segmentation</h4>
+      <p>Beyond the rule-based pipeline, we trained a <b>TweetyNet-style convolutional neural network</b> for
+      syllable <em>segmentation</em> &mdash; finding the boundaries of vocal units. <b>It does not categorise
+      syllables; see the correction immediately below.</b>
       The model processes raw spectrograms and predicts frame-level labels, then post-processing extracts contiguous
       segments with confidence thresholds and minimum-duration filtering. This architecture, introduced by
       <a href="https://doi.org/10.1038/s41592-022-01608-2">Cohen et al. (2022)</a> for birdsong annotation, learns
       spectral-temporal features directly from data rather than relying on hand-crafted rules.</p>
+
+      <div class="note" style="margin:1rem 0">
+        <div class="mark">Correction (29 July 2026) &mdash; this model does not categorise syllables</div>
+        <div>
+        <p style="margin:0 0 .7rem">Until today this section was headed &ldquo;CNN Segmentation &amp;
+        Categorisation&rdquo; and described the network as performing &ldquo;joint syllable <em>segmentation</em>
+        (finding boundaries) and <em>categorisation</em> (classifying vocalisation units)&rdquo;.
+        <b>No measurement ever supported the categorisation claim, and the model could not have performed the
+        task.</b> It is withdrawn.</p>
+
+        <p style="margin:0 0 .7rem">The training script read the Koe annotation field <code>seg[3]</code> as the
+        syllable class. That field is <b>f_mid &mdash; a frequency in Hz</b>, not a label. The result was
+        <b>829 distinct &ldquo;classes&rdquo; over 829 segments</b>: one example per class, the class identities
+        being floating-point frequencies (690.06, 762.34, 770.07&nbsp;Hz&hellip;). No classifier can be trained that
+        way, and none was.</p>
+
+        <p style="margin:0 0 .7rem">The segmentation figures above are <b>unaffected</b>: segmentation scoring uses
+        only the blank/non-blank distinction, so the spurious classes never enter precision or recall. If anything
+        they penalise the model, since a segment is terminated whenever the predicted class changes. But every
+        statement on this page about the network identifying syllable <i>types</i> was false.</p>
+
+        <p style="margin:0 0 .7rem">Two knock-on errors, corrected today. The dataset table below listed the Koe
+        corpus as having <b>3 label types</b> &mdash; neither the 829 the model was trained on nor the 74 the corpus
+        actually contains. And the multi-species section offered <code>bellbird:click</code> as an example of a
+        species-prefixed label; the real labels in that run are frequencies with a species prefix, e.g.
+        <code>bellbird:1018.63239577395</code>.</p>
+
+        <p style="margin:0">The real taxonomy was never loaded. <code>segment.extraattrvalue.json</code>, sitting
+        beside the file that was parsed, holds <b>13 families and 74 labels</b> &mdash; Stutter, Alarmy, Pipe,
+        Flatsqueak, Down, Chortle, Cough. A retrain against it is underway. Until that produces a validated result,
+        <b>this project has no syllable classifier</b> and no categorisation performance to report.</p>
+        </div>
+      </div>
 
       <div class="note" style="margin:1rem 0">
         <div class="mark">Correction (27 July 2026) — what the CNN numbers do and do not show</div>
@@ -1361,25 +1395,32 @@ tr:hover td{background:var(--surface-2)}
         <li><b>Input:</b> Log-scaled spectrogram (500–10kHz, z-score normalised per file)</li>
         <li><b>Encoder:</b> 3-layer Conv2D (32→64→128 channels, 5×5 / 5×5 / 3×3 kernels) with BatchNorm + ReLU</li>
         <li><b>Temporal:</b> Frequency pooling → 2-layer bidirectional GRU (256 hidden, 0.3 dropout)</li>
-        <li><b>Output:</b> Frame-level classification (N phrase types + 1 blank class)</li>
+        <li><b>Output:</b> Frame-level labels (N classes + 1 blank). Only the blank/non-blank distinction is used for segmentation &mdash; per the 29 July correction, the class dimension was misconfigured and carries no syllable-type information.</li>
         <li><b>Loss:</b> Weighted Cross-Entropy (blank weight = 0.15–0.25, tuned per species)</li>
         <li><b>Post-processing:</b> Confidence threshold sweep (0.3–0.9), minimum segment duration filtering, IoU > 0.1 matching against ground truth</li>
       </ul>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Multi-Species Training</h4>
       <p>The CNN trains jointly on annotated datasets from multiple species, with species-prefixed labels to avoid
-      category collision (e.g. <code>bellbird:click</code> and <code>toutouwai:B</code> are distinct classes). This
-      allows a single model to segment and categorise vocalisations across species with different acoustic
-      structures — bellbird's 55ms discrete syllables vs toutouwai's 971ms sustained phrases.</p>
+      category collision across corpora. This allows a single model to <em>segment</em> vocalisations across species
+      with different acoustic structures &mdash; bellbird's 55ms discrete syllables vs toutouwai's 971ms sustained
+      phrases. <b>Correction (29 July 2026):</b> this previously read &ldquo;segment and categorise&rdquo; and gave
+      <code>bellbird:click</code> as an example label. In the run described here the labels are frequencies rather
+      than call types (e.g. <code>bellbird:1018.63239577395</code>), so no cross-species categorisation was
+      performed.</p>
 
       <table style="width:100%;font-size:.85rem;margin:1rem 0">
         <thead><tr><th style="text-align:left">Dataset</th><th>Species</th><th>Recordings</th><th>Segments</th><th>Label types</th><th>Source</th></tr></thead>
         <tbody>
-          <tr><td><b>Koe</b></td><td>Bellbird (korimako)</td><td class="num">60</td><td class="num">829</td><td class="num">3</td><td>Fukuzawa et al. (2020)</td></tr>
+          <tr><td><b>Koe</b></td><td>Bellbird (korimako)</td><td class="num">60</td><td class="num">829</td><td class="num">74 &dagger;</td><td>Fukuzawa et al. (2020)</td></tr>
           <tr><td><b>Donald</b></td><td>Toutouwai (NI robin)</td><td class="num">124</td><td class="num">10,357</td><td class="num">73</td><td>Harry Donald, Shaw Lab (VUW)</td></tr>
           <tr><td><b>Campbell</b></td><td>Kākā</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>Fraser Campbell, Shaw Lab (VUW) — forthcoming</td></tr>
         </tbody>
       </table>
+      <p style="font-size:.8rem;color:var(--ink-faint);margin:-.5rem 0 1rem">&dagger; Corrected 29 July 2026. This
+      cell previously read &ldquo;3&rdquo;. The Koe corpus carries 74 syllable labels across 13 families
+      (<code>segment.extraattrvalue.json</code>); the CNN described above was mistakenly trained on 829 frequency
+      values instead. See the 29 July correction.</p>
 
       <h4 style="font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:1.5rem 0 .5rem">Data Augmentation</h4>
       <p>To make the model robust to the heterogeneous recording conditions across datasets — studio (Koe) vs field
