@@ -1,6 +1,11 @@
 name: Extrapolate categories (DTW template match)
 
-# Triggered by the "Extrapolate" button in cluster.html (Create tab).
+# Dispatched by a maintainer with their own credentials, e.g.
+#   gh workflow run dtw-extrapolate.yml -f species=bellbird \
+#      -f clusters_json_b64="$(base64 -i bellbird_clusters.json)"
+# using the cluster export from cluster.html's "Export Clusters" button. It used to be
+# triggered directly from that page by a GitHub token embedded in the page; that token was
+# removed for credential hygiene, so the trigger is now a maintainer step.
 # Takes the current manual clusters for one species, builds DTW-barycenter
 # templates from them (tslearn), classifies every remaining candidate clip
 # against those templates, and merges confidence-scored results back into
@@ -40,9 +45,9 @@ jobs:
           python-version: '3.11'
 
       # Validate the species against a hard allowlist BEFORE it is ever used in a
-      # path or command. The dispatch trigger is a PAT embedded in a public page, so
-      # treat every input as attacker-controlled. Passing inputs via env (never inline
-      # ${{ }} interpolation in run: blocks) closes the Actions script-injection hole.
+      # path or command, and keep treating every input as untrusted. Passing inputs via
+      # env (never inline ${{ }} interpolation in run: blocks) closes the Actions
+      # script-injection hole. Keep this hardening in place regardless of who dispatches.
       - name: Validate species
         env:
           SPECIES: ${{ github.event.inputs.species }}
