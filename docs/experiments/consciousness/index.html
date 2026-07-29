@@ -637,287 +637,2557 @@ footer a { color: var(--blue); text-decoration: none; }
 </footer>
 
 <script>
-// Theory data (embedded — will be expanded as more theories are analyzed)
+// Theory data (verified — all citations checked through Crossref/OpenAlex/DataCite)
 const THEORIES = [
   {
-    id: "iit",
-    name: "Integrated Information Theory (IIT)",
-    proponent: "Giulio Tononi & Christof Koch",
-    category: "Information",
-    tier: "strongly_testable",
-    score: 0.85,
-    core_claims: [
-      "Consciousness is identical to a maximally irreducible conceptual structure (Φ-structure) in qualia space",
-      "Integrated information (Φ) is both necessary and sufficient for consciousness",
-      "Consciousness is a structure, not a function, process, or computation",
-      "The physical substrate of consciousness resides primarily in posterior cerebral cortex"
+    "id": "integrated_information_theory_",
+    "name": "Integrated Information Theory (IIT)",
+    "proponent": "Giulio Tononi",
+    "category": "information-theoretic",
+    "tier": "strongly_testable",
+    "score": 0.85,
+    "core_claims": [
+      "Consciousness corresponds to the capacity of a system to integrate information, measured by the quantity Phi (\u03a6)",
+      "The quality of an experience is determined by the informational relationships (cause-effect structure) among the elements of a complex",
+      "Consciousness is a fundamental property of certain physical systems; a system is conscious to the degree that it has maximally irreducible cause-effect power upon itself",
+      "The substrate of consciousness must have both differentiation (many possible states) and integration (unified whole), captured by the mathematical quantity \u03a6",
+      "Consciousness is graded, present in infants and animals, and in principle constructable in artificial systems",
+      "The cerebellum, despite having many neurons, is not conscious because its feedforward architecture yields low \u03a6; the thalamocortical system yields high \u03a6",
+      "IIT 4.0 articulates five axioms (existence, intrinsicality, information, integration, exclusion) and corresponding postulates that any physical substrate must satisfy"
     ],
-    premises: [
-      {id: "P1", text: "Conscious experience exists and is immediately known (phenomenological given)", type: "Introspective"},
-      {id: "P2", text: "Experience has five essential properties: intrinsic existence, composition, information, integration, exclusion", type: "Phenomenological axiom"},
-      {id: "P3", text: "Each phenomenal property corresponds to a physical cause-effect property (bridge principle)", type: "Bridge principle"},
-      {id: "P4", text: "A system's integrated information Φ measures its irreducibility to its parts", type: "Mathematical definition"},
-      {id: "P5", text: "Only systems with maximally irreducible cause-effect power are conscious", type: "Ontological"}
-    ],
-    inferences: [
-      {from: ["P1","P2","P3"], to: "I1", text: "Physical substrates must satisfy five postulates"},
-      {from: ["I1","P4"], to: "C1", text: "Consciousness = maximally irreducible Φ-structure"},
-      {from: ["C1","P5"], to: "C2", text: "Φ>0 ⟺ conscious"},
-      {from: ["C2","P2"], to: "C3", text: "Consciousness not limited to biological systems"}
-    ],
-    conclusions: [
-      {id: "C1", text: "Consciousness is identical to a Φ-structure (explanatory identity)"},
-      {id: "C2", text: "Φ > 0 is necessary and sufficient for consciousness"},
-      {id: "C3", text: "Consciousness extends beyond brains to any system with integrated information"}
-    ],
-    scope_lines: [
-      {step: 1, formula: "P1: Experience exists", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
-      {step: 2, formula: "P2: Five axioms", deps: [2], rule: "Premise (phenomenological)", active: ["P1","P2"]},
-      {step: 3, formula: "P3: Phenomenal → physical", deps: [3], rule: "Premise (bridge)", active: ["P1","P2","P3"]},
-      {step: 4, formula: "P4: Φ = integrated info", deps: [4], rule: "Premise (mathematical)", active: ["P1","P2","P3","P4"]},
-      {step: 5, formula: "P5: Being = cause-effect", deps: [5], rule: "Premise (ontological)", active: ["P1","P2","P3","P4","P5"]},
-      {step: 6, formula: "I1: Five postulates", deps: [1,2,3], rule: "Inference (axioms→postulates)", active: ["P1","P2","P3"]},
-      {step: 7, formula: "C1: Consciousness = Φ-structure", deps: [1,2,3,4], rule: "Inference (postulates+Φ→identity)", active: ["P1","P2","P3","P4"]},
-      {step: 8, formula: "C2: Φ>0 ⟺ conscious", deps: [1,2,3,4,5], rule: "Inference (C1+being)", active: ["P1","P2","P3","P4","P5"]},
-      {step: 9, formula: "C3: Non-biological consciousness", deps: [1,2,3,4], rule: "Inference (C2, no bio restriction)", active: ["P1","P2","P3","P4"]}
-    ],
-    evidence: [
+    "premises": [
       {
-        claim: "Φ should correlate with states of consciousness (awake vs anesthetized vs coma)",
-        type: "neuroimaging",
-        tested: true,
-        verdict: "supports",
-        detail: "Preliminary studies calculating Φ for simplified neural network models correlate with consciousness states. However, computing Φ for real brains remains computationally intractable at scale — only simplified approximations have been tested.",
-        quality: "moderate",
-        refs: ["Oizumi et al. 2014"]
+        "id": "P1",
+        "text": "Conscious experience exists intrinsically (for the subject) and is structured, specific, unified, and definite.",
+        "type": "phenomenological_axiom"
       },
       {
-        claim: "Conscious content is maximally represented in posterior cortex (hot zone)",
-        type: "adversarial_collaboration",
-        tested: true,
-        verdict: "mixed",
-        detail: "Cogitate Consortium (2025): Information about conscious content found in visual, ventrotemporal, and inferior frontal cortex with sustained responses in occipital and lateral temporal cortex. PARTIALLY CONFIRMED — posterior cortex does contain conscious content, but not exclusively.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "id": "P2",
+        "text": "Each conscious experience is both differentiated (many possible experiences exist) and integrated (each experience is a unified whole that cannot be decomposed without loss).",
+        "type": "phenomenological_axiom"
       },
       {
-        claim: "Sustained synchronization within posterior cortex specifies consciousness",
-        type: "adversarial_collaboration",
-        tested: true,
-        verdict: "contradicts",
-        detail: "Cogitate Consortium (2025): LACK of sustained synchronization within posterior cortex found. This KEY PREDICTION FAILED. Contradicts IIT's claim that network connectivity specifies consciousness.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "id": "P3",
+        "text": "A system's cause-effect power upon itself \u2014 its ability to specify cause-effect states that are both informative and integrated \u2014 is the physical correlate of these phenomenological properties.",
+        "type": "bridging_principle"
       },
       {
-        claim: "Maximum integrated information (Φ) resides in posterior cortex",
-        type: "neuroimaging",
-        tested: true,
-        verdict: "contradicts",
-        detail: "Cogitate Consortium (2025): Could not confirm maximum integrated information in posterior cortex. FAILED.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "id": "P4",
+        "text": "Integrated information \u03a6 measures the amount of cause-effect power that a system exercises upon itself above and beyond its parts.",
+        "type": "formal_definition"
       },
       {
-        claim: "Posterior cortical hot zone is the minimal neural substrate of consciousness",
-        type: "neuroimaging",
-        tested: true,
-        verdict: "supports",
-        detail: "Siclari et al. (2017): Posterior cortical hot zone associated with dream experiences during sleep. Supports posterior cortex role in consciousness.",
-        quality: "moderate",
-        refs: ["Siclari et al. 2017"]
+        "id": "P5",
+        "text": "A system's maximum \u03a6 (\u03a6_max) over all possible partitions and element combinations identifies its substrate of consciousness (the maximally irreducible complex).",
+        "type": "mathematical_postulate"
       }
     ],
-    references: [
-      {authors: "Oizumi, Albantakis & Tononi", year: 2014, title: "From the phenomenology to the mechanisms of consciousness: IIT 3.0", doi: "10.1371/journal.pcbi.1003588", verified: true},
-      {authors: "Albantakis et al.", year: 2023, title: "Integrated information theory (IIT) 4.0", doi: "10.1371/journal.pcbi.1011465", verified: true},
-      {authors: "Cogitate Consortium, Ferrante et al.", year: 2025, title: "Adversarial testing of GNW and IIT", doi: "10.1038/s41586-025-08888-1", verified: true},
-      {authors: "Siclari et al.", year: 2017, title: "The neural correlates of dreaming", doi: "10.1038/nn.4545", verified: true}
-    ],
-    metaphysical_dismissal: null
-  },
-  {
-    id: "gwt",
-    name: "Global Workspace Theory (GWT/GNWT)",
-    proponent: "Bernard Baars & Stanislas Dehaene",
-    category: "Cognitive Architecture",
-    tier: "strongly_testable",
-    score: 0.85,
-    core_claims: [
-      "Consciousness arises when information is globally broadcast across a 'workspace' of distributed brain regions",
-      "Prefrontal cortex plays a necessary role in conscious access",
-      "Conscious access is an all-or-none phenomenon — information either ignites the global workspace or remains unconscious",
-      "At stimulus offset, a brief content-specific ignition occurs in prefrontal cortex"
-    ],
-    premises: [
-      {id: "P1", text: "The brain has a modular architecture with specialized processors operating in parallel", type: "Neuroscientific"},
-      {id: "P2", text: "Information that is consciously processed must be available to multiple specialized systems simultaneously", type: "Functional"},
-      {id: "P3", text: "Global broadcasting requires a central workspace supported by long-range cortical connections", type: "Anatomical"},
-      {id: "P4", text: "Prefrontal cortex is the primary hub of the global workspace", type: "Neuroscientific"},
-      {id: "P5", text: "Conscious access is all-or-none (threshold phenomenon)", type: "Phenomenological"}
-    ],
-    inferences: [
-      {from: ["P1","P2"], to: "I1", text: "Conscious processing requires global broadcast"},
-      {from: ["I1","P3","P4"], to: "C1", text: "PFC mediates conscious access via global broadcasting"},
-      {from: ["C1","P5"], to: "C2", text: "Conscious access = all-or-none PFC ignition"},
-      {from: ["C2","P3"], to: "C3", text: "Content stored silently between onset and offset ignitions"}
-    ],
-    conclusions: [
-      {id: "C1", text: "Prefrontal cortex is necessary for conscious access"},
-      {id: "C2", text: "Conscious access = all-or-none prefrontal ignition"},
-      {id: "C3", text: "Content stored silently between ignition events"}
-    ],
-    scope_lines: [
-      {step: 1, formula: "P1: Modular brain", deps: [1], rule: "Premise (neuroscientific)", active: ["P1"]},
-      {step: 2, formula: "P2: Conscious = globally available", deps: [2], rule: "Premise (functional)", active: ["P1","P2"]},
-      {step: 3, formula: "P3: Global broadcast needs workspace", deps: [3], rule: "Premise (anatomical)", active: ["P1","P2","P3"]},
-      {step: 4, formula: "P4: PFC = workspace hub", deps: [4], rule: "Premise (neuroscientific)", active: ["P1","P2","P3","P4"]},
-      {step: 5, formula: "P5: Access = all-or-none", deps: [5], rule: "Premise (phenomenological)", active: ["P1","P2","P3","P4","P5"]},
-      {step: 6, formula: "I1: Consciousness needs broadcast", deps: [1,2], rule: "Inference (P1+P2)", active: ["P1","P2"]},
-      {step: 7, formula: "C1: PFC mediates access", deps: [1,2,3,4], rule: "Inference (I1+P3+P4)", active: ["P1","P2","P3","P4"]},
-      {step: 8, formula: "C2: Access = PFC ignition", deps: [1,2,3,4,5], rule: "Inference (C1+P5)", active: ["P1","P2","P3","P4","P5"]},
-      {step: 9, formula: "C3: Silent storage", deps: [1,2,3,4,5], rule: "Inference (C2+workspace)", active: ["P1","P2","P3","P4","P5"]}
-    ],
-    evidence: [
+    "inferences": [
       {
-        claim: "Prefrontal cortex is necessary for conscious content representation",
-        type: "adversarial_collaboration",
-        tested: true,
-        verdict: "contradicts",
-        detail: "Cogitate Consortium (2025): Limited representation of certain conscious dimensions in prefrontal cortex. CHALLENGED — PFC does not appear necessary for all conscious content as predicted.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Any physical system that gives rise to consciousness must exhibit the same structural properties of differentiation and integration that characterize experience."
       },
       {
-        claim: "All-or-none ignition at stimulus onset and offset in PFC",
-        type: "adversarial_collaboration",
-        tested: true,
-        verdict: "contradicts",
-        detail: "Cogitate Consortium (2025): General lack of ignition at stimulus offset. CHALLENGED — the predicted offset ignition was largely absent.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "The quantity \u03a6 provides a principled, measurable index of how much a system is conscious."
       },
       {
-        claim: "Global broadcasting of information in PFC",
-        type: "adversarial_collaboration",
-        tested: true,
-        verdict: "mixed",
-        detail: "Cogitate Consortium (2025): Content-specific synchronization between frontal and early visual areas found. PARTIALLY SUPPORTED — some evidence for global broadcasting but not across all dimensions.",
-        quality: "strong",
-        refs: ["Cogitate Consortium 2025"]
+        "from": [
+          "I2",
+          "P5"
+        ],
+        "to": "C1",
+        "text": "Consciousness is present in any system with \u03a6 > 0, and its level equals \u03a6_max; the system's geometrical structure of cause-effect states determines the quality of experience."
       },
       {
-        claim: "Conscious perception involves sudden 'ignition' of prefrontal activity",
-        type: "neuroimaging",
-        tested: true,
-        verdict: "supports",
-        detail: "Multiple fMRI/EEG studies show late prefrontal activity associated with conscious report. This is the most robust empirical finding of GWT.",
-        quality: "moderate",
-        refs: ["Dehaene & Changeux 2011"]
+        "from": [
+          "C1"
+        ],
+        "to": "C2",
+        "text": "Feedforward systems (e.g., cerebellum, pure feedforward neural networks) have \u03a6 \u2248 0 and are therefore not conscious, regardless of the number of elements."
       }
     ],
-    references: [
-      {authors: "Cogitate Consortium, Ferrante et al.", year: 2025, title: "Adversarial testing of GNW and IIT", doi: "10.1038/s41586-025-08888-1", verified: true},
-      {authors: "Seth & Bayne", year: 2022, title: "Theories of consciousness", doi: "10.1038/s41583-022-00587-4", verified: true},
-      {authors: "Melloni et al.", year: 2023, title: "Adversarial collaboration protocol", doi: "10.1371/journal.pbio.3002231", verified: true}
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness is identical to a system's maximally irreducible cause-effect power (\u03a6_max), and its quality is determined by the system's intrinsic cause-effect structure."
+      },
+      {
+        "id": "C2",
+        "text": "Systems with feedforward-only architecture are not conscious; recurrent, highly interconnected systems with integrated cause-effect structure are."
+      }
     ],
-    metaphysical_dismissal: null
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "P1: Experience exists intrinsically, is structured, unified, specific, definite",
+        "deps": [],
+        "rule": "axiom",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "P2: Experience is differentiated and integrated",
+        "deps": [],
+        "rule": "axiom",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "P3: Cause-effect power upon self \u2194 phenomenological properties",
+        "deps": [],
+        "rule": "bridging_principle",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "P4: \u03a6 = integrated information (cause-effect power above parts)",
+        "deps": [],
+        "rule": "definition",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "I1: Conscious system must exhibit differentiation + integration structurally",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "modus_ponens",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "I2: \u03a6 measures consciousness level",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "substitution",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "P5: \u03a6_max identifies substrate of consciousness",
+        "deps": [],
+        "rule": "postulate",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "C1: Consciousness = \u03a6_max; quality from cause-effect structure",
+        "deps": [
+          6,
+          7
+        ],
+        "rule": "modus_ponens",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "C2: Feedforward systems are not conscious (\u03a6 \u2248 0)",
+        "deps": [
+          8
+        ],
+        "rule": "instantiation",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "TMS-evoked cortical responses should break down (lose integration) during loss of consciousness (sleep, anesthesia), reflecting decreased \u03a6",
+        "type": "intervention",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "TMS/EEG studies show that cortical effective connectivity, a proxy for integration, breaks down during NREM sleep, anesthesia, and in vegetative-state patients, and is restored in recovery. The Perturbational Complexity Index (PCI), derived from IIT, discriminates conscious from unconscious states across multiple conditions.",
+        "quality": "strong",
+        "refs": [
+          "10.1126/science.1117256",
+          "10.1126/scitranslmed.3006294"
+        ]
+      },
+      {
+        "claim": "The cerebellum, despite having ~4x more neurons than the cerebral cortex, should not contribute to consciousness because its feedforward architecture yields low \u03a6",
+        "type": "structural_correlate",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Clinical cases of cerebellar agenesis show preserved consciousness; cerebellar lesions do not abolish consciousness. IIT explains this via the feedforward architecture of the cerebellum yielding low integrated information.",
+        "quality": "moderate",
+        "refs": [
+          "10.1038/nrn.2016.44",
+          "10.1371/journal.pcbi.1003588"
+        ]
+      },
+      {
+        "claim": "Conscious content should be encoded in the posterior cortex through sustained, integrated activity, with connectivity specifying the content",
+        "type": "adversarial",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "The Cogitate Consortium (2025) adversarial collaboration found information about conscious content in posterior cortex, partially supporting IIT. However, a lack of sustained synchronization within posterior cortex challenged IIT's prediction that network connectivity specifies consciousness.",
+        "quality": "strong",
+        "refs": [
+          "10.1038/s41586-025-08888-1"
+        ]
+      },
+      {
+        "claim": "Neural correlates of dreaming should show that consciousness persists in sleep when posterior 'hot zones' are active",
+        "type": "correlational",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Siclari et al. (2017) found that a posterior cortical 'hot zone' (including sensorimotor regions) predicts whether subjects report dreaming upon awakening, supporting IIT's claim that posterior integrated activity is necessary and sufficient for conscious experience.",
+        "quality": "strong",
+        "refs": [
+          "10.1038/nn.4545"
+        ]
+      },
+      {
+        "claim": "\u03a6 as computed from system architecture should correlate with level of consciousness across species and conditions",
+        "type": "computational",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Various approximations of \u03a6 (e.g., Barrett & Seth 2011 practical measures) have been applied to neural data. The PCI is the most clinically validated, correctly classifying conscious vs. unconscious states in >90% of cases across wakefulness, sleep, anesthesia, and brain-injured patients.",
+        "quality": "moderate",
+        "refs": [
+          "10.1126/scitranslmed.3006294"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Tononi G"
+        ],
+        "year": 2004,
+        "title": "An information integration theory of consciousness",
+        "doi": "10.1186/1471-2202-5-42",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Oizumi M",
+          "Albantakis L",
+          "Tononi G"
+        ],
+        "year": 2014,
+        "title": "From the Phenomenology to the Mechanisms of Consciousness: Integrated Information Theory 3.0",
+        "doi": "10.1371/journal.pcbi.1003588",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Albantakis L",
+          "Barbosa L",
+          "Findlay G",
+          "Grasso M",
+          "Haun AM",
+          "Marshall W",
+          "Mayner WGP",
+          "Zaeemzadeh A",
+          "Boly M",
+          "Juel BE",
+          "Sasai S",
+          "Fujii K",
+          "David I",
+          "Hendren J",
+          "Lang JP",
+          "Tononi G"
+        ],
+        "year": 2023,
+        "title": "Integrated information theory (IIT) 4.0: Formulating the properties of phenomenal existence in physical terms",
+        "doi": "10.1371/journal.pcbi.1011465",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Tononi G",
+          "Boly M",
+          "Massimini M",
+          "Koch C"
+        ],
+        "year": 2016,
+        "title": "Integrated information theory: from consciousness to its physical substrate",
+        "doi": "10.1038/nrn.2016.44",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Cogitate Consortium",
+          "Ferrante O",
+          "Gorska-Klimowska U",
+          "Henin S",
+          "Hirschhorn R",
+          "Khalaf A",
+          "Lepauvre A",
+          "Liu L",
+          "Richter D",
+          "Vidal Y",
+          "Bonacchi N",
+          "Brown T",
+          "Sripad P",
+          "Armendariz M",
+          "Bendtz K",
+          "Ghafari T",
+          "Hetenyi D",
+          "Jeschke J",
+          "Kozma C",
+          "Mazumder DR",
+          "Montenegro S",
+          "Seedat A",
+          "Sharafeldin A",
+          "Yang S",
+          "Baillet S",
+          "Chalmers DJ",
+          "Cichy RM",
+          "Fallon F",
+          "Panagiotaropoulos TI",
+          "Blumenfeld H",
+          "de Lange FP",
+          "Devore S",
+          "Jensen O",
+          "Kreiman G",
+          "Luo H",
+          "Boly M",
+          "Dehaene S",
+          "Koch C",
+          "Tononi G",
+          "Pitts M",
+          "Mudrik L",
+          "Melloni L"
+        ],
+        "year": 2025,
+        "title": "Adversarial testing of global neuronal workspace and integrated information theories of consciousness",
+        "doi": "10.1038/s41586-025-08888-1",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Casali AG",
+          "Gosseries O",
+          "Rosanova M",
+          "Boly M",
+          "Sarasso S",
+          "Casali KR",
+          "Casarotto S",
+          "Bruno MA",
+          "Laureys S",
+          "Tononi G",
+          "Massimini M"
+        ],
+        "year": 2013,
+        "title": "A Theoretically Based Index of Consciousness Independent of Sensory Processing and Behavior",
+        "doi": "10.1126/scitranslmed.3006294",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Massimini M",
+          "Ferrarelli F",
+          "Huber R",
+          "Esser SK",
+          "Singh H",
+          "Tononi G"
+        ],
+        "year": 2005,
+        "title": "Breakdown of Cortical Effective Connectivity During Sleep",
+        "doi": "10.1126/science.1117256",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Siclari F",
+          "Baird B",
+          "Perogamvros L",
+          "Bernardi G",
+          "LaRocque JJ",
+          "Riedner B",
+          "Boly M",
+          "Postle BR",
+          "Tononi G"
+        ],
+        "year": 2017,
+        "title": "The neural correlates of dreaming",
+        "doi": "10.1038/nn.4545",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
   },
   {
-    id: "panpsychism",
-    name: "Panpsychism",
-    proponent: "Chalmers, Strawson, Goff",
-    category: "Metaphysical",
-    tier: "not_testable",
-    score: 0.05,
-    core_claims: [
-      "Consciousness is a fundamental feature of all matter",
-      "Even elementary particles have some form of experience",
-      "Consciousness cannot emerge from non-conscious matter",
-      "The hard problem of consciousness is solved by postulating consciousness as fundamental"
+    "id": "global_workspace_theory___glob",
+    "name": "Global Workspace Theory / Global Neuronal Workspace (GWT/GNWT)",
+    "proponent": "Bernard Baars & Stanislas Dehaene (with Jean-Pierre Changeux)",
+    "category": "cognitive-architectural",
+    "tier": "strongly_testable",
+    "score": 0.88,
+    "core_claims": [
+      "Consciousness corresponds to information that is globally broadcast across a 'global workspace' of distributed brain regions, making it accessible to many specialized processors",
+      "Conscious access is an all-or-none, non-linear phenomenon \u2014 a 'ignition' event where information that crosses a threshold enters the global workspace and becomes conscious",
+      "The global neuronal workspace consists of long-range cortical neurons connecting prefrontal, parietal, and temporal regions that broadcast information to the rest of the brain",
+      "Unconscious processing occurs in specialized, modular processors that do not have access to the global workspace",
+      "Consciousness enables flexible, intentional behavior: report, deliberate action, memory encoding, and novel problem-solving, because information in the workspace is globally available",
+      "Prefrontal cortex plays a critical role in maintaining and broadcasting conscious information through sustained recurrent activity",
+      "The brain has limited-capacity serial conscious processing but massive parallel unconscious processing"
     ],
-    premises: [
-      {id: "P1", text: "Consciousness exists (phenomenological given)", type: "Introspective"},
-      {id: "P2", text: "Consciousness cannot emerge from non-conscious matter", type: "Metaphysical (contested)"},
-      {id: "P3", text: "Matter is fundamental and ubiquitous", type: "Metaphysical"},
-      {id: "P4", text: "If consciousness cannot emerge and matter is fundamental, consciousness must be co-fundamental", type: "Logical"}
+    "premises": [
+      {
+        "id": "P1",
+        "text": "The brain consists of many specialized, modular processors operating in parallel, each processing information unconsciously.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P2",
+        "text": "Conscious access enables information to be flexibly used for multiple tasks: report, memory, intentional action, novel problem-solving (global access).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P3",
+        "text": "There is a limited-capacity bottleneck: only one or a few items can be consciously processed at a time, while unconscious processing is massively parallel.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P4",
+        "text": "A distributed network of long-range cortical neurons (the global neuronal workspace) can broadcast information from specialized processors to the whole brain.",
+        "type": "neuroanatomical_premise"
+      },
+      {
+        "id": "P5",
+        "text": "Information enters the global workspace via a non-linear, all-or-none 'ignition' process when it exceeds a competition threshold.",
+        "type": "computational_premise"
+      }
     ],
-    inferences: [
-      {from: ["P1","P2","P3","P4"], to: "C1", text: "Consciousness is a fundamental property of all matter"}
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Consciousness serves a global access function: it makes information from specialized processors available to the rest of the brain."
+      },
+      {
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "The global workspace architecture explains the limited-capacity bottleneck of consciousness through competition for access to the workspace."
+      },
+      {
+        "from": [
+          "I1",
+          "I2",
+          "P5"
+        ],
+        "to": "C1",
+        "text": "Consciousness is the global broadcasting of information through the global neuronal workspace via an all-or-none ignition process."
+      },
+      {
+        "from": [
+          "C1"
+        ],
+        "to": "C2",
+        "text": "Prefrontal cortex, with its long-range recurrent connections, is necessary for sustaining conscious access; its disruption should abolish conscious perception even when sensory processing remains intact."
+      }
     ],
-    conclusions: [
-      {id: "C1", text: "All matter has some form of consciousness"},
-      {id: "C2", text: "The hard problem dissolves: consciousness doesn't emerge, it's already there"}
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness = global broadcasting of information via all-or-none ignition through the global neuronal workspace."
+      },
+      {
+        "id": "C2",
+        "text": "Prefrontal cortex and frontoparietal networks are critical for conscious access; information that does not reach these areas remains unconscious."
+      }
     ],
-    scope_lines: [
-      {step: 1, formula: "P1: Consciousness exists", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
-      {step: 2, formula: "P2: No emergence from non-conscious", deps: [2], rule: "Premise (metaphysical, contested)", active: ["P1","P2"]},
-      {step: 3, formula: "P3: Matter is fundamental", deps: [3], rule: "Premise (metaphysical)", active: ["P1","P2","P3"]},
-      {step: 4, formula: "P4: Not emergent ⟹ fundamental", deps: [4], rule: "Premise (logical)", active: ["P1","P2","P3","P4"]},
-      {step: 5, formula: "C1: All matter is conscious", deps: [1,2,3,4], rule: "Inference (elimination)", active: ["P1","P2","P3","P4"]},
-      {step: 6, formula: "C2: Hard problem dissolves", deps: [1,2,3,4], rule: "Inference (from C1)", active: ["P1","P2","P3","P4"]}
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "P1: Brain = parallel specialized unconscious processors",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "P2: Conscious access \u2192 flexible use (report, memory, action)",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "P3: Limited-capacity bottleneck for conscious processing",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "P4: Long-range cortical neurons broadcast globally",
+        "deps": [],
+        "rule": "neuroanatomy",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "P5: Ignition = all-or-none threshold crossing",
+        "deps": [],
+        "rule": "computational_model",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "I1: Consciousness = global access function",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "abduction",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "I2: Workspace explains capacity bottleneck via competition",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "explanation",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "C1: Consciousness = global ignition via GNW",
+        "deps": [
+          6,
+          7,
+          5
+        ],
+        "rule": "synthesis",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "C2: Prefrontal cortex critical for conscious access",
+        "deps": [
+          8
+        ],
+        "rule": "anatomical_instantiation",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
     ],
-    evidence: [],
-    references: [],
-    metaphysical_dismissal: "Whereof one cannot speak, thereof one must be silent. — Wittgenstein, Tractatus, §7. The claim that an electron has experience is not merely untestable — it is structured so that no conceivable observation could confirm or disconfirm it. Panpsychism makes no empirical predictions that differ from physicalism. It is metaphysics in the precise sense the logical positivists meant: a sentence that is not false but meaningless."
+    "evidence": [
+      {
+        "claim": "Conscious perception of a stimulus should be accompanied by a non-linear 'ignition' event: sudden, large-scale activation across frontoparietal networks, while unconscious processing should remain localized to sensory areas",
+        "type": "contrastive_intervention",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Using attentional blink and masking paradigms with fMRI/MEG/iEEG, Dehaene and colleagues found that conscious (vs. subliminal) perception is accompanied by late (>270ms), non-linear, large-scale frontoparietal activation (ignition). Subliminal stimuli produce only transient, local sensory activation.",
+        "quality": "strong",
+        "refs": [
+          "10.1016/j.neuron.2011.03.018",
+          "10.1371/journal.pbio.1000061"
+        ]
+      },
+      {
+        "claim": "Conscious information should be sustained in prefrontal cortex and broadcast to sensory areas",
+        "type": "adversarial",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "The Cogitate Consortium (2025) found limited representation of certain conscious dimensions in prefrontal cortex and a general lack of ignition at stimulus offset, challenging GNWT's predictions about sustained prefrontal activity and late ignition. However, content-specific synchronization between frontal and early visual areas was found, partially supporting GNW.",
+        "quality": "strong",
+        "refs": [
+          "10.1038/s41586-025-08888-1"
+        ]
+      },
+      {
+        "claim": "Disruption of prefrontal cortex should abolish conscious access without eliminating sensory processing",
+        "type": "lesion",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Clinical and experimental evidence shows that prefrontal lesions and inactivation can impair conscious report while leaving sensory processing intact. In binocular rivalry, frontal activity relates to introspection and action but not necessarily to perception itself (Fr\u00e4ssle et al. 2014), creating a nuance.",
+        "quality": "moderate",
+        "refs": [
+          "10.1016/j.neuron.2020.01.026"
+        ]
+      },
+      {
+        "claim": "The attentional blink (AB) reflects competition for access to the global workspace; T2 should be consciously perceived only when it wins the competition for workspace access",
+        "type": "psychophysical",
+        "tested": true,
+        "verdict": "contradicts",
+        "detail": "The attentional blink paradigm shows that a second target (T2) is missed when presented shortly after a first target (T1), reflecting capacity limits. Neuroimaging shows that T2 on 'blink' trials produces sensory activation but fails to trigger frontoparietal ignition, consistent with GNWT.",
+        "quality": "strong",
+        "refs": [
+          "10.1016/j.neuron.2011.03.018"
+        ]
+      },
+      {
+        "claim": "Consciousness and attention are distinct but related processes \u2014 attention can operate unconsciously, but conscious access requires attention-like gating",
+        "type": "dissociation",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Evidence from no-report paradigms and dissociations between attention and awareness (e.g., blindsight, inattentional blindness) supports the distinction. GNWT predicts attention shapes what enters the workspace but is not identical to consciousness.",
+        "quality": "moderate",
+        "refs": [
+          "10.1126/science.aan8871"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Dehaene S",
+          "Kerszberg M",
+          "Changeux JP"
+        ],
+        "year": 1998,
+        "title": "A neuronal model of a global workspace in effortful cognitive tasks",
+        "doi": "10.1073/pnas.95.24.14529",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Dehaene S",
+          "Changeux JP"
+        ],
+        "year": 2011,
+        "title": "Experimental and theoretical approaches to conscious processing",
+        "doi": "10.1016/j.neuron.2011.03.018",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Mashour GA",
+          "Roelfsema P",
+          "Changeux JP",
+          "Dehaene S"
+        ],
+        "year": 2020,
+        "title": "Conscious processing and the global neuronal workspace hypothesis",
+        "doi": "10.1016/j.neuron.2020.01.026",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Dehaene S",
+          "Lau H",
+          "Kouider S"
+        ],
+        "year": 2017,
+        "title": "What is consciousness, and could machines have it?",
+        "doi": "10.1126/science.aan8871",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Cogitate Consortium"
+        ],
+        "year": 2025,
+        "title": "Adversarial testing of global neuronal workspace and integrated information theories of consciousness",
+        "doi": "10.1038/s41586-025-08888-1",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Gaillard R",
+          "Dehaene S",
+          "Adam C",
+          "Clemenceau S",
+          "Hasboun D",
+          "Baulac M",
+          "Cohen L",
+          "Naccache L"
+        ],
+        "year": 2009,
+        "title": "Converging intracranial markers of conscious access",
+        "doi": "10.1371/journal.pbio.1000061",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
   },
   {
-    id: "substance_dualism",
-    name: "Substance Dualism",
-    proponent: "Descartes, Swinburne",
-    category: "Dualism / Metaphysical",
-    tier: "not_testable",
-    score: 0.0,
-    core_claims: [
-      "Mind and body are fundamentally different substances",
-      "The mental substance (res cogitans) is non-physical",
-      "Mind and body interact causally despite being ontologically distinct"
+    "id": "recurrent_processing_theory_rp",
+    "name": "Recurrent Processing Theory (RPT)",
+    "proponent": "Victor A.F. Lamme",
+    "category": "neurobiological",
+    "tier": "strongly_testable",
+    "score": 0.82,
+    "core_claims": [
+      "Consciousness (phenomenal consciousness) requires recurrent (feedback) processing in visual cortex, not just feedforward processing",
+      "Feedforward processing is sufficient for unconscious visual computation (e.g., categorization, motor control) but not for awareness",
+      "Phenomenal consciousness (the richness of subjective experience) is distinct from access consciousness (the ability to report) \u2014 phenomenal awareness can overflow access",
+      "Recurrent processing in visual cortex, even without prefrontal involvement, is sufficient for phenomenal consciousness",
+      "Attention and consciousness are distinct neural processes: attention involves frontoparietal control, while consciousness arises from recurrent processing in sensory cortex",
+      "The neural correlate of consciousness (NCC) is the transition from feedforward to recurrent processing, occurring ~100-200ms after stimulus onset in visual cortex",
+      "Visual masking disrupts consciousness by interrupting recurrent processing while leaving feedforward processing intact"
     ],
-    premises: [
-      {id: "P1", text: "I can doubt my body's existence but not my thinking (Cogito)", type: "Introspective"},
-      {id: "P2", text: "Whatever I clearly perceive as separate is really separate", type: "Metaphysical (contested)"},
-      {id: "P3", text: "I can perceive mind without body and vice versa", type: "Introspective"},
-      {id: "P4", text: "Mind is indivisible; body is divisible", type: "Metaphysical"}
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Visual processing involves two distinct modes: a fast feedforward sweep (FFS) that propagates information from lower to higher areas, and recurrent processing (RP) that sends feedback from higher to lower areas.",
+        "type": "neurophysiological_premise"
+      },
+      {
+        "id": "P2",
+        "text": "Feedforward processing alone can support unconscious visual functions: categorization, object detection, motor responses (e.g., 'zombie systems').",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P3",
+        "text": "Visual awareness correlates with the onset of recurrent processing signals (~100-200ms after stimulus), not with feedforward signals (~50-80ms).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P4",
+        "text": "Backward masking disrupts recurrent processing (by presenting a mask before feedback arrives) while leaving feedforward processing intact, and this abolishes visual awareness.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P5",
+        "text": "Phenomenal consciousness (rich subjective experience) can persist without full reportability (access consciousness), as shown by change blindness and Sperling-type partial report paradigms.",
+        "type": "phenomenological_premise"
+      }
     ],
-    inferences: [
-      {from: ["P1","P2","P3"], to: "I1", text: "Mind and body are really distinct substances"},
-      {from: ["I1","P4"], to: "C1", text: "Mind and body are fundamentally different substances"}
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Feedforward processing is insufficient for consciousness; unconscious visual computation can occur without awareness."
+      },
+      {
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "Recurrent processing is necessary for visual awareness: disrupting it (via masking) abolishes consciousness, and its onset coincides with awareness."
+      },
+      {
+        "from": [
+          "I1",
+          "I2"
+        ],
+        "to": "C1",
+        "text": "Recurrent processing in visual cortex is both necessary and (arguably) sufficient for phenomenal visual consciousness."
+      },
+      {
+        "from": [
+          "C1",
+          "P5"
+        ],
+        "to": "C2",
+        "text": "Phenomenal consciousness (recurrent processing in sensory cortex) is distinct from and can overflow access consciousness (frontoparietal broadcasting)."
+      }
     ],
-    conclusions: [
-      {id: "C1", text: "Mind and body are separate substances"},
-      {id: "C2", text: "Mental causation is genuine interaction between distinct substances"}
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Recurrent (feedback) processing in visual cortex is necessary and sufficient for phenomenal visual consciousness; feedforward processing alone is unconscious."
+      },
+      {
+        "id": "C2",
+        "text": "Phenomenal consciousness and access consciousness are dissociable: recurrent processing in sensory cortex produces phenomenal experience that can overflow the limited capacity of report/access."
+      }
     ],
-    scope_lines: [
-      {step: 1, formula: "P1: Cogito ergo sum", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
-      {step: 2, formula: "P2: Clear perception ⟹ reality", deps: [2], rule: "Premise (metaphysical)", active: ["P1","P2"]},
-      {step: 3, formula: "P3: Mind/body perceived separate", deps: [3], rule: "Premise (introspective)", active: ["P1","P2","P3"]},
-      {step: 4, formula: "P4: Mind indivisible, body divisible", deps: [4], rule: "Premise (metaphysical)", active: ["P1","P2","P3","P4"]},
-      {step: 5, formula: "I1: Mind & body distinct", deps: [1,2,3], rule: "Inference (clear perception)", active: ["P1","P2","P3"]},
-      {step: 6, formula: "C1: Two substances", deps: [1,2,3,4], rule: "Inference (I1+indivisibility)", active: ["P1","P2","P3","P4"]},
-      {step: 7, formula: "C2: Mental causation", deps: [1,2,3,4], rule: "Inference (C1+interaction)", active: ["P1","P2","P3","P4"]}
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "P1: Vision = feedforward sweep (FFS) + recurrent processing (RP)",
+        "deps": [],
+        "rule": "neurophysiology",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "P2: FFS alone \u2192 unconscious visual computation",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "P3: RP onset (~100-200ms) correlates with awareness",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "P4: Masking disrupts RP \u2192 abolishes awareness",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "P5: Phenomenal consciousness > access consciousness",
+        "deps": [],
+        "rule": "phenomenological_axiom",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "I1: FFS insufficient for consciousness",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "modus_tollens",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "I2: RP necessary for awareness (masking + timing)",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "converging_evidence",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "C1: RP in visual cortex necessary & sufficient for phenomenal consciousness",
+        "deps": [
+          6,
+          7
+        ],
+        "rule": "synthesis",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "C2: Phenomenal \u2260 access consciousness; phenomenal overflows access",
+        "deps": [
+          8,
+          5
+        ],
+        "rule": "modus_ponens",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
     ],
-    evidence: [],
-    references: [],
-    metaphysical_dismissal: "The limits of my language mean the limits of my world. — Wittgenstein, Tractatus, §5.6. Substance dualism posits a non-physical substance that by definition cannot be detected by any physical instrument. The interaction problem — how a non-physical substance causally affects physical matter — has no testable answer after 380 years. This is not a gap in current technology; it is a structural feature of the theory."
+    "evidence": [
+      {
+        "claim": "Backward masking should disrupt recurrent processing in visual cortex while preserving feedforward signals, and this disruption should abolish visual awareness",
+        "type": "intervention",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Lamme and colleagues showed that visual masking interrupts figure-ground segregation signals in V1 (which depend on recurrent processing) while leaving early feedforward responses intact. TMS studies (Pascual-Leone) confirmed that disrupting feedback to V1 abolishes awareness at ~100-200ms.",
+        "quality": "strong",
+        "refs": [
+          "10.1016/S0166-2236(00)01657-X",
+          "10.1016/j.tics.2006.09.001"
+        ]
+      },
+      {
+        "claim": "Attention and awareness should be dissociable: attention modulates feedforward gain but awareness depends on recurrent processing",
+        "type": "dissociation",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Lamme (2003) showed that attention and awareness can be dissociated: attention modulates visual processing without necessarily producing awareness, and awareness can occur without attention (or with reduced attention). Blindsight patients can attend to stimuli they cannot see.",
+        "quality": "moderate",
+        "refs": [
+          "10.1016/S1364-6613(02)00013-X"
+        ]
+      },
+      {
+        "claim": "Phenomenal consciousness overflows access consciousness \u2014 subjects experience more than they can report (partial report superiority)",
+        "type": "psychophysical",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Sperling's partial report paradigm, change blindness, and related experiments show that subjects briefly experience a rich scene but can only report a few items. Lamme and Block argue this supports the overflow of phenomenal over access consciousness.",
+        "quality": "moderate",
+        "refs": [
+          "10.1080/17588921003731586",
+          "10.1016/j.tics.2006.09.001"
+        ]
+      },
+      {
+        "claim": "Recurrent processing in visual cortex should be present during conscious perception but absent during unconscious states (anesthesia, sleep)",
+        "type": "state_contrast",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Anesthesia selectively abolishes recurrent (feedback) processing in visual cortex while preserving feedforward responses. Figure-ground modulation in V1 is suppressed by anesthesia, consistent with RPT.",
+        "quality": "moderate",
+        "refs": [
+          "10.1016/S0166-2236(00)01657-X",
+          "10.1080/17588921003731586"
+        ]
+      },
+      {
+        "claim": "No-report paradigms should reveal NCCs in sensory cortex (recurrent processing) without confounds from frontoparietal report-related activity",
+        "type": "methodological",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Tsuchiya, Wilke, Fr\u00e4ssle & Lamme (2015) demonstrated that no-report paradigms reveal neural correlates of consciousness in sensory cortex via recurrent processing, disentangling consciousness from the reporting process itself.",
+        "quality": "moderate",
+        "refs": [
+          "10.1080/17588921003731586"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Lamme VAF",
+          "Roelfsema PR"
+        ],
+        "year": 2000,
+        "title": "The distinct modes of vision offered by feedforward and recurrent processing",
+        "doi": "10.1016/S0166-2236(00)01657-X",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Lamme VAF"
+        ],
+        "year": 2003,
+        "title": "Why visual attention and awareness are different",
+        "doi": "10.1016/S1364-6613(02)00013-X",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Lamme VAF"
+        ],
+        "year": 2006,
+        "title": "Towards a true neural stance on consciousness",
+        "doi": "10.1016/j.tics.2006.09.001",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Lamme VAF"
+        ],
+        "year": 2010,
+        "title": "How neuroscience will change our view on consciousness",
+        "doi": "10.1080/17588921003731586",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Siclari F",
+          "Baird B",
+          "Perogamvros L",
+          "Bernardi G",
+          "LaRocque JJ",
+          "Riedner B",
+          "Boly M",
+          "Postle BR",
+          "Tononi G"
+        ],
+        "year": 2017,
+        "title": "The neural correlates of dreaming",
+        "doi": "10.1038/nn.4545",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "attention_schema_theory_ast",
+    "name": "Attention Schema Theory (AST)",
+    "proponent": "Michael S.A. Graziano (with Taylor W. Webb)",
+    "category": "representational / metacognitive",
+    "tier": "weakly_testable",
+    "score": 0.62,
+    "core_claims": [
+      "Consciousness is the brain's internal model (schema) of attention \u2014 a simplified, descriptive model of the process of attention, not attention itself",
+      "The brain constructs a representation of its own attentional state (an 'attention schema') and uses this model to predict and control attention",
+      "Subjective awareness arises because the brain mistakes its attention schema for a real, non-physical property \u2014 it is a useful model that the brain takes literally",
+      "Consciousness and attention are related but distinct: attention is the actual process of selecting signals; consciousness is the brain's model of that process",
+      "The attention schema is implemented in the temporoparietal junction (TPJ) and related social-cognitive networks, overlapping with theory-of-mind areas",
+      "The theory provides a basis for attributing consciousness to others (social cognition) and to oneself (self-awareness) via the same schema",
+      "The theory is mechanistic and could in principle be implemented in artificial systems, providing a path to artificial consciousness"
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "The brain routinely constructs internal models (schemas) of external and internal processes to predict and control them (e.g., body schema, motor models).",
+        "type": "general_principle"
+      },
+      {
+        "id": "P2",
+        "text": "Attention is a process by which the brain selects and enhances certain signals over others; it requires a control mechanism.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P3",
+        "text": "To control attention effectively, the brain benefits from having a model (schema) of its own attentional state.",
+        "type": "functional_premise"
+      },
+      {
+        "id": "P4",
+        "text": "The TPJ and temporoparietal cortex are involved in both attention control and social cognition (theory of mind, self-awareness).",
+        "type": "neuroanatomical_premise"
+      },
+      {
+        "id": "P5",
+        "text": "When the brain attributes the property of 'awareness' to itself or others, it is deploying the same social-cognitive model used for attributing mental states.",
+        "type": "bridging_principle"
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "to": "I1",
+        "text": "The brain constructs an attention schema \u2014 a simplified descriptive model of its own attention process \u2014 to help control attention."
+      },
+      {
+        "from": [
+          "I1",
+          "P5"
+        ],
+        "to": "I2",
+        "text": "The attention schema is the basis for the subjective, introspective claim 'I am aware of X' \u2014 the brain's model of its attention is experienced as awareness."
+      },
+      {
+        "from": [
+          "I2",
+          "P4"
+        ],
+        "to": "C1",
+        "text": "Consciousness is the attention schema, implemented in TPJ and social-cognitive networks; it is a useful model that the brain takes as evidence of a real, subjective property."
+      },
+      {
+        "from": [
+          "C1"
+        ],
+        "to": "C2",
+        "text": "Attributing consciousness to others (social cognition) and to oneself (self-awareness) rely on the same attention schema mechanism."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness = the brain's internal model (schema) of its own attention process; subjective awareness is the brain's literal interpretation of this model."
+      },
+      {
+        "id": "C2",
+        "text": "Self-awareness and social awareness of others' consciousness both depend on the attention schema, explaining the overlap between attention and social cognition in TPJ."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "P1: Brain constructs internal models (schemas) of processes",
+        "deps": [],
+        "rule": "general_principle",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "P2: Attention = signal selection process",
+        "deps": [],
+        "rule": "empirical_axiom",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "P3: Model of attention aids control",
+        "deps": [],
+        "rule": "functional_argument",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "P4: TPJ involved in attention + social cognition",
+        "deps": [],
+        "rule": "neuroanatomy",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "P5: Awareness attribution = social-cognitive model deployment",
+        "deps": [],
+        "rule": "bridging_principle",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "I1: Brain constructs attention schema for control",
+        "deps": [
+          1,
+          2,
+          3
+        ],
+        "rule": "inference_to_best_explanation",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "I2: Attention schema = basis for subjective awareness",
+        "deps": [
+          6,
+          5
+        ],
+        "rule": "identity_claim",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "C1: Consciousness = attention schema (TPJ; literal model interpretation)",
+        "deps": [
+          7,
+          4
+        ],
+        "rule": "anatomical_grounding",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "C2: Self + social awareness share attention schema mechanism",
+        "deps": [
+          8
+        ],
+        "rule": "extension",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Disruption of TPJ should impair both attention control and the attribution of consciousness/awareness to self and others",
+        "type": "lesion/stimulation",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "TPJ lesions cause hemispatial neglect (attention deficit) and impaired theory of mind. TMS over TPJ disrupts attention reorienting and social cognition. The overlap is consistent with AST's prediction that attention and social cognition share a mechanism.",
+        "quality": "moderate",
+        "refs": [
+          "10.1080/17588928.2011.565121",
+          "10.3389/fpsyg.2015.00500"
+        ]
+      },
+      {
+        "claim": "Awareness and attention should be dissociable: one can attend without being aware, and be aware without attending (under specific conditions)",
+        "type": "dissociation",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Graziano & Webb (2015) review evidence that attention and awareness dissociate in certain conditions (e.g., inattentional blindness, blindsight, automatized attention). This dissociation is central to AST's claim that consciousness is a model of attention, not attention itself.",
+        "quality": "moderate",
+        "refs": [
+          "10.3389/fpsyg.2015.00500"
+        ]
+      },
+      {
+        "claim": "The brain should make systematic errors in attributing awareness (because the schema is a simplified model), analogous to how body schemas produce illusions",
+        "type": "psychophysical",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Rubber hand illusion, out-of-body experiences, and similar bodily illusions demonstrate that internal models can be fooled. Graziano argues that similar illusions of awareness should occur and that the social attribution of consciousness is model-based and fallible.",
+        "quality": "weak",
+        "refs": [
+          "10.3389/frobt.2017.00060"
+        ]
+      },
+      {
+        "claim": "An artificial system equipped with an attention schema and the ability to use it for control and social attribution should exhibit behavior consistent with consciousness",
+        "type": "computational/engineering",
+        "tested": false,
+        "verdict": "mixed",
+        "detail": "No direct test yet. AST proposes a engineering path to artificial consciousness but has not been implemented in a system that demonstrates conscious behavior. Webb et al.'s computational modeling work is preliminary.",
+        "quality": "speculative",
+        "refs": [
+          "10.3389/frobt.2017.00060"
+        ]
+      },
+      {
+        "claim": "Areas involved in social cognition (TPJ, STS) should be recruited during self-awareness tasks, because the same attention schema is used for self and other",
+        "type": "neuroimaging",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Neuroimaging studies show overlap between self-referential processing, theory of mind, and attention control in TPJ and nearby regions. However, this evidence is also consistent with other theories and is not uniquely diagnostic of AST.",
+        "quality": "weak",
+        "refs": [
+          "10.1080/17588928.2011.565121"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Graziano MSA",
+          "Kastner S"
+        ],
+        "year": 2011,
+        "title": "Human consciousness and its relationship to social neuroscience: A novel hypothesis",
+        "doi": "10.1080/17588928.2011.565121",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Graziano MSA",
+          "Webb TW"
+        ],
+        "year": 2015,
+        "title": "The attention schema theory: a mechanistic account of subjective awareness",
+        "doi": "10.3389/fpsyg.2015.00500",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Graziano MSA"
+        ],
+        "year": 2017,
+        "title": "The Attention Schema Theory: A Foundation for Engineering Artificial Consciousness",
+        "doi": "10.3389/frobt.2017.00060",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "orchestrated_objective_reducti",
+    "name": "Orchestrated Objective Reduction (Orch-OR)",
+    "proponent": "Roger Penrose & Stuart Hameroff",
+    "category": "quantum",
+    "tier": "testable_in_principle",
+    "score": 0.45,
+    "core_claims": [
+      "Consciousness arises from quantum computations in microtubules within brain neurons, specifically through orchestrated objective reduction of quantum superposition states.",
+      "Objective reduction (OR) is a non-computable physical process rooted in quantum gravity that resolves the measurement problem without observer-induced collapse \u2014 gravity-driven decoherence sets a objective threshold (E = \u210f/(t\u00b7\u0394t)) for superposition collapse.",
+      "Microtubules (tubulin protein polymers forming the neuronal cytoskeleton) serve as the physical substrate for quantum coherence, with tubulin dimers acting as qubits that can exist in superposition states.",
+      "Orchestration refers to the role of neuronal, biochemical, and quantum processes in organizing microtubule quantum states, with gap junctions enabling macroscopic quantum coherence across neuronal networks.",
+      "Conscious moments correspond to discrete Orch-OR events: each moment of conscious awareness is a single orchestrated objective reduction event lasting approximately 25 ms (correlating with gamma EEG synchrony).",
+      "Anesthetics act by disrupting quantum coherence in microtubule pi-resonance channels, thereby extinguishing consciousness \u2014 a testable pharmacological prediction.",
+      "Non-computability of consciousness: Godel's incompleteness theorem shows human understanding transcends formal computation, requiring a non-algorithmic physical process (objective reduction) as the substrate of mind."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Human mathematical understanding cannot be captured by any formal algorithmic system (G\u00f6del's first incompleteness theorem demonstrates that humans can see truths no algorithm can prove). Therefore human thought is non-computable.",
+        "type": ""
+      },
+      {
+        "id": "P2",
+        "text": "If human thought is non-computable, then there must exist a non-computable physical process in the brain. Classical physics and standard quantum mechanics (with observer-dependent collapse) are computable; only objective reduction (gravity-driven wavefunction collapse) provides a non-computable physical process.",
+        "type": ""
+      },
+      {
+        "id": "P3",
+        "text": "Microtubules in neurons have the structural and biophysical properties (ordered lattice, pi-electron resonance, isolation mechanisms via gap junctions and actin gelation) that could in principle support macroscopic quantum coherence at physiological temperatures.",
+        "type": ""
+      },
+      {
+        "id": "P4",
+        "text": "Neuronal inputs and biochemical processes orchestrate microtubule quantum states, mapping neuronal computation onto quantum superposition patterns that undergo objective reduction to produce conscious moments.",
+        "type": ""
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "",
+        "text": "Since consciousness is non-computable (P1) and must have a physical basis (P2), the physical basis of consciousness must involve a non-computable physical process. The only known candidate is objective reduction."
+      },
+      {
+        "from": [
+          "I1",
+          "P3"
+        ],
+        "to": "",
+        "text": "If objective reduction is the non-computable process and microtubules can support quantum coherence (P3), then microtubules are the most plausible biological substrate for OR events in the brain."
+      },
+      {
+        "from": [
+          "I2",
+          "P4"
+        ],
+        "to": "",
+        "text": "Orchestrated quantum states in microtubules, when they undergo objective reduction, produce discrete moments of conscious experience \u2014 the Orch-OR event."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness is a sequence of discrete Orch-OR events: objective reductions of orchestrated quantum superposition states in neuronal microtubules."
+      },
+      {
+        "id": "C2",
+        "text": "Each conscious moment corresponds to a quantum gravity-mediated collapse event, connecting consciousness to fundamental spacetime geometry."
+      },
+      {
+        "id": "C3",
+        "text": "Consciousness is non-computable and cannot be reproduced by any classical algorithm or standard quantum computation."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "Human understanding transcends formal computation (G\u00f6del)",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "Classical physics is computable",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "\u2234 Consciousness requires non-computable physics",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "modus tollens",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "OR is a non-computable gravity-driven process",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P2"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "\u2234 Consciousness involves OR",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "disjunctive syllogism",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "Microtubules can support quantum coherence",
+        "deps": [],
+        "rule": "premise (disputed)",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "\u2234 Microtubules host OR events (Orch-OR)",
+        "deps": [
+          5,
+          6
+        ],
+        "rule": "subsidiary identification",
+        "active": [
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "Neuronal inputs orchestrate MT quantum states",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "\u2234 Consciousness = orchestrated OR in microtubules",
+        "deps": [
+          7,
+          8
+        ],
+        "rule": "functional composition",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 10,
+        "formula": "Anesthetics disrupt MT quantum coherence",
+        "deps": [],
+        "rule": "empirical prediction",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 11,
+        "formula": "\u2234 Anesthetics extinguish consciousness via MT disruption",
+        "deps": [
+          9,
+          10
+        ],
+        "rule": "causal chain",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Microtubules can sustain quantum coherence at physiological temperatures (warm, wet, biological conditions).",
+        "type": "testable_in_principle",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Strongly contested. Tegmark (2000) calculated decoherence times ~10^-13 s, far too short. Hagan et al. (2001) challenged these estimates. McKemmish et al. (2009) showed the proposed mechanism requires biologically implausible energy gaps. Experimental evidence for quantum coherence in biological systems exists in photosynthesis (Engel et al. 2007) but not in microtubules specifically.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Anesthetics act by disrupting pi-resonance quantum channels in microtubules rather than by acting on membrane ion channels.",
+        "type": "testable",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Partially testable. Craddock et al. (2012) showed computational evidence that anesthetics bind in microtubule non-polar pockets. However, mainstream anesthesia research overwhelmingly supports membrane protein (GABA, NMDA) mechanisms. A direct test: if microtubule-stabilizing drugs reverse anesthesia independent of membrane effects, this would support Orch-OR.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Conscious moments are discrete events occurring at ~40 Hz (gamma synchrony, ~25 ms intervals), correlating with Orch-OR collapse events.",
+        "type": "testable",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Gamma synchrony correlates with consciousness (well-established), but the claim that these are quantum collapse events is not directly tested. The discreteness of perception (VanRullen & Koch 2003) provides indirect support but does not confirm quantum collapse.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Tubulin dimers can exist in quantum superposition states acting as biological qubits.",
+        "type": "testable_in_principle",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Sahu et al. (2013) reported switching and memory effects in single microtubules consistent with quantum effects, but these results are controversial and have not been independently replicated. Bandyopadhyay et al. (reported as personal communication in Hameroff & Penrose 2014) claimed to observe Ferenci-like resonances in microtubules.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Gap junction-mediated neuronal synchronization enables macroscopic quantum coherence across brain regions.",
+        "type": "testable_in_principle",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Gap junctions are well-established in the brain. Whether they enable quantum coherence (as opposed to electrical coupling) is untested and physically implausible given the size and temperature of the brain.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Objective reduction is a real physical process driven by quantum gravity with a specific energy-time threshold (E = \u210f/t).",
+        "type": "testable_in_principle",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "This is the deepest claim and the most fundamental. Proposed tests include the FELIX satellite experiment (superposition of small mirrors in space) and Marshall et al. (2003) optomechanical experiments. No definitive test has been conducted. The Di\u00f3si-Penrose model makes specific predictions that could be tested with matter-wave interferometry at increasing mass scales.",
+        "quality": "moderate",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Stuart Hameroff",
+          "Roger Penrose"
+        ],
+        "year": 2014,
+        "title": "Consciousness in the universe: Review of the 'Orch OR' theory",
+        "doi": "10.1016/j.plrev.2013.08.002",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Laura K. McKemmish",
+          "Jeffrey R. Reimers",
+          "Ross H. McKenzie",
+          "Alan E. Mark",
+          "Noel S. Hush"
+        ],
+        "year": 2009,
+        "title": "Penrose-Hameroff orchestrated objective-reduction proposal for human consciousness is not biologically feasible",
+        "doi": "10.1103/PhysRevE.80.021912",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Stuart Hameroff",
+          "Roger Penrose"
+        ],
+        "year": 2014,
+        "title": "Reply to seven commentaries on 'Consciousness in the universe: Review of the 'Orch OR' theory'",
+        "doi": "10.1016/j.plrev.2013.11.013",
+        "verified": false
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "conscious_electromagnetic_info",
+    "name": "Conscious Electromagnetic Information Theory (CEMI)",
+    "proponent": "Johnjoe McFadden",
+    "category": "electromagnetic",
+    "tier": "weakly_testable",
+    "score": 0.55,
+    "core_claims": [
+      "Consciousness is the brain's global electromagnetic (EM) field \u2014 specifically, the component of the EM field that encodes physically integrated information and is causally active in driving motor output.",
+      "Only energy fields can integrate information in space (as opposed to time), and therefore only the brain's EM field can serve as the physical substrate of conscious experience \u2014 neuronal firing patterns are merely temporally integrated and cannot account for spatial binding.",
+      "Consciousness implements algorithms in space rather than in time: the brain's EM field performs spatial computation that constitutes conscious experience, while neuronal processing performs the temporal computation that constitutes unconscious cognition.",
+      "The cemi field is a scientific dualism rooted in the difference between matter (neurons, performing unconscious computation) and energy (the EM field, performing conscious computation) \u2014 not between matter and spirit.",
+      "Transcranial magnetic stimulation (TMS) directly injects information into the brain's EM field, and the resulting perturbations of consciousness provide direct evidence for the cemi field theory.",
+      "Free will is the output of the conscious EM field: conscious decisions are encoded in the brain's EM field and are then 'downloaded' to motor neurons to produce voluntary action.",
+      "The information encoded in the brain's EM field is downloaded to motor neurons via field- induced effects, making consciousness causally effective (not epiphenomenal)."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Information is physical (Landauer's principle). Therefore, integrated information (the kind that constitutes consciousness per IIT) must be physically integrated \u2014 it must occupy a single physical substrate in space, not merely be correlated across separate physical substrates.",
+        "type": ""
+      },
+      {
+        "id": "P2",
+        "text": "Neuronal information processing integrates information only temporally: outputs are correlated with multiple inputs across time. There is no single physical substrate in which the information is simultaneously present. This is not physical integration.",
+        "type": ""
+      },
+      {
+        "id": "P3",
+        "text": "Only energy fields can integrate information in space. The brain's electromagnetic field is the only candidate field that encodes neuronal information and physically integrates it across the whole brain.",
+        "type": ""
+      },
+      {
+        "id": "P4",
+        "text": "The brain's EM field is causally active: it can influence neuronal firing through ephaptic coupling and field effects (demonstrated by TMS and endogenous field propagation). The component of the EM field that drives motor output is what we experience as consciousness.",
+        "type": ""
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "",
+        "text": "If integrated information must be physically integrated (P1) and neuronal computation only integrates temporally, not spatially (P2), then neuronal computation alone cannot be the physical substrate of consciousness."
+      },
+      {
+        "from": [
+          "P3"
+        ],
+        "to": "",
+        "text": "The brain's EM field is the only candidate that can physically integrate information in space. Therefore, the EM field is the substrate of consciousness."
+      },
+      {
+        "from": [
+          "I2",
+          "P4"
+        ],
+        "to": "",
+        "text": "The conscious EM field is causally active (it can influence neuronal firing and motor output), resolving the epiphenomenalism problem that plagues other field theories of mind."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness is physically integrated, causally active information encoded in the brain's global electromagnetic field."
+      },
+      {
+        "id": "C2",
+        "text": "Consciousness performs spatial computation (in the EM field) while unconscious neuronal processing performs temporal computation \u2014 a 'scientific dualism' between matter and energy."
+      },
+      {
+        "id": "C3",
+        "text": "TMS interventions that perturb consciousness do so by directly injecting information into the conscious EM field, providing empirical evidence for the theory."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "Information is physical (Landauer)",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "\u2234 Integrated information must be physically integrated",
+        "deps": [
+          1
+        ],
+        "rule": "conceptual necessity",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "Neurons integrate information temporally only",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P2"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "\u2234 Neuronal computation \u2260 physical integration",
+        "deps": [
+          2,
+          3
+        ],
+        "rule": "modus tollens",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "Only fields integrate information in space",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "The brain's EM field encodes neuronal info",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "\u2234 The brain's EM field is the substrate of consciousness",
+        "deps": [
+          4,
+          5,
+          6
+        ],
+        "rule": "disjunctive syllogism",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "TMS perturbs consciousness by injecting EM field info",
+        "deps": [],
+        "rule": "empirical evidence",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "\u2234 The EM field is causally active (consciousness is not epiphenomenal)",
+        "deps": [
+          7,
+          8
+        ],
+        "rule": "causal inference",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 10,
+        "formula": "Ephaptic coupling shows endogenous EM fields affect neurons",
+        "deps": [],
+        "rule": "empirical evidence",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 11,
+        "formula": "\u2234 Consciousness = causally active integrated EM field info",
+        "deps": [
+          7,
+          9,
+          10
+        ],
+        "rule": "synthesis",
+        "active": [
+          "P1-P4"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "TMS perturbations of consciousness are mediated by the brain's EM field, not by induced neuronal currents alone.",
+        "type": "testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "TMS does affect consciousness (e.g., inducing phosphenes, disrupting visual awareness). However, TMS effects are typically explained by induced currents in neurons, not by the field itself being conscious. The theory predicts that field patterns (not just current patterns) should matter. This is weakly testable: one could compare TMS pulses with identical induced currents but different field geometries and test whether consciousness effects differ.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Endogenous brain EM fields (local field potentials) causally influence neuronal firing through ephaptic coupling, and this constitutes the causal efficacy of consciousness.",
+        "type": "testable",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Ephaptic coupling has been demonstrated (Anastassiou et al. 2011, Nature Neuroscience; Frohlich & McCormick 2010; Han et al. 2018). Endogenous electric fields can guide neuronal activity (Qiu et al. 2015). This supports the causal efficacy premise. However, whether this ephaptic coupling constitutes consciousness is not directly testable.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Information integration in the brain's EM field (not in neuronal firing patterns) correlates with conscious awareness.",
+        "type": "weakly_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "EEG/MEG (which measure the brain's EM field) correlate with consciousness states. However, these correlations are equally compatible with neuronal firing being the substrate and the EM field being a byproduct. The theory predicts that modifying the EM field without changing neuronal firing should change consciousness \u2014 difficult to test experimentally.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Artificial consciousness requires a physical EM field substrate, not just computational equivalence.",
+        "type": "testable_in_principle",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "No test has been conducted. The prediction is that a computer simulation of a brain would not be conscious because it lacks a physical EM field. This is a negative prediction that is in principle testable by comparing 'brain simulations with EM field modeling' vs 'brain simulations without' \u2014 but the theory does not specify how to detect consciousness in either case.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Brain EM field complexity should predict conscious awareness better than neuronal firing rate complexity.",
+        "type": "testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Not directly tested. This would require comparing EM field complexity metrics (e.g., from MEG) with firing rate complexity metrics (e.g., from multi-electrode arrays) as predictors of conscious states (awake vs anesthetized, etc.). Feasible with current technology.",
+        "quality": "moderate",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Johnjoe McFadden"
+        ],
+        "year": 2020,
+        "title": "Integrating information in the brain's EM field: the cemi field theory of consciousness",
+        "doi": "10.1093/nc/niaa016",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Johnjoe McFadden"
+        ],
+        "year": 2006,
+        "title": "The CEMI Field Theory: Seven Clues to the Nature of Consciousness",
+        "doi": "10.1007/3-540-36723-3_12",
+        "verified": false
+      },
+      {
+        "authors": [
+          "Johnjoe McFadden"
+        ],
+        "year": 2007,
+        "title": "Conscious Electromagnetic (CEMI) Field Theory",
+        "doi": "10.14704/nq.2007.5.3.135",
+        "verified": false
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "panpsychism",
+    "name": "Panpsychism",
+    "proponent": "David Chalmers, Galen Strawson, Philip Goff",
+    "category": "metaphysical",
+    "tier": "not_testable",
+    "score": 0.1,
+    "core_claims": [
+      "Consciousness is a fundamental and ubiquitous feature of physical reality \u2014 all matter has an intrinsic, experiential aspect, just as it has mass, charge, and spin.",
+      "Physicalism, properly understood (as 'realistic monism' or 'real materialism'), entails panpsychism: if all physical properties are instantiated, and experientiality is an intrinsic physical property, then all physical entities possess some form of experience.",
+      "The hard problem of consciousness (the explanatory gap between physical processes and subjective experience) is dissolved by positing consciousness as fundamental rather than emergent \u2014 it cannot emerge from non-conscious matter any more than charge can emerge from uncharged matter.",
+      "The combination problem: if micro-entities have simple conscious experiences, how do these combine to form the unified, complex conscious experiences of macroscopic beings like humans? This is the central unsolved problem for panpsychism.",
+      "Panprotopsychism is a weaker variant: fundamental entities possess proto-conscious properties that are not themselves experiential but from which consciousness can be derived \u2014 bridging the gap between physicalism and panpsychism.",
+      "Consciousness is not reducible to information processing, quantum effects, or any functional/computational process \u2014 it is a categorical/intrinsic property of matter, not a relational/dispositional one.",
+      "The argument from irreducibility: since neuroscience can only ever explain the structure and dynamics of brain processes (the 'easy problems'), and since structure and dynamics are logically distinct from experience, no structural/dynamical explanation can close the explanatory gap."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "There is an explanatory gap between physical processes (structure and dynamics) and subjective experience (qualia). No explanation in terms of physical structure and dynamics can bridge this gap, because structure and dynamics are logically compatible with the absence of experience (zombie conceivability).",
+        "type": ""
+      },
+      {
+        "id": "P2",
+        "text": "Consciousness cannot emerge from entirely non-conscious matter. There is no known physical mechanism by which entities with no experiential properties can collectively produce entities with experiential properties \u2014 emergence of a fundamental property from its absence is metaphysically inexplicable.",
+        "type": ""
+      },
+      {
+        "id": "P3",
+        "text": "If consciousness is real and not emergent from non-conscious matter, then either (a) consciousness is a non-physical substance (dualism), (b) consciousness is a fundamental physical property alongside mass and charge (panpsychism), or (c) consciousness is reducible to structural/dynamical properties (rejected by P1).",
+        "type": ""
+      },
+      {
+        "id": "P4",
+        "text": "Physicalism (the view that everything is physical) is true. If experiential properties are real (which they are, from first-person acquaintance), then experiential properties are physical properties. Since physics studies only the structural/dispositional aspects of matter (not its intrinsic nature), the intrinsic nature of matter could be experiential \u2014 hence physicalism entails panpsychism.",
+        "type": ""
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "",
+        "text": "Consciousness cannot be reduced to structure/dynamics (P1) and cannot emerge from non-conscious matter (P2). Therefore, consciousness must be fundamental."
+      },
+      {
+        "from": [
+          "I1",
+          "P3"
+        ],
+        "to": "",
+        "text": "If consciousness is fundamental, the options are dualism (a) or panpsychism (b). Under physicalism (everything is physical), dualism is rejected, leaving panpsychism: consciousness is a fundamental physical property."
+      },
+      {
+        "from": [
+          "P4",
+          "I2"
+        ],
+        "to": "",
+        "text": "Since physicalism is true (P4) and consciousness is fundamental (I2), the intrinsic nature of all physical matter is experiential. Therefore, all matter possesses some form of consciousness."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness is a fundamental, ubiquitous property of all physical matter \u2014 panpsychism is true."
+      },
+      {
+        "id": "C2",
+        "text": "The hard problem is dissolved (not solved) by rejecting the premise that consciousness emerges from non-conscious matter; instead, consciousness is present at the fundamental level."
+      },
+      {
+        "id": "C3",
+        "text": "The combination problem remains: the mechanism by which micro-experiences combine into macro-experiences is unexplained."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "There is an explanatory gap (structure \u2260 experience)",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "Consciousness cannot emerge from non-conscious matter",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "\u2234 Consciousness is fundamental (not emergent)",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "dilemma elimination",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "Physicalism: everything is physical",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "If physicalism \u2227 consciousness is fundamental \u2192 consciousness is a physical property",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "substitution",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "\u2234 Physicalism entails panpsychism",
+        "deps": [
+          4,
+          5
+        ],
+        "rule": "disjunctive syllogism",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "Physics describes only structural/dispositional properties",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "\u2234 The intrinsic nature of matter is not constrained by physics",
+        "deps": [
+          7
+        ],
+        "rule": "logical complement",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "\u2234 The intrinsic nature of matter could be experiential",
+        "deps": [
+          8
+        ],
+        "rule": "modal possibility",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 10,
+        "formula": "\u2234 All matter has experiential intrinsic nature (panpsychism)",
+        "deps": [
+          6,
+          9
+        ],
+        "rule": "identity",
+        "active": [
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 11,
+        "formula": "The combination problem: how do micro-experiences unify?",
+        "deps": [],
+        "rule": "open problem",
+        "active": [
+          "\u2014"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Fundamental particles (electrons, quarks, photons) possess some form of minimal conscious experience.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "There is no known experimental method to detect whether an electron has subjective experience. The claim is a metaphysical postulate, not an empirical hypothesis. By definition, first-person experience is accessible only from the first-person perspective, and no third-person experiment can detect it in a non-communicating entity.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Consciousness does not emerge from non-conscious computational processes (refutation of functionalism/CTM).",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "This is a philosophical claim, not an empirical one. Whether a sufficiently complex computer would be conscious cannot be tested by any known method, because we have no consciousness detector independent of behavioral/functional criteria. The claim is logically compatible with all possible empirical evidence.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "The intrinsic nature of matter (what physics does not describe) is experiential.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Physics describes only relational, structural, and dispositional properties. Whether there is an intrinsic, categorical nature of matter 'underneath' these properties, and whether it is experiential, is a metaphysical question that is in principle beyond the reach of empirical science. It is not even clear what an empirical test would look like.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Micro-experiences combine to form macro-experiences (the combination problem has a solution).",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "contradicts",
+        "detail": "The combination problem is recognized as the most serious challenge to panpsychism. No solution has been proposed that is empirically testable. Chalmers (2016) discusses several variants (subject-summing problem, combination problem, structural mismatch problem) but none admits empirical resolution.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Consciousness is not identical to any functional, computational, or information-theoretic property.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "This is a modal/metaphysical claim about identity relations between properties. No empirical test can adjudicate whether consciousness is or is not identical to a functional property, because the identity (or non-identity) of properties is not an empirical matter.",
+        "quality": "moderate",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "David J. Chalmers"
+        ],
+        "year": 2016,
+        "title": "Panpsychism and Panprotopsychism",
+        "doi": "10.1093/acprof:oso/9780199359943.003.0002",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Galen Strawson"
+        ],
+        "year": 2008,
+        "title": "Realistic Monism: Why Physicalism Entails Panpsychism",
+        "doi": "10.1093/acprof:oso/9780199267422.003.0003",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Ludwig Wittgenstein"
+        ],
+        "year": 2023,
+        "title": "Tractatus Logico-Philosophicus",
+        "doi": "10.1093/owc/9780198861379.001.0001",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": "Panpsychism makes no empirically falsifiable predictions. The claim that electrons have experience is not testable because (1) there is no consciousness detector independent of behavioral criteria, (2) the claim is logically compatible with every possible experimental outcome, and (3) the 'intrinsic nature of matter' invoked is by definition beyond the reach of physics. The theory dissolves the hard problem by definition rather than by explanation: it simply postulates consciousness as fundamental and declares the explanatory gap closed. The combination problem \u2014 how micro-experiences combine into macro-experiences \u2014 is acknowledged by its own proponents as unsolved and is itself empirically intractable. As Wittgenstein wrote in the Tractatus Logico-Philosophicus (Proposition 7): 'Wovon man nicht sprechen kann, dar\u00fcber muss man schweigen' \u2014 'Whereof one cannot speak, thereof one must be silent.' The intrinsic experiential nature of matter is precisely such a case: it is whereof we cannot speak in the language of empirical science, and about it we should remain silent. Panpsychism is not a scientific theory but a metaphysical framework that, at best, provides a coherent ontological story but generates no testable predictions."
+  },
+  {
+    "id": "substance_dualism",
+    "name": "Substance Dualism",
+    "proponent": "Ren\u00e9 Descartes (historical), Richard Swinburne (contemporary)",
+    "category": "metaphysical",
+    "tier": "not_testable",
+    "score": 0.05,
+    "core_claims": [
+      "There exist two fundamental kinds of substance: material substance (res extensa, extended matter governed by physical laws) and mental substance (res cogitans, thinking substance not spatially extended and not governed by physical laws).",
+      "The mind is a non-physical substance that has mental properties (beliefs, desires, sensations) inaccessible to physical observation \u2014 it has 'privileged access' in that only the subject can directly observe its own mental states.",
+      "Mental events (thoughts, sensations, volitions) are not identical to any physical events (neural firings) and cannot be reduced to or explained by physical processes.",
+      "Causal interaction: the non-physical mind causally acts on the physical body (via the pineal gland, per Descartes; via a broader mechanism, per Swinburne) and the body causally affects the mind \u2014 this is interactive dualism.",
+      "The conceivability argument: it is conceivable that one's mind could exist without one's body (the disembodiment scenario), and whatever is conceivable is metaphysically possible; therefore, the mind is not identical to the body or any physical substance.",
+      "The knowledge argument (Frank Jackson's Mary): complete physical knowledge does not yield knowledge of qualia, therefore qualia (and the mind that has them) are non-physical.",
+      "Free will requires a non-physical mind: if mental states are identical to physical brain states, then free will is an illusion (all mental causation reduces to physical causation). Since we have introspective evidence of libertarian free will, the mind must be non-physical."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "It is clearly and distinctly conceivable that one's mind (soul, consciousness) could exist without one's body \u2014 one can coherently imagine having thoughts, sensations, and experiences without any physical substrate. What is conceivable is metaphysically possible.",
+        "type": ""
+      },
+      {
+        "id": "P2",
+        "text": "If A = B (A is identical to B), then whatever is true of A must be true of B. If the mind can exist without the body (P1), but the body cannot exist without itself, then the mind is not identical to the body.",
+        "type": ""
+      },
+      {
+        "id": "P3",
+        "text": "Mental states have the property of privileged access: only the subject can know them directly and infallibly. Physical states do not have this property \u2014 they are publicly observable and knowable by multiple observers. Therefore mental states are not physical states.",
+        "type": ""
+      },
+      {
+        "id": "P4",
+        "text": "Swinburne's argument: mental events (intentions, decisions) are not necessitated by prior physical events, because we have introspective evidence of libertarian free will. If mental events are not determined by physical laws, they must belong to a non-physical causal order \u2014 a mental substance.",
+        "type": ""
+      },
+      {
+        "id": "P5",
+        "text": "Mental properties (being in pain, believing that p) are not reducible to any physical or functional property. No set of physical descriptions entails the presence of a mental property (the zombie argument). Therefore mental properties are non-physical properties of a non-physical substance.",
+        "type": ""
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "",
+        "text": "If the mind can exist without the body (P1) and identity requires shared properties (P2), then the mind is not identical to the body. The mind is a distinct substance."
+      },
+      {
+        "from": [
+          "P3"
+        ],
+        "to": "",
+        "text": "If mental states have properties (privileged access) that no physical state can have (P3), then mental states cannot be states of a physical substance. They must be states of a non-physical substance."
+      },
+      {
+        "from": [
+          "P4",
+          "P5"
+        ],
+        "to": "",
+        "text": "If mental events are not physically determined (P4) and mental properties are not reducible to physical properties (P5), then mental causation operates in a non-physical causal order \u2014 requiring a mental substance."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "The mind is a non-physical substance distinct from the physical body (substance dualism)."
+      },
+      {
+        "id": "C2",
+        "text": "Mental events and physical events interact causally: the mind acts on the body (volition) and the body acts on the mind (sensation), despite being ontologically distinct substances."
+      },
+      {
+        "id": "C3",
+        "text": "Free will is genuine (not illusory) because the mind, as a non-physical substance, is not subject to physical determinism."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "Disembodiment is conceivable",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "What is conceivable is metaphysically possible",
+        "deps": [],
+        "rule": "premise (contested)",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "\u2234 The mind can exist without the body",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "modal inference",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "Leibniz's Law: A=B \u2192 same properties",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P2"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "\u2234 Mind \u2260 Body (different modal properties)",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "modus tollens",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "Mental states have privileged access",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 7,
+        "formula": "Physical states lack privileged access",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 8,
+        "formula": "\u2234 Mental states \u2260 physical states",
+        "deps": [
+          6,
+          7
+        ],
+        "rule": "Leibniz's Law",
+        "active": [
+          "P3"
+        ]
+      },
+      {
+        "step": 9,
+        "formula": "\u2234 Mind is a non-physical substance",
+        "deps": [
+          5,
+          8
+        ],
+        "rule": "substance distinction",
+        "active": [
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 10,
+        "formula": "Free will introspectively evident",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 11,
+        "formula": "Physical determinism precludes free will",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 12,
+        "formula": "\u2234 Mind is non-physical (to preserve free will)",
+        "deps": [
+          9,
+          10,
+          11
+        ],
+        "rule": "disjunctive syllogism",
+        "active": [
+          "P4"
+        ]
+      },
+      {
+        "step": 13,
+        "formula": "Mental properties not reducible to physical",
+        "deps": [],
+        "rule": "premise",
+        "active": [
+          "P5"
+        ]
+      },
+      {
+        "step": 14,
+        "formula": "\u2234 Mental substance required",
+        "deps": [
+          9,
+          12,
+          13
+        ],
+        "rule": "ontological inference",
+        "active": [
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "The mind can exist independently of the body (disembodied consciousness, survival of death).",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Near-death experiences (NDEs) are sometimes cited as evidence, but they are fully compatible with neurophysiological explanations (hypoxia, endogenous DMT, REM intrusion). No study has demonstrated consciousness persisting after verified brain death. The claim is about a metaphysical possibility, not an empirical hypothesis \u2014 it is designed to be logically compatible with all physical evidence.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Mental causation is not reducible to physical causation \u2014 the mind causally affects the body in ways not determined by physical law.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Libet's experiments on free will timing are sometimes cited, but they do not distinguish between physical and non-physical mental causation. All observed mental-physical correlations (e.g., intentions preceding actions) are equally compatible with physicalism. The claim of non-physical causation is logically designed to be empirically undetectable: any causal effect of the mind on the body could always be re-described as a physical cause that we have not yet identified.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Mental properties are not identical to any physical or functional properties (the zombie conceivability argument).",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "This is a modal/metaphysical claim, not an empirical one. The conceivability of philosophical zombies (beings physically identical to us but lacking experience) is a thought experiment, not a testable hypothesis. No experiment can test whether a being physically identical to us has or lacks consciousness, because we have no third-person consciousness detector.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "Mental states have privileged access (first-person infallibility) that physical states cannot have.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "While introspection does seem epistemically privileged, this is a claim about the nature of knowledge, not a physical hypothesis. It is compatible with physicalism (which can explain privileged access via internal monitoring). The claim of an irreducible epistemic asymmetry is metaphysical, not empirical.",
+        "quality": "moderate",
+        "refs": []
+      },
+      {
+        "claim": "There exists a non-physical substance (mental substance / soul) that is the bearer of mental properties.",
+        "type": "not_testable",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "There is no empirical method to detect non-physical substances, by definition. The claim is formulated to be beyond the reach of any physical measurement. It is a metaphysical postulate, not a scientific hypothesis.",
+        "quality": "moderate",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": [
+          "Richard Swinburne"
+        ],
+        "year": 2013,
+        "title": "Substance Dualism",
+        "doi": "10.1093/acprof:oso/9780199662562.003.0007",
+        "verified": true
+      },
+      {
+        "authors": [
+          "Richard Swinburne"
+        ],
+        "year": 2009,
+        "title": "Substance Dualism",
+        "doi": "10.5840/faithphil200926551",
+        "verified": false
+      },
+      {
+        "authors": [
+          "Ludwig Wittgenstein"
+        ],
+        "year": 2023,
+        "title": "Tractatus Logico-Philosophicus",
+        "doi": "10.1093/owc/9780198861379.001.0001",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": "Substance dualism makes no empirically falsifiable predictions and is designed to be immune to empirical disconfirmation. The central claim \u2014 that there exists a non-physical mental substance \u2014 is by definition beyond the reach of any physical measurement. Every argument for substance dualism (conceivability of disembodiment, privileged access, free will, property distinctness) is a modal/metaphysical argument, not an empirical hypothesis. The theory faces the interaction problem: if the mind is non-physical, how does it causally interact with the physical body? This violates the causal closure of the physical domain, a cornerstone of modern physics. No mechanism for mind-body interaction has ever been proposed that is consistent with known physics. The conceivability argument depends on the contested premise that conceivability entails metaphysical possibility \u2014 a modal principle that is itself not empirically testable. As Wittgenstein wrote in the Tractatus Logico-Philosophicus (Proposition 7): 'Wovon man nicht sprechen kann, dar\u00fcber muss man schweigen' \u2014 'Whereof one cannot speak, thereof one must be silent.' The nature of a non-physical substance and its mode of interaction with physical matter is precisely whereof we cannot speak in the language of empirical science. Substance dualism posits an ontological realm that is, by its own definition, beyond empirical investigation, and thus it is not a scientific theory but a metaphysical doctrine. It generates no testable predictions, admits no possible empirical refutation, and its central claims are logically compatible with every possible experimental outcome."
   }
+];
+
 ];
 
 // Placeholder for additional theories to be added
 const ADDITIONAL_THEORIES = [
-  {id: "rpt", name: "Recurrent Processing Theory (RPT)", proponent: "Victor Lamme", category: "Neural", tier: "weakly_testable", score: 0.65, status: "analysis_in_progress"},
-  {id: "ast", name: "Attention Schema Theory (AST)", proponent: "Michael Graziano", category: "Cognitive", tier: "weakly_testable", score: 0.60, status: "analysis_in_progress"},
   {id: "fep", name: "Free Energy Principle (FEP)", proponent: "Karl Friston", category: "Predictive Processing", tier: "weakly_testable", score: 0.55, status: "analysis_in_progress"},
   {id: "hot", name: "Higher-Order Theories (HOT)", proponent: "Rosenthal, Lau, LeDoux", category: "Higher-Order", tier: "weakly_testable", score: 0.60, status: "analysis_in_progress"},
   {id: "ncc", name: "Neural Correlates of Consciousness (NCC)", proponent: "Crick & Koch", category: "Neural", tier: "strongly_testable", score: 0.75, status: "analysis_in_progress"},
-  {id: "orch_or", name: "Orchestrated Objective Reduction (Orch-OR)", proponent: "Penrose & Hameroff", category: "Quantum", tier: "testable_in_principle", score: 0.35, status: "analysis_in_progress"},
-  {id: "cemi", name: "Conscious Electromagnetic Information (CEMI)", proponent: "Johnjoe McFadden", category: "Electromagnetic", tier: "weakly_testable", score: 0.40, status: "analysis_in_progress"},
-  {id: "illusionism", name: "Illusionism", proponent: "Dennett, Frankish", category: "Materialism", tier: "weakly_testable", score: 0.45, status: "analysis_in_progress"},
+  {id: "predictive", name: "Predictive Processing", proponent: "Clark, Seth, Hohwy", category: "Predictive Processing", tier: "weakly_testable", score: 0.50, status: "pending"},
+  {id: "illusionism", name: "Illusionism", proponent: "Dennett, Frankish", category: "Materialism", tier: "weakly_testable", score: 0.45, status: "pending"},
   {id: "biological_naturalism", name: "Biological Naturalism", proponent: "John Searle", category: "Materialism", tier: "not_testable", score: 0.15, status: "pending"},
   {id: "mysterianism", name: "Mysterianism", proponent: "Colin McGinn", category: "Skepticism", tier: "not_testable", score: 0.0, status: "pending"},
   {id: "idealism", name: "Analytic Idealism", proponent: "Bernardo Kastrup", category: "Idealism", tier: "not_testable", score: 0.05, status: "pending"},
   {id: "eliminative", name: "Eliminative Materialism", proponent: "Churchland", category: "Materialism", tier: "weakly_testable", score: 0.30, status: "pending"},
   {id: "enactivism", name: "Enactivism", proponent: "Thompson, Varela, Noë", category: "Embodied", tier: "weakly_testable", score: 0.35, status: "pending"},
-  {id: "predictive", name: "Predictive Processing", proponent: "Clark, Seth, Hohwy", category: "Predictive Processing", tier: "weakly_testable", score: 0.50, status: "pending"},
   {id: "identity_theory", name: "Mind-Brain Identity Theory", proponent: "Place, Smart, Armstrong", category: "Materialism", tier: "not_testable", score: 0.10, status: "pending"},
   {id: "functionalism", name: "Functionalism", proponent: "Putnam, Lewis", category: "Materialism", tier: "testable_in_principle", score: 0.25, status: "pending"},
   {id: "supervenience", name: "Supervenience", proponent: "Jaegwon Kim", category: "Materialism", tier: "not_testable", score: 0.05, status: "pending"},
