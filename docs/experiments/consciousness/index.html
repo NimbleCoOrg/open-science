@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Landscape of Consciousness — Theories, Testability & Evidence</title>
+<title>Theories of Consciousness: Testability & Evidence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -255,7 +255,121 @@ header .meta {
   margin-bottom: 16px;
 }
 
-/* Scope line display */
+/* Scope line display — Fitch-style */
+.fitch-proof {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  background: #faf6ed;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 28px;
+  overflow-x: auto;
+  line-height: 2.1;
+}
+.fitch-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 2.1em;
+}
+.fitch-step {
+  width: 32px;
+  text-align: right;
+  padding-right: 10px;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.fitch-bars {
+  display: flex;
+  flex-shrink: 0;
+}
+.fitch-bar {
+  width: 2px;
+  background: var(--ink-soft);
+  margin-right: 12px;
+  flex-shrink: 0;
+  opacity: 0.45;
+}
+.fitch-formula {
+  flex-grow: 1;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+.fitch-formula .var { font-weight: 600; }
+.fitch-formula .premise-var { color: var(--green); font-weight: 600; }
+.fitch-formula .conclusion-var { color: var(--accent); font-weight: 600; }
+.fitch-rule {
+  color: var(--blue);
+  font-size: 0.78rem;
+  padding-left: 20px;
+  white-space: nowrap;
+  padding-top: 3px;
+  flex-shrink: 0;
+}
+.fitch-bracket {
+  display: flex;
+  align-items: flex-end;
+  min-height: 1.2em;
+}
+.fitch-bracket-line {
+  border-top: 1.5px solid var(--ink-soft);
+  opacity: 0.45;
+  flex-shrink: 0;
+}
+.fitch-bracket-rule {
+  color: var(--blue);
+  font-size: 0.78rem;
+  padding-left: 10px;
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+.fitch-divider {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  margin: 8px 0;
+  letter-spacing: 0.1em;
+}
+.fitch-legend {
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.fitch-legend h4 {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.fitch-legend table {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  width: 100%;
+  border-collapse: collapse;
+}
+.fitch-legend th {
+  text-align: left;
+  color: var(--ink-soft);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-bottom: 2px solid var(--border);
+}
+.fitch-legend td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+.fitch-legend .sym {
+  font-weight: 600;
+  color: var(--accent);
+  width: 50px;
+}
+.fitch-legend .premise-sym { color: var(--green); }
+
+/* Scope line display (legacy — kept for backward compat) */
 .scope-line-container {
   font-family: var(--mono);
   font-size: 0.85rem;
@@ -473,8 +587,8 @@ footer a { color: var(--blue); text-decoration: none; }
 
 <header>
   <div class="container">
-    <h1>Landscape of Consciousness</h1>
-    <p class="subtitle">Theories of consciousness, their logical structure, and what the evidence says</p>
+    <h1>Theories of Consciousness</h1>
+    <p class="subtitle">Testability & Evidence — logical structure, neuroscience methods, and what the data says</p>
     <p class="meta">Built from Closer to Truth · Stanford Encyclopedia of Philosophy · Primary Literature · Last updated July 2026</p>
   </div>
 </header>
@@ -503,8 +617,8 @@ footer a { color: var(--blue); text-decoration: none; }
     <h3>What this is</h3>
     <p>A systematic analysis of theories of consciousness — what gives rise to subjective experience — assessed along three dimensions:</p>
     <ul style="margin: 12px 0 0 20px;">
-      <li><strong>Logical structure</strong>: Each theory's argument reconstructed as premises, inferences, and conclusions, with a scope line showing which assumptions are active at each step</li>
-      <li><strong>Testability</strong>: Which claims within each theory can be tested with neuroscience, psychology, or physics — and which are purely metaphysical</li>
+      <li><strong>Logical structure</strong>: Each theory's argument reconstructed in Fitch-style natural deduction, with vertical scope bars showing which assumptions are active at each step</li>
+      <li><strong>Testability</strong>: Each conclusion scored on a formal 5-dimension rubric (specificity, measurability, perturbability, falsifiability, discriminability) — assessing whether it <em>could</em> be tested with current neuroscience methods, not whether it has been</li>
       <li><strong>Evidence</strong>: What the empirical data actually shows — including the 2025 Cogitate Consortium adversarial collaboration that directly tested the two leading theories</li>
     </ul>
   </div>
@@ -543,7 +657,7 @@ footer a { color: var(--blue); text-decoration: none; }
 <div class="tab-content" id="tab-spectrum">
   <div class="card">
     <h3>Testability Spectrum</h3>
-    <p>Each theory is placed on a spectrum from <strong>strongly testable</strong> (makes quantitative predictions that can be confirmed or falsified with current technology) to <strong>not testable</strong> (makes no empirical predictions — pure metaphysics).</p>
+    <p>Each theory is scored on a formal 5-dimension rubric assessing whether its conclusions can be tested with current neuroscience methods. <strong>Testability is about what could be tested, not what has been tested</strong> — a famous theory with many papers is not necessarily testable if its core constructs cannot be measured.</p>
     <div class="spectrum-container">
       <div class="spectrum-labels">
         <span>Not Testable</span>
@@ -594,26 +708,95 @@ footer a { color: var(--blue); text-decoration: none; }
 <div class="tab-content" id="tab-about">
   <div class="card">
     <h3>Method</h3>
+
     <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Sources</h4>
     <ul style="margin: 0 0 16px 20px; font-size: 0.9rem;">
-      <li><a href="https://loc.closertotruth.com/" target="_blank" style="color: var(--blue);">Closer to Truth: Landscape of Consciousness</a> — 430+ theories of consciousness catalogued</li>
+      <li><a href="https://loc.closertotruth.com/" target="_blank" style="color: var(--blue);">Closer to Truth</a> — 430+ theories of consciousness catalogued</li>
       <li><a href="https://plato.stanford.edu/" target="_blank" style="color: var(--blue);">Stanford Encyclopedia of Philosophy</a> — consciousness entries for philosophical context</li>
       <li>Primary literature — all citations verified through Crossref/OpenAlex/DataCite</li>
     </ul>
 
-    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Scope Lines</h4>
-    <p style="font-size: 0.9rem;">Each theory's argument is reconstructed using <strong>scope line notation</strong> from formal proof theory. A scope line shows, for each step of an argument, which premises are still active assumptions. The format:</p>
-    <div style="font-family: var(--mono); font-size: 0.8rem; background: #faf6ed; padding: 12px; border-radius: 6px; margin: 8px 0; border: 1px solid var(--border);">
-      Step | Formula | Dependencies | Inference Rule | Active Assumptions
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Scope Lines (Fitch-Style)</h4>
+    <p style="font-size: 0.9rem;">Each theory's argument is reconstructed in <strong>Fitch-style natural deduction</strong> — the notation used in formal logic textbooks. Vertical scope bars on the left show which assumptions are active at each step. Nested bars mark sub-derivations that depend on additional auxiliary assumptions. Conclusions are written in abstract variables, with a symbol legend below each proof.</p>
+    <p style="font-size: 0.9rem;">This makes visible <em>which assumptions each conclusion depends on</em> — and therefore which assumptions, if wrong, would collapse the argument. The scope line is the backbone of our testability assessment: we score each conclusion based on whether it can be tested with current neuroscience methods.</p>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Testability Rubric</h4>
+    <p style="font-size: 0.9rem;">Each conclusion in a theory's scope line is scored on five dimensions (0–1). The theory-level score is a weighted mean (core conclusions weighted 2×, derived conclusions 1×). <strong>Citation count and publication volume do NOT enter the score</strong> — a famous theory with many papers is not necessarily testable if its core constructs cannot be measured.</p>
+
+    <div style="background: #faf6ed; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; font-size: 0.85rem;">
+      <table style="width:100%; border-collapse:collapse; font-family: var(--mono);">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border);">
+            <th style="text-align:left; padding:6px 8px; font-size:0.7rem; text-transform:uppercase; color:var(--ink-soft);">Dimension</th>
+            <th style="text-align:left; padding:6px 8px; font-size:0.7rem; text-transform:uppercase; color:var(--ink-soft);">Question</th>
+            <th style="text-align:left; padding:6px 8px; font-size:0.7rem; text-transform:uppercase; color:var(--ink-soft);">Score 1.0</th>
+            <th style="text-align:left; padding:6px 8px; font-size:0.7rem; text-transform:uppercase; color:var(--ink-soft);">Score 0.0</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding:6px 8px; font-weight:600; color:var(--green);">D1. Specificity</td>
+            <td style="padding:6px 8px;">Does the conclusion predict something about a brain area, circuit, or measurable quantity?</td>
+            <td style="padding:6px 8px;">Precise quantitative prediction</td>
+            <td style="padding:6px 8px;">No empirical prediction</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding:6px 8px; font-weight:600; color:var(--green);">D2. Measurability</td>
+            <td style="padding:6px 8px;">Can current neuroscience methods measure the predicted quantity?</td>
+            <td style="padding:6px 8px;">Routinely measured (fMRI, EEG)</td>
+            <td style="padding:6px 8px;">Not measurable with any existing tech</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding:6px 8px; font-weight:600; color:var(--green);">D3. Perturbability</td>
+            <td style="padding:6px 8px;">Can we causally intervene on the mechanism (TMS, pharmacology, lesions)?</td>
+            <td style="padding:6px 8px;">Selective perturbation in humans</td>
+            <td style="padding:6px 8px;">Cannot perturb the core mechanism</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding:6px 8px; font-weight:600; color:var(--green);">D4. Falsifiability</td>
+            <td style="padding:6px 8px;">Is there a clear disconfirming outcome, or can the theory absorb any result?</td>
+            <td style="padding:6px 8px;">Clear falsification criterion</td>
+            <td style="padding:6px 8px;">Any outcome can be reinterpreted</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 8px; font-weight:600; color:var(--green);">D5. Discriminability</td>
+            <td style="padding:6px 8px;">Does the prediction differ from rival theories?</td>
+            <td style="padding:6px 8px;">Unique to this theory</td>
+            <td style="padding:6px 8px;">Shared by all theories</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <p style="font-size: 0.9rem;">This makes visible <em>which assumptions each conclusion depends on</em> — and therefore which assumptions, if wrong, would collapse the argument.</p>
+
+    <p style="font-size: 0.85rem; color: var(--ink-soft); margin: 8px 0 12px;"><strong>Per-conclusion testability</strong> = mean(D1, D2, D3, D4, D5). <strong>Theory-level</strong> = weighted mean across conclusions (core 2×, derived 1×).</p>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Neuroscience Methods Toolkit</h4>
+    <p style="font-size: 0.9rem; margin-bottom: 8px;">The rubric is grounded in what current neuroscience can actually do:</p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+      <div style="background:#faf6ed; border:1px solid var(--border-soft); border-radius:6px; padding:12px;">
+        <strong style="font-family:var(--mono); font-size:0.75rem; color:var(--accent);">PERTURBATION</strong>
+        <p style="font-size:0.8rem; margin-top:4px; color:var(--ink-soft);">TMS · tACS/tDCS · Pharmacological (anesthesia, psychedelics) · Lesion studies · DBS · Optogenetics (animal)</p>
+      </div>
+      <div style="background:#faf6ed; border:1px solid var(--border-soft); border-radius:6px; padding:12px;">
+        <strong style="font-family:var(--mono); font-size:0.75rem; color:var(--blue);">MEASUREMENT</strong>
+        <p style="font-size:0.8rem; margin-top:4px; color:var(--ink-soft);">fMRI · EEG · MEG · ECoG/iEEG · Single-unit · Calcium imaging (animal) · PET · fNIRS</p>
+      </div>
+      <div style="background:#faf6ed; border:1px solid var(--border-soft); border-radius:6px; padding:12px;">
+        <strong style="font-family:var(--mono); font-size:0.75rem; color:var(--gold);">STATE COMPARISONS</strong>
+        <p style="font-size:0.8rem; margin-top:4px; color:var(--ink-soft);">Sleep stages · Anesthesia dose-response · Disorders of consciousness (coma, VS, MCS) · Psychedelic states · Dreaming</p>
+      </div>
+      <div style="background:#faf6ed; border:1px solid var(--border-soft); border-radius:6px; padding:12px;">
+        <strong style="font-family:var(--mono); font-size:0.75rem; color:var(--green);">PERCEPTUAL PARADIGMS</strong>
+        <p style="font-size:0.8rem; margin-top:4px; color:var(--ink-soft);">Binocular rivalry · Visual masking · Attentional blink · No-report paradigms · Change blindness</p>
+      </div>
+    </div>
 
     <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Testability Tiers</h4>
     <ul style="margin: 0 0 16px 20px; font-size: 0.9rem;">
-      <li><strong>Strongly testable</strong>: Makes quantitative, falsifiable predictions testable with current neuroimaging/physics technology</li>
-      <li><strong>Weakly testable</strong>: Makes predictions that are testable in principle and partially testable now, but core claims remain difficult to access empirically</li>
-      <li><strong>Testable in principle</strong>: Makes predictions that could be tested with foreseeable technology but have not yet been adequately tested</li>
-      <li><strong>Not testable (metaphysical)</strong>: Makes no empirical predictions. No conceivable observation could confirm or disconfirm the theory</li>
+      <li><strong>Strongly testable</strong> (0.75–1.0): Makes quantitative, falsifiable predictions testable with current neuroimaging/physics technology</li>
+      <li><strong>Weakly testable</strong> (0.50–0.74): Makes predictions that are testable in principle and partially testable now, but core claims remain difficult to access empirically</li>
+      <li><strong>Testable in principle</strong> (0.25–0.49): Makes predictions that could be tested with foreseeable technology but have not yet been adequately tested</li>
+      <li><strong>Not testable (metaphysical)</strong> (0.00–0.24): Makes no empirical predictions. No conceivable observation could confirm or disconfirm the theory</li>
     </ul>
 
     <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Citation Verification</h4>
@@ -631,7 +814,7 @@ footer a { color: var(--blue); text-decoration: none; }
 
 <footer>
   <div class="container">
-    <p>Landscape of Consciousness — an open-science project by <a href="https://nimbleco.ai">NimbleCo AI</a></p>
+    <p>Theories of Consciousness: Testability &amp; Evidence — an open-science project by <a href="https://nimbleco.ai">NimbleCo AI</a></p>
     <p style="margin-top: 8px;">All citations verified · Open source · Built on <a href="https://loc.closertotruth.com/">Closer to Truth</a> and <a href="https://plato.stanford.edu/">SEP</a></p>
   </div>
 </footer>
@@ -644,8 +827,8 @@ const THEORIES = [
     "name": "Integrated Information Theory (IIT)",
     "proponent": "Giulio Tononi",
     "category": "information-theoretic",
-    "tier": "strongly_testable",
-    "score": 0.85,
+    "tier": "testable_in_principle",
+    "score": 0.32,
     "core_claims": [
       "Consciousness corresponds to the capacity of a system to integrate information, measured by the quantity Phi (\u03a6)",
       "The quality of an experience is determined by the informational relationships (cause-effect structure) among the elements of a complex",
@@ -1066,8 +1249,8 @@ const THEORIES = [
     "name": "Global Workspace Theory / Global Neuronal Workspace (GWT/GNWT)",
     "proponent": "Bernard Baars & Stanislas Dehaene (with Jean-Pierre Changeux)",
     "category": "cognitive-architectural",
-    "tier": "strongly_testable",
-    "score": 0.88,
+    "tier": "weakly_testable",
+    "score": 0.7,
     "core_claims": [
       "Consciousness corresponds to information that is globally broadcast across a 'global workspace' of distributed brain regions, making it accessible to many specialized processors",
       "Conscious access is an all-or-none, non-linear phenomenon \u2014 a 'ignition' event where information that crosses a threshold enters the global workspace and becomes conscious",
@@ -1401,8 +1584,8 @@ const THEORIES = [
     "name": "Recurrent Processing Theory (RPT)",
     "proponent": "Victor A.F. Lamme",
     "category": "neurobiological",
-    "tier": "strongly_testable",
-    "score": 0.82,
+    "tier": "weakly_testable",
+    "score": 0.6,
     "core_claims": [
       "Consciousness (phenomenal consciousness) requires recurrent (feedback) processing in visual cortex, not just feedforward processing",
       "Feedforward processing is sufficient for unconscious visual computation (e.g., categorization, motor control) but not for awareness",
@@ -1722,8 +1905,8 @@ const THEORIES = [
     "name": "Attention Schema Theory (AST)",
     "proponent": "Michael S.A. Graziano (with Taylor W. Webb)",
     "category": "representational / metacognitive",
-    "tier": "weakly_testable",
-    "score": 0.62,
+    "tier": "testable_in_principle",
+    "score": 0.48,
     "core_claims": [
       "Consciousness is the brain's internal model (schema) of attention \u2014 a simplified, descriptive model of the process of attention, not attention itself",
       "The brain constructs a representation of its own attentional state (an 'attention schema') and uses this model to predict and control attention",
@@ -2020,7 +2203,7 @@ const THEORIES = [
     "proponent": "Roger Penrose & Stuart Hameroff",
     "category": "quantum",
     "tier": "testable_in_principle",
-    "score": 0.45,
+    "score": 0.26,
     "core_claims": [
       "Consciousness arises from quantum computations in microtubules within brain neurons, specifically through orchestrated objective reduction of quantum superposition states.",
       "Objective reduction (OR) is a non-computable physical process rooted in quantum gravity that resolves the measurement problem without observer-induced collapse \u2014 gravity-driven decoherence sets a objective threshold (E = \u210f/(t\u00b7\u0394t)) for superposition collapse.",
@@ -2311,8 +2494,8 @@ const THEORIES = [
     "name": "Conscious Electromagnetic Information Theory (CEMI)",
     "proponent": "Johnjoe McFadden",
     "category": "electromagnetic",
-    "tier": "weakly_testable",
-    "score": 0.55,
+    "tier": "testable_in_principle",
+    "score": 0.45,
     "core_claims": [
       "Consciousness is the brain's global electromagnetic (EM) field \u2014 specifically, the component of the EM field that encodes physically integrated information and is causally active in driving motor output.",
       "Only energy fields can integrate information in space (as opposed to time), and therefore only the brain's EM field can serve as the physical substrate of conscious experience \u2014 neuronal firing patterns are merely temporally integrated and cannot account for spatial binding.",
@@ -2588,7 +2771,7 @@ const THEORIES = [
     "proponent": "David Chalmers, Galen Strawson, Philip Goff",
     "category": "metaphysical",
     "tier": "not_testable",
-    "score": 0.1,
+    "score": 0.07,
     "core_claims": [
       "Consciousness is a fundamental and ubiquitous feature of physical reality \u2014 all matter has an intrinsic, experiential aspect, just as it has mass, charge, and spin.",
       "Physicalism, properly understood (as 'realistic monism' or 'real materialism'), entails panpsychism: if all physical properties are instantiated, and experientiality is an intrinsic physical property, then all physical entities possess some form of experience.",
@@ -2866,7 +3049,7 @@ const THEORIES = [
     "proponent": "Ren\u00e9 Descartes (historical), Richard Swinburne (contemporary)",
     "category": "metaphysical",
     "tier": "not_testable",
-    "score": 0.05,
+    "score": 0.19,
     "core_claims": [
       "There exist two fundamental kinds of substance: material substance (res extensa, extended matter governed by physical laws) and mental substance (res cogitans, thinking substance not spatially extended and not governed by physical laws).",
       "The mind is a non-physical substance that has mental properties (beliefs, desires, sensations) inaccessible to physical observation \u2014 it has 'privileged access' in that only the subject can directly observe its own mental states.",
@@ -3177,8 +3360,8 @@ const THEORIES = [
     "name": "Free Energy Principle / Active Inference",
     "proponent": "Karl Friston",
     "category": "Computational/Neuroscientific",
-    "tier": "weakly_testable",
-    "score": 0.55,
+    "tier": "testable_in_principle",
+    "score": 0.36,
     "core_claims": [
       "The brain minimizes variational free energy, an information-theoretic quantity that bounds the negative log evidence (surprise) of sensory observations given a generative model.",
       "Biological self-organizing systems must resist entropy (the second law of thermodynamics) by maintaining their states within bounded ranges; this is equivalent to minimizing free energy or surprise.",
@@ -3426,7 +3609,7 @@ const THEORIES = [
     "proponent": "David Rosenthal; Hakwan Lau; Joseph LeDoux; Richard Brown",
     "category": "Philosophical/Cognitive-Neuroscientific",
     "tier": "weakly_testable",
-    "score": 0.5,
+    "score": 0.52,
     "core_claims": [
       "A mental state is conscious if and only if it is accompanied by a higher-order representation (thought or perception) about that state.",
       "The higher-order thought (HOT) variant holds that a mental state M is conscious when the subject has a thought to the effect that they are in M.",
@@ -3663,8 +3846,8 @@ const THEORIES = [
     "name": "Neural Correlates of Consciousness (NCC)",
     "proponent": "Francis Crick & Christof Koch",
     "category": "Empirical/Neuroscientific",
-    "tier": "strongly_testable",
-    "score": 0.8,
+    "tier": "weakly_testable",
+    "score": 0.54,
     "core_claims": [
       "Consciousness has specific neural correlates \u2014 minimal neural mechanisms that are jointly sufficient for any one specific conscious percept.",
       "Visual awareness is the most tractable form of consciousness to study neurobiologically, and NCCs can be identified through contrastive analysis of conscious vs. non-conscious states.",
@@ -3892,8 +4075,8 @@ const THEORIES = [
     "name": "Predictive Processing Theories of Consciousness",
     "proponent": "Anil Seth; Andy Clark; Jakob Hohwy",
     "category": "Computational/Philosophical-Neuroscientific",
-    "tier": "weakly_testable",
-    "score": 0.6,
+    "tier": "testable_in_principle",
+    "score": 0.43,
     "core_claims": [
       "The brain is a prediction machine that generates top-down predictions about sensory inputs and minimizes prediction errors through hierarchical Bayesian inference.",
       "Conscious experience is a controlled hallucination \u2014 the brain's best guess about the causes of its sensory input, constrained but not determined by sensory data.",
@@ -4147,15 +4330,15 @@ const THEORIES = [
 
 const ADDITIONAL_THEORIES = [
   {id: "illusionism", name: "Illusionism", proponent: "Dennett, Frankish", category: "Materialism", tier: "weakly_testable", score: 0.45, status: "pending"},
-  {id: "biological_naturalism", name: "Biological Naturalism", proponent: "John Searle", category: "Materialism", tier: "not_testable", score: 0.15, status: "pending"},
-  {id: "mysterianism", name: "Mysterianism", proponent: "Colin McGinn", category: "Skepticism", tier: "not_testable", score: 0.0, status: "pending"},
+  {id: "biological_naturalism", name: "Biological Naturalism", proponent: "John Searle", category: "Materialism", tier: "not_testable", score: 0.12, status: "pending"},
+  {id: "mysterianism", name: "Mysterianism", proponent: "Colin McGinn", category: "Skepticism", tier: "not_testable", score: 0.03, status: "pending"},
   {id: "idealism", name: "Analytic Idealism", proponent: "Bernardo Kastrup", category: "Idealism", tier: "not_testable", score: 0.05, status: "pending"},
-  {id: "eliminative", name: "Eliminative Materialism", proponent: "Churchland", category: "Materialism", tier: "weakly_testable", score: 0.30, status: "pending"},
-  {id: "enactivism", name: "Enactivism", proponent: "Thompson, Varela, Noë", category: "Embodied", tier: "weakly_testable", score: 0.35, status: "pending"},
-  {id: "identity_theory", name: "Mind-Brain Identity Theory", proponent: "Place, Smart, Armstrong", category: "Materialism", tier: "not_testable", score: 0.10, status: "pending"},
+  {id: "eliminative", name: "Eliminative Materialism", proponent: "Churchland", category: "Materialism", tier: "testable_in_principle", score: 0.28, status: "pending"},
+  {id: "enactivism", name: "Enactivism", proponent: "Thompson, Varela, Noë", category: "Embodied", tier: "testable_in_principle", score: 0.32, status: "pending"},
+  {id: "identity_theory", name: "Mind-Brain Identity Theory", proponent: "Place, Smart, Armstrong", category: "Materialism", tier: "not_testable", score: 0.1, status: "pending"},
   {id: "functionalism", name: "Functionalism", proponent: "Putnam, Lewis", category: "Materialism", tier: "testable_in_principle", score: 0.25, status: "pending"},
   {id: "supervenience", name: "Supervenience", proponent: "Jaegwon Kim", category: "Materialism", tier: "not_testable", score: 0.05, status: "pending"},
-  {id: "emergence", name: "Strong Emergence", proponent: "Ellis", category: "Emergence", tier: "not_testable", score: 0.10, status: "pending"}
+  {id: "emergence", name: "Strong Emergence", proponent: "Ellis", category: "Emergence", tier: "not_testable", score: 0.08, status: "pending"}
 ];
 
 // Merge analyzed theories with placeholders
