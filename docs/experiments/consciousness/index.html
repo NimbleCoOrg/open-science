@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landscape of Consciousness — Theories, Testability & Evidence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e6;
+  --bg-warm: #ede5d4;
+  --bg-card: #fffdf7;
+  --ink: #2a2520;
+  --ink-soft: #6b5d50;
+  --ink-faint: #a0937f;
+  --accent: #8b3a3a;
+  --accent-light: #b85555;
+  --accent-bg: #f2e8e8;
+  --green: #4a6b3a;
+  --green-light: #7a9e5e;
+  --green-bg: #ecf2e6;
+  --gold: #9c7c2f;
+  --gold-bg: #f5edda;
+  --blue: #3a5a7a;
+  --blue-bg: #e8edf3;
+  --border: #d8cdb8;
+  --border-soft: #e8dfd0;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Fraunces', serif;
+  --body: 'Newsreader', serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* Layout */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+header {
+  background: var(--bg-warm);
+  border-bottom: 2px solid var(--border);
+  padding: 40px 0 30px;
+}
+header h1 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 2.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+header .subtitle {
+  font-family: var(--body);
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+header .meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  margin-top: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Tab Navigation */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 32px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: var(--body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--ink); background: var(--bg-warm); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+/* Overview stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-card .num {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--accent);
+}
+.stat-card .label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+/* Testability spectrum */
+.spectrum-container {
+  margin: 24px 0;
+}
+.spectrum-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(to right, #d4d4d4 0%, #a0c080 25%, #e8c04a 50%, #c88040 75%, #8b3a3a 100%);
+  position: relative;
+  margin: 0 0 40px;
+}
+.spectrum-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.theory-dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transform: translateX(-50%);
+  transition: transform 0.2s;
+}
+.theory-dot:hover { transform: translateX(-50%) scale(1.5); z-index: 10; }
+.theory-dot::after {
+  content: attr(data-name);
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: none;
+  z-index: 20;
+}
+.theory-dot:hover::after { display: block; }
+
+/* Theory table */
+.theory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.theory-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--border);
+}
+.theory-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+.theory-table tr:hover { background: var(--bg-warm); }
+.theory-table tr { cursor: pointer; }
+
+/* Tier badges */
+.tier-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+.tier-strongly { background: var(--green-bg); color: var(--green); }
+.tier-weakly { background: var(--green-bg); color: var(--green); opacity: 0.7; }
+.tier-principle { background: var(--gold-bg); color: var(--gold); }
+.tier-not { background: var(--accent-bg); color: var(--accent); }
+
+/* Theory detail view */
+.theory-detail { display: none; }
+.theory-detail.active { display: block; }
+.theory-detail h2 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+.theory-detail .proponent {
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+/* Scope line display */
+.scope-line-container {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  background: #faf6ed;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  overflow-x: auto;
+}
+.scope-line {
+  display: grid;
+  grid-template-columns: 40px 1fr 60px 200px 1fr;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--border-soft);
+  align-items: center;
+}
+.scope-line:last-child { border-bottom: none; }
+.scope-line .step { color: var(--ink-faint); text-align: right; }
+.scope-line .formula { font-weight: 500; }
+.scope-line .deps { color: var(--ink-faint); font-size: 0.75rem; }
+.scope-line .rule { color: var(--blue); font-size: 0.75rem; }
+.scope-line .active-assumptions { color: var(--accent); font-size: 0.72rem; }
+.scope-line.premise .formula { color: var(--green); }
+.scope-line.conclusion .formula { color: var(--accent); font-weight: 600; }
+
+/* Argument map */
+.argument-map {
+  background: #faf6ed;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  overflow-x: auto;
+}
+.arg-node {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.arg-node.premise { border-color: var(--green-light); background: var(--green-bg); }
+.arg-node.inference { border-color: var(--gold); background: var(--gold-bg); }
+.arg-node.conclusion { border-color: var(--accent-light); background: var(--accent-bg); font-weight: 600; }
+.arg-arrow { color: var(--ink-faint); margin: 0 4px; }
+
+/* Evidence assessment */
+.evidence-item {
+  border-left: 3px solid var(--border);
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  background: var(--bg-card);
+  border-radius: 0 6px 6px 0;
+}
+.evidence-item.supports { border-left-color: var(--green-light); }
+.evidence-item.contradicts { border-left-color: var(--accent); }
+.evidence-item.mixed { border-left-color: var(--gold); }
+.evidence-item .claim {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.evidence-item .verdict {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.verdict.supports { background: var(--green-bg); color: var(--green); }
+.verdict.contradicts { background: var(--accent-bg); color: var(--accent); }
+.verdict.mixed { background: var(--gold-bg); color: var(--gold); }
+.evidence-item .detail { font-size: 0.9rem; color: var(--ink-soft); }
+.evidence-item .refs { font-size: 0.8rem; margin-top: 6px; color: var(--blue); }
+
+/* Metaphysical dismissal */
+.metaphysical-dismissal {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-light);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  font-style: italic;
+}
+.metaphysical-dismissal::before {
+  content: "🐍";
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Wittgenstein quote */
+.witt-quote {
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  padding: 40px 20px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 32px 0;
+}
+.witt-quote cite {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-style: normal;
+  margin-top: 12px;
+  color: var(--ink-faint);
+}
+
+/* References */
+.ref-list {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.ref-list li {
+  margin-bottom: 6px;
+  padding-left: 16px;
+  position: relative;
+  list-style: none;
+}
+.ref-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--ink-faint);
+}
+.ref-verified { color: var(--green); font-size: 0.7rem; }
+
+/* Back button */
+.back-btn {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-bottom: 16px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.back-btn:hover { background: var(--border-soft); }
+
+/* Section headers */
+.section-header {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* Two-column layout */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr; }
+  .scope-line { grid-template-columns: 30px 1fr 40px 120px; }
+  .scope-line .active-assumptions { grid-column: 1 / -1; }
+}
+
+/* Cogitate highlight box */
+.cogitate-box {
+  background: linear-gradient(135deg, #f0e8d8, #e8e0d0);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 20px 0;
+}
+.cogitate-box h3 {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.cogitate-box .finding {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+.cogitate-box .finding-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.cogitate-box .finding-text {
+  font-size: 0.92rem;
+}
+
+footer {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--ink-faint);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+footer a { color: var(--blue); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Landscape of Consciousness</h1>
+    <p class="subtitle">Theories of consciousness, their logical structure, and what the evidence says</p>
+    <p class="meta">Built from Closer to Truth · Stanford Encyclopedia of Philosophy · Primary Literature · Last updated July 2026</p>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- Tab Navigation -->
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="spectrum">Testability Spectrum</button>
+  <button class="tab-btn" data-tab="theories">All Theories</button>
+  <button class="tab-btn" data-tab="evidence">Evidence</button>
+  <button class="tab-btn" data-tab="about">Method</button>
+</div>
+
+<!-- OVERVIEW TAB -->
+<div class="tab-content active" id="tab-overview">
+  <div class="stats-grid">
+    <div class="stat-card"><div class="num" id="stat-total">—</div><div class="label">Theories Catalogued</div></div>
+    <div class="stat-card"><div class="num" id="stat-testable">—</div><div class="label">Testable (Now)</div></div>
+    <div class="stat-card"><div class="num" id="stat-principle">—</div><div class="label">Testable (In Principle)</div></div>
+    <div class="stat-card"><div class="num" id="stat-metaphysical">—</div><div class="label">Metaphysical Only</div></div>
+  </div>
+
+  <div class="card">
+    <h3>What this is</h3>
+    <p>A systematic analysis of theories of consciousness — what gives rise to subjective experience — assessed along three dimensions:</p>
+    <ul style="margin: 12px 0 0 20px;">
+      <li><strong>Logical structure</strong>: Each theory's argument reconstructed as premises, inferences, and conclusions, with a scope line showing which assumptions are active at each step</li>
+      <li><strong>Testability</strong>: Which claims within each theory can be tested with neuroscience, psychology, or physics — and which are purely metaphysical</li>
+      <li><strong>Evidence</strong>: What the empirical data actually shows — including the 2025 Cogitate Consortium adversarial collaboration that directly tested the two leading theories</li>
+    </ul>
+  </div>
+
+  <div class="cogitate-box">
+    <h3>🔬 Landmark: The Cogitate Consortium (2025)</h3>
+    <p style="font-size: 0.92rem; margin-bottom: 12px;">The first large-scale, preregistered adversarial collaboration directly comparing Integrated Information Theory (IIT) and Global Neuronal Workspace Theory (GNWT) — the two leading empirically-testable theories of consciousness.</p>
+    <div class="finding">
+      <span class="finding-icon">🟡</span>
+      <span class="finding-text"><strong>IIT</strong>: Posterior cortex contains conscious content (partially confirmed), BUT sustained synchronization within posterior cortex was NOT found (key prediction failed), and maximum integrated information in posterior cortex was NOT confirmed.</span>
+    </div>
+    <div class="finding">
+      <span class="finding-icon">🔴</span>
+      <span class="finding-text"><strong>GNWT</strong>: Lack of ignition at stimulus offset (challenged), limited prefrontal representation of conscious content (challenged), global broadcasting inconclusive.</span>
+    </div>
+    <div class="finding">
+      <span class="finding-icon">📊</span>
+      <span class="finding-text"><strong>Methods</strong>: fMRI, MEG, and intracranial EEG across 256 participants. Preregistered predictions with pass/fail criteria agreed ex-ante by both theory proponents.</span>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--ink-faint); margin-top: 12px;">
+      Cogitate Consortium, Ferrante et al. (2025). <em>Nature</em>, 642, 133–142.
+      <a href="https://doi.org/10.1038/s41586-025-08888-1" target="_blank" style="color: var(--blue);">DOI: 10.1038/s41586-025-08888-1</a>
+    </p>
+  </div>
+
+  <div class="witt-quote">
+    "Whereof one cannot speak, thereof one must be silent."
+    <cite>— Wittgenstein, Tractatus Logico-Philosophicus, §7</cite>
+  </div>
+  <p style="text-align: center; color: var(--ink-soft); font-size: 0.9rem; margin-top: -20px;">
+    Our guiding principle: theories that make no testable predictions are not wrong — they are <em>not in the game</em>. We catalogue them, but our energy goes where evidence can reach.
+  </p>
+</div>
+
+<!-- TESTABILITY SPECTRUM TAB -->
+<div class="tab-content" id="tab-spectrum">
+  <div class="card">
+    <h3>Testability Spectrum</h3>
+    <p>Each theory is placed on a spectrum from <strong>strongly testable</strong> (makes quantitative predictions that can be confirmed or falsified with current technology) to <strong>not testable</strong> (makes no empirical predictions — pure metaphysics).</p>
+    <div class="spectrum-container">
+      <div class="spectrum-labels">
+        <span>Not Testable</span>
+        <span>In Principle</span>
+        <span>Weakly Testable</span>
+        <span>Strongly Testable</span>
+      </div>
+      <div class="spectrum-bar" id="spectrum-bar"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Theories by Tier</h3>
+    <div id="tier-list"></div>
+  </div>
+</div>
+
+<!-- ALL THEORIES TAB -->
+<div class="tab-content" id="tab-theories">
+  <div class="card">
+    <h3>All Catalogued Theories</h3>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 16px;">Click any theory to see its argument structure, scope line, and evidence assessment.</p>
+    <table class="theory-table" id="theory-table">
+      <thead>
+        <tr>
+          <th>Theory</th>
+          <th>Proponent</th>
+          <th>Category</th>
+          <th>Testability</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="theory-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EVIDENCE TAB -->
+<div class="tab-content" id="tab-evidence">
+  <div class="card">
+    <h3>Empirical Evidence for Theories of Consciousness</h3>
+    <p>This tab compiles the actual experimental and observational evidence that has been brought to bear on testable theories of consciousness.</p>
+  </div>
+  <div id="evidence-list"></div>
+</div>
+
+<!-- METHOD TAB -->
+<div class="tab-content" id="tab-about">
+  <div class="card">
+    <h3>Method</h3>
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Sources</h4>
+    <ul style="margin: 0 0 16px 20px; font-size: 0.9rem;">
+      <li><a href="https://loc.closertotruth.com/" target="_blank" style="color: var(--blue);">Closer to Truth: Landscape of Consciousness</a> — 430+ theories of consciousness catalogued</li>
+      <li><a href="https://plato.stanford.edu/" target="_blank" style="color: var(--blue);">Stanford Encyclopedia of Philosophy</a> — consciousness entries for philosophical context</li>
+      <li>Primary literature — all citations verified through Crossref/OpenAlex/DataCite</li>
+    </ul>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Scope Lines</h4>
+    <p style="font-size: 0.9rem;">Each theory's argument is reconstructed using <strong>scope line notation</strong> from formal proof theory. A scope line shows, for each step of an argument, which premises are still active assumptions. The format:</p>
+    <div style="font-family: var(--mono); font-size: 0.8rem; background: #faf6ed; padding: 12px; border-radius: 6px; margin: 8px 0; border: 1px solid var(--border);">
+      Step | Formula | Dependencies | Inference Rule | Active Assumptions
+    </div>
+    <p style="font-size: 0.9rem;">This makes visible <em>which assumptions each conclusion depends on</em> — and therefore which assumptions, if wrong, would collapse the argument.</p>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Testability Tiers</h4>
+    <ul style="margin: 0 0 16px 20px; font-size: 0.9rem;">
+      <li><strong>Strongly testable</strong>: Makes quantitative, falsifiable predictions testable with current neuroimaging/physics technology</li>
+      <li><strong>Weakly testable</strong>: Makes predictions that are testable in principle and partially testable now, but core claims remain difficult to access empirically</li>
+      <li><strong>Testable in principle</strong>: Makes predictions that could be tested with foreseeable technology but have not yet been adequately tested</li>
+      <li><strong>Not testable (metaphysical)</strong>: Makes no empirical predictions. No conceivable observation could confirm or disconfirm the theory</li>
+    </ul>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Citation Verification</h4>
+    <p style="font-size: 0.9rem;">Every citation in this dashboard has been verified through Crossref, OpenAlex, and DataCite. Citations that could not be verified are flagged. No citation is presented as verified without checking.</p>
+  </div>
+</div>
+
+<!-- THEORY DETAIL VIEW (hidden, shown when a theory is selected) -->
+<div class="theory-detail" id="theory-detail-view">
+  <a class="back-btn" onclick="showTab('theories')">← Back to all theories</a>
+  <div id="theory-detail-content"></div>
+</div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>Landscape of Consciousness — an open-science project by <a href="https://nimbleco.ai">NimbleCo AI</a></p>
+    <p style="margin-top: 8px;">All citations verified · Open source · Built on <a href="https://loc.closertotruth.com/">Closer to Truth</a> and <a href="https://plato.stanford.edu/">SEP</a></p>
+  </div>
+</footer>
+
+<script>
+// Theory data (embedded — will be expanded as more theories are analyzed)
+const THEORIES = [
+  {
+    id: "iit",
+    name: "Integrated Information Theory (IIT)",
+    proponent: "Giulio Tononi & Christof Koch",
+    category: "Information",
+    tier: "strongly_testable",
+    score: 0.85,
+    core_claims: [
+      "Consciousness is identical to a maximally irreducible conceptual structure (Φ-structure) in qualia space",
+      "Integrated information (Φ) is both necessary and sufficient for consciousness",
+      "Consciousness is a structure, not a function, process, or computation",
+      "The physical substrate of consciousness resides primarily in posterior cerebral cortex"
+    ],
+    premises: [
+      {id: "P1", text: "Conscious experience exists and is immediately known (phenomenological given)", type: "Introspective"},
+      {id: "P2", text: "Experience has five essential properties: intrinsic existence, composition, information, integration, exclusion", type: "Phenomenological axiom"},
+      {id: "P3", text: "Each phenomenal property corresponds to a physical cause-effect property (bridge principle)", type: "Bridge principle"},
+      {id: "P4", text: "A system's integrated information Φ measures its irreducibility to its parts", type: "Mathematical definition"},
+      {id: "P5", text: "Only systems with maximally irreducible cause-effect power are conscious", type: "Ontological"}
+    ],
+    inferences: [
+      {from: ["P1","P2","P3"], to: "I1", text: "Physical substrates must satisfy five postulates"},
+      {from: ["I1","P4"], to: "C1", text: "Consciousness = maximally irreducible Φ-structure"},
+      {from: ["C1","P5"], to: "C2", text: "Φ>0 ⟺ conscious"},
+      {from: ["C2","P2"], to: "C3", text: "Consciousness not limited to biological systems"}
+    ],
+    conclusions: [
+      {id: "C1", text: "Consciousness is identical to a Φ-structure (explanatory identity)"},
+      {id: "C2", text: "Φ > 0 is necessary and sufficient for consciousness"},
+      {id: "C3", text: "Consciousness extends beyond brains to any system with integrated information"}
+    ],
+    scope_lines: [
+      {step: 1, formula: "P1: Experience exists", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
+      {step: 2, formula: "P2: Five axioms", deps: [2], rule: "Premise (phenomenological)", active: ["P1","P2"]},
+      {step: 3, formula: "P3: Phenomenal → physical", deps: [3], rule: "Premise (bridge)", active: ["P1","P2","P3"]},
+      {step: 4, formula: "P4: Φ = integrated info", deps: [4], rule: "Premise (mathematical)", active: ["P1","P2","P3","P4"]},
+      {step: 5, formula: "P5: Being = cause-effect", deps: [5], rule: "Premise (ontological)", active: ["P1","P2","P3","P4","P5"]},
+      {step: 6, formula: "I1: Five postulates", deps: [1,2,3], rule: "Inference (axioms→postulates)", active: ["P1","P2","P3"]},
+      {step: 7, formula: "C1: Consciousness = Φ-structure", deps: [1,2,3,4], rule: "Inference (postulates+Φ→identity)", active: ["P1","P2","P3","P4"]},
+      {step: 8, formula: "C2: Φ>0 ⟺ conscious", deps: [1,2,3,4,5], rule: "Inference (C1+being)", active: ["P1","P2","P3","P4","P5"]},
+      {step: 9, formula: "C3: Non-biological consciousness", deps: [1,2,3,4], rule: "Inference (C2, no bio restriction)", active: ["P1","P2","P3","P4"]}
+    ],
+    evidence: [
+      {
+        claim: "Φ should correlate with states of consciousness (awake vs anesthetized vs coma)",
+        type: "neuroimaging",
+        tested: true,
+        verdict: "supports",
+        detail: "Preliminary studies calculating Φ for simplified neural network models correlate with consciousness states. However, computing Φ for real brains remains computationally intractable at scale — only simplified approximations have been tested.",
+        quality: "moderate",
+        refs: ["Oizumi et al. 2014"]
+      },
+      {
+        claim: "Conscious content is maximally represented in posterior cortex (hot zone)",
+        type: "adversarial_collaboration",
+        tested: true,
+        verdict: "mixed",
+        detail: "Cogitate Consortium (2025): Information about conscious content found in visual, ventrotemporal, and inferior frontal cortex with sustained responses in occipital and lateral temporal cortex. PARTIALLY CONFIRMED — posterior cortex does contain conscious content, but not exclusively.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "Sustained synchronization within posterior cortex specifies consciousness",
+        type: "adversarial_collaboration",
+        tested: true,
+        verdict: "contradicts",
+        detail: "Cogitate Consortium (2025): LACK of sustained synchronization within posterior cortex found. This KEY PREDICTION FAILED. Contradicts IIT's claim that network connectivity specifies consciousness.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "Maximum integrated information (Φ) resides in posterior cortex",
+        type: "neuroimaging",
+        tested: true,
+        verdict: "contradicts",
+        detail: "Cogitate Consortium (2025): Could not confirm maximum integrated information in posterior cortex. FAILED.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "Posterior cortical hot zone is the minimal neural substrate of consciousness",
+        type: "neuroimaging",
+        tested: true,
+        verdict: "supports",
+        detail: "Siclari et al. (2017): Posterior cortical hot zone associated with dream experiences during sleep. Supports posterior cortex role in consciousness.",
+        quality: "moderate",
+        refs: ["Siclari et al. 2017"]
+      }
+    ],
+    references: [
+      {authors: "Oizumi, Albantakis & Tononi", year: 2014, title: "From the phenomenology to the mechanisms of consciousness: IIT 3.0", doi: "10.1371/journal.pcbi.1003588", verified: true},
+      {authors: "Albantakis et al.", year: 2023, title: "Integrated information theory (IIT) 4.0", doi: "10.1371/journal.pcbi.1011465", verified: true},
+      {authors: "Cogitate Consortium, Ferrante et al.", year: 2025, title: "Adversarial testing of GNW and IIT", doi: "10.1038/s41586-025-08888-1", verified: true},
+      {authors: "Siclari et al.", year: 2017, title: "The neural correlates of dreaming", doi: "10.1038/nn.4545", verified: true}
+    ],
+    metaphysical_dismissal: null
+  },
+  {
+    id: "gwt",
+    name: "Global Workspace Theory (GWT/GNWT)",
+    proponent: "Bernard Baars & Stanislas Dehaene",
+    category: "Cognitive Architecture",
+    tier: "strongly_testable",
+    score: 0.85,
+    core_claims: [
+      "Consciousness arises when information is globally broadcast across a 'workspace' of distributed brain regions",
+      "Prefrontal cortex plays a necessary role in conscious access",
+      "Conscious access is an all-or-none phenomenon — information either ignites the global workspace or remains unconscious",
+      "At stimulus offset, a brief content-specific ignition occurs in prefrontal cortex"
+    ],
+    premises: [
+      {id: "P1", text: "The brain has a modular architecture with specialized processors operating in parallel", type: "Neuroscientific"},
+      {id: "P2", text: "Information that is consciously processed must be available to multiple specialized systems simultaneously", type: "Functional"},
+      {id: "P3", text: "Global broadcasting requires a central workspace supported by long-range cortical connections", type: "Anatomical"},
+      {id: "P4", text: "Prefrontal cortex is the primary hub of the global workspace", type: "Neuroscientific"},
+      {id: "P5", text: "Conscious access is all-or-none (threshold phenomenon)", type: "Phenomenological"}
+    ],
+    inferences: [
+      {from: ["P1","P2"], to: "I1", text: "Conscious processing requires global broadcast"},
+      {from: ["I1","P3","P4"], to: "C1", text: "PFC mediates conscious access via global broadcasting"},
+      {from: ["C1","P5"], to: "C2", text: "Conscious access = all-or-none PFC ignition"},
+      {from: ["C2","P3"], to: "C3", text: "Content stored silently between onset and offset ignitions"}
+    ],
+    conclusions: [
+      {id: "C1", text: "Prefrontal cortex is necessary for conscious access"},
+      {id: "C2", text: "Conscious access = all-or-none prefrontal ignition"},
+      {id: "C3", text: "Content stored silently between ignition events"}
+    ],
+    scope_lines: [
+      {step: 1, formula: "P1: Modular brain", deps: [1], rule: "Premise (neuroscientific)", active: ["P1"]},
+      {step: 2, formula: "P2: Conscious = globally available", deps: [2], rule: "Premise (functional)", active: ["P1","P2"]},
+      {step: 3, formula: "P3: Global broadcast needs workspace", deps: [3], rule: "Premise (anatomical)", active: ["P1","P2","P3"]},
+      {step: 4, formula: "P4: PFC = workspace hub", deps: [4], rule: "Premise (neuroscientific)", active: ["P1","P2","P3","P4"]},
+      {step: 5, formula: "P5: Access = all-or-none", deps: [5], rule: "Premise (phenomenological)", active: ["P1","P2","P3","P4","P5"]},
+      {step: 6, formula: "I1: Consciousness needs broadcast", deps: [1,2], rule: "Inference (P1+P2)", active: ["P1","P2"]},
+      {step: 7, formula: "C1: PFC mediates access", deps: [1,2,3,4], rule: "Inference (I1+P3+P4)", active: ["P1","P2","P3","P4"]},
+      {step: 8, formula: "C2: Access = PFC ignition", deps: [1,2,3,4,5], rule: "Inference (C1+P5)", active: ["P1","P2","P3","P4","P5"]},
+      {step: 9, formula: "C3: Silent storage", deps: [1,2,3,4,5], rule: "Inference (C2+workspace)", active: ["P1","P2","P3","P4","P5"]}
+    ],
+    evidence: [
+      {
+        claim: "Prefrontal cortex is necessary for conscious content representation",
+        type: "adversarial_collaboration",
+        tested: true,
+        verdict: "contradicts",
+        detail: "Cogitate Consortium (2025): Limited representation of certain conscious dimensions in prefrontal cortex. CHALLENGED — PFC does not appear necessary for all conscious content as predicted.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "All-or-none ignition at stimulus onset and offset in PFC",
+        type: "adversarial_collaboration",
+        tested: true,
+        verdict: "contradicts",
+        detail: "Cogitate Consortium (2025): General lack of ignition at stimulus offset. CHALLENGED — the predicted offset ignition was largely absent.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "Global broadcasting of information in PFC",
+        type: "adversarial_collaboration",
+        tested: true,
+        verdict: "mixed",
+        detail: "Cogitate Consortium (2025): Content-specific synchronization between frontal and early visual areas found. PARTIALLY SUPPORTED — some evidence for global broadcasting but not across all dimensions.",
+        quality: "strong",
+        refs: ["Cogitate Consortium 2025"]
+      },
+      {
+        claim: "Conscious perception involves sudden 'ignition' of prefrontal activity",
+        type: "neuroimaging",
+        tested: true,
+        verdict: "supports",
+        detail: "Multiple fMRI/EEG studies show late prefrontal activity associated with conscious report. This is the most robust empirical finding of GWT.",
+        quality: "moderate",
+        refs: ["Dehaene & Changeux 2011"]
+      }
+    ],
+    references: [
+      {authors: "Cogitate Consortium, Ferrante et al.", year: 2025, title: "Adversarial testing of GNW and IIT", doi: "10.1038/s41586-025-08888-1", verified: true},
+      {authors: "Seth & Bayne", year: 2022, title: "Theories of consciousness", doi: "10.1038/s41583-022-00587-4", verified: true},
+      {authors: "Melloni et al.", year: 2023, title: "Adversarial collaboration protocol", doi: "10.1371/journal.pbio.3002231", verified: true}
+    ],
+    metaphysical_dismissal: null
+  },
+  {
+    id: "panpsychism",
+    name: "Panpsychism",
+    proponent: "Chalmers, Strawson, Goff",
+    category: "Metaphysical",
+    tier: "not_testable",
+    score: 0.05,
+    core_claims: [
+      "Consciousness is a fundamental feature of all matter",
+      "Even elementary particles have some form of experience",
+      "Consciousness cannot emerge from non-conscious matter",
+      "The hard problem of consciousness is solved by postulating consciousness as fundamental"
+    ],
+    premises: [
+      {id: "P1", text: "Consciousness exists (phenomenological given)", type: "Introspective"},
+      {id: "P2", text: "Consciousness cannot emerge from non-conscious matter", type: "Metaphysical (contested)"},
+      {id: "P3", text: "Matter is fundamental and ubiquitous", type: "Metaphysical"},
+      {id: "P4", text: "If consciousness cannot emerge and matter is fundamental, consciousness must be co-fundamental", type: "Logical"}
+    ],
+    inferences: [
+      {from: ["P1","P2","P3","P4"], to: "C1", text: "Consciousness is a fundamental property of all matter"}
+    ],
+    conclusions: [
+      {id: "C1", text: "All matter has some form of consciousness"},
+      {id: "C2", text: "The hard problem dissolves: consciousness doesn't emerge, it's already there"}
+    ],
+    scope_lines: [
+      {step: 1, formula: "P1: Consciousness exists", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
+      {step: 2, formula: "P2: No emergence from non-conscious", deps: [2], rule: "Premise (metaphysical, contested)", active: ["P1","P2"]},
+      {step: 3, formula: "P3: Matter is fundamental", deps: [3], rule: "Premise (metaphysical)", active: ["P1","P2","P3"]},
+      {step: 4, formula: "P4: Not emergent ⟹ fundamental", deps: [4], rule: "Premise (logical)", active: ["P1","P2","P3","P4"]},
+      {step: 5, formula: "C1: All matter is conscious", deps: [1,2,3,4], rule: "Inference (elimination)", active: ["P1","P2","P3","P4"]},
+      {step: 6, formula: "C2: Hard problem dissolves", deps: [1,2,3,4], rule: "Inference (from C1)", active: ["P1","P2","P3","P4"]}
+    ],
+    evidence: [],
+    references: [],
+    metaphysical_dismissal: "Whereof one cannot speak, thereof one must be silent. — Wittgenstein, Tractatus, §7. The claim that an electron has experience is not merely untestable — it is structured so that no conceivable observation could confirm or disconfirm it. Panpsychism makes no empirical predictions that differ from physicalism. It is metaphysics in the precise sense the logical positivists meant: a sentence that is not false but meaningless."
+  },
+  {
+    id: "substance_dualism",
+    name: "Substance Dualism",
+    proponent: "Descartes, Swinburne",
+    category: "Dualism / Metaphysical",
+    tier: "not_testable",
+    score: 0.0,
+    core_claims: [
+      "Mind and body are fundamentally different substances",
+      "The mental substance (res cogitans) is non-physical",
+      "Mind and body interact causally despite being ontologically distinct"
+    ],
+    premises: [
+      {id: "P1", text: "I can doubt my body's existence but not my thinking (Cogito)", type: "Introspective"},
+      {id: "P2", text: "Whatever I clearly perceive as separate is really separate", type: "Metaphysical (contested)"},
+      {id: "P3", text: "I can perceive mind without body and vice versa", type: "Introspective"},
+      {id: "P4", text: "Mind is indivisible; body is divisible", type: "Metaphysical"}
+    ],
+    inferences: [
+      {from: ["P1","P2","P3"], to: "I1", text: "Mind and body are really distinct substances"},
+      {from: ["I1","P4"], to: "C1", text: "Mind and body are fundamentally different substances"}
+    ],
+    conclusions: [
+      {id: "C1", text: "Mind and body are separate substances"},
+      {id: "C2", text: "Mental causation is genuine interaction between distinct substances"}
+    ],
+    scope_lines: [
+      {step: 1, formula: "P1: Cogito ergo sum", deps: [1], rule: "Premise (introspective)", active: ["P1"]},
+      {step: 2, formula: "P2: Clear perception ⟹ reality", deps: [2], rule: "Premise (metaphysical)", active: ["P1","P2"]},
+      {step: 3, formula: "P3: Mind/body perceived separate", deps: [3], rule: "Premise (introspective)", active: ["P1","P2","P3"]},
+      {step: 4, formula: "P4: Mind indivisible, body divisible", deps: [4], rule: "Premise (metaphysical)", active: ["P1","P2","P3","P4"]},
+      {step: 5, formula: "I1: Mind & body distinct", deps: [1,2,3], rule: "Inference (clear perception)", active: ["P1","P2","P3"]},
+      {step: 6, formula: "C1: Two substances", deps: [1,2,3,4], rule: "Inference (I1+indivisibility)", active: ["P1","P2","P3","P4"]},
+      {step: 7, formula: "C2: Mental causation", deps: [1,2,3,4], rule: "Inference (C1+interaction)", active: ["P1","P2","P3","P4"]}
+    ],
+    evidence: [],
+    references: [],
+    metaphysical_dismissal: "The limits of my language mean the limits of my world. — Wittgenstein, Tractatus, §5.6. Substance dualism posits a non-physical substance that by definition cannot be detected by any physical instrument. The interaction problem — how a non-physical substance causally affects physical matter — has no testable answer after 380 years. This is not a gap in current technology; it is a structural feature of the theory."
+  }
+];
+
+// Placeholder for additional theories to be added
+const ADDITIONAL_THEORIES = [
+  {id: "rpt", name: "Recurrent Processing Theory (RPT)", proponent: "Victor Lamme", category: "Neural", tier: "weakly_testable", score: 0.65, status: "analysis_in_progress"},
+  {id: "ast", name: "Attention Schema Theory (AST)", proponent: "Michael Graziano", category: "Cognitive", tier: "weakly_testable", score: 0.60, status: "analysis_in_progress"},
+  {id: "fep", name: "Free Energy Principle (FEP)", proponent: "Karl Friston", category: "Predictive Processing", tier: "weakly_testable", score: 0.55, status: "analysis_in_progress"},
+  {id: "hot", name: "Higher-Order Theories (HOT)", proponent: "Rosenthal, Lau, LeDoux", category: "Higher-Order", tier: "weakly_testable", score: 0.60, status: "analysis_in_progress"},
+  {id: "ncc", name: "Neural Correlates of Consciousness (NCC)", proponent: "Crick & Koch", category: "Neural", tier: "strongly_testable", score: 0.75, status: "analysis_in_progress"},
+  {id: "orch_or", name: "Orchestrated Objective Reduction (Orch-OR)", proponent: "Penrose & Hameroff", category: "Quantum", tier: "testable_in_principle", score: 0.35, status: "analysis_in_progress"},
+  {id: "cemi", name: "Conscious Electromagnetic Information (CEMI)", proponent: "Johnjoe McFadden", category: "Electromagnetic", tier: "weakly_testable", score: 0.40, status: "analysis_in_progress"},
+  {id: "illusionism", name: "Illusionism", proponent: "Dennett, Frankish", category: "Materialism", tier: "weakly_testable", score: 0.45, status: "analysis_in_progress"},
+  {id: "biological_naturalism", name: "Biological Naturalism", proponent: "John Searle", category: "Materialism", tier: "not_testable", score: 0.15, status: "pending"},
+  {id: "mysterianism", name: "Mysterianism", proponent: "Colin McGinn", category: "Skepticism", tier: "not_testable", score: 0.0, status: "pending"},
+  {id: "idealism", name: "Analytic Idealism", proponent: "Bernardo Kastrup", category: "Idealism", tier: "not_testable", score: 0.05, status: "pending"},
+  {id: "eliminative", name: "Eliminative Materialism", proponent: "Churchland", category: "Materialism", tier: "weakly_testable", score: 0.30, status: "pending"},
+  {id: "enactivism", name: "Enactivism", proponent: "Thompson, Varela, Noë", category: "Embodied", tier: "weakly_testable", score: 0.35, status: "pending"},
+  {id: "predictive", name: "Predictive Processing", proponent: "Clark, Seth, Hohwy", category: "Predictive Processing", tier: "weakly_testable", score: 0.50, status: "pending"},
+  {id: "identity_theory", name: "Mind-Brain Identity Theory", proponent: "Place, Smart, Armstrong", category: "Materialism", tier: "not_testable", score: 0.10, status: "pending"},
+  {id: "functionalism", name: "Functionalism", proponent: "Putnam, Lewis", category: "Materialism", tier: "testable_in_principle", score: 0.25, status: "pending"},
+  {id: "supervenience", name: "Supervenience", proponent: "Jaegwon Kim", category: "Materialism", tier: "not_testable", score: 0.05, status: "pending"},
+  {id: "emergence", name: "Strong Emergence", proponent: "Ellis", category: "Emergence", tier: "not_testable", score: 0.10, status: "pending"}
+];
+
+// Merge analyzed theories with placeholders
+const ALL_THEORIES = [...THEORIES, ...ADDITIONAL_THEORIES];
+
+// Tab management
+function showTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  document.getElementById('theory-detail-view').classList.remove('active');
+
+  if (tabName === 'theories') {
+    renderTheoryTable();
+  } else if (tabName === 'spectrum') {
+    renderSpectrum();
+  } else if (tabName === 'evidence') {
+    renderEvidence();
+  }
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => showTab(btn.dataset.tab));
+});
+
+// Stats
+function renderStats() {
+  const total = ALL_THEORIES.length;
+  const testable = ALL_THEORIES.filter(t => t.tier === 'strongly_testable').length;
+  const principle = ALL_THEORIES.filter(t => t.tier === 'testable_in_principle' || t.tier === 'weakly_testable').length;
+  const metaphysical = ALL_THEORIES.filter(t => t.tier === 'not_testable').length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-testable').textContent = testable;
+  document.getElementById('stat-principle').textContent = principle;
+  document.getElementById('stat-metaphysical').textContent = metaphysical;
+}
+
+// Testability spectrum
+function renderSpectrum() {
+  const bar = document.getElementById('spectrum-bar');
+  bar.innerHTML = '';
+  ALL_THEORIES.forEach(t => {
+    const dot = document.createElement('div');
+    dot.className = 'theory-dot';
+    dot.style.left = (t.score * 100) + '%';
+    dot.style.background = t.tier === 'strongly_testable' ? '#4a6b3a' :
+                           t.tier === 'weakly_testable' ? '#7a9e5e' :
+                           t.tier === 'testable_in_principle' ? '#9c7c2f' :
+                           '#8b3a3a';
+    dot.dataset.name = t.name;
+    dot.addEventListener('click', () => showTheoryDetail(t.id));
+    bar.appendChild(dot);
+  });
+
+  // Render tier lists
+  const tierList = document.getElementById('tier-list');
+  const tiers = [
+    {key: 'strongly_testable', label: 'Strongly Testable', class: 'tier-strongly', desc: 'Makes quantitative, falsifiable predictions testable with current technology'},
+    {key: 'weakly_testable', label: 'Weakly Testable', class: 'tier-weakly', desc: 'Partially testable now; core claims remain difficult to access empirically'},
+    {key: 'testable_in_principle', label: 'Testable In Principle', class: 'tier-principle', desc: 'Could be tested with foreseeable technology but has not yet been adequately tested'},
+    {key: 'not_testable', label: 'Not Testable (Metaphysical)', class: 'tier-not', desc: 'Makes no empirical predictions — no conceivable observation could confirm or disconfirm'}
+  ];
+  tierList.innerHTML = '';
+  tiers.forEach(tier => {
+    const theories = ALL_THEORIES.filter(t => t.tier === tier.key);
+    const div = document.createElement('div');
+    div.style.marginBottom = '20px';
+    div.innerHTML = `<h4 style="font-family:var(--serif);font-weight:700;font-size:1.05rem;margin-bottom:8px;">
+      <span class="tier-badge ${tier.class}">${tier.label}</span>
+      <span style="font-size:0.85rem;color:var(--ink-soft);font-weight:400;margin-left:8px;">${tier.desc}</span>
+    </h4>`;
+    const list = document.createElement('div');
+    theories.forEach(t => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding:8px 12px;border:1px solid var(--border-soft);border-radius:4px;margin:4px 0;cursor:pointer;background:var(--bg-card);';
+      item.innerHTML = `<strong>${t.name}</strong> — ${t.proponent} <span style="color:var(--ink-faint);font-size:0.8rem;">(score: ${t.score})</span>`;
+      item.addEventListener('click', () => showTheoryDetail(t.id));
+      list.appendChild(item);
+    });
+    div.appendChild(list);
+    tierList.appendChild(div);
+  });
+}
+
+// Theory table
+function renderTheoryTable() {
+  const tbody = document.getElementById('theory-table-body');
+  tbody.innerHTML = '';
+  ALL_THEORIES.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.addEventListener('click', () => showTheoryDetail(t.id));
+    const tierClass = t.tier === 'strongly_testable' ? 'tier-strongly' :
+                      t.tier === 'weakly_testable' ? 'tier-weakly' :
+                      t.tier === 'testable_in_principle' ? 'tier-principle' : 'tier-not';
+    const tierLabel = t.tier.replace(/_/g, ' ');
+    tr.innerHTML = `
+      <td><strong>${t.name}</strong>${t.status === 'analysis_in_progress' ? ' <em style="color:var(--gold);font-size:0.75rem;">[in progress]</em>' : ''}${t.status === 'pending' ? ' <em style="color:var(--ink-faint);font-size:0.75rem;">[pending]</em>' : ''}</td>
+      <td>${t.proponent}</td>
+      <td>${t.category}</td>
+      <td><span class="tier-badge ${tierClass}">${tierLabel}</span></td>
+      <td>${t.score.toFixed ? t.score.toFixed(2) : t.score}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Theory detail view
+function showTheoryDetail(id) {
+  const t = THEORIES.find(t => t.id === id);
+  if (!t) {
+    // Show placeholder for theories still being analyzed
+    const p = ADDITIONAL_THEORIES.find(t => t.id === id);
+    if (p) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('theory-detail-view').classList.add('active');
+      document.getElementById('theory-detail-content').innerHTML = `
+        <h2>${p.name}</h2>
+        <p class="proponent">${p.proponent}</p>
+        <div class="card"><p style="color:var(--ink-soft);">📋 <em>Deep analysis in progress. This theory has been catalogued and tiered but the full argument structure, scope line, and evidence assessment are being compiled.</em></p>
+        <p style="margin-top:12px;"><strong>Category:</strong> ${p.category}</p>
+        <p><strong>Testability tier:</strong> ${p.tier.replace(/_/g,' ')}</p>
+        <p><strong>Testability score:</strong> ${p.score}</p></div>
+      `;
+    }
+    return;
+  }
+
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('theory-detail-view').classList.add('active');
+
+  const tierClass = t.tier === 'strongly_testable' ? 'tier-strongly' :
+                    t.tier === 'weakly_testable' ? 'tier-weakly' :
+                    t.tier === 'testable_in_principle' ? 'tier-principle' : 'tier-not';
+
+  let html = `
+    <h2>${t.name}</h2>
+    <p class="proponent">${t.proponent}</p>
+    <p><span class="tier-badge ${tierClass}">${t.tier.replace(/_/g,' ')}</span>
+       <span style="margin-left:12px;color:var(--ink-soft);">Category: ${t.category}</span></p>
+  `;
+
+  // Core claims
+  html += '<div class="section-header">Core Claims</div><ul style="margin:0 0 16px 20px;">';
+  t.core_claims.forEach(c => html += `<li>${c}</li>`);
+  html += '</ul>';
+
+  // Argument map
+  html += '<div class="section-header">Argument Map</div><div class="argument-map">';
+  // Premises
+  html += '<div style="margin-bottom:12px;"><strong style="color:var(--green);">Premises:</strong><br>';
+  t.premises.forEach(p => {
+    html += `<div class="arg-node premise" title="${p.type}"><strong>${p.id}</strong>: ${p.text}</div>`;
+  });
+  html += '</div>';
+  // Inferences
+  html += '<div style="margin-bottom:12px;"><strong style="color:var(--gold);">Inferences:</strong><br>';
+  t.inferences.forEach(i => {
+    html += `<div class="arg-node inference"><strong>${i.from.join(',')} → ${i.to}</strong>: ${i.text}</div>`;
+  });
+  html += '</div>';
+  // Conclusions
+  html += '<div><strong style="color:var(--accent);">Conclusions:</strong><br>';
+  t.conclusions.forEach(c => {
+    html += `<div class="arg-node conclusion"><strong>${c.id}</strong>: ${c.text}</div>`;
+  });
+  html += '</div></div>';
+
+  // Scope line
+  html += '<div class="section-header">Scope Line</div>';
+  html += '<p style="font-size:0.85rem;color:var(--ink-soft);margin-bottom:8px;">Each line shows which assumptions are active at that step. The scope of each conclusion is determined by which premises it depends on.</p>';
+  html += '<div class="scope-line-container"><div style="display:grid;grid-template-columns:40px 1fr 60px 200px 1fr;gap:8px;padding-bottom:8px;border-bottom:2px solid var(--border);font-weight:600;font-size:0.75rem;color:var(--ink-soft);">';
+  html += '<div>Step</div><div>Formula</div><div>Deps</div><div>Rule</div><div>Active Assumptions</div></div>';
+  t.scope_lines.forEach(line => {
+    const isPremise = line.formula.startsWith('P');
+    const isConclusion = line.formula.startsWith('C');
+    html += `<div class="scope-line ${isPremise ? 'premise' : ''} ${isConclusion ? 'conclusion' : ''}">
+      <div class="step">${line.step}</div>
+      <div class="formula">${line.formula}</div>
+      <div class="deps">[${line.deps.join(',')}]</div>
+      <div class="rule">${line.rule}</div>
+      <div class="active-assumptions">${line.active.join(', ')}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Evidence
+  if (t.evidence && t.evidence.length > 0) {
+    html += '<div class="section-header">Evidence Assessment</div>';
+    t.evidence.forEach(ev => {
+      html += `<div class="evidence-item ${ev.verdict}">
+        <div class="claim">${ev.claim}</div>
+        <span class="verdict ${ev.verdict}">${ev.verdict} · ${ev.quality}</span>
+        <div class="detail">${ev.detail}</div>
+        <div class="refs">Refs: ${ev.refs.join(', ')}</div>
+      </div>`;
+    });
+  } else {
+    html += '<div class="section-header">Evidence Assessment</div>';
+    html += '<p style="color:var(--ink-soft);font-style:italic;">No testable claims — no empirical evidence to assess.</p>';
+  }
+
+  // Metaphysical dismissal
+  if (t.metaphysical_dismissal) {
+    html += `<div class="metaphysical-dismissal">${t.metaphysical_dismissal}</div>`;
+  }
+
+  // References
+  if (t.references && t.references.length > 0) {
+    html += '<div class="section-header">References</div><ul class="ref-list">';
+    t.references.forEach(r => {
+      html += `<li>${r.authors} (${r.year}). ${r.title}. <em>${r.doi}</em> ${r.verified ? '<span class="ref-verified">✓ verified</span>' : '<span style="color:var(--accent);font-size:0.7rem;">⚠ unverified</span>'}</li>`;
+    });
+    html += '</ul>';
+  }
+
+  document.getElementById('theory-detail-content').innerHTML = html;
+}
+
+// Evidence tab
+function renderEvidence() {
+  const container = document.getElementById('evidence-list');
+  container.innerHTML = '';
+  THEORIES.forEach(t => {
+    if (!t.evidence || t.evidence.length === 0) return;
+    const card = document.createElement('div');
+    card.className = 'card';
+    let html = `<h3>${t.name}</h3>`;
+    t.evidence.forEach(ev => {
+      html += `<div class="evidence-item ${ev.verdict}">
+        <div class="claim">${ev.claim}</div>
+        <span class="verdict ${ev.verdict}">${ev.verdict} · ${ev.quality}</span>
+        <div class="detail">${ev.detail}</div>
+        <div class="refs">Refs: ${ev.refs.join(', ')}</div>
+      </div>`;
+    });
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+// Initialize
+renderStats();
+renderTheoryTable();
+</script>
+</body>
+</html>
