@@ -784,6 +784,76 @@ p b{font-weight:600}
 
   <hr class="divider">
 
+  <h2 class="section-h">A new model of <em>peer review</em></h2>
+  <p class="lead">
+    The current peer review system has two jobs welded together: <b>gatekeeping</b> (deciding what gets published) and <b>evaluation</b> (assessing whether claims are supported). The decoupled model eliminates gatekeeping — everything gets published — and reinvents evaluation as a <b>continuous, claim-level, democratized process</b>.
+  </p>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2rem 0 .8rem;color:var(--ink)">Review at the word level</h3>
+  <p>
+    A reader enters <b>review mode</b> on any narrative or claim. They click any individual statement — a sentence, a clause, a single word choice — and write a critique. The critique attaches to that specific claim node, not to the "paper" (which doesn't exist). Every claim carries its full critique history, visible to any reader.
+  </p>
+  <div class="two-col">
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">✍️ Critique at any granularity</h3>
+      <p style="font-size:.9rem">Disagree with how data is described? Critique the specific word. Think a causal claim is actually correlational? Challenge that clause. Think a methodology section glosses over a confound? Flag that sentence. No more writing a 3-page review of an entire paper — you critique the <b>exact thing</b> you object to.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">🔗 Critiques are themselves nodes</h3>
+      <p style="font-size:.9rem">Each critique is a first-class node in the knowledge graph — with its own evidence trail, confidence score, and critique history. A critique can itself be critiqued. The graph tracks the full dialectic: claim → critique → response → counter-critique.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">Democratized critique: expertise is in the argument, not the credential</h3>
+  <p>
+    You don't need a PhD to have a good critique. A field biologist who has spent 20 years observing kākā in the wild may spot a categorization error that a lab-based ornithologist with a PhD missed. A statistician may catch a sampling bias that the domain expert overlooked. A citizen who experienced a drug side effect may have data that contradicts a clinical trial's conclusion.
+  </p>
+  <div class="callout">
+    <b>The principle:</b> The system evaluates the <b>expertise contained within the critique</b> — not the established expertise of the person making it. A well-evidenced critique from a citizen carries more weight than an unevidenced assertion from a professor. Authority is earned per-critique through the quality of the argument and evidence, not granted wholesale by degree or title.
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">How the AI agent evaluates critiques</h3>
+  <p>
+    When a critique is submitted, the AI agent doesn't just accept or reject it — it evaluates the <b>logic and evidence</b> of the critique itself:
+  </p>
+  <div class="layer-stack" style="margin-top:1.5rem">
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">🧠</span></div>
+      <div class="desc"><b>Logical evaluation:</b> Does the critique identify a genuine flaw? Is the reasoning sound? The agent checks the logical structure — e.g., does the critique correctly identify a correlation-as-causation error, or is it itself making a logical error?</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">📋</span></div>
+      <div class="desc"><b>Evidence evaluation:</b> If the critique provides evidence (its own data, alternative analyses, cited studies), the agent runs the same verification pipeline on the critique's evidence as it does on the original claim. Does the critique's evidence actually support its assertion?</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">⚖️</span></div>
+      <div class="desc"><b>Confidence adjustment:</b> The agent adjusts the original claim's confidence based on the weighted critiques. A strong critique with solid evidence lowers the claim's confidence. A weak critique that doesn't hold up doesn't. The adjustment is transparent — the reader can see exactly which critiques moved the needle and why.</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">📊</span></div>
+      <div class="desc"><b>Integration into the graph:</b> Valid critiques become part of the claim's permanent record. When the AI agent uses that claim in synthesis or analysis, it accounts for the critiques — weighting the claim's contribution by its post-critique confidence, not its original assertion.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">What this replaces</h3>
+  <div class="two-col">
+    <div>
+      <div class="kicker">Old model</div>
+      <p style="font-size:.9rem"><b>2–3 anonymous reviewers</b> with PhDs, chosen by an editor, review the <b>whole paper</b> before publication. Months of delay. Binary accept/reject. Reviewer expertise assumed relevant but unaudited. Critiques invisible to future readers. No mechanism for post-publication correction except a separate paper.</p>
+    </div>
+    <div>
+      <div class="kicker">New model</div>
+      <p style="font-size:.9rem"><b>Anyone</b> can critique <b>any claim</b> at <b>any time</b>. No delay — published immediately. No binary verdict — confidence adjusts continuously. Expertise evaluated per-critique. All critiques visible permanently. The AI agent handles verification at scale; humans contribute judgment and domain knowledge.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>This doesn't eliminate expertise — it redistributes it.</b> The PhD-trained immunologist still matters. But so does the nurse who noticed a pattern across 200 patients, the statistician who spots the sampling flaw, and the citizen who experienced the side effect. The system's job is to evaluate whether each contribution is <b>well-evidenced and logically sound</b> — not to check whether the contributor has the right degree. Expertise is demonstrated through the quality of the argument, not assumed from the title.
+    <span class="src">— This is the structural answer to "who gets to participate in science?"</span>
+  </div>
+
+  <hr class="divider">
+
   <h2 class="section-h">What it <em>actually looks like</em>: the platform</h2>
   <p class="lead">
     A web platform where scientific knowledge lives as a living system, not a static archive. Here's the concrete logistics.
@@ -813,6 +883,10 @@ p b{font-weight:600}
     <div class="crit-card">
       <h3 style="font-size:1.05rem">👁 Toggle the evidence overlay</h3>
       <p style="font-size:.9rem">Reading a narrative? Switch to evidence mode and see which sentences are strongly backed, which are weak, which are unsupported. (This is Tab 2's demo, applied to real text.)</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">✍️ Enter review mode</h3>
+      <p style="font-size:.9rem">Click any individual statement and write a critique. The critique attaches to that specific claim node — not a whole paper, but the exact sentence or clause. Anyone can critique; the AI agent evaluates the logic and evidence of each critique. <b>No PhD required to participate.</b></p>
     </div>
     <div class="crit-card">
       <h3 style="font-size:1.05rem">🤖 Ask an AI agent</h3>
