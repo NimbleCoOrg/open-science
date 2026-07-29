@@ -784,27 +784,139 @@ p b{font-weight:600}
 
   <hr class="divider">
 
+  <h2 class="section-h">What it <em>actually looks like</em>: the platform</h2>
+  <p class="lead">
+    A web platform where scientific knowledge lives as a living system, not a static archive. Here's the concrete logistics.
+  </p>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2rem 0 .8rem;color:var(--ink)">The user experience</h3>
+  <p>
+    A researcher — or a citizen, a journalist, a funder — lands on the platform. They don't read papers. They explore <b>claims</b>, each backed by <b>live evidence</b>, each with a <b>confidence score</b> that reflects the quality and independence of its support. They can:
+  </p>
+  <div class="two-col">
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">🔍 Query the knowledge graph</h3>
+      <p style="font-size:.9rem">"What do we know about X, and how confident are we?" The graph returns claims with their evidence trails, not a list of papers to read and evaluate yourself.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">📊 Explore live data</h3>
+      <p style="font-size:.9rem">Click through to the actual datasets — interactive visualizations, raw downloads, executable analysis pipelines. Not supplemental PDFs.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">📝 Submit a finding</h3>
+      <p style="font-size:.9rem">Upload data, register a claim, link evidence. The system handles DOI minting, metadata extraction, and evidence-graph linking automatically.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">🔄 Replicate or challenge</h3>
+      <p style="font-size:.9rem">Submit a replication or a null result. It links to the original claim and updates its confidence score. First-class contribution, not a "failed paper."</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">👁 Toggle the evidence overlay</h3>
+      <p style="font-size:.9rem">Reading a narrative? Switch to evidence mode and see which sentences are strongly backed, which are weak, which are unsupported. (This is Tab 2's demo, applied to real text.)</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">🤖 Ask an AI agent</h3>
+      <p style="font-size:.9rem">Natural-language interaction: "Find all claims about sleep deprivation and decision-making that have been independently replicated." The agent queries the graph, fetches the evidence, and synthesizes — with full provenance for every claim it makes.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">The AI agent's role</h3>
+  <p>
+    An AI agent is built into the platform — not as a replacement for human judgment, but as infrastructure for <b>scale</b>. The thing that makes the paper format impossible to replace manually is that <b>checking every citation, evaluating every evidence trail, and maintaining every claim's status is more work than any human can do</b>. The agent does:
+  </p>
+  <div class="layer-stack" style="margin-top:1.5rem">
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">📥</span></div>
+      <div class="desc"><b>Ingest & structure:</b> When a researcher uploads data or submits a claim, the agent extracts atomic assertions, resolves citations against Crossref/OpenAlex, checks for retractions, and links the claim into the knowledge graph automatically.</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">🔎</span></div>
+      <div class="desc"><b>Verify & score:</b> The agent evaluates whether cited sources actually support each claim, assesses evidence strength (replicated → strong, single study → moderate, indirect → weak, no support → none), and assigns a confidence score with a transparent evidence trail.</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">📡</span></div>
+      <div class="desc"><b>Monitor & update:</b> The agent watches for new replications, retractions, and corrections that affect existing claims. When a retraction occurs, the claim's confidence drops and all dependent claims are flagged. The system stays live — it doesn't wait for someone to notice and write a correction.</div>
+    </div>
+    <div class="layer" style="grid-template-columns:48px 1fr;gap:1rem;padding:1.2rem 1.5rem">
+      <div><span class="icon">💬</span></div>
+      <div class="desc"><b>Answer & analyze:</b> Users query in natural language. The agent synthesizes answers from the claim graph, fetching and analyzing data on demand — running analysis pipelines, generating visualizations, comparing evidence across studies. Every answer carries full provenance: which claims, which evidence, which confidence level.</div>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem">
+    The agent doesn't replace peer review. It handles the mechanical verification work that humans <b>can't</b> do at scale — checking 200 citations against their sources, flagging circular citation chains, detecting when a retraction propagates. Human judgment sits on top: researchers evaluate claims, contribute replications, and curate the graph.
+  </p>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">Access & sustainability</h3>
+  <div class="two-col">
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">Free tier</h3>
+      <p style="font-size:.9rem">All public claims, evidence, and data are <b>free to read, query, and explore</b>. Anyone — citizen, researcher, journalist, student — can browse the knowledge graph, view evidence trails, and read narratives. This is the public-good layer. The data is open; the knowledge is open.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">Token-based AI interaction</h3>
+      <p style="font-size:.9rem">Querying the AI agent (synthesis, custom analysis, evidence-gap reports) uses a <b>token system</b>. Users get a free monthly allowance. Beyond that, they bring their own API key (OpenAI, Anthropic, open models) or purchase tokens. The platform is model-agnostic — you use whatever AI backend you prefer.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">Institutional subscriptions</h3>
+      <p style="font-size:.9rem">Labs, universities, and funding agencies subscribe for: private claim graphs (pre-publication), team workspaces, custom analysis pipelines, and monitoring alerts. This funds the free tier. <b>Subscription replaces journal APCs</b> — and costs less.</p>
+    </div>
+    <div class="crit-card">
+      <h3 style="font-size:1.05rem">Funder/grant integration</h3>
+      <p style="font-size:.9rem">Funders can require that grant-supported findings be submitted as claim nodes with live evidence (instead of papers). They get real-time dashboards of what their money has produced. <b>Research assessment shifts from counting papers to counting verified claims.</b></p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>The economic argument:</b> The current system costs ~$10,000–$25,000 per published article (APCs + subscriptions + reviewer time + editorial overhead). For that price, you get a static PDF that decays. The platform provides a live, verified, self-updating knowledge artifact for less — because the mechanical work is automated and the infrastructure is shared. <b>The money moves from maintaining a print-age pipeline to maintaining a live knowledge system.</b>
+  </div>
+
+  <h3 style="font-family:var(--display);font-weight:600;font-size:1.3rem;margin:2.5rem 0 .8rem;color:var(--ink)">Technical stack (what we'd build with)</h3>
+  <div class="two-col" style="margin-top:1rem">
+    <div>
+      <div class="kicker">Knowledge graph</div>
+      <p style="font-size:.9rem">Claim nodes in a graph database (Neo4j / RDF triplestore). Each node has: persistent ID (DOI-like), assertion text, evidence links, confidence score, provenance, version history. Built on OpenAIRE / OpenAlex infrastructure.</p>
+    </div>
+    <div>
+      <div class="kicker">Evidence layer</div>
+      <p style="font-size:.9rem">Data stored in object storage (S3 / Zenodo). Interactive viewers rendered server-side (the same pattern as the birdsong dashboard). Executable methods in Git repos with CI runners.</p>
+    </div>
+    <div>
+      <div class="kicker">AI agent</div>
+      <p style="font-size:.9rem">Model-agnostic backend. Citation verification via Crossref, OpenAlex, Retraction Watch, Unpaywall (already built — these are Matilde's existing tools). Analysis pipelines via containerized code execution. Natural language interface via API.</p>
+    </div>
+    <div>
+      <div class="kicker">Frontend</div>
+      <p style="font-size:.9rem">Web platform (React/Next.js or similar). Evidence overlay as a text-annotation layer. Knowledge graph visualization (D3.js / Cytoscape). Live data dashboards (the pattern we already use). Mobile-responsive.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
   <h2 class="section-h">We're <em>already</em> building this</h2>
   <p>
     The pieces aren't theoretical. They exist, they work, and they're in production:
   </p>
   <div class="two-col">
     <div>
-      <div class="kicker">Birdsong dashboard</div>
-      <p style="font-size:.92rem">A live evidence system: real data, real analysis, live display. No paywall, no gatekeeper. The "publication" IS the running system.</p>
+      <div class="kicker"><a href="https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/" target="_blank">Birdsong dashboard ↗</a></div>
+      <p style="font-size:.92rem">A live evidence system: real data, real analysis, live display. No paywall, no gatekeeper. The "publication" IS the running system. <a href="https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/" target="_blank">nimblecoorg.github.io/open-science/experiments/nz-birdsong ↗</a></p>
     </div>
     <div>
       <div class="kicker">Citation verification tools</div>
-      <p style="font-size:.92rem">Claim-checking against Crossref, OpenAlex, Retraction Watch, Unpaywall. The evidence-overlay pipeline is these tools wired into a text renderer.</p>
+      <p style="font-size:.92rem">Claim-checking against Crossref, OpenAlex, Retraction Watch, Unpaywall. The evidence-overlay pipeline is these tools wired into a text renderer. Already operational — used to verify every citation in this dashboard.</p>
     </div>
     <div>
-      <div class="kicker">Consciousness testability rubric</div>
-      <p style="font-size:.92rem">A structured claim graph: each scope-line is a claim node with its testability status. Not biased by citation count — biased by evidence.</p>
+      <div class="kicker"><a href="https://nimblecoorg.github.io/open-science/experiments/consciousness/" target="_blank">Consciousness testability rubric ↗</a></div>
+      <p style="font-size:.92rem">A structured claim graph: each scope-line is a claim node with its testability status. Not biased by citation count — biased by evidence. <a href="https://nimblecoorg.github.io/open-science/experiments/consciousness/" target="_blank">nimblecoorg.github.io/open-science/experiments/consciousness ↗</a></p>
     </div>
     <div>
-      <div class="kicker">The question</div>
-      <p style="font-size:.92rem">Do we build the infrastructure that makes the stitching possible for others — or do we keep demonstrating it case by case until the pattern becomes undeniable?</p>
+      <div class="kicker"><a href="https://nimblecoorg.github.io/open-science/experiments/peptide-reporting/" target="_blank">Peptide pharmacovigilance ↗</a></div>
+      <p style="font-size:.92rem">Community-generated data with valence analysis — a working example of non-expert knowledge contribution, structured and queryable. <a href="https://nimblecoorg.github.io/open-science/experiments/peptide-reporting/" target="_blank">nimblecoorg.github.io/open-science/experiments/peptide-reporting ↗</a></p>
     </div>
+  </div>
+  <div class="callout" style="margin-top:2rem">
+    <b>The question:</b> Do we build the infrastructure that makes the stitching possible for others — or do we keep demonstrating it case by case until the pattern becomes undeniable?
+    <span class="src">— This dashboard is itself the argument for building it.</span>
   </div>
 
 </section>
