@@ -3171,17 +3171,981 @@ const THEORIES = [
       }
     ],
     "metaphysical_dismissal": "Substance dualism makes no empirically falsifiable predictions and is designed to be immune to empirical disconfirmation. The central claim \u2014 that there exists a non-physical mental substance \u2014 is by definition beyond the reach of any physical measurement. Every argument for substance dualism (conceivability of disembodiment, privileged access, free will, property distinctness) is a modal/metaphysical argument, not an empirical hypothesis. The theory faces the interaction problem: if the mind is non-physical, how does it causally interact with the physical body? This violates the causal closure of the physical domain, a cornerstone of modern physics. No mechanism for mind-body interaction has ever been proposed that is consistent with known physics. The conceivability argument depends on the contested premise that conceivability entails metaphysical possibility \u2014 a modal principle that is itself not empirically testable. As Wittgenstein wrote in the Tractatus Logico-Philosophicus (Proposition 7): 'Wovon man nicht sprechen kann, dar\u00fcber muss man schweigen' \u2014 'Whereof one cannot speak, thereof one must be silent.' The nature of a non-physical substance and its mode of interaction with physical matter is precisely whereof we cannot speak in the language of empirical science. Substance dualism posits an ontological realm that is, by its own definition, beyond empirical investigation, and thus it is not a scientific theory but a metaphysical doctrine. It generates no testable predictions, admits no possible empirical refutation, and its central claims are logically compatible with every possible experimental outcome."
+  },
+  {
+    "id": "free_energy_principle___active",
+    "name": "Free Energy Principle / Active Inference",
+    "proponent": "Karl Friston",
+    "category": "Computational/Neuroscientific",
+    "tier": "weakly_testable",
+    "score": 0.55,
+    "core_claims": [
+      "The brain minimizes variational free energy, an information-theoretic quantity that bounds the negative log evidence (surprise) of sensory observations given a generative model.",
+      "Biological self-organizing systems must resist entropy (the second law of thermodynamics) by maintaining their states within bounded ranges; this is equivalent to minimizing free energy or surprise.",
+      "Perception and action are two sides of the same coin: perception updates beliefs to minimize prediction error, while action changes the world to fit predictions (active inference).",
+      "The brain implements a hierarchical generative model that predicts sensory inputs at multiple levels, with prediction errors propagating upward and predictions propagating downward.",
+      "Free energy minimization subsumes perception, action, learning, attention, and planning under a single variational objective, providing a unified theory of brain function.",
+      "Consciousness, under this framework, is an emergent property of deep temporal generative models that maintain beliefs about their own persistence and agency over time."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Biological systems persist by maintaining their internal states within bounded subsets of phase space (homeostasis/autopoiesis).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P2",
+        "text": "Systems at non-equilibrium steady state can be described as minimizing the Shannon entropy of the states they occupy over time.",
+        "type": "mathematical_premise"
+      },
+      {
+        "id": "P3",
+        "text": "Variational free energy provides an upper bound on the surprise (negative log evidence) of sensory observations, which the system cannot directly evaluate.",
+        "type": "mathematical_premise"
+      },
+      {
+        "id": "P4",
+        "text": "The brain can only access its sensory inputs and internal states, not the external causes of those inputs; it must therefore infer hidden states via an internal generative model.",
+        "type": "epistemological_premise"
+      },
+      {
+        "id": "P5",
+        "text": "Free energy can be minimized either by changing beliefs (perception/inference) or by changing sensory data through action (active inference).",
+        "type": "mechanistic_premise"
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Therefore, biological systems must minimize the entropy of their sensory states to persist."
+      },
+      {
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "Therefore, the brain must minimize variational free energy as a proxy for minimizing surprise, since it cannot directly compute surprise."
+      },
+      {
+        "from": [
+          "I2",
+          "P5"
+        ],
+        "to": "I3",
+        "text": "Therefore, both perception and action are governed by the same imperative: free energy minimization."
+      },
+      {
+        "from": [
+          "I3",
+          "P4"
+        ],
+        "to": "C1",
+        "text": "Therefore, the brain operates as a hierarchical generative model performing approximate Bayesian inference, minimizing prediction errors through both perceptual updating and active engagement with the environment."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "The brain operates as a hierarchical generative model performing approximate Bayesian inference, minimizing prediction errors through both perceptual updating and active engagement with the environment."
+      },
+      {
+        "id": "C2",
+        "text": "All neural processes \u2014 perception, action, learning, attention, and planning \u2014 can be unified under the single principle of variational free energy minimization."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "Biological systems maintain bounded internal states (homeostasis)",
+        "deps": [],
+        "rule": "Empirical premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "S = -ln p(s|m) (surprise of sensory states given model m)",
+        "deps": [
+          1
+        ],
+        "rule": "Definition from information theory",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "F = -ln p(s|m) + D_KL[q(\u03c8)||p(\u03c8|s,m)] \u2265 S",
+        "deps": [
+          2
+        ],
+        "rule": "Variational bound (free energy bounds surprise)",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "min_q F \u2248 -ln p(s|m) (when q \u2248 posterior)",
+        "deps": [
+          3
+        ],
+        "rule": "Variational inference: minimize KL divergence",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "\u2202F/\u2202a \u2192 action changes s to minimize F (active inference)",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "Adding action pathway via P5",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "Perception \u222a Action \u222a Learning = argmin F(q, s, a)",
+        "deps": [
+          4,
+          5
+        ],
+        "rule": "Unification conclusion",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Neural responses should reflect prediction errors rather than just sensory features, as shown by repetition suppression and mismatch negativity effects.",
+        "type": "neurophysiological",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Repetition suppression in visual cortex is consistent with predictive coding; mismatch negativity (MMN) in auditory cortex reflects prediction error signals. Dynamic causal modeling of EEG/MEG data shows prediction error signals consistent with hierarchical generative models.",
+        "quality": "moderate",
+        "refs": [
+          "Garrido et al. 2009 (J Neurophysiol 101:2620-2631)",
+          "Murray et al. 2002 (PNAS 99:15164-15169)",
+          "Egner et al. 2008 (Nat Neurosci 11:1387)"
+        ]
+      },
+      {
+        "claim": "Active inference predicts that agents will act to bring sensory observations in line with predictions, rather than only updating beliefs.",
+        "type": "behavioral/computational",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Saccadic eye movements in visual foraging can be modeled as active inference; motor control trajectories emerge from active inference models without explicit cost functions.",
+        "quality": "moderate",
+        "refs": [
+          "Friston et al. 2010 (Biol Cybern 102:227-240)",
+          "Yang et al. 2016 (eLife 5:e12215)"
+        ]
+      },
+      {
+        "claim": "The free energy principle provides a mathematical framework that subsumes Bayesian brain theories, predictive coding, and optimal control.",
+        "type": "theoretical_unification",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Formal demonstrations show that predictive coding, Bayesian filtering, and optimal control can all be derived as special cases of free energy minimization. However, the claim that ALL brain function reduces to this single principle remains largely untested as a whole.",
+        "quality": "weak",
+        "refs": [
+          "Friston 2010 (Nat Rev Neurosci 11:127-138)",
+          "Friston et al. 2006 (J Physiol Paris 100:70-87)"
+        ]
+      },
+      {
+        "claim": "Consciousness arises from deep temporal generative models with beliefs about self and agency.",
+        "type": "theoretical_extrapolation",
+        "tested": false,
+        "verdict": "mixed",
+        "detail": "No direct empirical tests link FEP to phenomenal consciousness. The connection between free energy minimization and subjective experience remains speculative.",
+        "quality": "none",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": "Friston K",
+        "year": 2010,
+        "title": "The free-energy principle: a unified brain theory?",
+        "doi": "10.1038/nrn2787",
+        "verified": true
+      },
+      {
+        "authors": "Friston K, Kilner J, Harrison L",
+        "year": 2006,
+        "title": "A free energy principle for the brain",
+        "doi": "10.1016/j.jphysparis.2006.10.001",
+        "verified": true
+      },
+      {
+        "authors": "Parr T, Pezzulo G, Friston KJ",
+        "year": 2022,
+        "title": "Active Inference: The Free Energy Principle in Mind, Brain, and Behavior",
+        "doi": "10.7551/mitpress/12441.001.0001",
+        "verified": true
+      },
+      {
+        "authors": "Parr T, Friston KJ",
+        "year": 2019,
+        "title": "Generalised free energy and active inference",
+        "doi": "10.1007/s00422-019-00805-w",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "higherorder_theories_of_consci",
+    "name": "Higher-Order Theories of Consciousness (HOT)",
+    "proponent": "David Rosenthal; Hakwan Lau; Joseph LeDoux; Richard Brown",
+    "category": "Philosophical/Cognitive-Neuroscientific",
+    "tier": "weakly_testable",
+    "score": 0.5,
+    "core_claims": [
+      "A mental state is conscious if and only if it is accompanied by a higher-order representation (thought or perception) about that state.",
+      "The higher-order thought (HOT) variant holds that a mental state M is conscious when the subject has a thought to the effect that they are in M.",
+      "The higher-order perception (HOP) variant holds that an internal monitoring mechanism, analogous to perception, detects first-order states and makes them conscious.",
+      "Consciousness is a representational relation: what makes a state conscious is not its intrinsic properties but its being represented by another, higher-order state.",
+      "Higher-order theories are reductive: they aim to explain consciousness in terms of non-conscious mental representations and their structural relations.",
+      "LeDoux & Brown extend HOT to emotional consciousness, proposing that conscious feelings are higher-order cortical representations of lower-order affective processes.",
+      "HOT predicts that prefrontal cortex (especially dorsolateral and medial prefrontal areas) is necessary for conscious awareness, as it supports higher-order representations."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Mental states can occur without being conscious (unconscious perceptions, beliefs, and desires are well-documented).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P2",
+        "text": "There must be something that distinguishes conscious mental states from non-conscious ones.",
+        "type": "conceptual_premise"
+      },
+      {
+        "id": "P3",
+        "text": "The most straightforward way for a state to be conscious is for the subject to be aware of being in that state.",
+        "type": "phenomenological_premise"
+      },
+      {
+        "id": "P4",
+        "text": "Being aware of a mental state requires having a representation of that state (a higher-order representation).",
+        "type": "representationalist_premise"
+      },
+      {
+        "id": "P5",
+        "text": "Prefrontal cortex supports meta-cognitive and self-referential processing necessary for higher-order representations.",
+        "type": "neuroscientific_premise"
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Therefore, there is a specific condition that converts a non-conscious mental state into a conscious one."
+      },
+      {
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "Therefore, a mental state is conscious when the subject has a higher-order representation of being in that state."
+      },
+      {
+        "from": [
+          "I2",
+          "P5"
+        ],
+        "to": "C1",
+        "text": "Therefore, prefrontal cortex should be necessary for conscious awareness, as it generates higher-order representations."
+      },
+      {
+        "from": [
+          "I2"
+        ],
+        "to": "C2",
+        "text": "Therefore, consciousness is a relational property of mental states (being represented by a higher-order state), not an intrinsic property."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Prefrontal cortex is necessary for conscious awareness because it generates higher-order representations."
+      },
+      {
+        "id": "C2",
+        "text": "Consciousness is a relational property of mental states \u2014 being the object of a higher-order representation \u2014 rather than an intrinsic property."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "\u2203 mental states that are non-conscious (P1)",
+        "deps": [],
+        "rule": "Empirical premise",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "\u2203 C such that M is conscious iff C(M) holds (P2)",
+        "deps": [
+          1
+        ],
+        "rule": "Conceptual necessity",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "C(M) = subject is aware of M (P3)",
+        "deps": [
+          2
+        ],
+        "rule": "Phenomenological premise",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "aware(M) \u2192 \u2203 R: R represents M (P4)",
+        "deps": [
+          3
+        ],
+        "rule": "Representationalist premise",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "M is conscious iff \u2203 higher-order representation R of M",
+        "deps": [
+          4
+        ],
+        "rule": "Biconditional conclusion (I2)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "PFC necessary for generating R \u2192 PFC necessary for consciousness",
+        "deps": [
+          5
+        ],
+        "rule": "Neuroscientific inference from P5",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Prefrontal cortex activity should correlate with conscious awareness of stimuli, independent of stimulus presence.",
+        "type": "neuroimaging",
+        "tested": true,
+        "verdict": "contradicts",
+        "detail": "Multiple fMRI and TMS studies show that prefrontal cortex activity tracks reportability and conscious access. Lau & Rosenthal review evidence that PFC lesions impair metacognitive access. However, some studies show consciousness-related activity in posterior cortex without PFC involvement, challenging the necessity claim.",
+        "quality": "moderate",
+        "refs": [
+          "Lau & Rosenthal 2011 (Trends Cogn Sci 15:365)",
+          "Rounis et al. 2010 (Cogn Neurosci 1:74)",
+          "Bor & Seth 2012"
+        ]
+      },
+      {
+        "claim": "Conscious emotions are cortical higher-order representations of subcortical affective states, not direct outputs of subcortical circuits.",
+        "type": "neuroanatomical/comparative",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "LeDoux & Brown argue that subcortical structures (amygdala, PAG) generate non-conscious survival circuits, while conscious feelings require cortical representations. This challenges Panksepp's view that emotions are innate subcortical programs. Human lesion data showing preserved affective processing without conscious feeling supports the dissociation.",
+        "quality": "moderate",
+        "refs": [
+          "LeDoux & Brown 2017 (PNAS 114:2016-2025)",
+          "Panksepp 1998 (Affective Neuroscience)"
+        ]
+      },
+      {
+        "claim": "Blindsight patients have first-order visual processing intact but lack higher-order representations, explaining their lack of conscious visual experience.",
+        "type": "neuropsychological",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Blindsight patients show above-chance visual discrimination without conscious awareness, consistent with HOT's prediction that first-order processing can occur without higher-order representation. The specific neural substrate of the missing higher-order representation is debated.",
+        "quality": "moderate",
+        "refs": [
+          "Weiskrantz 1997 (Consciousness Lost and Found)",
+          "Persaud & Cowey 2008"
+        ]
+      },
+      {
+        "claim": "Consciousness is exclusively a relational property \u2014 no intrinsic property of a mental state makes it conscious.",
+        "type": "philosophical_conceptual",
+        "tested": false,
+        "verdict": "mixed",
+        "detail": "This is a philosophical claim that cannot be directly tested empirically. It depends on conceptual arguments and thought experiments. Competing theories (first-order theories, integrated information theory) dispute this claim.",
+        "quality": "none",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": "Rosenthal DM",
+        "year": 2005,
+        "title": "Consciousness and Mind",
+        "doi": "10.1093/oso/9780198236979.001.0001",
+        "verified": true
+      },
+      {
+        "authors": "LeDoux JE, Brown R",
+        "year": 2017,
+        "title": "A higher-order theory of emotional consciousness",
+        "doi": "10.1073/pnas.1619316114",
+        "verified": true
+      },
+      {
+        "authors": "Rosenthal D, Weisberg J",
+        "year": 2008,
+        "title": "Higher-order theories of consciousness",
+        "doi": "10.4249/scholarpedia.4407",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "neural_correlates_of_conscious",
+    "name": "Neural Correlates of Consciousness (NCC)",
+    "proponent": "Francis Crick & Christof Koch",
+    "category": "Empirical/Neuroscientific",
+    "tier": "strongly_testable",
+    "score": 0.8,
+    "core_claims": [
+      "Consciousness has specific neural correlates \u2014 minimal neural mechanisms that are jointly sufficient for any one specific conscious percept.",
+      "Visual awareness is the most tractable form of consciousness to study neurobiologically, and NCCs can be identified through contrastive analysis of conscious vs. non-conscious states.",
+      "The NCC is not simply all neural activity during a conscious state, but the minimal set of neural events sufficient for that conscious content.",
+      "Different aspects of consciousness (visual, auditory, emotional) may have different NCCs \u2014 there is no guarantee of a single unified mechanism.",
+      "Feedforward and feedback (reentrant) connections between cortical areas are likely important for conscious awareness, as they enable the integration needed for unified percepts.",
+      "NCC research is agnostic about the philosophical 'hard problem' \u2014 it aims to identify the physical correlates without explaining why they give rise to subjective experience.",
+      "Studying the differences between conscious and non-conscious processing (e.g., in blindsight, binocular rivalry, masking) provides the empirical pathway to identifying NCCs."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Conscious states are accompanied by specific neural activity in the brain (mind-brain correlation).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P2",
+        "text": "Different conscious contents (seeing red vs. seeing green) correspond to different neural activity patterns.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P3",
+        "text": "Some neural activity occurs without consciousness (e.g., in blindsight, during anesthesia, in zombie systems), and some conscious states can occur without corresponding external stimuli.",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P4",
+        "text": "The contrastive method \u2014 comparing neural activity during conscious vs. non-conscious processing of the same stimulus \u2014 can isolate the neural activity specifically associated with consciousness.",
+        "type": "methodological_premise"
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2"
+        ],
+        "to": "I1",
+        "text": "Therefore, conscious content is correlated with specific patterns of neural activity."
+      },
+      {
+        "from": [
+          "P3",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "Therefore, the contrastive method can distinguish neural activity necessary for consciousness from neural activity necessary for stimulus processing but not consciousness."
+      },
+      {
+        "from": [
+          "I1",
+          "I2"
+        ],
+        "to": "C1",
+        "text": "Therefore, a minimal set of neural mechanisms (the NCC) sufficient for specific conscious contents can be empirically identified."
+      },
+      {
+        "from": [
+          "C1"
+        ],
+        "to": "C2",
+        "text": "Therefore, the scientific study of consciousness is tractable as an empirical neuroscience program, even without solving the hard problem."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "A minimal set of neural mechanisms (the NCC) sufficient for specific conscious contents can be empirically identified through contrastive analysis."
+      },
+      {
+        "id": "C2",
+        "text": "The scientific study of consciousness is tractable as an empirical neuroscience program without needing to solve the hard problem first."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "\u2200 conscious state C, \u2203 neural activity N: N correlates with C",
+        "deps": [],
+        "rule": "Empirical premise (P1)",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "C1 \u2260 C2 \u2192 N1 \u2260 N2 (different contents \u2192 different neural patterns)",
+        "deps": [
+          1
+        ],
+        "rule": "From P2",
+        "active": [
+          "P1",
+          "P2"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "\u2203 N: N occurs without C, and \u2203 C: C occurs without matching stimulus (P3)",
+        "deps": [
+          1,
+          2
+        ],
+        "rule": "Dissociation premise (P3)",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "NCC = N_conscious \u2212 N_non-conscious (contrastive method)",
+        "deps": [
+          3
+        ],
+        "rule": "Methodological premise (P4)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "NCC = minimal neural system S sufficient for C",
+        "deps": [
+          4
+        ],
+        "rule": "Minimality criterion",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "Consciousness is empirically tractable via NCC identification",
+        "deps": [
+          5
+        ],
+        "rule": "Programmatic conclusion (C2)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Neural activity in primary visual cortex (V1) is not sufficient for visual awareness \u2014 content can be processed in V1 without being consciously perceived.",
+        "type": "neurophysiological/lesion",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Crick & Koch (1995) argued V1 is not the NCC for visual awareness. Binocular rivalry studies show V1 activity tracks the retinal stimulus, not the conscious percept. Blindsight patients process visual information in V1 without awareness. However, some TMS studies suggest V1 may be necessary if not sufficient for awareness.",
+        "quality": "strong",
+        "refs": [
+          "Crick & Koch 1995 (Nature 375:121-123)",
+          "Tononi & Koch 2008 (Ann Rev Psychol 59:243)",
+          "Rees 2007"
+        ]
+      },
+      {
+        "claim": "Frontoparietal network activity is correlated with conscious reportability across multiple paradigms (masking, rivalry, attentional blink).",
+        "type": "neuroimaging",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Meta-analyses of neuroimaging studies using masking, binocular rivalry, and attentional blink consistently show frontoparietal activation correlating with conscious awareness. However, whether this is the NCC itself or post-perceptual processing related to reporting remains debated.",
+        "quality": "strong",
+        "refs": [
+          "Dehaene & Naccache 2001 (Cognition 79:1-37)",
+          "Koch et al. 2016 (Nat Rev Neurosci 17:307-321)",
+          "Naghavi & Nyberg 2005"
+        ]
+      },
+      {
+        "claim": "The contrastive method can distinguish neural activity specifically associated with consciousness from neural activity associated with task performance.",
+        "type": "methodological",
+        "tested": true,
+        "verdict": "mixed",
+        "detail": "Paradigms like binocular rivalry, backward masking, and the attentional blink provide controlled comparisons. However, the method has limitations: it cannot distinguish NCCs from neural activity that is merely enabling or consequential to consciousness.",
+        "quality": "moderate",
+        "refs": [
+          "Crick & Koch 2003 (Nat Neurosci 6:119-126)",
+          "Tononi & Koch 2008"
+        ]
+      },
+      {
+        "claim": "There is a single unified NCC rather than multiple domain-specific NCCs.",
+        "type": "comparative_neuroscience",
+        "tested": false,
+        "verdict": "mixed",
+        "detail": "Evidence from different modalities (visual, auditory, somatosensory) suggests overlapping but distinct networks. The question of whether there is a unified NCC or multiple NCCs remains open.",
+        "quality": "weak",
+        "refs": [
+          "Crick & Koch 2003"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "authors": "Crick F, Koch C",
+        "year": 2003,
+        "title": "A framework for consciousness",
+        "doi": "10.1038/nn0203-119",
+        "verified": true
+      },
+      {
+        "authors": "Crick F, Koch C",
+        "year": 1990,
+        "title": "Towards a neurobiological theory of consciousness",
+        "doi": null,
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
+  },
+  {
+    "id": "predictive_processing_theories",
+    "name": "Predictive Processing Theories of Consciousness",
+    "proponent": "Anil Seth; Andy Clark; Jakob Hohwy",
+    "category": "Computational/Philosophical-Neuroscientific",
+    "tier": "weakly_testable",
+    "score": 0.6,
+    "core_claims": [
+      "The brain is a prediction machine that generates top-down predictions about sensory inputs and minimizes prediction errors through hierarchical Bayesian inference.",
+      "Conscious experience is a controlled hallucination \u2014 the brain's best guess about the causes of its sensory input, constrained but not determined by sensory data.",
+      "Perception is not passive reception but active inference: the brain tests hypotheses against sensory data, and what we perceive is the brain's best hypothesis, not the world itself.",
+      "Selfhood and bodily consciousness arise from interoceptive inference \u2014 the brain predicts its own physiological states and generates a model of the self as an embodied agent.",
+      "Predictive processing provides a unifying framework that subsumes perception, action, cognition, and consciousness under error minimization.",
+      "Precision weighting \u2014 the modulation of prediction error signals by expected uncertainty \u2014 is the mechanism by which attention and awareness are controlled.",
+      "The sense of conscious presence (the feeling of being in a body, in a world, in the present moment) results from successful suppression of interoceptive prediction errors."
+    ],
+    "premises": [
+      {
+        "id": "P1",
+        "text": "Sensory inputs are noisy, ambiguous, and incomplete; they underdetermine the causes that produce them (the inverse problem of perception).",
+        "type": "empirical_premise"
+      },
+      {
+        "id": "P2",
+        "text": "The brain has hierarchical generative models that can predict sensory inputs at multiple levels of abstraction.",
+        "type": "neuroscientific_premise"
+      },
+      {
+        "id": "P3",
+        "text": "Perception requires inferring the most likely causes of sensory data given prior beliefs (Bayesian inference).",
+        "type": "computational_premise"
+      },
+      {
+        "id": "P4",
+        "text": "Interoceptive signals (from the body's internal organs) are predicted by the same hierarchical inference system as exteroceptive signals.",
+        "type": "neuroscientific_premise"
+      },
+      {
+        "id": "P5",
+        "text": "Conscious experience is what it feels like to have the brain's best guess about the causes of its sensory and interoceptive inputs.",
+        "type": "phenomenological_premise"
+      }
+    ],
+    "inferences": [
+      {
+        "from": [
+          "P1",
+          "P2",
+          "P3"
+        ],
+        "to": "I1",
+        "text": "Therefore, perception is a form of Bayesian inference where the brain generates predictions about sensory causes and updates them based on prediction errors."
+      },
+      {
+        "from": [
+          "I1",
+          "P4"
+        ],
+        "to": "I2",
+        "text": "Therefore, bodily selfhood and emotional experience arise from interoceptive inference \u2014 the brain predicting its own physiological states."
+      },
+      {
+        "from": [
+          "I1",
+          "I2",
+          "P5"
+        ],
+        "to": "C1",
+        "text": "Therefore, consciousness is a form of controlled hallucination: the brain's best guess about the causes of both external and internal sensory signals."
+      },
+      {
+        "from": [
+          "C1"
+        ],
+        "to": "C2",
+        "text": "Therefore, the self and the world as experienced are both perceptual constructs generated by the same predictive machinery \u2014 there is no privileged access to reality beyond the brain's best guesses."
+      }
+    ],
+    "conclusions": [
+      {
+        "id": "C1",
+        "text": "Consciousness is a controlled hallucination \u2014 the brain's best guess about the causes of its sensory and interoceptive inputs, generated through hierarchical Bayesian inference."
+      },
+      {
+        "id": "C2",
+        "text": "Both the experienced self and the experienced world are perceptual constructs generated by the same predictive processing machinery; there is no privileged access to reality beyond the brain's models."
+      }
+    ],
+    "scope_lines": [
+      {
+        "step": 1,
+        "formula": "s = g(\u03b8) + \u03b5 (sensory data = generative function of hidden causes + noise)",
+        "deps": [],
+        "rule": "Generative model premise (P1)",
+        "active": [
+          "P1"
+        ]
+      },
+      {
+        "step": 2,
+        "formula": "p(\u03b8|s) \u221d p(s|\u03b8)\u00b7p(\u03b8) (Bayesian posterior)",
+        "deps": [
+          1
+        ],
+        "rule": "Bayesian inference (P3)",
+        "active": [
+          "P1",
+          "P3"
+        ]
+      },
+      {
+        "step": 3,
+        "formula": "Prediction error = s \u2212 \u015d(predicted); minimize error across hierarchy",
+        "deps": [
+          2
+        ],
+        "rule": "Hierarchical predictive coding (P2)",
+        "active": [
+          "P1",
+          "P2",
+          "P3"
+        ]
+      },
+      {
+        "step": 4,
+        "formula": "Interoceptive inference: p(body|interoception) \u2014 predict own physiological state",
+        "deps": [
+          3
+        ],
+        "rule": "Extending inference to interoception (P4)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ]
+      },
+      {
+        "step": 5,
+        "formula": "Conscious experience = argmax hypothesis about causes of s (external + internal)",
+        "deps": [
+          3,
+          4
+        ],
+        "rule": "Phenomenological identification (P5)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      },
+      {
+        "step": 6,
+        "formula": "Self = controlled hallucination; World = controlled hallucination",
+        "deps": [
+          5
+        ],
+        "rule": "Unification conclusion (C2)",
+        "active": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "claim": "Rubber hand illusion and full-body illusions can be explained as interoceptive prediction errors being resolved by updating the body model.",
+        "type": "behavioral/psychophysical",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Seth & Tsakiris showed that individual differences in interoceptive sensitivity predict susceptibility to the rubber hand illusion. Participants with high interoceptive accuracy are less susceptible, consistent with the prediction that strong interoceptive priors resist revision by exteroceptive prediction errors.",
+        "quality": "moderate",
+        "refs": [
+          "Tsakiris et al. 2011 (Proc R Soc B 278:2470)",
+          "Suzuki et al. 2013 (Neuropsychologia)",
+          "Seth 2013 (Trends Cogn Sci 17:565-573)"
+        ]
+      },
+      {
+        "claim": "Neural prediction error signals should be observable in sensory cortex during unexpected stimuli.",
+        "type": "neurophysiological",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Predictive coding models explain repetition suppression and MMN as prediction error reduction. Rao & Ballard's model explains extra-classical receptive field effects in V1 as prediction errors. Single-unit recordings in macaque V1 show signals consistent with prediction errors.",
+        "quality": "moderate",
+        "refs": [
+          "Rao & Ballard 1999 (Nat Neurosci 2:79-87)",
+          "Egner et al. 2008",
+          "Clark 2013 (Behav Brain Sci 36:181-204)"
+        ]
+      },
+      {
+        "claim": "Conscious selfhood arises from interoceptive inference \u2014 disrupted interoceptive prediction should alter bodily self-consciousness.",
+        "type": "neuroimaging/clinical",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Heartbeat detection tasks combined with fMRI show insular cortex involvement in interoceptive awareness. Depersonalization disorder, characterized by loss of bodily self-awareness, involves insular dysfunction. Aspell et al. showed that visualized heartbeats alter bodily self-consciousness.",
+        "quality": "moderate",
+        "refs": [
+          "Critchley et al. 2004 (Nat Neurosci 7:189)",
+          "Aspell et al. 2013 (Psychol Sci 24:1033)",
+          "Seth 2013"
+        ]
+      },
+      {
+        "claim": "The experience of conscious presence is the resolution of interoceptive prediction errors \u2014 when prediction matches interoceptive signal, presence is experienced.",
+        "type": "psychophysical/virtual_reality",
+        "tested": true,
+        "verdict": "supports",
+        "detail": "Seth et al. (2011) proposed an interoceptive predictive coding model of presence. VR studies show that congruence between predicted and actual multisensory/interoceptive signals predicts the subjective sense of presence. However, the causal link from prediction error resolution to phenomenal presence is not yet directly demonstrated.",
+        "quality": "weak",
+        "refs": [
+          "Seth 2011 (Front Psychol 2:395)",
+          "Seth 2013 (Trends Cogn Sci 17:565-573)"
+        ]
+      },
+      {
+        "claim": "Consciousness is a controlled hallucination \u2014 perception is the brain's best guess, not a direct readout of the world.",
+        "type": "philosophical_conceptual",
+        "tested": false,
+        "verdict": "supports",
+        "detail": "This is a philosophical interpretation of the predictive processing framework, not a directly testable empirical claim. It is supported by indirect evidence from visual illusions, hallucinations, and the plasticity of perception, but the equivalence between 'best guess' and 'conscious experience' is a theoretical commitment.",
+        "quality": "none",
+        "refs": []
+      }
+    ],
+    "references": [
+      {
+        "authors": "Seth AK",
+        "year": 2013,
+        "title": "Interoceptive inference, emotion, and the embodied self",
+        "doi": "10.1016/j.tics.2013.09.007",
+        "verified": true
+      },
+      {
+        "authors": "Clark A",
+        "year": 2013,
+        "title": "Whatever next? Predictive brains, situated agents, and the future of cognitive science",
+        "doi": "10.1017/s0140525x12000477",
+        "verified": true
+      },
+      {
+        "authors": "Hohwy J",
+        "year": 2013,
+        "title": "The Predictive Mind",
+        "doi": "10.1093/acprof:oso/9780199682737.001.0001",
+        "verified": true
+      }
+    ],
+    "metaphysical_dismissal": null
   }
 ];
 
-];
-
-// Placeholder for additional theories to be added
 const ADDITIONAL_THEORIES = [
-  {id: "fep", name: "Free Energy Principle (FEP)", proponent: "Karl Friston", category: "Predictive Processing", tier: "weakly_testable", score: 0.55, status: "analysis_in_progress"},
-  {id: "hot", name: "Higher-Order Theories (HOT)", proponent: "Rosenthal, Lau, LeDoux", category: "Higher-Order", tier: "weakly_testable", score: 0.60, status: "analysis_in_progress"},
-  {id: "ncc", name: "Neural Correlates of Consciousness (NCC)", proponent: "Crick & Koch", category: "Neural", tier: "strongly_testable", score: 0.75, status: "analysis_in_progress"},
-  {id: "predictive", name: "Predictive Processing", proponent: "Clark, Seth, Hohwy", category: "Predictive Processing", tier: "weakly_testable", score: 0.50, status: "pending"},
   {id: "illusionism", name: "Illusionism", proponent: "Dennett, Frankish", category: "Materialism", tier: "weakly_testable", score: 0.45, status: "pending"},
   {id: "biological_naturalism", name: "Biological Naturalism", proponent: "John Searle", category: "Materialism", tier: "not_testable", score: 0.15, status: "pending"},
   {id: "mysterianism", name: "Mysterianism", proponent: "Colin McGinn", category: "Skepticism", tier: "not_testable", score: 0.0, status: "pending"},
