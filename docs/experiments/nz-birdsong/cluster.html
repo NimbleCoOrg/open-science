@@ -120,17 +120,9 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
     </div>
     <div><span id="excludeCount" style="font-size:10px;color:var(--reject)"></span></div>
     <div id="extrapolateSection" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-      <button class="btn" id="extrapolateBtn" onclick="startExtrapolate()" style="width:100%">Extrapolate</button>
-      <div id="extrapolatePasswordRow" style="display:none;margin-top:4px;gap:4px;display:flex">
-        <input type="password" id="extrapolatePassword" placeholder="Shared password..." style="flex:1;font-size:11px">
-        <button class="btn" onclick="submitExtrapolate()" style="font-size:10px">Go</button>
-      </div>
-      <div id="extrapolateProgressWrap" style="display:none;margin-top:6px">
-        <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden">
-          <div id="extrapolateProgressBar" style="background:var(--accent);height:100%;width:0%;transition:width 0.4s"></div>
-        </div>
-        <div id="extrapolateProgressLabel" style="font-size:10px;color:var(--text2);margin-top:3px"></div>
-      </div>
+      <!-- The browser-triggered Extrapolate run is disabled: it depended on a write-scoped
+           GitHub token embedded in this page. See the CREDENTIAL HYGIENE note in the script. -->
+      <button class="btn secondary" id="extrapolateBtn" onclick="startExtrapolate()" style="width:100%">Extrapolate (maintainer step)</button>
       <div id="extrapolateStatus" style="font-size:10px;color:var(--text2);margin-top:4px"></div>
     </div>
   </div>
@@ -1180,199 +1172,48 @@ function exportClusters() {
   a.click();
 }
 
-// ==================== EXTRAPOLATE (DTW template-match, triggered via GitHub Actions) ====================
-// Takes the current manual clusters (same data as Export Clusters) and dispatches the
-// dtw-extrapolate.yml workflow, which runs the same DTW-barycenter classifier used for
-// bellbird (scripts/dtw_classify.py) against the *current* species, then merges confidence
-// scores back into <species>_pca_data.json and pushes. Reuses the encrypted-PAT + shared-
-// password pattern from annotate.html's sync feature (same repo, same trust model).
+// ==================== EXTRAPOLATE — CREDENTIAL HYGIENE, BROWSER TRIGGER REMOVED ====================
+// "Extrapolate" used to dispatch the dtw-extrapolate.yml GitHub Actions workflow straight from
+// this page. To do that it carried a GitHub personal access token, encrypted, and decrypted it
+// in the browser with a password shared among annotators. Workflow dispatch needs more than
+// read access, so that was a write-scoped token published on a public site: anyone who loaded
+// this page held the material needed to recover it offline. The token has been removed here and
+// is being revoked separately.
 //
-// SETUP NOTE: EXTRAPOLATE_PAT below must be filled in with a PAT encrypted the same way as
-// annotate.html's ENCRYPTED_PAT, but with 'workflow' scope added (required to dispatch a
-// GitHub Actions workflow — 'contents' scope alone is not enough). Until that's set up this
-// button will show a clear "not configured" message rather than fail silently.
-const EXTRAPOLATE_REPO = 'NimbleCoOrg/open-science';
-const EXTRAPOLATE_WORKFLOW = 'dtw-extrapolate.yml';
-const EXTRAPOLATE_PAT = { salt: 'QvngB1y4p0RKvaEap/oEoA==', iv: 'NWea+aUiMwD+QjB9', ct: 'OjNWTx1N5wyDcQvwWALgbQFu0uSD6/FRHKQsG4nb4Qo57oYeY5NsBSfJNScwQAEBnm5ZGy24XEKNiXrB8WA7FpC0RN6TUQKguZ8cde0yC+pQvgenBMChC4fhKGlSXLv9MPrB/o1kuJ/Elh7R/A==' }; // { salt, iv, ct } — set up by Juni/Azure once workflow-scope PAT exists
-
-async function decryptExtrapolatePAT(password) {
-  const enc = new TextEncoder();
-  const salt = Uint8Array.from(atob(EXTRAPOLATE_PAT.salt), c => c.charCodeAt(0));
-  const iv = Uint8Array.from(atob(EXTRAPOLATE_PAT.iv), c => c.charCodeAt(0));
-  const ct = Uint8Array.from(atob(EXTRAPOLATE_PAT.ct), c => c.charCodeAt(0));
-  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-  );
-  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
-  return new TextDecoder().decode(decrypted);
-}
+// Nothing about the analysis changed. The workflow, scripts/dtw_classify.py and
+// scripts/merge_dtw_results.py are all still in the repo and still do the same thing — a
+// maintainer now starts the run instead of the browser:
+//
+//   1. In this page, build your clusters and hit "Export Clusters" to get <species>_clusters.json
+//   2. Send that file to a maintainer, who runs (with their own credentials, from their machine):
+//        gh workflow run dtw-extrapolate.yml -f species=<bellbird|tui|kaka> \
+//           -f clusters_json_b64="$(base64 -i <species>_clusters.json)"
+//   3. The workflow commits the confidence-scored PCA data as before; reload to see it.
+//
+// If in-browser triggering is wanted back, the safe shapes are a server-side proxy that holds
+// the credential and validates the payload, or a per-user token pasted in at runtime and kept
+// only in memory for that session. Never an embedded token, encrypted or otherwise — anything
+// shipped to a browser is public by construction.
+// ===================================================================================================
 
 function setExtrapolateStatus(msg, isError) {
   const el = document.getElementById('extrapolateStatus');
   el.textContent = msg;
-  el.style.colour = isError ? 'var(--reject)' : 'var(--text2)';
-}
-
-function setExtrapolateProgress(pct, label) {
-  const wrap = document.getElementById('extrapolateProgressWrap');
-  wrap.style.display = pct === null ? 'none' : 'block';
-  if (pct !== null) {
-    document.getElementById('extrapolateProgressBar').style.width = `${pct}%`;
-    document.getElementById('extrapolateProgressLabel').textContent = label || '';
-  }
+  el.style.color = isError ? 'var(--reject)' : 'var(--text2)';
 }
 
 function startExtrapolate() {
-  if (!EXTRAPOLATE_PAT) {
-    setExtrapolateStatus('Not configured yet — needs a workflow-scope PAT set up by Juni/Azure.', true);
-    return;
-  }
   if (Object.keys(clusters).length === 0) {
-    setExtrapolateStatus('No manual clusters yet — assign some categories first.', true);
+    setExtrapolateStatus('No manual clusters yet — assign some categories first, then Export Clusters.', true);
     return;
   }
-  const nManual = Object.values(clusters).reduce((a, ids) => a + ids.length, 0);
-  const ok = confirm(
-    `Extrapolate ${SP.label} categories?\n\n` +
-    `This builds DTW templates from your ${nManual} manually-clustered points and ` +
-    `classifies every remaining candidate against them. It runs on GitHub's servers ` +
-    `and typically takes a few minutes. If someone else is extrapolating the same ` +
-    `species right now, this run will wait its turn rather than clash with theirs.\n\n` +
-    `Continue?`
+  const nManual = Object.values(clusters).reduce((a, ids) => a + ids.size, 0);
+  setExtrapolateStatus(
+    `Running extrapolation from the browser is disabled (it needed a write-scoped token embedded in ` +
+    `this page). Hit "Export Clusters" to download your ${nManual} clustered points and pass the file ` +
+    `to a maintainer, who dispatches dtw-extrapolate.yml with their own credentials.`
   );
-  if (!ok) return;
-  document.getElementById('extrapolatePasswordRow').style.display = 'flex';
-  document.getElementById('extrapolatePassword').focus();
 }
-
-async function submitExtrapolate() {
-  const password = document.getElementById('extrapolatePassword').value.trim();
-  if (!password) return;
-  setExtrapolateStatus('Authenticating...');
-  let token;
-  try {
-    token = await decryptExtrapolatePAT(password);
-  } catch (e) {
-    setExtrapolateStatus('Wrong password', true);
-    return;
-  }
-
-  const out = {};
-  for (const [name, ids] of Object.entries(clusters)) out[name] = [...ids];
-  const exportData = { clusters: out, excluded: [...excludedIds], exported_at: new Date().toISOString() };
-  const b64 = btoa(JSON.stringify(exportData));
-
-  const dispatchedAt = new Date().toISOString();
-  setExtrapolateStatus(`Dispatching DTW classification for ${currentSpecies}...`);
-  setExtrapolateProgress(3, 'Requesting run from GitHub...');
-  try {
-    const resp = await fetch(
-      `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/workflows/${EXTRAPOLATE_WORKFLOW}/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main', inputs: { species: currentSpecies, clusters_json_b64: b64 } }),
-      }
-    );
-    if (resp.status === 204) {
-      document.getElementById('extrapolatePasswordRow').style.display = 'none';
-      document.getElementById('extrapolatePassword').value = '';
-      pollExtrapolateRun(token, dispatchedAt);
-    } else {
-      const body = await resp.text();
-      setExtrapolateStatus(`Failed to start (${resp.status}): ${body.slice(0,200)}`, true);
-      setExtrapolateProgress(null);
-    }
-  } catch (e) {
-    setExtrapolateStatus(`Network error: ${e.message}`, true);
-    setExtrapolateProgress(null);
-  }
-}
-
-// Roughly maps the workflow's known steps (see .github/workflows/dtw-extrapolate.yml) to a
-// progress percentage, since GitHub doesn't give a single 0-100 number directly.
-const EXTRAPOLATE_STEP_PCT = {
-  'Set up job': 5,
-  'Checkout': 10,
-  'actions/checkout@v4': 10,
-  'Set up Python': 15,
-  'actions/setup-python@v5': 15,
-  'Install dependencies': 25,
-  'Decode cluster export': 30,
-  'Run DTW template-match classifier': 75,
-  'Merge results into deployed PCA data': 90,
-  'Commit and push updated PCA data': 97,
-  'Complete job': 100,
-  'Post Checkout': 98,
-};
-
-async function pollExtrapolateRun(token, dispatchedAt) {
-  setExtrapolateStatus('Waiting for the run to appear...');
-  setExtrapolateProgress(5, 'Queued...');
-  const headers = { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' };
-  let runId = null;
-  // Find the run: list recent runs for this workflow, match one created after we dispatched.
-  for (let attempt = 0; attempt < 15 && !runId; attempt++) {
-    await new Promise(r => setTimeout(r, 3000));
-    try {
-      const listResp = await fetch(
-        `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/workflows/${EXTRAPOLATE_WORKFLOW}/runs?event=workflow_dispatch&per_page=5`,
-        { headers }
-      );
-      if (!listResp.ok) continue;
-      const listData = await listResp.json();
-      const candidate = (listData.workflow_runs || []).find(r => new Date(r.created_at) >= new Date(dispatchedAt) - 5000);
-      if (candidate) runId = candidate.id;
-    } catch (e) { /* keep trying */ }
-  }
-  if (!runId) {
-    setExtrapolateStatus('Dispatched, but could not find the run to track progress. Check the Actions tab on GitHub.');
-    setExtrapolateProgress(null);
-    return;
-  }
-
-  // Poll the run's jobs/steps for progress until it completes.
-  for (let i = 0; i < 200; i++) {
-    await new Promise(r => setTimeout(r, 4000));
-    try {
-      const jobsResp = await fetch(
-        `https://api.github.com/repos/${EXTRAPOLATE_REPO}/actions/runs/${runId}/jobs`,
-        { headers }
-      );
-      if (!jobsResp.ok) continue;
-      const jobsData = await jobsResp.json();
-      const job = (jobsData.jobs || [])[0];
-      if (!job) continue;
-
-      if (job.status === 'completed') {
-        if (job.conclusion === 'success') {
-          setExtrapolateProgress(100, 'Done');
-          setExtrapolateStatus(`Extrapolation complete for ${currentSpecies}. Reload the page to see updated confidence scores.`);
-        } else {
-          setExtrapolateProgress(null);
-          setExtrapolateStatus(`Run finished with status "${job.conclusion}" — check the Actions tab for the log.`, true);
-        }
-        return;
-      }
-
-      const steps = job.steps || [];
-      const running = steps.find(s => s.status === 'in_progress');
-      const lastDone = [...steps].reverse().find(s => s.status === 'completed');
-      const label = running ? running.name : (lastDone ? lastDone.name : 'Starting...');
-      const pct = EXTRAPOLATE_STEP_PCT[label] || (lastDone ? (EXTRAPOLATE_STEP_PCT[lastDone.name] || 10) : 5);
-      setExtrapolateProgress(pct, running ? `Running: ${label}` : `Just finished: ${label}`);
-      setExtrapolateStatus(`In progress — ${currentSpecies} extrapolation running on GitHub...`);
-    } catch (e) { /* keep polling */ }
-  }
-  setExtrapolateStatus('Still running after a while — check the Actions tab on GitHub directly.');
-}
-
 
 // `DATA.families` is not always one taxonomy. For kaka it concatenates the three
 // lowercase Van Horik call classes auto-assigned to the Xeno-canto clips with the
