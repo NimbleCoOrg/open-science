@@ -8,6 +8,7 @@ Open science experiments from NimbleCo — data visualizations, community report
 |-----------|-------------|------|
 | [peptide-reporting](experiments/peptide-reporting/) | Peptide Pharmacovigilance: Community Self-Reports with Valence | [View](https://nimblecoorg.github.io/open-science/experiments/peptide-reporting/) |
 | [nz-birdsong](docs/experiments/nz-birdsong/) | New Zealand Birdsong: vocalisation analysis of tūī, korimako & kākā from Xeno-Canto open data — spectral syllable classification, template matching, geographic variation, plus interactive annotation & PCA clustering tools and a Te Reo Manu learning game | [View](https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/) |
+| [beyond-paper](docs/experiments/beyond-paper/) | Beyond the Paper: 14 structural critiques of the scientific paper format, an interactive evidence-overlay demo, a landscape of existing alternatives (nanopublications, executable articles, PRC, knowledge graphs), and a proposal for decoupled scientific knowledge | [View](https://nimblecoorg.github.io/open-science/experiments/beyond-paper/) |
 
 ## Structure
 
