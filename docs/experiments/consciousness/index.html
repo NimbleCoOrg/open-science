@@ -601,6 +601,8 @@ footer a { color: var(--blue); text-decoration: none; }
   <button class="tab-btn" data-tab="spectrum">Testability Spectrum</button>
   <button class="tab-btn" data-tab="theories">All Theories</button>
   <button class="tab-btn" data-tab="evidence">Evidence</button>
+  <button class="tab-btn" data-tab="premise-evidence">Premise Evidence</button>
+  <button class="tab-btn" data-tab="defining">Defining Consciousness</button>
   <button class="tab-btn" data-tab="about">Method</button>
 </div>
 
@@ -702,6 +704,31 @@ footer a { color: var(--blue); text-decoration: none; }
     <p>This tab compiles the actual experimental and observational evidence that has been brought to bear on testable theories of consciousness.</p>
   </div>
   <div id="evidence-list"></div>
+</div>
+
+<!-- PREMISE EVIDENCE TAB -->
+<div class="tab-content" id="tab-premise-evidence">
+  <div class="card">
+    <h3>Premise-by-Premise Evidence Database</h3>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 16px;">
+      Each theory's premises are tested against evidence from <strong>independent sources</strong> — papers that test the underlying physics, pharmacology, or neuroscience without necessarily referencing the consciousness theory. This avoids publication bias: nobody publishes "Orch-OR failed," but physicists routinely test quantum decoherence in biological systems.
+    </p>
+    <p style="font-size: 0.85rem; color: var(--ink-faint);">
+      🟢 Supports &nbsp; 🟡 Supports with caveats &nbsp; 🔴 Refutes &nbsp; 🟠 Mixed &nbsp; ⚪ Untestable &nbsp; 🔵 Theoretical prediction
+    </p>
+  </div>
+  <div id="premise-evidence-list"></div>
+</div>
+
+<!-- DEFINING CONSCIOUSNESS TAB -->
+<div class="tab-content" id="tab-defining">
+  <div class="card">
+    <h3>What Is Consciousness?</h3>
+    <p style="font-size: 0.9rem; color: var(--ink-soft);">
+      Before asking what <em>creates</em> consciousness, we need to ask what consciousness <em>is</em>. Theories of consciousness implicitly or explicitly adopt a definition. If we don't make that definition explicit, we risk talking past each other — and we miss a powerful form of critique: the <strong>overgeneration test</strong>.
+    </p>
+  </div>
+  <div id="defining-consciousness-content"></div>
 </div>
 
 <!-- METHOD TAB -->
@@ -4358,6 +4385,10 @@ function showTab(tabName) {
     renderSpectrum();
   } else if (tabName === 'evidence') {
     renderEvidence();
+  } else if (tabName === 'premise-evidence') {
+    renderPremiseEvidence();
+  } else if (tabName === 'defining') {
+    renderDefiningConsciousness();
   }
 }
 
@@ -4688,6 +4719,467 @@ function renderEvidence() {
 // Initialize
 renderStats();
 renderTheoryTable();
+
+// ═══════════════════════════════════════════════════════════════════
+// PREMISE EVIDENCE DATABASE
+// Tests premises of consciousness theories against independent evidence
+// ═══════════════════════════════════════════════════════════════════
+
+const PREMISE_EVIDENCE = [
+  {
+    theoryId: "iit",
+    theoryName: "Integrated Information Theory (IIT)",
+    theoryNote: "Most testable theory — multiple premises have direct empirical tests",
+    premises: [
+      {
+        text: "Φ (integrated information) measures consciousness and drops when consciousness is lost",
+        uniqueToIIT: true,
+        evidence: [
+          {
+            citation: "Casali et al. (2013), Science Translational Medicine",
+            doi: "10.1126/scitranslmed.3006294",
+            finding: "PCI (Perturbational Complexity Index) — TMS-EEG measure derived from IIT — discriminates waking, deep sleep, REM, anesthesia (midazolam, xenon, propofol), and brain-damaged patients (vegetative vs. minimally conscious vs. locked-in).",
+            direction: "supporting_with_caveats",
+            note: "Φ approximation alone insufficient; needs connectivity measures too. This is the most direct practical application of IIT."
+          },
+          {
+            citation: "Kim et al. (2018), Frontiers in Human Neuroscience",
+            doi: null,
+            finding: "EEG-based Φ alone was 'insufficient to discriminate certain states of anesthesia' — needed multi-dimensional parameter space with connectivity measures.",
+            direction: "refuting_with_caveats",
+            note: "Challenges the strong claim that Φ alone tracks consciousness."
+          },
+          {
+            citation: "Neuroscience of Consciousness (2025)",
+            doi: null,
+            finding: "Φ decreases during anesthesia on fMRI at both global and local levels, but authors note 'empirical data supporting this claim remain limited.'",
+            direction: "supporting_with_caveats",
+            note: "Direct empirical test on fMRI data — promising but preliminary."
+          }
+        ]
+      },
+      {
+        text: "Cerebellum doesn't contribute to consciousness despite ~80B neurons (feedforward = low Φ)",
+        uniqueToIIT: true,
+        evidence: [
+          {
+            citation: "Clinical neurology — well-established",
+            doi: null,
+            finding: "Large cerebellar lesions do not abolish consciousness. Patients can lose significant cerebellar tissue and remain fully conscious.",
+            direction: "supporting",
+            note: "Independent of IIT — this is established neurology. But it supports IIT's unique prediction that neuron count ≠ consciousness."
+          },
+          {
+            citation: "Tononi (2004), BMC Neuroscience",
+            doi: "10.1186/1471-2202-5-42",
+            finding: "Original IIT paper — computed that cerebellar architecture (parallel, feedforward modules) yields low Φ despite high neuron count.",
+            direction: "supporting",
+            note: "From IIT's own proponents — not independent evidence."
+          }
+        ]
+      },
+      {
+        text: "Split-brain → split consciousness (Φ maximized within each hemisphere)",
+        uniqueToIIT: true,
+        evidence: [
+          {
+            citation: "Tononi (2004), BMC Neuroscience",
+            doi: "10.1186/1471-2202-5-42",
+            finding: "Computed Φ = 72 for the unified brain vs. Φ = 61 for each disconnected hemisphere — consciousness should split.",
+            direction: "theoretical_prediction",
+            note: "A unique IIT prediction — no other theory predicts split consciousness in this way."
+          },
+          {
+            citation: "Volz & Gazzaniga (2017); Pinto et al. (2017)",
+            doi: null,
+            finding: "Some preserved cognitive unity after callosotomy — action control and certain attention processes remain unified. A 2021 Neuropsychologia paper argues 'independent and unified consciousness co-exist' after commissurotomy.",
+            direction: "refuting",
+            note: "Challenges IIT's strong prediction that consciousness fully splits."
+          }
+        ]
+      },
+      {
+        text: "Posterior cortex is the 'hot zone' of consciousness (not prefrontal)",
+        uniqueToIIT: true,
+        evidence: [
+          {
+            citation: "COGITATE Consortium (2025), Nature",
+            doi: "10.1038/s41586-025-08888-1",
+            finding: "256 participants, fMRI + MEG + intracranial EEG. Found conscious content in visual/ventrotemporal cortex (partially supports IIT location claim) BUT lack of sustained synchronization within posterior cortex contradicts IIT's connectivity claim.",
+            direction: "mixed",
+            note: "The largest adversarial collaboration in consciousness science. Also challenged GNW."
+          }
+        ]
+      },
+      {
+        text: "Covert consciousness in vegetative state patients (Φ without behavioral output)",
+        uniqueToIIT: false,
+        evidence: [
+          {
+            citation: "Owen et al. (2006), Science",
+            doi: "10.1126/science.1130197",
+            finding: "Vegetative patient followed commands via fMRI mental imagery (imagine playing tennis / navigating home). Preserved consciousness despite no behavioral output.",
+            direction: "supporting",
+            note: "Also supports GNW (intact workspace, disconnected output). Does not uniquely discriminate."
+          },
+          {
+            citation: "Cruse et al. (2011), Lancet",
+            doi: null,
+            finding: "~17% of patients diagnosed as vegetative show covert command-following on fMRI.",
+            direction: "supporting",
+            note: "Replication and extension. Also supports GNW."
+          }
+        ]
+      },
+      {
+        text: "Feedforward AI not conscious regardless of size (unique IIT prediction)",
+        uniqueToIIT: true,
+        evidence: [
+          {
+            citation: "Not yet empirically testable",
+            doi: null,
+            finding: "IIT predicts that feedforward architectures (like transformers) cannot be conscious regardless of size or capability, because they lack recurrent integrated structure.",
+            direction: "untestable_currently",
+            note: "Theory-discriminating vs GNW (which allows for AI consciousness if global broadcast is achieved). Will become testable as AI architectures evolve."
+          }
+        ]
+      }
+    ],
+    testCases: [
+      { name: "Wada test", description: "One hemisphere anesthetized with sodium amobarbital, other remains conscious. Supports IIT's claim that consciousness is local to integrated systems.", supports: true },
+      { name: "Hemispherectomy", description: "Entire hemisphere removed — patient remains conscious. Supports IIT (a single integrated system suffices).", supports: true },
+      { name: "Locked-in syndrome", description: "Fully conscious with intact thalamocortical integration despite no motor output. Supports IIT (consciousness = integration, not behavior).", supports: true },
+      { name: "Anesthesia", description: "Φ should drop (IIT), global broadcast should cease (GNW), microtubule quantum effects disrupted (Orch-OR). All predict loss of consciousness but for different reasons.", supports: null }
+    ]
+  },
+  {
+    theoryId: "orch_or",
+    theoryName: "Orchestrated Objective Reduction (Orch-OR)",
+    theoryNote: "Testable primarily through anesthesia pharmacology and quantum biology — premises tested independently by physicists and pharmacologists",
+    premises: [
+      {
+        text: "Quantum coherence in microtubules at brain temperature (37°C) lasts long enough for neurophysiological relevance",
+        uniqueToIIT: false,
+        evidence: [
+          {
+            citation: "Tegmark (2000), Physical Review E",
+            doi: "10.1103/PhysRevE.61.4194",
+            finding: "Calculated decoherence times of ~10⁻¹³ to 10⁻²⁰ seconds in microtubules — far too short for neurophysiological relevance. This is a PHYSICS paper, not a consciousness paper.",
+            direction: "strongly_refuting",
+            note: "Independent of Orch-OR — Tegmark is a physicist testing quantum decoherence in biological systems. This is the strongest independent critique."
+          },
+          {
+            citation: "Hagan, Hameroff & Tuszynski (2002), Physical Review E",
+            doi: "10.1103/PhysRevE.65.061901",
+            finding: "Recalculated Tegmark's numbers, arguing wrong model (superposition separation, dielectric constant), extended coherence to 10⁻⁵–10⁻¹ seconds.",
+            direction: "rebuttal",
+            note: "From Orch-OR proponents themselves — NOT independent evidence. This is a response to Tegmark, not an independent test."
+          },
+          {
+            citation: "McKemmish et al. (2009), Physical Review E",
+            doi: "10.1103/PhysRevE.80.021912",
+            finding: "Showed the Orch-OR model requires biologically implausible energy gaps between tubulin conformational states. The mechanism as proposed doesn't work with known tubulin physics.",
+            direction: "refuting",
+            note: "Independent — McKemmish is a quantum chemist, not a consciousness theorist."
+          },
+          {
+            citation: "Engel et al. (2007), Nature",
+            doi: "10.1038/nature05678",
+            finding: "Quantum coherence in the FMO photosynthetic complex — proved warm, wet, noisy biological systems CAN sustain quantum coherence. But at 77K initially, and for ~300 femtoseconds, not the milliseconds Orch-OR needs.",
+            direction: "supporting_in_principle",
+            note: "Independent quantum biology — proves the concept is possible but the gap between 'coherence in photosynthesis' and 'coherence for consciousness in microtubules' remains enormous."
+          },
+          {
+            citation: "Babcock et al. (2024), J. Phys. Chem. B",
+            doi: null,
+            finding: "UV superradiance from tryptophan networks in microtubule architectures persisting at 37°C. Closest evidence to date — but excitonic energy transfer ≠ quantum superposition Orch-OR requires.",
+            direction: "suggestive_but_inconclusive",
+            note: "Independent — quantum chemists studying microtubule biophysics. Promising but doesn't bridge the gap."
+          }
+        ]
+      },
+      {
+        text: "Anesthetics act through microtubules (disrupting quantum channels, not membrane ion channels)",
+        uniqueToIIT: false,
+        evidence: [
+          {
+            citation: "Craddock et al. (2012), PLoS ONE",
+            doi: "10.1371/journal.pone.0037251",
+            finding: "Computational predictions that volatile anesthetics bind to tubulin subunits in microtubule lattice. Molecular modeling, not experimental.",
+            direction: "computational_only",
+            note: "Hameroff is a co-author — not fully independent. Computational predictions need experimental confirmation."
+          },
+          {
+            citation: "Kalra et al. (2023), ACS Central Science",
+            doi: null,
+            finding: "Experimental: anesthetics (isoflurane, etomidate) dampen quantum optical effects (exciton propagation) in microtubules. Non-anesthetic controls did not — a genuine discriminating test.",
+            direction: "supporting",
+            note: "Independent experimental evidence — real discriminating test with appropriate controls."
+          },
+          {
+            citation: "Khan, Wiest et al. (2024), eNeuro",
+            doi: "10.1523/ENEURO.0291-24.2024",
+            finding: "Epothilone B (microtubule-stabilizing drug) delays anesthetic onset in rats by 69 seconds (Cohen's d = 1.9, large effect). Directly tests an Orch-OR prediction: if MT-stabilizing drugs delay anesthesia, it supports the microtubule mechanism.",
+            direction: "supporting",
+            note: "Most direct experimental test of an Orch-OR prediction to date. However, could have alternative explanations (e.g., altered cellular mechanics affecting ion channels indirectly)."
+          },
+          {
+            citation: "Mashour (2024), Neuron",
+            doi: "10.1016/j.neuron.2024.03.002",
+            finding: "Comprehensive review of anesthesia and consciousness — framework is entirely about network-level functional disconnection: GABA, NMDA, two-pore K channels, thalamocortical connectivity. Microtubules mentioned but not primary. 190 references.",
+            direction: "confounding",
+            note: "The mainstream field has converged on membrane protein targets. Anesthetics are notoriously promiscuous — they bind multiple targets (GABA, NMDA, K channels, AND microtubules). Finding anesthetics bind tubulin doesn't disprove membrane mechanisms."
+          }
+        ]
+      },
+      {
+        text: "Penrose's gravity-driven objective reduction causes wavefunction collapse (the non-computable process)",
+        uniqueToIIT: false,
+        evidence: [
+          {
+            citation: "No experimental tests exist",
+            doi: null,
+            finding: "Proposed tests (FELIX satellite, Marshall optomechanical experiments, matter-wave interferometry at increasing mass scales) have not been conducted. The deepest premise of Orch-OR has zero empirical support.",
+            direction: "untestable_currently",
+            note: "This is the foundational premise — without gravity-driven collapse, the entire theory collapses. No paper outside the Orch-OR literature tests whether gravity causes wavefunction collapse in biological tissue."
+          }
+        ]
+      }
+    ],
+    testCases: [
+      { name: "Anesthesia", description: "Orch-OR predicts anesthetics disrupt microtubule quantum channels. Epothilone B test (Khan 2024) supports this, but confounded by multi-target anesthetic action.", supports: true },
+      { name: "Quantum biology", description: "Photosynthesis research (Engel 2007) proves warm biology can sustain coherence — but for femtoseconds, not milliseconds.", supports: null }
+    ]
+  }
+];
+
+function renderPremiseEvidence() {
+  const container = document.getElementById('premise-evidence-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const directionMap = {
+    'supporting': { icon: '🟢', label: 'Supports', color: 'var(--green)' },
+    'supporting_with_caveats': { icon: '🟡', label: 'Supports with caveats', color: 'var(--gold)' },
+    'supporting_in_principle': { icon: '🟡', label: 'Supports in principle', color: 'var(--gold)' },
+    'refuting': { icon: '🔴', label: 'Refutes', color: '#c0392b' },
+    'strongly_refuting': { icon: '🔴', label: 'Strongly refutes', color: '#c0392b' },
+    'refuting_with_caveats': { icon: '🔴', label: 'Refutes with caveats', color: '#c0392b' },
+    'mixed': { icon: '🟠', label: 'Mixed evidence', color: '#e67e22' },
+    'untestable_currently': { icon: '⚪', label: 'Untestable currently', color: 'var(--ink-soft)' },
+    'theoretical_prediction': { icon: '🔵', label: 'Theoretical prediction', color: 'var(--blue)' },
+    'rebuttal': { icon: '🔵', label: 'Proponent rebuttal', color: 'var(--blue)' },
+    'computational_only': { icon: '🟡', label: 'Computational only', color: 'var(--gold)' },
+    'suggestive_but_inconclusive': { icon: '🟠', label: 'Suggestive but inconclusive', color: '#e67e22' },
+    'confounding': { icon: '🟠', label: 'Confounding evidence', color: '#e67e22' }
+  };
+
+  PREMISE_EVIDENCE.forEach(theory => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginBottom = '24px';
+
+    let html = `<h3>${theory.theoryName}</h3>`;
+    if (theory.theoryNote) {
+      html += `<p style="font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 16px;">${theory.theoryNote}</p>`;
+    }
+
+    theory.premises.forEach((premise, pi) => {
+      const uniqueBadge = premise.uniqueToIIT
+        ? '<span style="font-size:0.7rem; background:var(--bg-warm); border:1px solid var(--border-soft); border-radius:3px; padding:1px 6px; margin-left:8px; color:var(--accent); font-family:var(--mono);">UNIQUE TO THIS THEORY</span>'
+        : '<span style="font-size:0.7rem; background:var(--bg-warm); border:1px solid var(--border-soft); border-radius:3px; padding:1px 6px; margin-left:8px; color:var(--ink-soft); font-family:var(--mono);">SHARED BY MULTIPLE THEORIES</span>';
+
+      html += `<div style="margin: ${pi === 0 ? '16px' : '24px'} 0 12px; padding: 14px 16px; background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 8px;">`;
+      html += `<h4 style="font-family: var(--serif); margin: 0 0 4px; font-size: 1rem; line-height: 1.4;">Premise ${pi + 1}: ${premise.text}${uniqueBadge}</h4>`;
+      html += `</div>`;
+
+      premise.evidence.forEach(e => {
+        const d = directionMap[e.direction] || directionMap['mixed'];
+        let doiLink = e.doi
+          ? ` <a href="https://doi.org/${e.doi}" target="_blank" style="color: var(--blue); font-size: 0.78rem;">DOI:${e.doi}</a>`
+          : '';
+        let noteHtml = e.note
+          ? `<div style="font-size: 0.8rem; color: var(--ink-faint); margin-top: 6px; font-style: italic;">${e.note}</div>`
+          : '';
+
+        html += `<div style="margin: 8px 0 8px 20px; padding: 10px 14px; border-left: 3px solid ${d.color}; background: white; border-radius: 0 6px 6px 0;">`;
+        html += `<div style="display:flex; align-items:flex-start; gap:8px;">`;
+        html += `<span style="font-size: 0.9rem; flex-shrink:0;">${d.icon}</span>`;
+        html += `<div style="flex:1;">`;
+        html += `<div style="font-size: 0.82rem; font-weight: 600; color: var(--ink);">${e.citation}${doiLink}</div>`;
+        html += `<div style="font-size: 0.85rem; color: var(--ink-soft); margin: 4px 0;">${e.finding}</div>`;
+        html += `<div style="font-size: 0.75rem; font-weight: 600; color: ${d.color};">${d.label}</div>`;
+        html += noteHtml;
+        html += `</div></div></div>`;
+      });
+    });
+
+    if (theory.testCases && theory.testCases.length > 0) {
+      html += `<h4 style="font-family: var(--serif); margin: 20px 0 8px; font-size: 0.95rem;">Discriminating Test Cases</h4>`;
+      html += `<div style="display:grid; grid-template-columns: 1fr; gap: 6px;">`;
+      theory.testCases.forEach(tc => {
+        const badge = tc.supports === true
+          ? '<span style="color: var(--green); font-size:0.75rem;">✓ Supports</span>'
+          : tc.supports === false
+          ? '<span style="color: #c0392b; font-size:0.75rem;">✗ Refutes</span>'
+          : '<span style="color: var(--ink-soft); font-size:0.75rem;">— Shared (non-discriminating)</span>';
+        html += `<div style="padding: 8px 12px; background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 0.85rem;">`;
+        html += `<strong>${tc.name}</strong> — ${tc.description} ${badge}</div>`;
+      });
+      html += `</div>`;
+    }
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DEFINING CONSCIOUSNESS
+// ═══════════════════════════════════════════════════════════════════
+
+function renderDefiningConsciousness() {
+  const container = document.getElementById('defining-consciousness-content');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // 1. Working Definitions
+  const definitionsCard = document.createElement('div');
+  definitionsCard.className = 'card';
+  definitionsCard.innerHTML = `
+    <h3>Working Definitions of Consciousness</h3>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 16px;">
+      "Consciousness" is not one thing. The literature distinguishes several concepts that are often conflated. A theory may explain one sense while remaining silent on others.
+    </p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent);">PHENOMENAL CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">What it feels like from the inside — the subjective quality of experience (qualia). The redness of red, the painfulness of pain.</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Ned Block (1995). "On a Confusion about a Function of Consciousness." <em>Behavioral and Brain Sciences</em>.</p>
+      </div>
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: var(--blue);">ACCESS CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">Information available for reasoning, speech, and rational control of action. The content that can be <em>used</em>, not just <em>experienced</em>.</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Ned Block (1995). Same paper — the distinction that launched a thousand debates.</p>
+      </div>
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: var(--green);">GLOBAL STATE CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">The overall <em>level</em> of consciousness — awake vs. asleep vs. anesthetized vs. vegetative vs. minimally conscious. A matter of degree, not kind.</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Tim Bayne (2022). <em>The Unity of Consciousness</em>. Oxford University Press.</p>
+      </div>
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: var(--gold);">PRIMARY CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">Present-moment sensory experience without self-reflection. Shared with many animals. The raw "what is happening" without "I am experiencing what is happening."</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Gerald Edelman (1989). <em>The Remembered Present</em>. Basic Books.</p>
+      </div>
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: #8e44ad;">REFLECTIVE / NARRATIVE CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">Self-awareness, metacognition, the ability to think about one's own mental states. The "I" that knows it's experiencing.</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Higher-order theories (Rosenthal, Lau). The most cognitively sophisticated form.</p>
+      </div>
+      <div style="background: #faf6ed; border: 1px solid var(--border-soft); border-radius: 6px; padding: 14px;">
+        <strong style="font-family: var(--mono); font-size: 0.8rem; color: #2c3e50;">AGENTIVE CONSCIOUSNESS</strong>
+        <p style="font-size: 0.85rem; margin: 6px 0 2px; color: var(--ink);">Consciousness as it relates to voluntary action and the sense of agency — the experience of "I did that," not just "I saw that."</p>
+        <p style="font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px;">Relevant to disorders of consciousness, locked-in syndrome, and free will debates.</p>
+      </div>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--ink-soft); border-top: 1px solid var(--border-soft); padding-top: 12px;">
+      <strong>Why this matters:</strong> IIT primarily targets phenomenal consciousness. GNW primarily targets access consciousness. Orch-OR targets phenomenal consciousness but through a quantum mechanism. A theory that explains phenomenal consciousness may not explain access consciousness, and vice versa. When we say a theory "works" or "fails," we need to specify which sense of consciousness we mean.
+    </p>
+  `;
+  container.appendChild(definitionsCard);
+
+  // 2. The Overgeneration Test
+  const overgenCard = document.createElement('div');
+  overgenCard.className = 'card';
+  overgenCard.style.marginTop = '24px';
+  overgenCard.innerHTML = `
+    <h3>The Overgeneration Test</h3>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 12px;">
+      A form of <em>reductio ad absurdum</em> applied to the <strong>scope</strong> of a theory. If a theory's criteria for consciousness are satisfied by rocks, oceans, or thermostats, then either:
+    </p>
+    <ul style="margin: 0 0 12px 20px; font-size: 0.9rem;">
+      <li><strong>(a)</strong> rocks are conscious — which contradicts most definitions above and common-sense intuition, <em>or</em></li>
+      <li><strong>(b)</strong> the theory's criteria are too permissive and don't capture what's distinctive about consciousness.</li>
+    </ul>
+    <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 16px;">
+      The test forces theories to either <strong>accept the absurd implication</strong> (own the panpsychism) or <strong>revise their criteria</strong>. Both responses are informative.
+    </p>
+    <p style="font-size: 0.85rem; color: var(--ink-faint); margin-bottom: 20px;">
+      Also called the <em>extensional adequacy test</em>: a good theory should neither undergenerate (miss obviously conscious things) nor overgenerate (label obviously non-conscious things as conscious).
+    </p>
+
+    <h4 style="font-family: var(--serif); margin: 16px 0 12px;">How Each Theory Responds to the Test</h4>
+    <div style="overflow-x: auto;">
+      <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border);">
+            <th style="text-align:left; padding: 8px 10px; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft);">Theory</th>
+            <th style="text-align:left; padding: 8px 10px; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft);">What counts as conscious?</th>
+            <th style="text-align:left; padding: 8px 10px; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft);">Overgenerates to...</th>
+            <th style="text-align:left; padding: 8px 10px; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft);">Proponent response</th>
+            <th style="text-align:left; padding: 8px 10px; font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft);">Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding: 10px; font-weight: 600; color: var(--ink);">IIT</td>
+            <td style="padding: 10px;">Any system with Φ > 0 (maximally irreducible cause-effect power)</td>
+            <td style="padding: 10px;">Thermostats (Φ slightly > 0). <strong>Expander graphs of XOR gates</strong> — Aaronson (2014) showed these generate arbitrarily high Φ, higher than a human brain.</td>
+            <td style="padding: 10px;">Tononi <strong>accepts</strong> the implication: "Yes, thermostats have a small but nonzero consciousness." This is panpsychism.</td>
+            <td style="padding: 10px;"><span style="color: #c0392b; font-weight: 600;">FAILS</span> — but proponents bite the bullet. The XOR gate expander graph (high Φ, intuitively unconscious) is the strongest version of the critique.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding: 10px; font-weight: 600; color: var(--ink);">Orch-OR</td>
+            <td style="padding: 10px;">Systems with quantum superposition + orchestrated objective reduction in microtubules</td>
+            <td style="padding: 10px;">Photosynthetic bacteria (quantum coherence in FMO complex, Engel 2007). Any system with quantum coherence.</td>
+            <td style="padding: 10px;">Hameroff <strong>resists</strong> — argues Orch-OR requires specific biological architecture (microtubules, gap junctions, π-electron networks), not just any quantum coherence.</td>
+            <td style="padding: 10px;"><span style="color: var(--gold); font-weight: 600;">PARTIALLY FAILS</span> — if quantum coherence alone is the criterion, photosynthetic bacteria are conscious. The specific-architecture requirement narrows scope but is difficult to justify independently.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding: 10px; font-weight: 600; color: var(--ink);">GNW / GNWT</td>
+            <td style="padding: 10px;">Systems where information is globally broadcast across a workspace</td>
+            <td style="padding: 10px;">A broadcast radio network. The internet. Any system with global information routing.</td>
+            <td style="padding: 10px;">Dehaene <strong>resists</strong> — argues GNW requires specific <em>neuronal</em> architecture (long-range cortical pyramidal neurons, recurrent connections, specific ignition dynamics), not just any broadcast.</td>
+            <td style="padding: 10px;"><span style="color: var(--green); font-weight: 600;">PASSES</span> — the neuronal specificity requirement avoids the absurd implication. But this is an <em>added constraint</em> not entailed by the core theory.</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border-soft);">
+            <td style="padding: 10px; font-weight: 600; color: var(--ink);">Higher-Order Theories</td>
+            <td style="padding: 10px;">Systems that represent their own mental states (meta-representation)</td>
+            <td style="padding: 10px;">A camera with a self-monitoring system. A thermostat that reads its own temperature sensor.</td>
+            <td style="padding: 10px;">Proponents <strong>resist</strong> — argue meta-representation must have specific representational properties (non-inferential, suitably structured) to count.</td>
+            <td style="padding: 10px;"><span style="color: var(--gold); font-weight: 600;">PARTIALLY FAILS</span> — the boundary between "meta-representation" and "self-monitoring" is unclear without additional constraints.</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; font-weight: 600; color: var(--ink);">Attention Schema Theory</td>
+            <td style="padding: 10px;">Systems that model their own attention processes</td>
+            <td style="padding: 10px;">Any system with an internal model of its own processing — potentially any sufficiently complex control system.</td>
+            <td style="padding: 10px;">Graziano <strong>resists</strong> — argues the model must be specifically about attention, not just any self-model.</td>
+            <td style="padding: 10px;"><span style="color: var(--gold); font-weight: 600;">PARTIALLY FAILS</span> — scope depends on how broadly "attention model" is defined.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 20px; padding: 16px; background: #faf6ed; border: 1px solid var(--border); border-radius: 8px;">
+      <h4 style="font-family: var(--serif); margin: 0 0 8px;">The Key Insight</h4>
+      <p style="font-size: 0.88rem; color: var(--ink); margin: 0;">
+        The overgeneration test doesn't tell us which theory is <em>correct</em> — but it tells us which theories are <em>honest about their implications</em>. IIT accepts panpsychism openly; GNW and Higher-Order theories add constraints to avoid it but those constraints are not derived from the core theory — they are added post hoc. The test reveals whether a theory's criteria, taken at face value, capture what's distinctive about consciousness or whether they need help from outside the theory.
+      </p>
+    </div>
+
+    <div style="margin-top: 16px; padding: 14px; background: white; border: 1px solid var(--border-soft); border-radius: 8px;">
+      <h4 style="font-family: var(--serif); margin: 0 0 8px; font-size: 0.95rem;">The XOR Gate Expander: IIT's Hardest Case</h4>
+      <p style="font-size: 0.85rem; color: var(--ink-soft); margin: 0;">
+        Computer scientist Scott Aaronson (2014) showed that a simple network of XOR gates arranged in an "expander graph" generates arbitrarily high Φ — higher than the human brain. Tononi accepted this: yes, the expander graph is conscious. But an expander graph of XOR gates is one of the simplest, most repetitive structures in computer science. If the theory says it's more conscious than you are, either the theory's criteria are too permissive — or we need to radically revise our intuitions about what consciousness is. This is the overgeneration test in its sharpest form.
+      </p>
+      <p style="font-size: 0.78rem; color: var(--ink-faint); margin: 8px 0 0;">
+        Aaronson, S. (2014). "Why I Am Not An Integrated Information Theorist." <em>Shtetl-Optimized</em> blog. See also: Cerullo et al. (2015), <em>PLOS Computational Biology</em>, DOI: 10.1371/journal.pcbi.1004286.
+      </p>
+    </div>
+  `;
+  container.appendChild(overgenCard);
+}
 </script>
 </body>
 </html>
