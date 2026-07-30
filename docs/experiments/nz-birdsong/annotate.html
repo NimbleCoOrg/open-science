@@ -95,28 +95,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="meta">Match candidate spectrograms to published reference examples · <span id="total-matches">0</span> matches total</div>
   <div style="display:flex;gap:.5rem;align-items:center">
     <span class="sync-status" id="sync-status">local only</span>
-    <button class="export-btn" onclick="showSyncPanel()" id="sync-btn" title="Collaboration settings">👥 Collaborate</button>
+    <button class="export-btn" onclick="showSyncPanel()" id="sync-btn" title="Collaboration settings — pull shared annotations">👥 Collaborate</button>
   </div>
 </div>
 
-<!-- Sync/collab panel (hidden by default) -->
+<!-- Collaboration panel (hidden by default).
+     Pull is read-only and needs no credentials. The matching "Push mine" control was
+     removed — see the CREDENTIAL HYGIENE note in the script below. -->
 <div id="sync-panel" style="display:none;padding:1rem 2rem;border-bottom:1px solid var(--border);background:var(--surface2)">
   <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap">
     <div>
       <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">Your name</label>
       <input type="text" id="annotator-name" placeholder="e.g. Azure" style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:140px">
     </div>
-    <div>
-      <label style="font-family:var(--mono);font-size:.7rem;color:var(--text2);display:block;margin-bottom:.3rem">Push password</label>
-      <input type="password" id="push-password" placeholder="shared password" style="font-family:var(--mono);font-size:.8rem;padding:.4rem .6rem;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:200px">
-    </div>
     <button class="export-btn" onclick="syncPull()" style="border-color:var(--match);color:var(--match)">⬇ Pull shared</button>
-    <button class="export-btn" onclick="syncPush()" style="border-color:var(--accent);color:var(--accent)">⬆ Push mine</button>
     <span id="sync-msg" style="font-family:var(--mono);font-size:.7rem;color:var(--text2)"></span>
   </div>
   <p style="font-family:var(--mono);font-size:.65rem;color:var(--text2);margin-top:.6rem;line-height:1.6">
-    Pull fetches everyone's annotations from the shared repo (no login needed). Push merges yours in — just enter your name and the shared password.
-    Each annotation is tagged with your name so we can see who labelled what.
+    Pull fetches everyone&rsquo;s annotations from the shared repo (no login needed). Your own work is
+    saved in this browser and tagged with the name above.
+    <br>
+    <strong>Pushing from the browser is disabled.</strong> It used to run on a write-scoped GitHub
+    token shipped inside this page, which is not a safe thing to publish. Use
+    <em>Export Annotations (JSON)</em> below and hand the file to a maintainer (or open a pull
+    request against <code>annotation/shared_annotations.json</code>) and it will be merged in.
   </p>
 </div>
 
@@ -600,9 +602,22 @@ function updateMatchPile() {
 
 // ==================== EXPORT/IMPORT ====================
 function exportAnnotations() {
+  // Tag anything untagged with the annotator name from the Collaborate panel, so the exported
+  // file is directly mergeable into annotation/shared_annotations.json by a maintainer. This
+  // is the replacement for the removed in-browser push (see CREDENTIAL HYGIENE note below).
+  const annotator = getAnnotatorName();
+  for (const sp in state.annotations) {
+    for (const cat in state.annotations[sp]) {
+      for (const m of state.annotations[sp][cat]) {
+        if (!m.annotator && annotator !== 'anonymous') m.annotator = annotator;
+      }
+    }
+  }
+  saveAnnotations();
   const data = {
     version: 2,
     exported_at: new Date().toISOString(),
+    annotator: annotator,
     annotations: state.annotations,
     skips: state.skips
   };
@@ -688,32 +703,27 @@ const SYNC_REPO = 'NimbleCoOrg/open-science';
 const SYNC_PATH = 'docs/experiments/nz-birdsong/annotation/shared_annotations.json';
 const SYNC_RAW_URL = `https://raw.githubusercontent.com/${SYNC_REPO}/main/${SYNC_PATH}`;
 
-// Encrypted PAT — decrypted client-side with the shared password via AES-256-GCM + PBKDF2
-const ENCRYPTED_PAT = {
-  salt: 'QvngB1y4p0RKvaEap/oEoA==',
-  iv: 'NWea+aUiMwD+QjB9',
-  ct: 'OjNWTx1N5wyDcQvwWALgbQFu0uSD6/FRHKQsG4nb4Qo57oYeY5NsBSfJNScwQAEBnm5ZGy24XEKNiXrB8WA7FpC0RN6TUQKguZ8cde0yC+pQvgenBMChC4fhKGlSXLv9MPrB/o1kuJ/Elh7R/A=='
-};
-
-async function decryptPAT(password) {
-  const enc = new TextEncoder();
-  const salt = Uint8Array.from(atob(ENCRYPTED_PAT.salt), c => c.charCodeAt(0));
-  const iv = Uint8Array.from(atob(ENCRYPTED_PAT.iv), c => c.charCodeAt(0));
-  const ct = Uint8Array.from(atob(ENCRYPTED_PAT.ct), c => c.charCodeAt(0));
-  
-  // Derive key with PBKDF2 (must match Python: SHA-256, 100k iterations, 256-bit key)
-  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['decrypt']
-  );
-  
-  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
-  return new TextDecoder().decode(decrypted);
-}
+// ==================== CREDENTIAL HYGIENE — WRITE PATH REMOVED ====================
+// This page used to carry an encrypted GitHub personal access token and decrypt it in the
+// browser with a password shared among annotators, so that "Push mine" could commit straight
+// to annotation/shared_annotations.json. That token had write scope on a public repository,
+// which means anyone who loaded this page held the material needed to obtain it offline. It has
+// been removed and the token is being revoked separately.
+//
+// Reading is unaffected: syncPull()/autoPull() below fetch the shared annotation file over
+// plain unauthenticated HTTP, which needs no credential at all.
+//
+// Writing is now a maintainer step: annotate locally, hit "Export Annotations (JSON)", and send
+// the file on (or open a pull request with it).
+//
+// If a maintainer wants in-browser push back, the two safe shapes are:
+//   1. A small server-side proxy that holds the token, authenticates the annotator, validates
+//      the payload, and performs the commit. The browser never sees a token.
+//   2. A per-user token that the annotator pastes into a field at runtime, kept only in memory
+//      for that session, never written to localStorage and never committed to this repo.
+// Do not reintroduce an embedded token, encrypted or otherwise — anything shipped to the
+// browser is public by construction.
+// ===================================================================================
 
 function showSyncPanel() {
   const panel = document.getElementById('sync-panel');
@@ -796,113 +806,6 @@ async function syncPull() {
     setSyncMsg(`Pulled! ${added} new annotations merged. Contributors: ${[...contributors].join(', ') || 'none yet'}`, false);
   } catch(e) {
     setSyncMsg('Pull failed: ' + e.message, true);
-  }
-}
-
-// Push: decrypt PAT with password, then commit to GitHub
-async function syncPush() {
-  const password = document.getElementById('push-password').value.trim();
-  const annotator = getAnnotatorName();
-  if (!password) { setSyncMsg('Enter the shared password to push', true); return; }
-  if (annotator === 'anonymous') { setSyncMsg('Please enter your name first', true); return; }
-  
-  setSyncMsg('Decrypting...', false);
-  
-  let token;
-  try {
-    token = await decryptPAT(password);
-  } catch(e) {
-    setSyncMsg('Wrong password', true);
-    return;
-  }
-  
-  setSyncMsg('Pushing...', false);
-  
-  try {
-    // Tag all annotations with annotator name
-    for (const sp in state.annotations) {
-      for (const cat in state.annotations[sp]) {
-        for (const m of state.annotations[sp][cat]) {
-          if (!m.annotator) m.annotator = annotator;
-        }
-      }
-    }
-    saveAnnotations();
-    
-    // Fetch existing shared file to merge
-    let existing = { annotations: {}, skips: {} };
-    let existingSha = null;
-    try {
-      const apiResp = await fetch(`https://api.github.com/repos/${SYNC_REPO}/contents/${SYNC_PATH}`, {
-        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (apiResp.ok) {
-        const fileData = await apiResp.json();
-        existingSha = fileData.sha;
-        existing = JSON.parse(atob(fileData.content));
-      }
-    } catch(e) {}
-    
-    // Merge annotations
-    let added = 0;
-    for (const sp in state.annotations) {
-      if (!existing.annotations[sp]) existing.annotations[sp] = {};
-      for (const cat in state.annotations[sp]) {
-        if (!existing.annotations[sp][cat]) existing.annotations[sp][cat] = [];
-        const existingIds = new Set(existing.annotations[sp][cat].map(m => m.id));
-        for (const m of state.annotations[sp][cat]) {
-          if (!existingIds.has(m.id)) {
-            existing.annotations[sp][cat].push(m);
-            added++;
-          }
-        }
-      }
-    }
-    
-    // Merge skips
-    for (const sp in state.skips) {
-      if (!existing.skips) existing.skips = {};
-      if (!existing.skips[sp]) existing.skips[sp] = {};
-      for (const cat in state.skips[sp]) {
-        if (!existing.skips[sp][cat]) existing.skips[sp][cat] = [];
-        const existingSet = new Set(existing.skips[sp][cat]);
-        for (const id of state.skips[sp][cat]) {
-          if (!existingSet.has(id)) existing.skips[sp][cat].push(id);
-        }
-      }
-    }
-    
-    existing.version = 3;
-    existing.last_updated = new Date().toISOString();
-    existing.last_pushed_by = annotator;
-    
-    // Commit to GitHub
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
-    const commitResp = await fetch(`https://api.github.com/repos/${SYNC_REPO}/contents/${SYNC_PATH}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `annotation: ${annotator} pushed ${added} new annotations`,
-        content: content,
-        sha: existingSha || undefined
-      })
-    });
-    
-    if (!commitResp.ok) {
-      const err = await commitResp.json();
-      throw new Error(err.message || `HTTP ${commitResp.status}`);
-    }
-    
-    const status = document.getElementById('sync-status');
-    status.className = 'sync-status synced';
-    status.textContent = `synced · pushed by ${annotator}`;
-    setSyncMsg(`Pushed! ${added} new annotations committed.`, false);
-  } catch(e) {
-    setSyncMsg('Push failed: ' + e.message, true);
   }
 }
 
