@@ -962,6 +962,139 @@ tr:hover td{background:var(--surface-2)}
 
       <div class="section-label">Representative Samples</div>
       <div id="voc-samples-kaka"><!-- Populated by JS --></div>
+
+      <!-- BEHAVIOUR–VOCALISATION CORRELATION -->
+      <div class="section-label" style="margin-top:2.5rem">Behaviour–Vocalisation Correlation</div>
+      <div class="prose" style="margin-bottom:1.5rem">
+        <p>Do kākā calls carry acoustic signatures of <b>behavioural context</b> — that is, does a call's
+        sound structure encode what the bird was <em>doing</em> when it called, beyond just the call type?
+        This analysis tests whether kākā vocalisations are organised by <b>meaning</b>, not just by sound.</p>
+        <p>This is a computational proxy for the kind of behavioural discrimination test that
+        <a href="https://doi.org/10.1126/science.ads8482">Elie et al. (2025)</a> performed with operant
+        conditioning on zebra finches. We can't ask kākā to discriminate calls in a lab — but we can
+        test whether the acoustic structure of their calls non-randomly encodes behavioural context.</p>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--kaka)">
+        <h3>Key Result: Calls from the same behaviour are acoustically more similar</h3>
+        <table style="width:100%;font-size:.88rem;border-collapse:collapse">
+          <thead><tr style="border-bottom:1px solid var(--rule)"><th style="text-align:left;padding:.4rem">Test</th><th>r</th><th>p</th><th style="text-align:left;padding:.4rem">Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:.4rem"><b>Mantel test</b> (all 53 calls)</td><td class="num">0.166</td><td class="num">0.024</td><td style="padding:.4rem;color:var(--pos)">Significant — calls cluster by behaviour</td></tr>
+            <tr style="border-top:1px solid var(--rule)"><td style="padding:.4rem"><b>Within-skraak only</b> (42 calls)</td><td class="num">0.165</td><td class="num">0.040</td><td style="padding:.4rem;color:var(--pos)">Significant — sub-structure exists within skraak</td></tr>
+            <tr style="border-top:1px solid var(--rule)"><td style="padding:.4rem"><b>RF classification</b> (LOO)</td><td class="num">96.2%</td><td class="num">—</td><td style="padding:.4rem">51/53 correct; 2 errors both within foraging</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:1rem;font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)">
+          53 calls · 3 behaviours (Perching, Foraging, Flying) · 52 acoustic features (MFCC + spectral contrast + tonnetz) · 10,000 permutations
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:1.5rem">
+        <div class="mark">What is an MDS plot?</div>
+        <div>
+          <b>MDS (Multidimensional Scaling)</b> is a way to visualise how similar or different things are
+          by placing them on a 2D map. Each dot is one kākā call. The key idea: <b>calls that sound
+          similar are placed close together; calls that sound different are placed far apart.</b>
+          We compute the acoustic distance between every pair of calls (using 52 features — MFCCs,
+          spectral contrast, and tonnetz), then MDS finds the best 2D arrangement that preserves those
+          distances. Think of it as creating a "sound map" of the calls.
+          <br><br>
+          When we colour the dots by call type or behaviour, clusters tell us something: if all the
+          foraging calls cluster in one corner and all the flying calls in another, that means the
+          acoustic features are encoding behavioural context. If the colours were randomly scattered,
+          it would mean the calls sound the same regardless of behaviour.
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:1rem">
+        <div class="mark">What is a Mantel test?</div>
+        <div>
+          The <b>Mantel test</b> asks a simple question: <em>are calls from the same behaviour more
+          acoustically similar than calls from different behaviours?</em> It compares two distance
+          matrices — one measuring acoustic similarity (how the calls sound) and one measuring
+          behavioural similarity (same vs different behaviour). A positive correlation (r > 0) means
+          yes, same-behaviour calls are more similar than expected by chance.
+          <br><br>
+          Because the test uses 10,000 random permutations to build a null distribution, the p-value
+          tells us the probability of seeing this pattern by chance. r = 0.166 with p = 0.024 is a
+          <b>weak but statistically significant</b> signal — the effect is real but modest, which makes
+          sense: call type is the strong signal (slide whistle = foraging, whistle = perching), and
+          within that, behavioural sub-structure is a subtler layer.
+        </div>
+      </div>
+
+      <div class="section-label">MDS: Acoustic Space Coloured by Call Type and Behaviour</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">
+          Each dot is one call. Left: coloured by call type. Right: coloured by behaviour.
+          Call types separate clearly (skraak, whistle, slide whistle occupy different regions).
+          Behaviour shows weaker but visible clustering — especially within the skraak cluster,
+          where foraging and flying calls partially separate from perching.
+        </p>
+        <img src="semantic_acoustic/mds_plot.png" alt="MDS plot of kākā acoustic space, coloured by call type and behaviour" style="width:100%;border-radius:4px;border:1px solid var(--rule)">
+      </div>
+
+      <div class="section-label">Mantel Test: Null Distribution</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">
+          The observed correlation (r = 0.166, red line) falls in the right tail of the null
+          distribution (grey bars) — meaning this degree of same-behaviour acoustic similarity
+          would rarely occur by chance (p = 0.024).
+        </p>
+        <img src="semantic_acoustic/mantel_test.png" alt="Mantel test null distribution showing observed r=0.166 in the right tail" style="width:100%;max-width:500px;border-radius:4px;border:1px solid var(--rule);display:block;margin:0 auto">
+      </div>
+
+      <div class="section-label">Within-Skraak MDS: Acoustic Space by Behaviour</div>
+      <div class="card">
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">
+          This is the critical test. We strip away the call-type differences — only skraak calls
+          remain (42 of 53). If there were no behavioural signal within skraak, these dots would
+          be randomly scattered by behaviour. Instead, foraging (orange) and flying (teal) calls
+          show partial separation from perching (purple). This means skraak isn't one uniform call —
+          there are <b>sub-acoustic variants</b> that track what the bird was doing, even though
+          our classifier lumps them all as "skraak."
+        </p>
+        <img src="semantic_acoustic/within_skraak_mds.png" alt="MDS plot of skraak-only acoustic space, coloured by behaviour" style="width:100%;max-width:500px;border-radius:4px;border:1px solid var(--rule);display:block;margin:0 auto">
+      </div>
+
+      <div class="section-label">Call Type × Behaviour Cross-Tabulation</div>
+      <div class="card">
+        <table style="width:100%;font-size:.88rem;border-collapse:collapse">
+          <thead><tr style="border-bottom:1px solid var(--rule)"><th style="text-align:left;padding:.4rem">Call Type</th><th>Perching</th><th>Foraging</th><th>Flying</th><th style="text-align:left;padding:.4rem">Pattern</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:.4rem"><b>Skraak</b></td><td class="num">30</td><td class="num">5</td><td class="num">7</td><td style="padding:.4rem;font-size:.82rem;color:var(--ink-soft)">General-purpose — spans all behaviours</td></tr>
+            <tr style="border-top:1px solid var(--rule)"><td style="padding:.4rem"><b>Slide whistle</b></td><td class="num">0</td><td class="num">6</td><td class="num">0</td><td style="padding:.4rem;font-size:.82rem;color:var(--ink-soft)">Exclusively foraging (6/6)</td></tr>
+            <tr style="border-top:1px solid var(--rule)"><td style="padding:.4rem"><b>Whistle</b></td><td class="num">4</td><td class="num">1</td><td class="num">0</td><td style="padding:.4rem;font-size:.82rem;color:var(--ink-soft)">Mostly perching (4/5)</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:.8rem;font-size:.82rem;color:var(--ink-soft)">
+          Slide whistle maps perfectly to foraging; whistle maps to perching; skraak spans all three
+          — which is why the within-skraak test is the important one.
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:1.5rem;border-left:3px solid var(--neu)">
+        <div class="mark">Caveats</div>
+        <div style="font-size:.88rem">
+          <ul style="margin:.3rem 0 .3rem 1.2rem;line-height:1.6">
+            <li><b>n = 53 calls, 3 behaviours</b> — small sample, especially flying (7) and foraging (12)</li>
+            <li><b>Categories are coarse</b> — finer context (alarm vs contact vs agonistic) might reveal stronger structure</li>
+            <li><b>No individual ID</b> — controlling for individual bird could strengthen or change the signal</li>
+            <li><b>Acoustic proximity ≠ perception</b> — Elie et al. tested what birds actually confuse; we're testing acoustic structure as a proxy</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:1rem;font-size:.84rem">
+        <div class="mark">Data & Code</div>
+        <div>
+          Data: Fraser Campbell's <code>vocalisations_master.xlsx</code> (55 annotations, 53 with valid features).
+          Code: <code>/opt/data/semantic_acoustic_analysis.py</code>.
+          Results: <code>/opt/data/semantic_acoustic_analysis/results.json</code>.
+          Reference: <a href="https://doi.org/10.1126/science.ads8482">Elie et al. (2025), Science</a> — semantic categorisation of calls in zebra finches.
+        </div>
+      </div>
     </div>
 
     <!-- TOUTOUWAI sub-panel — Donald dataset (Harry Donald, Shaw lab) -->
