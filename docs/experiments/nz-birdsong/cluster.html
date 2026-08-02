@@ -796,7 +796,11 @@ function initReview() {
   if (!DATA) return;
   reviewPoints = DATA.points.filter(p => p.assignment_confidence === 'low').map(p => p.id);
   const unit = currentSpecies === 'kaka' ? 'ambiguous calls' : 'ambiguous syllables';
-  document.getElementById('reviewHeader').textContent = `Review ${unit} `;
+  // Write the heading's own text node, NOT its textContent — textContent on the
+  // <h3> deletes its child <span id="reviewCount">, and the next line then threw
+  // on the null span, aborting the rest of init (the count badge never appeared
+  // and updateReviewVisibility never ran).
+  document.getElementById('reviewHeader').firstChild.nodeValue = `Review ${unit} `;
   document.getElementById('reviewCount').textContent = `(${reviewPoints.length})`;
   updateReviewVisibility();
 }
