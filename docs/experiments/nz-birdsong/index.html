@@ -426,6 +426,14 @@ tr:hover td{background:var(--surface-2)}
     <div class="fig"><div class="n">47</div><div class="l">Calls<br>detected</div></div>
   </div>
 
+  <p style="font-size:.8rem;color:var(--ink-faint);margin:.4rem 0 1rem">Checked 5 August 2026: an internal audit
+  flagged <b>3,156</b> as a possible copy-paste error, because the same figure appears on this page both as a
+  recording count and as the bellbird <i>click</i> syllable count. <b>It is a coincidence &mdash; both are
+  correct.</b> Recordings = 3,096 Xeno-Canto (Methods, below) + 60 Koe = 3,156. Clicks = 3,156 of 13,086 bellbird
+  syllables = 24.1%, consistent with every other row of that table. We record the check here rather than silently
+  leaving it, so the next reader does not have to repeat it. Note that <b>3,096 is the raw query result</b>; after
+  filtering, the clean identified dataset is <b>2,244 recordings across 175 species</b>.</p>
+
   <div class="note">
     <div class="mark">Scope</div>
     <div>This is an <b>extended replication</b> of Hill &amp; Ji (2014) using crowd-sourced field recordings. We analysed all <b>232 tūī A-quality songs</b>, <b>94 korimako</b>, and <b>47 kākā</b> recordings, with geographic variation across 10 regions. Discrepancies with Hill's manual classification are discussed.</div>
@@ -717,6 +725,9 @@ tr:hover td{background:var(--surface-2)}
             <tr><td><b style="color:#8c4a2c">Harsh/Buzz</b></td><td class="num">0</td><td class="num">0.0%</td><td>Broadband noisy syllables (not detected)</td></tr>
           </tbody>
         </table>
+        <p style="font-size:.8rem;color:var(--ink-faint);margin:.6rem 0 0">Rows sum to 13,086. The Click count of
+        3,156 is identical to the recording count in the page header purely by coincidence &mdash; both were
+        verified independently on 5 August 2026; see the note under the header figures.</p>
       </div>
 
       <div class="note" style="margin-top:1.5rem">
@@ -1427,11 +1438,117 @@ tr:hover td{background:var(--surface-2)}
       <h4>Deep Learning: CNN Segmentation</h4>
       <p>Beyond the rule-based pipeline, we trained a <b>TweetyNet-style convolutional neural network</b> for
       syllable <em>segmentation</em> &mdash; finding the boundaries of vocal units. <b>It does not categorise
-      syllables; see the correction immediately below.</b>
+      syllables; see the 29 July correction below.</b>
       The model processes raw spectrograms and predicts frame-level labels, then post-processing extracts contiguous
       segments with confidence thresholds and minimum-duration filtering. This architecture, introduced by
       <a href="https://doi.org/10.1038/s41592-022-01608-2">Cohen et al. (2022)</a> for birdsong annotation, learns
       spectral-temporal features directly from data rather than relying on hand-crafted rules.</p>
+
+      <div class="note" style="margin:1rem 0">
+        <div class="mark">Correction (5 August 2026) &mdash; new headline result, and its limits</div>
+        <div>
+        <p style="margin:0 0 .7rem">This page has shown <b>F1=0.784</b> as the bellbird segmentation result while
+        also stating, three paragraphs below, that <b>the artifact behind 0.784 no longer exists and the number does
+        not reproduce</b>. That is not a tenable thing to keep publishing. Meanwhile the best-provenanced comparison
+        we have has sat unpublished on a lab machine since 29 July. Both halves of that are corrected here. The
+        0.784 discussion below is <b>retained unedited</b> &mdash; it is the record of how we got here.</p>
+
+        <p style="margin:0 0 .7rem"><b>The current result: CNN F1 = 0.8577, FIR envelope F1 = 0.7212</b>
+        (&Delta; = +0.137) on split <code>88513a3aaa91</code>. Unlike 0.784, this one is a held-out estimate and
+        both arms were scored the same way:</p>
+
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <table style="width:100%;min-width:480px;font-size:.85rem;margin:0 0 .7rem">
+          <thead><tr><th style="text-align:left">Method</th><th>Threshold</th><th>P</th><th>R</th><th>F1</th></tr></thead>
+          <tbody>
+            <tr><td><b>CNN (TweetyNet-style)</b></td><td class="num">0.45</td><td class="num">0.846</td><td class="num">0.870</td><td class="num"><b>0.8577</b></td></tr>
+            <tr><td><b>FIR envelope</b></td><td class="num">0.70</td><td class="num">0.882</td><td class="num">0.610</td><td class="num"><b>0.7212</b></td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p style="margin:0 0 .7rem"><b>15 held-out test files, 246 ground-truth segments.</b> One matching
+        criterion for both arms &mdash; <code>IoU &ge; 0.3 OR overlap &ge; 0.5</code>, greedy by detected length.
+        Both operating thresholds chosen by argmax F1 on a <i>separate validation split</i>, not on test.
+        Paired sign test over the 15 test files: <b>12 favour the CNN, 2 favour FIR, 1 tie</b>,
+        <b>p = 0.035 two-sided</b>. (The value recorded in the source artifact, 0.0176, is one-sided; we publish
+        the two-sided figure.) Source: <code>rescore_final_results.json</code>, 29 July 2026.</p>
+
+        <p style="margin:0 0 .7rem"><b>Now the part that matters more than the number. This is not evidence that
+        the CNN generalises, and we are not claiming that it does.</b></p>
+
+        <ul style="margin:0 0 .7rem">
+          <li><b>n = 15 test files.</b> Every claim on this page about segmentation rests on fifteen recordings.</li>
+          <li><b>One site, one week.</b> All 60 files in this split come from a single site (CUV), recorded across
+          five days of November 2016. There is no second site and no second season.</li>
+          <li><b>Bird-level leakage in both directions.</b> The split is file-disjoint &mdash; no recording appears
+          in two partitions &mdash; but it is <b>not bird-disjoint</b>. Of the 12 distinct birds in the test set,
+          <b>4 also appear in training</b> (AMH015, AMH036, BAE042, WHW021) and <b>6 also appear in validation</b>
+          (BAE037, BAE042, BAE047, DHB008, DHB016, WHW021). In one case the annotator's own filename says so:
+          <code>AMH015_01_M&hellip;TrumpetSongSameBirdAsTr014Harmonics.wav</code> is in train and
+          <code>AMH015_02_M&hellip;</code> &mdash; same bird, same song type &mdash; is in test.</li>
+          <li><b>The operating point was selected on birds present in the test set.</b> This follows from the two
+          facts above and is the one that does the most damage. The methodology note "threshold tuned on
+          validation, not test" is true at the file level and <b>false at the level that matters</b>, because half
+          the test birds are validation birds.</li>
+        </ul>
+
+        <p style="margin:0"><b>So read 0.8577 as within-individual, within-site, within-week segmentation
+        performance.</b> That is a real quantity and a reasonable place to be after five weeks. It is not the
+        quantity a reader will assume from "CNN F1 = 0.858", and it does not support "this method works on New
+        Zealand birdsong." A re-split grouped by bird rather than by file is the next measurement, and we expect
+        the number to fall; <b>the size of that fall is the finding</b>, not a failure.</p>
+        </div>
+      </div>
+
+      <div class="note" style="margin:1rem 0">
+        <div class="mark">What we do not yet know (5 August 2026)</div>
+        <div>
+        <p style="margin:0 0 .7rem">Five open questions that bear directly on everything above. None of these has
+        an answer yet, and we would rather say so here than have a reader discover it. Per the kaupapa this project
+        works under, a finding is <i>a baton and everything the next runner needs to succeed</i> &mdash; which
+        means the unresolved parts are part of the finding, not an embarrassment to be tidied away.</p>
+
+        <ul style="margin:0 0 .7rem">
+          <li><b>Whether data augmentation helps or hurts &mdash; direction unresolved.</b> A 29 July run found
+          augmentation improved F1 (+0.033); a 3 August run found it hurt (&minus;0.078). The two runs are
+          <b>not comparable</b>: the 3 August run's FIR baseline collapsed from 0.721 to 0.424 because the
+          registered baseline was never loaded, and its "augmented" arm reused a borrowed checkpoint rather than
+          retraining. Neither run supersedes the other. <b>We therefore publish no augmentation qualifier on the
+          number above</b>, in either direction, until a clean ablation exists.</li>
+
+          <li><b>How WhisperSeg compares &mdash; currently unmeasurable.</b> WhisperSeg is being evaluated in
+          parallel, but its scoring counts a prediction correct on <b>any overlap</b> with ground truth, while the
+          CNN and FIR numbers require <code>IoU &ge; 0.3 or 50% overlap</code>. A more permissive matcher produces
+          a higher F1 for free. <b>No WhisperSeg-vs-CNN comparison appears on this page and none should be quoted
+          from elsewhere</b> until all three methods are re-scored through the single canonical matcher. This is
+          the same error class we publicly withdrew in July; we are declining to make it a third time.</li>
+
+          <li><b>The annotation ceiling &mdash; unmeasured, and it bounds every number here.</b> Every F1 on this
+          page measures agreement with <b>one person's</b> annotations, treated as truth. But where a syllable
+          starts is genuinely ambiguous, and two experienced annotators will disagree. If human annotators agree
+          with each other at F1 &asymp; 0.85, then <b>0.8577 is at the ceiling</b> and further tuning is fitting one
+          annotator's habits. If they agree at 0.97, there is real headroom. <b>We currently cannot tell which
+          world we are in</b>, which makes this the highest-value unmeasured quantity in the project.</li>
+
+          <li><b>How much of the result survives a bird-grouped split.</b> See the correction above: the current
+          split is file-disjoint but not bird- or site-disjoint. Until the re-split is run, the reported figure
+          cannot be read as generalisation to unseen birds, let alone unseen sites.</li>
+
+          <li><b>Why the label set was cut from 41 families to 14.</b> The Koe taxonomy carries 41 label families;
+          the trainers filter to 14 by a minimum-count threshold. <b>That threshold is not recorded in any
+          provenance block</b>, so we cannot currently state what fraction of segments the 27 dropped families
+          represent, or how the result moves at a different cut. This is a bookkeeping failure rather than a
+          scientific one, but it is unrecoverable without a re-run.</li>
+        </ul>
+
+        <p style="margin:0">One more, smaller: the seven CNN spectrogram figures further down this page carry a
+        <b>&ldquo;CNN prediction (bottom)&rdquo; legend burned into the image pixels that is false</b> &mdash; the
+        panel does not show what the legend says. This is disclaimed in the prose beside them and the figures have
+        deliberately not been regenerated, so the erroneous legend remains visible rather than being quietly
+        repaired.</p>
+        </div>
+      </div>
 
       <div class="note" style="margin:1rem 0">
         <div class="mark">Correction (29 July 2026) &mdash; this model does not categorise syllables</div>
