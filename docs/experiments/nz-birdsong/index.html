@@ -1455,7 +1455,10 @@ tr:hover td{background:var(--surface-2)}
 
         <p style="margin:0 0 .7rem"><b>The current result: CNN F1 = 0.8577, FIR envelope F1 = 0.7212</b>
         (&Delta; = +0.137) on split <code>88513a3aaa91</code>. Unlike 0.784, this one is a held-out estimate and
-        both arms were scored the same way:</p>
+        both arms were scored the same way. The CNN here is the <b>SpecAugment-trained</b> model &mdash; we name
+        the model because a later run appeared to show augmentation hurting, and that run turned out to be
+        invalid (it resampled the audio to a rate the model was never trained at, which cost 0.13 F1 on its own).
+        Whether augmentation helps is currently <b>unknown</b>; see &ldquo;What we do not yet know&rdquo;.</p>
 
         <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
         <table style="width:100%;min-width:480px;font-size:.85rem;margin:0 0 .7rem">
