@@ -364,11 +364,21 @@ tr:hover td{background:var(--surface-2)}
   .two-col{grid-template-columns:1fr}
   .card{padding:1.2rem}
   .masthead{padding:3rem 0 1.4rem}
-  .note{flex-direction:column;gap:.55rem}
+  /* metric strings like F1=0.784 (P=0.753, R=0.818) are single unbreakable tokens */
+  .note{flex-direction:column;gap:.55rem;overflow-wrap:anywhere}
+  .note .mark{padding-top:0}
   .gallery{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
   #map{height:360px}
   .syl-label{width:90px;font-size:.68rem}
-  .pbar-label{width:118px;font-size:.65rem}
+  .pbar-label{width:118px;font-size:.65rem;overflow-wrap:anywhere}
+  .pbar-val{width:48px}
+}
+/* The mark is a nowrap eyebrow on wide screens, but two of the correction marks
+   are full sentences. Below 1024px (iPad portrait is 768px, above the breakpoint
+   used here) nowrap pushes them past the note and body overflow-x:hidden clips
+   the text away entirely, so let them wrap. */
+@media (max-width:1024px){
+  .note .mark{white-space:normal}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -1542,7 +1552,8 @@ tr:hover td{background:var(--surface-2)}
       than call types (e.g. <code>bellbird:1018.63239577395</code>), so no cross-species categorisation was
       performed.</p>
 
-      <table style="width:100%;font-size:.85rem;margin:1rem 0">
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table style="width:100%;min-width:480px;font-size:.85rem;margin:1rem 0">
         <thead><tr><th style="text-align:left">Dataset</th><th>Species</th><th>Recordings</th><th>Segments</th><th>Label types</th><th>Source</th></tr></thead>
         <tbody>
           <tr><td><b>Koe</b></td><td>Bellbird (korimako)</td><td class="num">60</td><td class="num">829</td><td class="num">74 &dagger;</td><td>Fukuzawa et al. (2020)</td></tr>
@@ -1550,6 +1561,7 @@ tr:hover td{background:var(--surface-2)}
           <tr><td><b>Campbell</b></td><td>Kākā</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td>Fraser Campbell, Shaw Lab (VUW) — forthcoming</td></tr>
         </tbody>
       </table>
+      </div>
       <p style="font-size:.8rem;color:var(--ink-faint);margin:-.5rem 0 1rem">&dagger; Corrected 29 July 2026. This
       cell previously read &ldquo;3&rdquo;. The Koe corpus carries 74 syllable labels across 13 families
       (<code>segment.extraattrvalue.json</code>); the CNN described above was mistakenly trained on 829 frequency
