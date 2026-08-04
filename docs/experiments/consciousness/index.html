@@ -542,6 +542,11 @@ header .meta {
   .two-col { grid-template-columns: 1fr; }
   .scope-line { grid-template-columns: 30px 1fr 40px 120px; }
   .scope-line .active-assumptions { grid-column: 1 / -1; }
+  /* long DOIs are single unbreakable tokens and spill past the card edge */
+  #premise-evidence-list { overflow-wrap: anywhere; }
+  /* the theory table now lives in a horizontal scroller; keep its columns
+     readable rather than letting every cell wrap to one word per line */
+  .theory-table { min-width: 720px; }
 }
 
 /* Cogitate highlight box */
@@ -682,6 +687,7 @@ footer a { color: var(--blue); text-decoration: none; }
   <div class="card">
     <h3>All Catalogued Theories</h3>
     <p style="font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 16px;">Click any theory to see its argument structure, scope line, and evidence assessment.</p>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
     <table class="theory-table" id="theory-table">
       <thead>
         <tr>
@@ -694,6 +700,7 @@ footer a { color: var(--blue); text-decoration: none; }
       </thead>
       <tbody id="theory-table-body"></tbody>
     </table>
+    </div>
   </div>
 </div>
 
@@ -750,8 +757,8 @@ footer a { color: var(--blue); text-decoration: none; }
     <h4 style="font-family: var(--serif); margin: 16px 0 8px;">Testability Rubric</h4>
     <p style="font-size: 0.9rem;">Each conclusion in a theory's scope line is scored on five dimensions (0–1). The theory-level score is a weighted mean (core conclusions weighted 2×, derived conclusions 1×). <strong>Citation count and publication volume do NOT enter the score</strong> — a famous theory with many papers is not necessarily testable if its core constructs cannot be measured.</p>
 
-    <div style="background: #faf6ed; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; font-size: 0.85rem;">
-      <table style="width:100%; border-collapse:collapse; font-family: var(--mono);">
+    <div style="background: #faf6ed; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin: 12px 0; font-size: 0.85rem; overflow-x:auto; -webkit-overflow-scrolling:touch;">
+      <table style="width:100%; min-width:640px; border-collapse:collapse; font-family: var(--mono);">
         <thead>
           <tr style="border-bottom: 2px solid var(--border);">
             <th style="text-align:left; padding:6px 8px; font-size:0.7rem; text-transform:uppercase; color:var(--ink-soft);">Dimension</th>

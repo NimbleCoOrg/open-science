@@ -50,6 +50,21 @@ header .sub { font-size:11px; color:var(--text2); margin-top:2px; }
 .fisher-bar { display:flex; align-items:center; gap:4px; margin:1px 0; }
 .fisher-bar-fill { height:8px; border-radius:2px; }
 #speciesSelector { background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px;padding:6px 8px;font-family:var(--mono);cursor:pointer; }
+
+/* ---- Mobile ----
+   The desktop layout is a fixed 100vh flex row: a 280px sidebar plus a 2x2 canvas
+   grid. Below ~760px that leaves ~110px for the whole grid (~41px per plot), which
+   is unusable. Stack instead and let the page scroll; the plots already resize
+   themselves through a ResizeObserver on .canvas-wrap. */
+@media (max-width:760px) {
+  body { height:auto; min-height:100vh; overflow:auto; }
+  header .controls { flex-wrap:wrap; gap:8px; }
+  header h1 { font-size:14px; }
+  .main { flex-direction:column; overflow:visible; }
+  .grid-area { padding:6px; }
+  .grid { grid-template-columns:1fr; grid-template-rows:repeat(4,minmax(240px,1fr)); }
+  .sidebar { width:100%; min-width:0; border-left:none; border-top:1px solid var(--border); overflow-y:visible; }
+}
 </style>
 </head>
 <body>

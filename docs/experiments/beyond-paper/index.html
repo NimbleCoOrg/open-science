@@ -207,6 +207,13 @@ p b{font-weight:600}
 .tl-item .yr{font-family:var(--mono);font-size:.76rem;font-weight:600;color:var(--accent-2);letter-spacing:.08em}
 .tl-item h4{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:.3rem 0 .4rem;color:var(--ink)}
 .tl-item p{font-size:.9rem;color:var(--ink-soft);margin:0;max-width:none}
+/* Below ~640px the alternating two-sided timeline leaves ~155px of text column,
+   which crushes headings and spills long words. Collapse to a single left rail. */
+@media(max-width:639px){
+  .timeline::before{left:6px;transform:none}
+  .tl-item,.tl-item:nth-child(even){width:100%;left:0;padding:0 0 1.6rem 1.9rem}
+  .tl-item .dot,.tl-item:nth-child(even) .dot{left:0;right:auto}
+}
 
 /* ============ LANDSCAPE TABLE ============ */
 .landscape-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.92rem}
