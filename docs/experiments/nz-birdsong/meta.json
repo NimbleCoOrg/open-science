@@ -1,0 +1,10 @@
+{
+  "slug": "nz-birdsong",
+  "title": "New Zealand Birdsong",
+  "blurb": "Vocalisation analysis of tūī, korimako & kākā from Xeno-Canto open data — syllable classification, geographic variation, annotation & clustering tools, and a Te Reo Manu learning game",
+  "emoji": "🐦",
+  "status": "published",
+  "updated": "2026-08-04",
+  "order": 2,
+  "source": "generated in hermes-matilde container on the Mini; source not yet in repo"
+}
