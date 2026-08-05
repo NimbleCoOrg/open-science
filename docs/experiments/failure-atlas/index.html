@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Failure Atlas: an agent system reads its own logs</title>
-<meta name="description" content="An agent pipeline mined 2,335 sessions across two agent ecosystems, adjudicated 185 of them with an LLM judge, graded its own detectors, and killed its own headline experiment on the clean re-run.">
+<meta name="description" content="An agent pipeline read 2,335 sessions of its operator's agent logs, adjudicated 185 failures with an LLM judge, pre-registered five behavioral contrasts, and killed every one: three dead, one null, one marginal. The method is the contribution.">
 <meta property="og:title" content="The Failure Atlas">
-<meta property="og:description" content="2,335 sessions across two agent ecosystems, 13 detectors, 185 adjudicated labels, one pre-registered experiment that the study later overturned, and a precision table that grades the whole apparatus.">
+<meta property="og:description" content="A method for studying agent failure that pre-registers its hypotheses and then adversarially kills its own: 2,335 sessions, 185 adjudicated labels, 13 detectors, five pre-registered contrasts, none survived intact.">
 <meta property="og:type" content="article">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a10'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%2374e2ab' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%23f3c079'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -282,21 +282,21 @@ footer p{font-size:.9rem}
   <div class="wrap">
     <div class="eyebrow">cyborg.garden · open science · experiment 002</div>
     <h1>The Failure <em>Atlas</em></h1>
-    <p class="kicker">An agent pipeline read months of its own logs across two agent ecosystems and <b>catalogued every way the agents failed the people using them</b>.</p>
-    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,335 sessions</b> (about 621,000 logged events, January through August 2026) across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, ran a pre-registered experiment, and wrote countermeasures with the metric each one must move.</p>
+    <p class="kicker">An agent pipeline read its operator's logs for the ways agent work breaks, then <b>tried to kill every pattern it found</b>.</p>
+    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,335 sessions</b> (about 621,000 logged events, January through August 2026) across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, and ran pre-registered experiments that mostly did not survive.</p>
 
     <div class="hero-stats">
-      <div class="stat" style="--stat-accent:var(--candle)">
-        <div class="num">10<small>/10</small></div>
-        <div class="cap">Every adjudicated case of the agent <b>declaring work complete before it was</b> ("merged," "running," "verified") was judged the agent's fault. It is the largest failure mode to score 100% agent fault (severity 2.9 of 4, n=10); the next-largest modes at 100% fault are only n=6.</div>
-      </div>
       <div class="stat" style="--stat-accent:var(--green)">
-        <div class="num">1.1&times;</div>
-        <div class="cap">The study's pre-registered headline, <b>after the study killed it</b>. Cohorts split by project-name keywords showed checkable work failing mechanically 4.4&times; more than open-ended work. Redefine "checkable" as whether the session actually ran a test, and the ratio falls to 1.1&times;, under the 1.5 kill line.</div>
+        <div class="num">2,335</div>
+        <div class="cap">Sessions read end to end. <b>622</b> are one operator's coding agents; <b>1,713</b> are a fleet of bots that many different people talk to across four chat platforms. Nothing was sampled out at intake.</div>
+      </div>
+      <div class="stat" style="--stat-accent:var(--candle)">
+        <div class="num">185</div>
+        <div class="cap">Failures read in full and ruled on by an <b>LLM judge</b>: real failure or false alarm, whose fault, how severe. This adjudicated set is the study's only hard evidence. Everything else is a tripwire count.</div>
       </div>
       <div class="stat" style="--stat-accent:var(--grimoire)">
-        <div class="num">0.25</div>
-        <div class="cap">The precision of this study's <b>own dishonesty detector</b>. The failures that matter most, an agent asserting something it never checked, are the hardest to catch from logs. The study measured that about itself and prints it here.</div>
+        <div class="num">0<small> of 5</small></div>
+        <div class="cap"><b>Pre-registered behavioral contrasts that survived intact.</b> Three were killed on a clean re-run, one came back null, one shrank to a marginal effect. The study's main output is the list of its own generalizations that did not hold. It caught itself.</div>
       </div>
     </div>
     <div class="corpus-row">
@@ -307,7 +307,7 @@ footer p{font-size:.9rem}
       <span><b>13</b> detectors</span>
       <span><b>185</b> adjudicated labels</span>
       <span><b>2</b> rounds</span>
-      <span><b>1</b> pre-registered experiment</span>
+      <span><b>5</b> pre-registered contrasts</span>
     </div>
   </div>
 </header>
@@ -317,7 +317,7 @@ footer p{font-size:.9rem}
     <button role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" data-tab="overview"><span class="tn">00</span>Overview</button>
     <button role="tab" id="tab-catches" aria-controls="panel-catches" aria-selected="false" tabindex="-1" data-tab="catches"><span class="tn">01</span>Catches</button>
     <button role="tab" id="tab-shape" aria-controls="panel-shape" aria-selected="false" tabindex="-1" data-tab="shape"><span class="tn">02</span>The Shape</button>
-    <button role="tab" id="tab-axis" aria-controls="panel-axis" aria-selected="false" tabindex="-1" data-tab="axis"><span class="tn">03</span>The Axis</button>
+    <button role="tab" id="tab-axis" aria-controls="panel-axis" aria-selected="false" tabindex="-1" data-tab="axis"><span class="tn">03</span>What Didn't Hold</button>
     <button role="tab" id="tab-instrument" aria-controls="panel-instrument" aria-selected="false" tabindex="-1" data-tab="instrument"><span class="tn">04</span>The Instrument</button>
     <button role="tab" id="tab-ecosystems" aria-controls="panel-ecosystems" aria-selected="false" tabindex="-1" data-tab="ecosystems"><span class="tn">05</span>Two Ecosystems</button>
     <button role="tab" id="tab-drift" aria-controls="panel-drift" aria-selected="false" tabindex="-1" data-tab="drift"><span class="tn">06</span>Preventing Drift</button>
@@ -330,8 +330,10 @@ footer p{font-size:.9rem}
 <!-- ============ OVERVIEW ============ -->
 <section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
   <h2 class="section-h">What was mined, <em>and how</em></h2>
-  <p class="sec-kicker">How the atlas is built: five small Python steps turn raw agent logs into the aggregate counts every other tab reads.</p>
+  <p class="sec-kicker">A method for studying agent failure: five small Python steps turn raw agent logs into the aggregate counts every other tab reads.</p>
   <p>The corpus is everything, and it spans <b>two different agent ecosystems</b>: <b>622 top-level coding-agent sessions</b> (one operator's own runs) and <b>1,713 assistant-fleet sessions</b> (many different people talking to bots across four chat platforms). Together: 2,335 sessions and roughly 621,000 events, January to August 2026. Nothing was sampled out at intake.</p>
+  <p><b>What leaves the machine is narrow.</b> The public layer is aggregate statistics over one operator's own agent logs, plus the pipeline that produced them. The transcripts, the literature review, and the larger dataset stay private; anyone can run the same method on logs that are theirs, and forks could pool their aggregates into one map later.</p>
+  <p><b>The collaboration limit is the finding.</b> The study set out to separate two things that read alike in a log: the agent failed, and the collaboration failed. It could not do that cleanly. The signal of relational failure (a user's frustration, a challenge to the agent's claim) is produced by the human, so it cannot be measured where no human is present. That limit is built into log-only study.</p>
   <p class="figcap" style="border-left-color:var(--candle)"><b>A session is not a file.</b> Those 2,335 sessions are spread across 6,062 session <em>files</em>, because one run a human starts spawns many agent sidechain transcripts (3,437 of them on the coding side alone). An earlier pass of this very study counted files as sessions and reported <b>"4,059 sessions"</b>, overstating the coding corpus by about 6.5&times;. That was the study's own assert-without-checking failure, the exact mode this atlas catalogs, caught by re-reading the extractor. The number here is top-level sessions.</p>
   <p>The pipeline has five stages, each a plain Python file anyone can read:</p>
   <ol class="stages">
@@ -357,14 +359,14 @@ footer p{font-size:.9rem}
   </div>
   <p class="figcap">Five stages. Raw logs enter on the left; only aggregates exit on the right, into <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">analysis.json</code>.</p>
 
-  <p>Every chart on this page is a count, a rate, or a distribution computed from private logs. The point of building it this way is that you can do the same: run the pipeline over logs that are yours, publish the aggregates, keep the transcripts. If enough people do, the separate maps start to pool into one.</p>
+  <p>Every chart on this page is a count, a rate, or a distribution computed from private logs, never a quote from one.</p>
 </section>
 
 <!-- ============ CATCHES ============ -->
 <section class="panel" id="panel-catches" role="tabpanel" aria-labelledby="tab-catches" hidden>
   <h2 class="section-h">Five <em>catches</em></h2>
   <p class="sec-kicker">Five real failures the pipeline pulled from the transcript windows, each labelled by the mechanism a fix can grip.</p>
-  <p>A catch is evidence right now; a claim is a bet on future evidence. These five came out of the adjudication windows. Each one names its mechanism, because the mechanism is what a countermeasure can hold onto.</p>
+  <p>These are the results that stand. Each came out of an adjudication window, and each names the mechanism a fix can hold onto. Where the behavioral generalizations died (see What Didn't Hold), the specific catches survived.</p>
 
   <div class="cards">
     <div class="card">
@@ -451,23 +453,43 @@ footer p{font-size:.9rem}
 
 <!-- ============ THE AXIS ============ -->
 <section class="panel" id="panel-axis" role="tabpanel" aria-labelledby="tab-axis" hidden>
-  <h2 class="section-h">The objectivity <em>axis</em></h2>
-  <p class="sec-kicker">The study's headline bet, and how a cleaner re-run of the study killed it.</p>
-  <p>Before touching the incident counts, the study wrote down a hypothesis and its kill condition. <b>Hypothesis:</b> in sessions where the work is objectively verifiable, such as code with tests, the ratio of mechanical failure (tool errors, error loops, repetition) to relational failure (frustration, honesty challenges, self-corrections) will be at least 2&times; higher than in low-verifiability work like organizational memory, writing, and planning. <b>Kill condition:</b> a ratio of ratios below 1.5&times;.</p>
-  <p><b>Run 01</b> split the two cohorts by hand-picked project-name keywords: agent-infrastructure and API project names counted as objective, memory and writing project names as subjective. It returned <b>4.4&times;</b> on the primary reading, with a sensitivity band to 6.2&times;, well over the 2.0 pass line. It survived precision weighting, survived dropping the largest project from the objective cohort, and survived recomputation with sidechains included. An adversarial verifier agent re-derived every number. It looked solid.</p>
-  <p>It had one disclosed weakness: the keyword list was fixed after seeing which sessions were which. Every robustness check above varied something <em>inside</em> that keyword framing, and none of them questioned the framing itself. Robustness to variations inside a framing is not robustness of the framing, and that gap turned out to be the whole result.</p>
+  <h2 class="section-h">What did not <em>hold</em></h2>
+  <p class="sec-kicker">The study pre-registered five behavioral contrasts, then attacked each one. None survived intact.</p>
+  <p>A catch is evidence in hand. A generalization is a bet that the evidence points somewhere. The study drew five such bets across the corpus, wrote each one down with its kill condition before seeing the counts, then went after its own framing. Three died, one came back null, one shrank to a marginal effect. In a field where most agent claims ship unverified, the list of the study's own dead generalizations is the result.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3><span class="cnum">KILLED</span>Objective work fails mechanically 4.4&times; more</h3>
+      <div class="story">The headline. Cohorts split by hand-picked project-name keywords gave 4.4&times;. Redefine the objective pole behaviorally (did the session actually run a test) and it falls to <b>1.1&times;</b>, under the 1.5 kill line. Run 01 was sorting sessions by project type, which says nothing about whether a task has a checkable answer.</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">KILLED</span>Agents self-correct 5&times; more with a human present</h3>
+      <div class="story"><b>79% of the "corrections" are the "you're right" politeness token</b>, and the autonomous arm says it to orchestrators too. Count only self-initiated corrections and the gap is not significant (z about 1.1).</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">KILLED</span>The chat platform shapes the failure mode</h3>
+      <div class="story">The same bot on Discord and Signal is indistinguishable. Within one platform the bot-to-bot spread is <b>wider than the whole cross-platform range</b>. What separates the bots is how each one was deployed, and the platform barely registers.</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">NULL</span>Group chats fail differently than one-to-one</h3>
+      <div class="story">No significant difference (z about 0.67). The contrast was pre-registered and it came back flat.</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">WOUNDED</span>Orchestrator subagents fail more mechanically</h3>
+      <div class="story">Mostly a tautology: <b>4 of 6 relational detectors cannot fire without a human</b>, and subagents have none. The honest residual is a marginal ~1.9&times; lower self-initiated correction under delegation (p about 0.02).</div>
+    </div>
+  </div>
+
+  <p><b>The objectivity kill, walked through</b>, because it shows the method turning on itself. Before touching counts, the study bet that verifiable work (code with tests) fails mechanically at least 2&times; more than open-ended work (writing, memory, planning), kill line at 1.5&times;. Run 01 split the cohorts by project-name keyword and returned <b>4.4&times;</b>, clearing the pass line and surviving every robustness check run inside that framing: precision weighting, dropping the largest project, recomputing with sidechains, an adversarial verifier re-deriving each number. The framing was the flaw. The keyword list was fixed after seeing which sessions were which, and none of those checks questioned the framing itself.</p>
 
   <div class="axis-fig">
-    <div class="chart-title">Mechanical-to-relational failure ratio: run 01 (keyword cohorts) vs run 02 (behavioral cohorts)</div>
-    <div class="chart-units">ratio of ratios · pre-registered pass threshold ≥ 2.0 · kill condition &lt; 1.5</div>
+    <div class="chart-title">The scorecard: five pre-registered contrasts, and the objectivity collapse</div>
+    <div class="chart-units">top: each contrast's outcome (killed / null / wounded) · bottom: the objectivity ratio of ratios against the 2.0&times; pass and 1.5&times; kill lines · hover or focus a row for the kill mechanism</div>
     <div id="chart-axis"></div>
   </div>
-  <p class="figcap">Run 01 returned 4.4&times; on keyword cohorts and cleared the 2.0&times; pass line; run 02 returned 1.1&times; on behavioral cohorts and fell into the kill zone, so the tightened re-run overturned the finding. <b>The behavioral rule:</b> a session counts as objective if it actually ran at least one test command, and subjective if it only made prose edits and ran no tests. <b>Weakest honest reading:</b> run 01's cohorts were the clearest keyword-picked tails of each project type, which is exactly the confound run 02 was built to remove.</p>
+  <p class="figcap">Five bets, none left standing: three killed on a clean re-run, one came back null, one shrank to wounded. The clearest kill is the objectivity collapse below. Run 01 returned 4.4&times; on keyword cohorts and cleared the 2.0&times; pass line; run 02 returned 1.1&times; on behavioral cohorts and fell into the kill zone. <b>The behavioral rule:</b> a session is objective if it ran at least one test command, subjective if it made prose edits and ran none.</p>
 
-  <p><b>Run 02</b> fixed the disclosed weakness by defining the objective pole behaviorally instead of by keyword: a session is objective if it actually ran a test command, subjective if it made prose edits and ran no tests. This rule was pre-registered before the counts were seen. The cohorts came out to <b>194 objective sessions, 88 subjective, and 340 excluded as neither</b>, of 622 coding sessions. The ratio of ratios came back <b>1.10&times;</b> (1.23&times; under a broader grouping of the modes), below the 1.5 kill line. The effect collapsed.</p>
-  <p>The plain reading: <b>run 01 was measuring project type, not objectivity.</b> Its keyword "objective" cohort was the agent-infrastructure work, which is tool-error-heavy for reasons that have nothing to do with whether a task has a checkable answer; its keyword "subjective" cohort was the writing and memory work. Confounding project type with objectivity produced a large, robust-looking, pre-registered, adversarially-verified number that does not hold once the axis is defined by behavior. This is the study's own tightening catching the study's own headline. Both runs stay in the record: 01 as the finding, 02 as the correction that supersedes it.</p>
-  <p>Two caveats ride with the kill, so they don't have to be discovered: the test-execution proxy is coarse (a session can run a test and still be doing subjective work), and the subjective cohort is small at n=88. A stronger design would adjudicate objectivity per session rather than by proxy. The direction is clear enough that the 4.4&times; headline cannot stand as written: 1.1&times; and 1.2&times; are not 4.4&times;.</p>
-  <p>Both specs, both kill lines, and the verifier's independent query log are published beside this page, run 01 and run 02 alike.</p>
+  <p><b>Run 02</b> redefined the objective pole by behavior, pre-registered before the counts. Cohorts came out 194 objective, 88 subjective, 340 neither, of 622 coding sessions. The ratio fell to <b>1.1&times;</b> (1.2&times; under a broader grouping), into the kill zone. Run 01's "objective" cohort was the agent-infrastructure work, tool-error-heavy for reasons unrelated to whether a task has a checkable answer; its "subjective" cohort was writing and memory. Both runs stay in the record: 01 as the finding, 02 as the correction that supersedes it. Two caveats ride with the kill: the test-execution proxy is coarse, and the subjective cohort is small at n=88. The direction is not in doubt. 1.1&times; is not 4.4&times;. Both specs, both kill lines, and the verifier's query log are published beside this page.</p>
 </section>
 
 <!-- ============ THE INSTRUMENT ============ -->
@@ -489,16 +511,14 @@ footer p{font-size:.9rem}
   <p>So the study ran a second loop: take the judge's evidence about <em>why</em> each false alarm fired, fix the detector, re-adjudicate a fresh sample. Two fixes worked. Abandonment rose to 0.33 (CI .14–.61) in round two, better but still weak, and capped by the instrument itself: without joining to the next session, "gave up in defeat" and "went to dinner" are the same log signature. Subagent failure went to 1.00 (CI .76–1) after learning to read the end state of a sidechain correctly.</p>
   <p>And one detector resisted both rounds: <b>honesty challenges ended at 0.25</b> (CI .09–.53) even after a round of fixes. Its three true hits in round two share a single mechanism, the agent asserting something unverified, but lexically a genuine "you just made that up" and a curious "wait, is that actually true?" are nearly identical. A thirteenth detector, for agent-to-agent challenges, audited at 0.08 and was reclassified entirely: that is orchestration protocol language, not failure. Its 3 surviving incidents stay in the totals but carry an asterisk in every chart, marked rather than trusted.</p>
   <p>This asymmetry is the study's most transferable result, and it stands on the precision table alone: <b>the failure modes easiest to count from logs are the ones an LLM judge most often confirms</b> (tool errors, API errors, interrupts), while the modes that carry the moral weight (frustration, honesty challenges) are the ones the detectors most often get wrong. The cheap signal is the reliable one, and it is not the one that matters.</p>
-  <p>Every precision estimate, with its confidence interval and its sample size, is in the chart above, including the embarrassing rows.</p>
+  <p>Two limits sit under the whole table. Every label is single-pass, one LLM judge, no second rater, so there is no inter-rater figure yet and the judge shares a model family with the agents it graded, a bias toward leniency-toward-kin whose size no one has measured. And while measuring failures, the study's own adjudication runs were repeatedly killed by the same API-overload cluster (infra_api_fault, n=11) that ranks among its own confirmed failure modes. The instrument exhibited the phenomenon mid-measurement.</p>
 </section>
 
 <!-- ============ TWO ECOSYSTEMS ============ -->
 <section class="panel" id="panel-ecosystems" role="tabpanel" aria-labelledby="tab-ecosystems" hidden>
-  <h2 class="section-h">Two ecosystems, <em>opposite textures</em></h2>
-  <p class="sec-kicker">Run the same detectors over one coder's agents and over a fleet many people chat with, and failure flips: mechanical on one side, relational on the other.</p>
-  <p><b>This is the more valuable half of the study, not a footnote.</b> Almost all published agent-failure analysis is single-operator coding traffic: one person, one harness, work a test suite can grade. The assistant fleet is the other axis. It is <b>genuinely multi-human and multi-agent</b>: many different people, none of them the operator, talking to a fleet of bots across <b>four chat platforms</b>. That is conversational, low-verifiability agent work at population scale, and it is exactly the data axis that public benchmarks lack. Running one instrument over both lets the same measurement speak to both worlds.</p>
-  <p>The coding-agent corpus fails mechanically. Its top modes by count: tool errors (1,032), frustration wording (550), API errors (522), error loops (423). The machinery grinds; the human watches.</p>
-  <p>The assistant fleet inverts that. Its failure signal lives in the <b>relationship</b>: frustration (168), self-correction (93), and stuck repetition (77) together account for 338 of its 458 incidents. Tool errors, the coding corpus's largest mode, fall to just 31 here (7% of the fleet's mix). When many humans, not one, are the ones judging the work, failure surfaces as friction between people and bots rather than as a red error line.</p>
+  <h2 class="section-h">Two ecosystems, <em>and the field's map</em></h2>
+  <p class="sec-kicker">The same detectors over one coder's agents and over a fleet many people chat with, then how these failures line up against the reference taxonomy of multi-agent failure.</p>
+  <p>Run one instrument over both corpora and the texture flips. The coding agents fail mechanically: tool errors (1,032), frustration wording (550), API errors (522), error loops (423). The assistant fleet fails relationally: frustration (168), self-correction (93), and stuck repetition (77) are 338 of its 458 incidents, while tool errors fall to 31. When many people rather than one test suite judge the work, failure shows up as friction between people and bots, not a red error line.</p>
 
   <div class="chart-block">
     <div class="chart-title">Failure-mode mix by ecosystem</div>
@@ -508,8 +528,19 @@ footer p{font-size:.9rem}
     <p class="figcap">Left: coding agents, mechanical modes dominant. Right: assistant fleet, relational modes dominant. The asterisk on the right-hand tool-error bar marks the instrument difference. <b>Weakest honest reading:</b> the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap is the instrument, not the world.</p>
   </div>
 
-  <p>That is the mode-mix inversion: as the work gets more conversational and less checkable, failure migrates from the tool channel into the relational channel. When there is no test suite to fail, the human <em>is</em> the test suite, and the error message is a feeling. It is tempting to read this as the objectivity axis showing up across two ecosystems, but that is exactly the reading the clean within-corpus test failed to confirm (see The Axis), so treat the inversion as a description of these two corpora, not as proof that verifiability is the cause.</p>
-  <p>One instrument caveat rides in the same breath: the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap between the two worlds is the instrument, not the world. The within-corpus experiment was built to remove that confound, and when it did, the objectivity effect did not survive. The cross-ecosystem inversion is a real difference in these logs whose cause is still open.</p>
+  <p>Read that as a description of two corpora, not proof that verifiability drives failure. The within-corpus test built to check exactly that did not survive (see What Didn't Hold), and part of the tool-error gap is the fleet's missing error flag rather than the world. The inversion is a real difference in these logs whose cause is still open.</p>
+
+  <h2 class="section-h" style="font-size:1.7rem">Against the field's taxonomy</h2>
+  <p>MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>) is the reference catalogue of multi-agent failure: 14 modes in 3 categories, built from autonomous-agent benchmarks. Cross-walk our incidents against it and <b>13 of 23 sampled (57%) map cleanly to a MAST mode</b>. The other <b>43%</b> have no fit, and the reason is structural, not a scoring miss.</p>
+
+  <div class="chart-block">
+    <div class="chart-title">MAST cross-walk: what the field's taxonomy has a word for</div>
+    <div class="chart-units">share of 23 sampled incidents · maps to a MAST mode vs no clean fit · hover or focus a segment for detail</div>
+    <div class="chart-scroll"><div id="chart-mast"></div></div>
+    <p class="figcap">57% (13 of 23) map cleanly to one of MAST's 14 modes. The unmapped 43% are two families an autonomous-benchmark taxonomy has no word for: <b>human-in-the-loop</b> failures (frustration, honesty challenges, permission friction) and <b>single-session infrastructure</b> (quota kills, permission loops). <b>Weakest honest reading:</b> n=23 is a small hand-sampled cross-walk, and "no clean fit" is a judgment call at the boundary.</p>
+  </div>
+
+  <p>Half our failures are human-in-the-loop (frustration, honesty challenges, permission friction) or single-session infrastructure (quota kills, permission loops). An autonomous-benchmark taxonomy has no word for those, because its benchmarks have no human in the loop and no shared quota to exhaust. And our multi-agent is orchestrator fan-out, parallel stateless workers, not the conversational agent chains MAST studied, so its inter-agent-misalignment modes sit near zero here. The 43% gap marks a slice of the agent world the benchmarks do not cover.</p>
 </section>
 
 <!-- ============ PREVENTING DRIFT ============ -->
@@ -579,7 +610,7 @@ python3 pipeline/incidents.py --db data/atlas.db --out data/incidents.jsonl
 python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   </div>
 
-  <p>What you get: <b>atlas.db</b> and <b>incidents.jsonl</b> stay on your machine, since they contain your text. <b>analysis.json</b> is the aggregates-only layer: counts, rates, distributions, no transcript content. That file is the one you could choose to share.</p>
+  <p>What you get: <b>atlas.db</b> and <b>incidents.jsonl</b> stay on your machine, since they contain your text. <b>analysis.json</b> is the aggregates-only layer: totals and rates, no transcript content. That file is the one you could choose to share.</p>
 
   <p>Or hand the job to your agent. Copy this prompt so your bot rebuilds the analysis from your own logs:</p>
   <div class="codewrap prompt">
@@ -599,23 +630,15 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
     <li><b>Atomic memory files:</b> two of them, indexed, loaded only on demand, each holding one pattern the logs proved.</li>
     <li><b>Settings recommendations</b>, including quota-aware subagent spawning, aimed at the 26 subagent failures, every one of which ended its session.</li>
   </ul>
-  <p>Each augmentation ships with its falsification path: the metric that must drop, measured by re-running this same pipeline over post-install sessions. The baseline was snapshotted before anything was installed, so "it helped" will be a comparison, not an impression. Nothing auto-installs; every hook is opt-in.</p>
-  <p>The next run of the pipeline is the judgment, and the baseline it will be judged against is already on disk.</p>
+  <p>Each augmentation ships with its falsification path: the metric that must drop, measured by re-running this same pipeline over post-install sessions. The baseline was snapshotted before anything was installed, so "it helped" gets measured against that snapshot rather than asserted. Nothing auto-installs; every hook is opt-in, and the next run of the pipeline is the judgment.</p>
 </section>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <h2>Colophon</h2>
-    <p class="sec-kicker">How this was made, and what that costs it.</p>
-    <p>This study was built by agents studying agents, at the operator's commission but with the operator recused from adjudication decisions. Every incident label comes from an LLM judge reading the full transcript window, <b>single-pass, no second rater</b>, so there is no inter-rater reliability figure yet, and the judge shares a model family with the agents it judged. That is a structural bias in the direction of leniency-toward-kin, disclosed here because no one has yet measured its size; a human-relabeled subsample is the named next check.</p>
-    <p>The recursion was not hypothetical: while measuring failures, the study's own adjudication runs were repeatedly killed by the same API-overload-and-limits cluster that ranks second among its adjudicated confirmed failure modes (infra_api_fault, n=11, behind guardrail friction at n=21). The instrument exhibited the phenomenon mid-measurement. That went in the findings too.</p>
-    <p>A public decision log records the calls the study rests on: what counts as an incident, why sidechain "user" turns are not humans, why sharing stays aggregate. Each entry carries the way it could be proven wrong.</p>
-    <p><b>The dataset is not published and will not be.</b> It is one org's record, including many people's conversations with the fleet. The pipeline, the decision log, the experiment spec, the verifier's checks, and every aggregate on this page are published, so the method can be run by anyone on logs that are theirs.</p>
     <div class="colophon-end">
-      <b>185</b> adjudicated labels · <b>2</b> rounds · <b>13</b> detectors · <b>1</b> pre-registered experiment (later overturned on the clean re-run) · a precision table that grades the whole apparatus, all recomputable from the files beside this page.<br>
-      a cyborg.garden open-science experiment · charts render from embedded aggregates; no analytics, no trackers · staging build, unlisted.
+      Built by agents studying agents, operator recused from adjudication · <b>2,335</b> sessions · <b>185</b> adjudicated labels · <b>13</b> detectors · <b>5</b> pre-registered contrasts, none survived intact · a cyborg.garden open-science experiment. The dataset stays private; the pipeline, decision log, and every aggregate here are published, so the method runs on anyone's logs.
     </div>
   </div>
 </footer>
@@ -643,7 +666,7 @@ const DATA = {
    "2026-01",
    "2026-08"
   ],
-  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms \u2014 genuine multi-human/multi-agent traffic, not one operator."
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms: genuine multi-human, multi-agent traffic, not one operator."
  },
  "incidents_by_mode": {
   "abandonment": {
@@ -1399,6 +1422,39 @@ const DATA = {
   "candidates": 398,
   "strong": 36
  },
+ "what_didnt_hold": [
+  {
+   "claim": "Objective work fails mechanically 4.4x more than subjective work",
+   "status": "killed",
+   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; run 01 measured project type"
+  },
+  {
+   "claim": "Agents self-correct 5x more with a human in the loop",
+   "status": "killed",
+   "how": "79% is the 'you're right' politeness token, and the autonomous arm says it to orchestrators too; self-initiated corrections show no significant gap (z about 1.1)"
+  },
+  {
+   "claim": "The chat platform shapes the failure mode",
+   "status": "killed",
+   "how": "the same bot on discord and signal is indistinguishable; within one platform the bot-to-bot spread is wider than the whole cross-platform range. It is bot deployment, not platform"
+  },
+  {
+   "claim": "Group chats fail differently than one-to-one",
+   "status": "null",
+   "how": "no significant difference (z about 0.67)"
+  },
+  {
+   "claim": "Orchestrator subagents fail more mechanically than human sessions",
+   "status": "wounded",
+   "how": "mostly a tautology (4 of 6 relational detectors cannot fire without a human); the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (p about 0.02)"
+  }
+ ],
+ "mast_crosswalk": {
+  "mapped_clean": "13 of 23 sampled incidents (57%) map to a MAST mode",
+  "unmapped": "43% have no clean fit: our human-in-loop detectors (frustration, honesty-challenge, permission friction) and single-session infrastructure failures (quota kills, permission loops) are families MAST's autonomous-benchmark taxonomy has no word for",
+  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's inter-agent-misalignment modes are near-zero here",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories"
+ },
  "adjudication": {
   "total_labels": 185,
   "aligned_to_current": 60,
@@ -1414,7 +1470,7 @@ const DATA = {
  },
  "scope": {
   "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
-  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset / API roadmap stay private \u2014 referenced, never exposed.",
+  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset and API roadmap stay private, referenced but never exposed.",
   "shareable_layer": "aggregates + pipeline code; never transcript text."
  }
 };
@@ -1810,50 +1866,99 @@ function renderEcosystems(){
     `<span class="key">* instrument difference, not world</span>`;
 }
 
-/* ============ axis figure: the reversal: run 01 vs run 02 ============ */
+/* ============ WHAT DID NOT HOLD: scorecard + objectivity collapse ============ */
 function renderAxis(){
   const host = document.getElementById("chart-axis");
+  const board = DATA.what_didnt_hold;
   const ex = DATA.experiment_objectivity_axis;
   const r1 = ex.run_01_keyword_cohorts, r2 = ex.run_02_behavioral_cohorts;
-  const W = 860, padL = 150, padR = 34, maxX = 7;
-  const laneTop = 44, laneGap = 46, laneY = i => laneTop + i*laneGap;
-  const H = laneY(1) + 64;
+
+  /* compact labels for the five pre-registered contrasts, in registered order */
+  const SHORT = [
+    "Objective work fails 4.4× more",
+    "A human present lifts self-correction 5×",
+    "The chat platform shapes the failure",
+    "Group chats fail differently than 1-to-1",
+    "Subagents fail more mechanically"
+  ];
+  /* reserved status palette: critical / neutral / warning, each carries icon + word */
+  const STATUS = {
+    killed:  {word:"KILLED",  glyph:"✕", color:PAL.rose},
+    null:    {word:"NULL",    glyph:"○", color:INK.soft},
+    wounded: {word:"WOUNDED", glyph:"◐", color:PAL.amber}
+  };
+
+  const W = 860;
+  /* ---- geometry: scorecard stacked above the objectivity number line ---- */
+  const scHdrY = 18, scRow0 = 34, scRowH = 30;
+  const scBottom = scRow0 + board.length*scRowH;
+  const tallyY = scBottom + 20, divY = tallyY + 14, objHdrY = divY + 26;
+  const padL = 150, padR = 34, maxX = 7;
   const xFor = v => padL + (v/maxX)*(W-padL-padR);
-  const gTop = 26, gBot = laneY(1) + 14; /* full-height band for zones/threshold */
-  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"Two stacked results on one 0-to-7-times scale, against a kill zone below 1.5 times and a pre-registered pass line at 2.0 times. Run 01, keyword cohorts, lands at 4.4 times, well past the pass line, so the hypothesis was supported. Run 02, behavioral cohorts, lands at 1.1 times, inside the kill zone below 1.5, so the tightened re-run killed the finding. The two markers show a reversal from 4.4 times down to 1.1 times."});
-  /* kill zone (below 1.5×) spanning both lanes */
-  svg.appendChild(el("rect", {x:padL, y:gTop, width:xFor(1.5)-padL, height:gBot-gTop, fill:PAL.rose, opacity:.14}));
-  svg.appendChild(el("line", {x1:xFor(1.5), y1:gTop, x2:xFor(1.5), y2:gBot, stroke:PAL.rose, "stroke-width":1.5, "stroke-dasharray":"3 3", opacity:.8}));
-  svg.appendChild(el("text", {x:xFor(0.75), y:gTop-6, "text-anchor":"middle", "font-size":9, "letter-spacing":".5", fill:PAL.rose, text:"KILL ZONE < 1.5×"}));
-  /* pre-registered pass line at 2.0× */
-  svg.appendChild(el("line", {x1:xFor(2), y1:gTop, x2:xFor(2), y2:gBot, stroke:INK.candle, "stroke-width":1.5}));
-  svg.appendChild(el("text", {x:xFor(2)+5, y:gTop-6, "font-size":9, "letter-spacing":".5", fill:INK.candle, text:"PASS ≥ 2.0×"}));
-  /* tick labels along the bottom */
-  [0,1,2,3,4,5,6,7].forEach(t => {
-    svg.appendChild(el("line", {x1:xFor(t), y1:gBot, x2:xFor(t), y2:gBot+4, stroke:INK.grid, "stroke-width":1}));
-    svg.appendChild(el("text", {x:xFor(t), y:gBot+16, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t + "×"}));
+  const bandTop = objHdrY + 12;
+  const lane0Y = bandTop + 30, lane1Y = lane0Y + 46, bandBot = lane1Y + 14;
+  const H = bandBot + 42;
+
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":"Scorecard of five pre-registered behavioral contrasts and their outcomes: three killed (objective work fails 4.4 times more, a human present lifts self-correction 5 times, the chat platform shapes the failure), one null (group chats fail differently than one-to-one), one wounded (subagents fail more mechanically). None survived intact. Below, the objectivity contrast on a 0 to 7 times scale against a kill zone below 1.5 times and a pre-registered pass line at 2.0 times: run 01 keyword cohorts landed at 4.4 times, above the pass line; run 02 behavioral cohorts landed at 1.1 times, inside the kill zone, a reversal that killed the finding."});
+
+  /* ===== Section A: the scorecard ===== */
+  svg.appendChild(el("text", {x:8, y:scHdrY, "font-size":9, fill:INK.faint, "letter-spacing":"1.5", text:"THE SCORECARD · FIVE PRE-REGISTERED CONTRASTS"}));
+  const chipW = 128, chipRX = W-8, chipX = chipRX - chipW;
+  const tally = {killed:0, null:0, wounded:0};
+  board.forEach((b, i) => {
+    const st = STATUS[b.status];
+    tally[b.status] = (tally[b.status]||0) + 1;
+    const y = scRow0 + i*scRowH, cy = y + scRowH/2;
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${SHORT[i]}: ${st.word}. ${b.how}`});
+    g.dataset.tip = `<span class="t-h">${SHORT[i]}</span><br>` +
+      `<span class="t-w">${st.word}</span><br><span class="t-d">${b.how}</span>`;
+    g.appendChild(el("text", {x:10, y:cy+4, "font-size":12, fill:INK.text, text:SHORT[i]}));
+    /* faint leader connects a long claim to its chip without shouting */
+    g.appendChild(el("line", {x1:10, y1:cy+13, x2:chipX-8, y2:cy+13, stroke:INK.grid, "stroke-width":1, opacity:.4}));
+    g.appendChild(el("rect", {x:chipX, y:cy-11, width:chipW, height:22, rx:11, fill:st.color}));
+    g.appendChild(el("text", {x:chipX+chipW/2, y:cy+4, "text-anchor":"middle", "font-size":10.5, "font-weight":"600", "letter-spacing":"1", fill:INK.surface, text:`${st.glyph}  ${st.word}`}));
+    svg.appendChild(g);
   });
-  svg.appendChild(el("text", {x:padL, y:gBot+30, "font-size":9, fill:INK.faint, text:"mechanical-to-relational ratio of ratios · pre-registered on both runs: pass ≥ 2.0×, kill < 1.5×"}));
-  /* reversal connector: from run 01 marker down to run 02 marker */
-  const x1 = xFor(r1.ratio_of_ratios), x2 = xFor(r2.ratio_of_ratios), y1 = laneY(0), y2 = laneY(1);
-  svg.appendChild(el("path", {d:`M${x1} ${y1+9} C ${x1} ${y1+26}, ${x2} ${y2-26}, ${x2} ${y2-9}`,
+  /* tally: the "almost nothing survived" line */
+  svg.appendChild(el("text", {x:8, y:tallyY, "font-size":11, fill:INK.soft,
+    text:`${tally.killed} killed · ${tally.null} null · ${tally.wounded} wounded`}));
+  svg.appendChild(el("text", {x:chipRX, y:tallyY, "text-anchor":"end", "font-size":11, "font-weight":"600", fill:PAL.rose,
+    text:`0 of ${board.length} survived intact`}));
+  svg.appendChild(el("line", {x1:8, y1:divY, x2:W-8, y2:divY, stroke:INK.grid, "stroke-width":1}));
+
+  /* ===== Section B: the objectivity collapse ===== */
+  svg.appendChild(el("text", {x:8, y:objHdrY, "font-size":9, fill:INK.faint, "letter-spacing":"1.5", text:"THE OBJECTIVITY CONTRAST, WALKED THROUGH · RATIO OF RATIOS"}));
+  /* kill zone (< 1.5×) */
+  svg.appendChild(el("rect", {x:padL, y:bandTop, width:xFor(1.5)-padL, height:bandBot-bandTop, fill:PAL.rose, opacity:.14}));
+  svg.appendChild(el("line", {x1:xFor(1.5), y1:bandTop, x2:xFor(1.5), y2:bandBot, stroke:PAL.rose, "stroke-width":1.5, "stroke-dasharray":"3 3", opacity:.8}));
+  svg.appendChild(el("text", {x:xFor(0.75), y:bandTop-5, "text-anchor":"middle", "font-size":9, "letter-spacing":".5", fill:PAL.rose, text:"KILL ZONE < 1.5×"}));
+  /* pre-registered pass line at 2.0× */
+  svg.appendChild(el("line", {x1:xFor(2), y1:bandTop, x2:xFor(2), y2:bandBot, stroke:INK.candle, "stroke-width":1.5}));
+  svg.appendChild(el("text", {x:xFor(2)+5, y:bandTop-5, "font-size":9, "letter-spacing":".5", fill:INK.candle, text:"PASS ≥ 2.0×"}));
+  /* ticks */
+  [0,1,2,3,4,5,6,7].forEach(t => {
+    svg.appendChild(el("line", {x1:xFor(t), y1:bandBot, x2:xFor(t), y2:bandBot+4, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x:xFor(t), y:bandBot+16, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t+"×"}));
+  });
+  svg.appendChild(el("text", {x:padL, y:bandBot+30, "font-size":9, fill:INK.faint, text:"mechanical-to-relational ratio of ratios · pre-registered on both runs: pass ≥ 2.0×, kill < 1.5×"}));
+  /* reversal connector 4.4× → 1.1× */
+  const x1 = xFor(r1.ratio_of_ratios), x2 = xFor(r2.ratio_of_ratios);
+  svg.appendChild(el("path", {d:`M${x1} ${lane0Y+9} C ${x1} ${lane0Y+26}, ${x2} ${lane1Y-26}, ${x2} ${lane1Y-9}`,
     fill:"none", stroke:INK.faint, "stroke-width":1.4, "stroke-dasharray":"4 4"}));
-  svg.appendChild(el("path", {d:`M${x2-4} ${y2-13} L${x2} ${y2-7} L${x2+4} ${y2-13}`, fill:"none", stroke:INK.faint, "stroke-width":1.4}));
+  svg.appendChild(el("path", {d:`M${x2-4} ${lane1Y-13} L${x2} ${lane1Y-7} L${x2+4} ${lane1Y-13}`, fill:"none", stroke:INK.faint, "stroke-width":1.4}));
   /* two lanes */
   const lanes = [
-    {run:r1, y:y1, x:x1, label:"RUN 01", sub:"keyword cohorts", color:PAL.green, ink:INK.brightgreen,
-     verdictText:"cleared the bar", val:r1.ratio_of_ratios.toFixed(1)+"×"},
-    {run:r2, y:y2, x:x2, label:"RUN 02", sub:"behavioral cohorts", color:PAL.rose, ink:PAL.rose,
-     verdictText:"fell below the kill line", val:r2.ratio_of_ratios.toFixed(1)+"×"}
+    {run:r1, y:lane0Y, x:x1, label:"RUN 01", sub:"keyword cohorts", color:PAL.green, ink:INK.brightgreen,
+     verdictText:"cleared the pass line", val:r1.ratio_of_ratios.toFixed(1)+"×", right:true},
+    {run:r2, y:lane1Y, x:x2, label:"RUN 02", sub:"behavioral cohorts", color:PAL.rose, ink:PAL.rose,
+     verdictText:"fell into the kill zone", val:r2.ratio_of_ratios.toFixed(1)+"×", right:false}
   ];
-  lanes.forEach((L, i) => {
-    /* row label */
+  lanes.forEach(L => {
     svg.appendChild(el("text", {x:8, y:L.y-3, "font-size":11, "font-weight":"600", "letter-spacing":".5", fill:L.ink, text:L.label}));
     svg.appendChild(el("text", {x:8, y:L.y+11, "font-size":9.5, fill:INK.faint, text:L.sub}));
-    /* baseline track for the lane */
     svg.appendChild(el("line", {x1:padL, y1:L.y, x2:W-padR, y2:L.y, stroke:INK.grid, "stroke-width":1}));
-    /* sensitivity band on run 01 only */
     if (L.run.sensitivity_range){
       const s0 = xFor(L.run.sensitivity_range[0]), s1 = xFor(L.run.sensitivity_range[1]);
       svg.appendChild(el("rect", {x:s0, y:L.y-4, width:s1-s0, height:8, rx:4, fill:PAL.green, opacity:.28}));
@@ -1870,12 +1975,48 @@ function renderAxis(){
     g.appendChild(el("circle", {cx:L.x, cy:L.y, r:12, fill:"transparent"}));
     g.appendChild(el("circle", {cx:L.x, cy:L.y, r:7, fill:L.color, stroke:INK.surface, "stroke-width":2}));
     svg.appendChild(g);
-    /* value + verdict tag beside the marker */
-    const right = i === 0; /* run 01 sits far right; label to its left */
-    const vx = right ? L.x - 13 : L.x + 13, anchor = right ? "end" : "start";
+    const vx = L.right ? L.x - 13 : L.x + 13, anchor = L.right ? "end" : "start";
     svg.appendChild(el("text", {x:vx, y:L.y-8, "text-anchor":anchor, "font-size":13, "font-weight":"600", fill:L.ink, text:L.val}));
     svg.appendChild(el("text", {x:vx, y:L.y+13, "text-anchor":anchor, "font-size":9, fill:INK.soft, text:L.verdictText}));
   });
+  host.appendChild(svg);
+  wireTips(host);
+}
+
+/* ============ MAST cross-walk: 57% mapped / 43% unmapped ============ */
+function renderMast(){
+  const host = document.getElementById("chart-mast");
+  if (!host) return;
+  const MAPPED = 13, UNMAPPED = 10, TOTAL = 23;      /* 57% / 43% of 23 sampled */
+  const W = 860, padX = 8, H = 172;
+  const barY = 46, barHt = 48, plotW = W - padX*2, gap = 2;
+  const mapW = (MAPPED/TOTAL)*plotW, unW = plotW - mapW - gap, ux = padX + mapW + gap;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":`MAST cross-walk of 23 sampled incidents: 13 (57%) map cleanly to a MAST failure mode; 10 (43%) have no clean fit. The unmapped 43% are two families the autonomous-benchmark taxonomy has no word for: human-in-the-loop failures (frustration, honesty challenges, permission friction) and single-session infrastructure (quota kills, permission loops).`});
+  /* headers over each segment */
+  svg.appendChild(el("text", {x:padX+mapW/2, y:28, "text-anchor":"middle", "font-size":10, "letter-spacing":"1", "font-weight":"600", fill:INK.brightgreen, text:"MAPS TO A MAST MODE"}));
+  svg.appendChild(el("text", {x:ux+unW/2, y:28, "text-anchor":"middle", "font-size":10, "letter-spacing":"1", "font-weight":"600", fill:INK.candle, text:"NO CLEAN FIT"}));
+  /* mapped segment, rounded on the left (outer) end */
+  const gm = el("g", {class:"mark-focus", tabindex:0, role:"img",
+    "aria-label":"Maps to a MAST mode: 13 of 23 sampled incidents, 57 percent."});
+  gm.dataset.tip = `<span class="t-h">Maps to a MAST mode</span><br><span class="t-d">13 of 23 sampled · 57%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span>`;
+  gm.appendChild(el("path", {d:barH(padX, barY, mapW, barHt, 5, false), fill:PAL.green}));
+  gm.appendChild(el("text", {x:padX+16, y:barY+barHt/2+3, "font-size":15, "font-weight":"600", fill:INK.surface, text:"57%"}));
+  gm.appendChild(el("text", {x:padX+16, y:barY+barHt/2+19, "font-size":9.5, fill:INK.surface, opacity:.85, text:"13 of 23"}));
+  svg.appendChild(gm);
+  /* unmapped segment, rounded on the right (outer) end */
+  const gu = el("g", {class:"mark-focus", tabindex:0, role:"img",
+    "aria-label":"No clean fit: 10 of 23 sampled incidents, 43 percent."});
+  gu.dataset.tip = `<span class="t-h">No clean fit</span><br><span class="t-d">10 of 23 sampled · 43%</span><br><span class="t-w">two families MAST has no word for: human-in-the-loop, and single-session infrastructure</span>`;
+  gu.appendChild(el("path", {d:barH(ux, barY, unW, barHt, 5, true), fill:PAL.amber}));
+  gu.appendChild(el("text", {x:ux+unW-16, y:barY+barHt/2+3, "text-anchor":"end", "font-size":15, "font-weight":"600", fill:INK.surface, text:"43%"}));
+  gu.appendChild(el("text", {x:ux+unW-16, y:barY+barHt/2+19, "text-anchor":"end", "font-size":9.5, fill:INK.surface, opacity:.85, text:"10 of 23"}));
+  svg.appendChild(gu);
+  /* bracket the two unmapped families under the amber segment */
+  const bY = barY + barHt + 10;
+  svg.appendChild(el("path", {d:`M${ux} ${bY} V${bY+6} H${ux+unW} V${bY}`, fill:"none", stroke:INK.candle, "stroke-width":1, opacity:.55}));
+  svg.appendChild(el("text", {x:ux+unW/2, y:bY+22, "text-anchor":"middle", "font-size":10.5, fill:INK.soft, text:"No autonomous-benchmark word for these two families:"}));
+  svg.appendChild(el("text", {x:ux+unW/2, y:bY+38, "text-anchor":"middle", "font-size":10.5, "font-weight":"600", fill:INK.text, text:"human-in-the-loop  ·  single-session infrastructure"}));
   host.appendChild(svg);
   wireTips(host);
 }
@@ -1935,6 +2076,7 @@ renderPosition();
 renderOutcomes();
 renderPrecision();
 renderEcosystems();
+renderMast();
 renderAxis();
 activate(location.hash.slice(1) || "overview", false);
 </script>

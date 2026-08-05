@@ -16,7 +16,7 @@
    "2026-01",
    "2026-08"
   ],
-  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms \u2014 genuine multi-human/multi-agent traffic, not one operator."
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms: genuine multi-human, multi-agent traffic, not one operator."
  },
  "incidents_by_mode": {
   "abandonment": {
@@ -766,11 +766,49 @@
    "rule": "objective = session ran >=1 test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
   },
   "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
-  "takeaway": "The headline 4.4x effect did not survive a clean cohort definition. The study's own tightening killed its own finding \u2014 which is the method working on itself."
+  "takeaway": "The headline 4.4x effect did not survive a clean cohort definition. The study's own tightening killed its own finding. That is the method working on itself."
  },
  "escalation_bridges": {
   "candidates": 398,
   "strong": 36
+ },
+ "what_didnt_hold": [
+  {
+   "claim": "Objective work fails mechanically 4.4x more than subjective work",
+   "status": "killed",
+   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; run 01 measured project type"
+  },
+  {
+   "claim": "Agents self-correct 5x more with a human in the loop",
+   "status": "killed",
+   "how": "79% is the 'you're right' politeness token, and the autonomous arm says it to orchestrators too; self-initiated corrections show no significant gap (z about 1.1)"
+  },
+  {
+   "claim": "The chat platform shapes the failure mode",
+   "status": "killed",
+   "how": "the same bot on discord and signal is indistinguishable; within one platform the bot-to-bot spread is wider than the whole cross-platform range. It is bot deployment, not platform"
+  },
+  {
+   "claim": "Group chats fail differently than one-to-one",
+   "status": "null",
+   "how": "no significant difference (z about 0.67)"
+  },
+  {
+   "claim": "Orchestrator subagents fail more mechanically than human sessions",
+   "status": "wounded",
+   "residual_ratio": 1.9,
+   "how": "mostly a tautology (4 of 6 relational detectors cannot fire without a human); the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (p about 0.02)"
+  }
+ ],
+ "mast_crosswalk": {
+  "sampled": 23,
+  "mapped": 13,
+  "mapped_share": 0.57,
+  "unmapped_share": 0.43,
+  "mapped_clean": "13 of 23 sampled incidents (57%) map to a MAST mode",
+  "unmapped": "43% have no clean fit: our human-in-loop detectors (frustration, honesty-challenge, permission friction) and single-session infrastructure failures (quota kills, permission loops) are families MAST's autonomous-benchmark taxonomy has no word for",
+  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's inter-agent-misalignment modes are near-zero here",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories"
  },
  "adjudication": {
   "total_labels": 185,
@@ -787,7 +825,7 @@
  },
  "scope": {
   "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
-  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset / API roadmap stay private \u2014 referenced, never exposed.",
+  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset and API roadmap stay private, referenced but never exposed.",
   "shareable_layer": "aggregates + pipeline code; never transcript text."
  }
 }
