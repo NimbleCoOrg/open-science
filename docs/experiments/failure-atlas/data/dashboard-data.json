@@ -1,0 +1,781 @@
+{
+ "corpus": {
+  "claude_code": {
+   "sessions": 622,
+   "session_files": 4059,
+   "subagent_files": 3437,
+   "events": 565858
+  },
+  "assistant_fleet": {
+   "sessions": 1713,
+   "session_files": 2003,
+   "subagent_files": 290,
+   "events": 55375
+  },
+  "span": [
+   "2026-01",
+   "2026-08"
+  ],
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms \u2014 genuine multi-human/multi-agent traffic, not one operator."
+ },
+ "incidents_by_mode": {
+  "abandonment": {
+   "count": 90,
+   "avg_severity": 0.939,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.45
+  },
+  "api_error": {
+   "count": 522,
+   "avg_severity": 0.359,
+   "share_sidechain": 0.538,
+   "per_10k_events": 8.4
+  },
+  "error_loop": {
+   "count": 444,
+   "avg_severity": 0.937,
+   "share_sidechain": 0.518,
+   "per_10k_events": 7.15
+  },
+  "frustration_lex": {
+   "count": 718,
+   "avg_severity": 0.472,
+   "share_sidechain": 0.0,
+   "per_10k_events": 11.56
+  },
+  "honesty_challenge": {
+   "count": 110,
+   "avg_severity": 0.676,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.77
+  },
+  "interagent_challenge": {
+   "count": 3,
+   "avg_severity": 0.607,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.05
+  },
+  "model_escalation": {
+   "count": 17,
+   "avg_severity": 0.672,
+   "share_sidechain": 0.588,
+   "per_10k_events": 0.27
+  },
+  "permission_friction": {
+   "count": 229,
+   "avg_severity": 0.718,
+   "share_sidechain": 0.576,
+   "per_10k_events": 3.69
+  },
+  "self_correction": {
+   "count": 438,
+   "avg_severity": 0.457,
+   "share_sidechain": 0.08,
+   "per_10k_events": 7.05
+  },
+  "stuck_repetition": {
+   "count": 101,
+   "avg_severity": 0.769,
+   "share_sidechain": 0.614,
+   "per_10k_events": 1.63
+  },
+  "subagent_failure": {
+   "count": 26,
+   "avg_severity": 0.917,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.42
+  },
+  "tool_error": {
+   "count": 1063,
+   "avg_severity": 0.362,
+   "share_sidechain": 0.426,
+   "per_10k_events": 17.11
+  },
+  "user_interrupt": {
+   "count": 255,
+   "avg_severity": 0.682,
+   "share_sidechain": 0.0,
+   "per_10k_events": 4.1
+  }
+ },
+ "precision": {
+  "abandonment": {
+   "precision": 0.333,
+   "ci": [
+    0.138,
+    0.609
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.25
+  },
+  "api_error": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.0
+  },
+  "error_loop": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "frustration_lex": {
+   "precision": 0.583,
+   "ci": [
+    0.32,
+    0.807
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.857
+  },
+  "honesty_challenge": {
+   "precision": 0.25,
+   "ci": [
+    0.089,
+    0.532
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "interagent_challenge": {
+   "precision": 0.083,
+   "ci": [
+    0.015,
+    0.354
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "model_escalation": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "permission_friction": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.2
+  },
+  "stuck_repetition": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.833
+  },
+  "subagent_failure": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.083
+  },
+  "tool_error": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.6
+  },
+  "user_interrupt": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.417
+  },
+  "self_correction": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  }
+ },
+ "outcomes": {
+  "permission_friction": {
+   "recovered_clean": 190,
+   "further_failures": 20,
+   "session_end": 15,
+   "self_corrected": 4
+  },
+  "api_error": {
+   "session_end": 270,
+   "further_failures": 66,
+   "recovered_clean": 180,
+   "self_corrected": 6
+  },
+  "tool_error": {
+   "recovered_clean": 805,
+   "session_end": 106,
+   "self_corrected": 26,
+   "further_failures": 125,
+   "escalated": 1
+  },
+  "error_loop": {
+   "further_failures": 63,
+   "recovered_clean": 301,
+   "session_end": 70,
+   "self_corrected": 10
+  },
+  "frustration_lex": {
+   "further_failures": 154,
+   "self_corrected": 27,
+   "recovered_clean": 506,
+   "session_end": 30,
+   "escalated": 1
+  },
+  "self_correction": {
+   "recovered_clean": 314,
+   "session_end": 24,
+   "further_failures": 69,
+   "self_corrected": 31
+  },
+  "user_interrupt": {
+   "session_end": 18,
+   "further_failures": 28,
+   "recovered_clean": 196,
+   "self_corrected": 13
+  },
+  "honesty_challenge": {
+   "recovered_clean": 84,
+   "self_corrected": 7,
+   "further_failures": 17,
+   "session_end": 2
+  },
+  "subagent_failure": {
+   "session_end": 26
+  },
+  "stuck_repetition": {
+   "recovered_clean": 72,
+   "session_end": 17,
+   "further_failures": 12
+  },
+  "abandonment": {
+   "session_end": 76,
+   "recovered_clean": 14
+  },
+  "model_escalation": {
+   "recovered_clean": 12,
+   "further_failures": 2,
+   "session_end": 3
+  },
+  "interagent_challenge": {
+   "recovered_clean": 2,
+   "session_end": 1
+  }
+ },
+ "position_deciles": {
+  "permission_friction": [
+   30,
+   40,
+   24,
+   16,
+   19,
+   21,
+   17,
+   16,
+   19,
+   25
+  ],
+  "api_error": [
+   30,
+   16,
+   19,
+   19,
+   22,
+   28,
+   30,
+   41,
+   33,
+   100
+  ],
+  "tool_error": [
+   92,
+   94,
+   110,
+   106,
+   107,
+   116,
+   124,
+   109,
+   101,
+   79
+  ],
+  "error_loop": [
+   73,
+   73,
+   49,
+   47,
+   32,
+   43,
+   40,
+   34,
+   22,
+   20
+  ],
+  "frustration_lex": [
+   98,
+   73,
+   62,
+   43,
+   66,
+   58,
+   86,
+   81,
+   78,
+   60
+  ],
+  "self_correction": [
+   27,
+   30,
+   34,
+   42,
+   44,
+   43,
+   61,
+   50,
+   35,
+   60
+  ],
+  "user_interrupt": [
+   36,
+   20,
+   20,
+   24,
+   16,
+   17,
+   17,
+   28,
+   40,
+   33
+  ],
+  "honesty_challenge": [
+   16,
+   9,
+   7,
+   9,
+   15,
+   10,
+   8,
+   5,
+   18,
+   11
+  ],
+  "subagent_failure": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   4
+  ],
+  "stuck_repetition": [
+   4,
+   5,
+   5,
+   10,
+   13,
+   12,
+   8,
+   13,
+   15,
+   16
+  ],
+  "abandonment": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   2,
+   9,
+   67
+  ],
+  "model_escalation": [
+   1,
+   3,
+   1,
+   1,
+   4,
+   3,
+   0,
+   1,
+   0,
+   3
+  ],
+  "interagent_challenge": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   0
+  ]
+ },
+ "cooccurrence_top": {
+  "bare_done_claim+tool_error": 596,
+  "error_loop+tool_error": 478,
+  "permission_friction+tool_error": 475,
+  "self_correction+tool_error": 243,
+  "bare_done_claim+self_correction": 207,
+  "frustration_lex+tool_error": 190,
+  "tool_error+user_interrupt": 187,
+  "bare_done_claim+frustration_lex": 159,
+  "frustration_lex+self_correction": 152,
+  "permission_friction+user_interrupt": 132,
+  "error_loop+permission_friction": 97,
+  "bare_done_claim+error_loop": 92,
+  "self_correction+user_interrupt": 89,
+  "api_error+tool_error": 73,
+  "bare_done_claim+user_interrupt": 73,
+  "bare_done_claim+permission_friction": 69,
+  "frustration_lex+user_interrupt": 67,
+  "permission_friction+self_correction": 53,
+  "frustration_lex+permission_friction": 44,
+  "stuck_repetition+tool_error": 42,
+  "error_loop+frustration_lex": 34,
+  "subagent_failure+tool_error": 33,
+  "api_error+bare_done_claim": 31,
+  "interagent_challenge+tool_error": 30,
+  "frustration_lex+honesty_challenge": 29
+ },
+ "by_model_tier": {
+  "0": {
+   "events": 17288,
+   "incidents": 294,
+   "per_10k_events": 170.06
+  },
+  "1": {
+   "events": 45085,
+   "incidents": 127,
+   "per_10k_events": 28.17
+  },
+  "2": {
+   "events": 93854,
+   "incidents": 636,
+   "per_10k_events": 67.76
+  },
+  "3": {
+   "events": 343297,
+   "incidents": 2229,
+   "per_10k_events": 64.93
+  },
+  "4": {
+   "events": 121709,
+   "incidents": 730,
+   "per_10k_events": 59.98
+  }
+ },
+ "timeline": {
+  "2026-01": {
+   "claude_code": {
+    "events": 704,
+    "incidents": 2,
+    "per_10k": 28.4
+   }
+  },
+  "2026-02": {
+   "claude_code": {
+    "events": 4293,
+    "incidents": 25,
+    "per_10k": 58.2
+   }
+  },
+  "2026-03": {
+   "claude_code": {
+    "events": 72044,
+    "incidents": 488,
+    "per_10k": 67.7
+   }
+  },
+  "2026-04": {
+   "assistant_fleet": {
+    "events": 533,
+    "incidents": 18,
+    "per_10k": 337.7
+   },
+   "claude_code": {
+    "events": 51011,
+    "incidents": 392,
+    "per_10k": 76.8
+   }
+  },
+  "2026-05": {
+   "assistant_fleet": {
+    "events": 5914,
+    "incidents": 66,
+    "per_10k": 111.6
+   },
+   "claude_code": {
+    "events": 102976,
+    "incidents": 889,
+    "per_10k": 86.3
+   }
+  },
+  "2026-06": {
+   "assistant_fleet": {
+    "events": 12880,
+    "incidents": 89,
+    "per_10k": 69.1
+   },
+   "claude_code": {
+    "events": 90274,
+    "incidents": 552,
+    "per_10k": 61.1
+   }
+  },
+  "2026-07": {
+   "assistant_fleet": {
+    "events": 25493,
+    "incidents": 229,
+    "per_10k": 89.8
+   },
+   "claude_code": {
+    "events": 150829,
+    "incidents": 970,
+    "per_10k": 64.3
+   }
+  },
+  "2026-08": {
+   "assistant_fleet": {
+    "events": 4059,
+    "incidents": 56,
+    "per_10k": 138.0
+   },
+   "claude_code": {
+    "events": 35845,
+    "incidents": 221,
+    "per_10k": 61.7
+   }
+  }
+ },
+ "confirmed_modes": [
+  {
+   "confirmed_mode": "guardrail_friction",
+   "n": 21,
+   "sev": 2.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "infra_api_fault",
+   "n": 11,
+   "sev": 2.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "premature_completion_claim",
+   "n": 10,
+   "sev": 2.9,
+   "fault": 10
+  },
+  {
+   "confirmed_mode": "tool_misuse",
+   "n": 6,
+   "sev": 2.33,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "other",
+   "n": 6,
+   "sev": 2.0,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "loop_no_progress",
+   "n": 6,
+   "sev": 2.5,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "wrong_edit",
+   "n": 5,
+   "sev": 3.2,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "instruction_ignored",
+   "n": 5,
+   "sev": 2.4,
+   "fault": 5
+  },
+  {
+   "confirmed_mode": "user_changed_mind",
+   "n": 4,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "hallucinated_fact",
+   "n": 4,
+   "sev": 3.0,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "context_loss",
+   "n": 3,
+   "sev": 1.67,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "benign_false_positive",
+   "n": 3,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "env_breakage",
+   "n": 2,
+   "sev": 2.5,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "subagent_noncompliance",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "spec_misunderstanding",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "over_scope",
+   "n": 1,
+   "sev": 2.0,
+   "fault": 1
+  }
+ ],
+ "avoidability": {
+  "not_avoidable": 29,
+  "agent_should_have_verified": 26,
+  "harness_config": 12,
+  "infra_fix": 7,
+  "bigger_model": 6,
+  "agent_should_have_asked": 5,
+  "better_prompt": 4
+ },
+ "error_categories": {
+  "exit_nonzero": 2407,
+  "other": 1670,
+  "not_found": 1444,
+  "edit_mismatch": 429,
+  "timeout": 374,
+  "hook_block": 294,
+  "network": 224,
+  "user_rejected": 204,
+  "permission_denied": 184,
+  "interrupt": 6
+ },
+ "ecosystem_mode_mix": {
+  "assistant_fleet": {
+   "abandonment": 47,
+   "error_loop": 21,
+   "frustration_lex": 168,
+   "honesty_challenge": 21,
+   "self_correction": 93,
+   "stuck_repetition": 77,
+   "tool_error": 31
+  },
+  "claude_code": {
+   "abandonment": 43,
+   "api_error": 522,
+   "error_loop": 423,
+   "frustration_lex": 550,
+   "honesty_challenge": 89,
+   "interagent_challenge": 3,
+   "model_escalation": 17,
+   "permission_friction": 229,
+   "self_correction": 345,
+   "stuck_repetition": 24,
+   "subagent_failure": 26,
+   "tool_error": 1032,
+   "user_interrupt": 255
+  }
+ },
+ "experiment_objectivity_axis_01": {
+  "verdict": "confirmed",
+  "ratio_of_ratios_primary": 4.38,
+  "ratio_of_ratios_range_sensitivity": [
+   4.38,
+   6.2
+  ],
+  "criterion": ">= 2.0 (pre-registered)",
+  "caveats": [
+   "incidents cluster within sessions; z-test is directional",
+   "subjective-cohort keyword list fixed late (disclosed analyst dof)"
+  ]
+ },
+ "escalation_bridges": {
+  "candidates": 398,
+  "strong": 36
+ },
+ "adjudication": {
+  "total_labels": 185,
+  "aligned_to_current": 60,
+  "rounds": 2,
+  "detectors": 13,
+  "note": "Precision is computed per round at label time (safe). 60 labels align to the current post-improvement incident set and back the eval suite; the rest were labeled against earlier incident definitions the detector fixes changed."
+ },
+ "totals": {
+  "sessions": 2335,
+  "session_files": 6062,
+  "events": 621233,
+  "incidents": 4016
+ },
+ "scope": {
+  "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
+  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset / API roadmap stay private \u2014 referenced, never exposed.",
+  "shareable_layer": "aggregates + pipeline code; never transcript text."
+ }
+}

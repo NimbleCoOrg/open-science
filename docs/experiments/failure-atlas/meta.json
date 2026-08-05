@@ -1,0 +1,10 @@
+{
+  "slug": "failure-atlas",
+  "title": "The Failure Atlas",
+  "blurb": "An agent system mined its own operator's complete Claude Code and assistant-fleet logs for human-agent interaction failures — adjudicated them, measured its own detectors' honesty, ran a pre-registered experiment on where failure lives, and turned the findings into countermeasures. Run the pipeline on your own logs.",
+  "emoji": "",
+  "status": "staging",
+  "updated": "2026-08-05",
+  "order": 3,
+  "source": "pipeline generated in the lab; dataset stays local, only aggregates ship"
+}
