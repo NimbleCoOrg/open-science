@@ -743,18 +743,30 @@
    "user_interrupt": 255
   }
  },
- "experiment_objectivity_axis_01": {
-  "verdict": "confirmed",
-  "ratio_of_ratios_primary": 4.38,
-  "ratio_of_ratios_range_sensitivity": [
-   4.38,
-   6.2
-  ],
-  "criterion": ">= 2.0 (pre-registered)",
-  "caveats": [
-   "incidents cluster within sessions; z-test is directional",
-   "subjective-cohort keyword list fixed late (disclosed analyst dof)"
-  ]
+ "experiment_objectivity_axis": {
+  "run_01_keyword_cohorts": {
+   "ratio_of_ratios": 4.38,
+   "sensitivity_range": [
+    4.38,
+    6.2
+   ],
+   "verdict": "supported-but-superseded",
+   "flaw": "cohorts defined by hand-picked project-name keywords; the split measured project type, not objectivity"
+  },
+  "run_02_behavioral_cohorts": {
+   "ratio_of_ratios": 1.101,
+   "ratio_of_ratios_broad_grouping": 1.23,
+   "verdict": "killed",
+   "cohorts": {
+    "objective_sessions": 194,
+    "subjective_sessions": 88,
+    "excluded_sessions": 340,
+    "total": 622
+   },
+   "rule": "objective = session ran >=1 test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
+  },
+  "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
+  "takeaway": "The headline 4.4x effect did not survive a clean cohort definition. The study's own tightening killed its own finding \u2014 which is the method working on itself."
  },
  "escalation_bridges": {
   "candidates": 398,

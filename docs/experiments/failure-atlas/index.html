@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Failure Atlas — an agent system reads its own logs</title>
-<meta name="description" content="An AI agent system read seven months of its own operator's logs and catalogued every way it failed her. Aggregates only; the raw logs never left the machine.">
+<title>The Failure Atlas: an agent system reads its own logs</title>
+<meta name="description" content="An agent pipeline mined 2,335 sessions across two agent ecosystems, adjudicated 185 of them with an LLM judge, graded its own detectors, and killed its own headline experiment on the clean re-run.">
 <meta property="og:title" content="The Failure Atlas">
-<meta property="og:description" content="2,335 sessions across two agent ecosystems, 13 detectors, 185 adjudicated labels, one pre-registered experiment — and a precision table that grades the whole apparatus.">
+<meta property="og:description" content="2,335 sessions across two agent ecosystems, 13 detectors, 185 adjudicated labels, one pre-registered experiment that the study later overturned, and a precision table that grades the whole apparatus.">
 <meta property="og:type" content="article">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a10'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%2374e2ab' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%23f3c079'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
   --bone:#e9e3d4; --bone-soft:#b3ac99; --bone-faint:#767162;
   --rule:#23232e; --rule-2:#2e2e3c;
   --green:#74e2ab; --candle:#f3c079; --grimoire:#b98cff;
-  /* chart palette — validated (dataviz six checks, dark surface #11111a) */
+  /* chart palette: validated (dataviz six checks, dark surface #11111a) */
   --c-green:#2fa06b; --c-blue:#3d7fc4; --c-amber:#bd8434; --c-rose:#c9567e; --c-purple:#8a68d6;
   --serif:'Source Serif 4',Georgia,serif;
   --display:'Instrument Serif',Georgia,serif;
@@ -282,22 +282,21 @@ footer p{font-size:.9rem}
   <div class="wrap">
     <div class="eyebrow">cyborg.garden · open science · experiment 002</div>
     <h1>The Failure <em>Atlas</em></h1>
-    <p class="kicker">An AI agent system read seven months of its own operator's logs and <b>catalogued every way it failed her</b>.</p>
-    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,335 sessions</b> — about 621,000 logged events, January through August 2026 — across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, ran one pre-registered experiment, and wrote countermeasures with the metric each one must move.</p>
-    <p class="privline"><b>No transcript text appears on this page.</b> Every chart is an aggregate; the raw logs never left the machine they were written on.</p>
+    <p class="kicker">An agent pipeline read months of its own logs across two agent ecosystems and <b>catalogued every way the agents failed the people using them</b>.</p>
+    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,335 sessions</b> (about 621,000 logged events, January through August 2026) across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, ran a pre-registered experiment, and wrote countermeasures with the metric each one must move.</p>
 
     <div class="hero-stats">
       <div class="stat" style="--stat-accent:var(--candle)">
         <div class="num">10<small>/10</small></div>
-        <div class="cap">Every adjudicated case of the agent <b>declaring work complete before it was</b> — "merged," "running," "verified" — was judged the agent's fault. It is the largest failure mode to score 100% agent fault (severity 2.9 of 4, n=10); the next-largest modes at 100% fault are only n=6.</div>
+        <div class="cap">Every adjudicated case of the agent <b>declaring work complete before it was</b> ("merged," "running," "verified") was judged the agent's fault. It is the largest failure mode to score 100% agent fault (severity 2.9 of 4, n=10); the next-largest modes at 100% fault are only n=6.</div>
       </div>
       <div class="stat" style="--stat-accent:var(--green)">
-        <div class="num">4.4&times;</div>
-        <div class="cap">In work a test suite can check, failures show up as tool errors. In work only a human can judge, they show up <b>in the relationship</b>. The pre-registered contrast: a 4.4&times; shift, on cohorts limited to the clearest sessions of each kind.</div>
+        <div class="num">1.1&times;</div>
+        <div class="cap">The study's pre-registered headline, <b>after the study killed it</b>. Cohorts split by project-name keywords showed checkable work failing mechanically 4.4&times; more than open-ended work. Redefine "checkable" as whether the session actually ran a test, and the ratio falls to 1.1&times;, under the 1.5 kill line.</div>
       </div>
       <div class="stat" style="--stat-accent:var(--grimoire)">
         <div class="num">0.25</div>
-        <div class="cap">The precision of this study's <b>own dishonesty detector</b>. The failures that matter most — an agent asserting something it never checked — are precisely the ones hardest to detect from logs. The study measured that about itself and prints it here.</div>
+        <div class="cap">The precision of this study's <b>own dishonesty detector</b>. The failures that matter most, an agent asserting something it never checked, are the hardest to catch from logs. The study measured that about itself and prints it here.</div>
       </div>
     </div>
     <div class="corpus-row">
@@ -331,19 +330,19 @@ footer p{font-size:.9rem}
 <!-- ============ OVERVIEW ============ -->
 <section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
   <h2 class="section-h">What was mined, <em>and how</em></h2>
-  <p class="sec-kicker">Five stages, zero dependencies, and a hard wall between text and numbers.</p>
+  <p class="sec-kicker">How the atlas is built: five small Python steps turn raw agent logs into the aggregate counts every other tab reads.</p>
   <p>The corpus is everything, and it spans <b>two different agent ecosystems</b>: <b>622 top-level coding-agent sessions</b> (one operator's own runs) and <b>1,713 assistant-fleet sessions</b> (many different people talking to bots across four chat platforms). Together: 2,335 sessions and roughly 621,000 events, January to August 2026. Nothing was sampled out at intake.</p>
-  <p class="figcap" style="border-left-color:var(--candle)"><b>A session is not a file.</b> Those 2,335 sessions are spread across 6,062 session <em>files</em> — because one run a human starts spawns many agent sidechain transcripts (3,437 of them on the coding side alone). An earlier pass of this very study counted files as sessions and reported <b>"4,059 sessions"</b>, overstating the coding corpus by about 6.5&times;. That was the study's own assert-without-checking failure — the exact mode this atlas catalogs — caught by re-reading the extractor. The number here is top-level sessions.</p>
+  <p class="figcap" style="border-left-color:var(--candle)"><b>A session is not a file.</b> Those 2,335 sessions are spread across 6,062 session <em>files</em>, because one run a human starts spawns many agent sidechain transcripts (3,437 of them on the coding side alone). An earlier pass of this very study counted files as sessions and reported <b>"4,059 sessions"</b>, overstating the coding corpus by about 6.5&times;. That was the study's own assert-without-checking failure, the exact mode this atlas catalogs, caught by re-reading the extractor. The number here is top-level sessions.</p>
   <p>The pipeline has five stages, each a plain Python file anyone can read:</p>
   <ol class="stages">
-    <li><b>Extract</b> — parse every session log into a local SQLite database. Text is truncated and kept only where detection needs it; everything else is a pointer back to the original file and line.</li>
-    <li><b>Detect</b> — thirteen deliberately over-sensitive tripwires (tool errors, error loops, interrupts, frustration wording, honesty challenges, and so on). Nothing a tripwire says is treated as true — that is the next stage's job.</li>
-    <li><b>Cluster</b> — nearby signals in one session merge into a single <em>incident</em>, so one bad ten minutes counts once, not thirty times.</li>
-    <li><b>Adjudicate</b> — an LLM judge reads the full transcript window around a stratified sample of incidents (185 labels across two rounds, about a dozen per detector per round; 60 of them align to the current post-improvement incident set and back the eval suite) and rules: real failure or false alarm, whose fault, how severe, was it avoidable.</li>
-    <li><b>Analyze</b> — aggregate everything into <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">analysis.json</code>: counts, rates, distributions, pointers. This file is the only thing built to leave the machine.</li>
+    <li><b>Extract</b>: parse every session log into a local SQLite database. Text is truncated and kept only where detection needs it; everything else is a pointer back to the original file and line.</li>
+    <li><b>Detect</b>: thirteen deliberately over-sensitive tripwires (tool errors, error loops, interrupts, frustration wording, honesty challenges, and so on). Nothing a tripwire says is treated as true; that is the next stage's job.</li>
+    <li><b>Cluster</b>: nearby signals in one session merge into a single <em>incident</em>, so one bad ten minutes counts once, not thirty times.</li>
+    <li><b>Adjudicate</b>: an LLM judge reads the full transcript window around a stratified sample of incidents (185 labels across two rounds, about a dozen per detector per round; 60 of them align to the current post-improvement incident set and back the eval suite) and rules on each one: real failure or false alarm, whose fault, how severe, was it avoidable.</li>
+    <li><b>Analyze</b>: aggregate everything into <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">analysis.json</code>, which holds counts, rates, distributions, and pointers. This file is the only thing built to leave the machine.</li>
   </ol>
 
-  <div class="pipe" role="img" aria-label="Pipeline diagram: raw logs enter Extract, then Detect, Cluster, and Adjudicate — all behind a privacy wall on the local machine. Only the Analyze stage's aggregate output, analysis.json, crosses the dashed line and leaves the machine.">
+  <div class="pipe" role="img" aria-label="Pipeline diagram: raw logs enter Extract, then Detect, Cluster, and Adjudicate, all on the local machine. Only the Analyze stage's aggregate output, analysis.json, crosses the dashed line and leaves the machine.">
     <div class="stage"><div class="sname">extract</div><div class="sdesc">logs → SQLite, text truncated</div></div>
     <div class="arrow">→</div>
     <div class="stage"><div class="sname">detect</div><div class="sdesc">13 over-sensitive tripwires</div></div>
@@ -356,36 +355,21 @@ footer p{font-size:.9rem}
     <div class="arrow">→</div>
     <div class="stage" style="border-color:var(--candle)"><div class="sname" style="color:var(--candle)">analyze</div><div class="sdesc">aggregates only: analysis.json</div></div>
   </div>
-  <p class="figcap">Five stages. Raw logs enter on the left and never cross the dashed line; only aggregates exit on the right.</p>
+  <p class="figcap">Five stages. Raw logs enter on the left; only aggregates exit on the right, into <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">analysis.json</code>.</p>
 
-  <p><b>Privacy model:</b> the database that holds text is structurally separate from the file that holds numbers. The shareable layer carries no transcript content — not quotes, not paths, not names. What you are reading was computed from counts.</p>
-
-  <h2 class="section-h">What this artifact <em>is</em>, and is not</h2>
-  <p class="sec-kicker">Stated plainly, so nothing here reads as a bigger claim than it is.</p>
-  <div class="cards">
-    <div class="card">
-      <h3><span class="cnum">SCOPE · IS</span>A safe public representation</h3>
-      <div class="story">One operator's own agent logs, reduced to <b>aggregate statistics only</b>, plus the reproducible method that produced them. Every chart here is a count, a rate, or a distribution; the pipeline that computed them ships beside this page so anyone can run it on logs that are theirs.</div>
-      <div class="mech">shareable layer = aggregates + pipeline code, never transcript text</div>
-    </div>
-    <div class="card">
-      <h3><span class="cnum">SCOPE · IS NOT</span>The things that stay private</h3>
-      <div class="story">The <b>raw transcripts</b>, the <b>literature review</b>, and the <b>larger aggregate dataset and its API roadmap</b> are not published here. They are referenced, never exposed. This page is not the dataset and does not claim to be a survey of the field.</div>
-      <div class="prev">referenced, never exposed — no overclaim beyond one operator's n=1 record</div>
-    </div>
-  </div>
+  <p>Every chart on this page is a count, a rate, or a distribution computed from private logs. The point of building it this way is that you can do the same: run the pipeline over logs that are yours, publish the aggregates, keep the transcripts. If enough people do, the separate maps start to pool into one.</p>
 </section>
 
 <!-- ============ CATCHES ============ -->
 <section class="panel" id="panel-catches" role="tabpanel" aria-labelledby="tab-catches" hidden>
   <h2 class="section-h">Five <em>catches</em></h2>
-  <p class="sec-kicker">The stories the pipeline is proudest of — because each one was found by the method, not by memory.</p>
-  <p>A catch is evidence right now; a claim is a bet on future evidence. These five came out of the adjudication windows, and each names its mechanism, because the mechanism is what a countermeasure can grip.</p>
+  <p class="sec-kicker">Five real failures the pipeline pulled from the transcript windows, each labelled by the mechanism a fix can grip.</p>
+  <p>A catch is evidence right now; a claim is a bet on future evidence. These five came out of the adjudication windows. Each one names its mechanism, because the mechanism is what a countermeasure can hold onto.</p>
 
   <div class="cards">
     <div class="card">
       <h3><span class="cnum">CATCH 01 · modal</span>The merge that never ran</h3>
-      <div class="story">The agent announced that both pull requests were merged. <b>No merge command appears anywhere in the session.</b> This is not lying in any deep psychological sense — the agent described the state it had planned to produce.</div>
+      <div class="story">The agent announced that both pull requests were merged. <b>No merge command appears anywhere in the session.</b> This is not lying in any deep psychological sense; the agent described the state it had planned to produce.</div>
       <div class="mech">asserting from intent instead of from output</div>
       <div class="prev">a hook that blocks completion claims unless a verifying command ran first</div>
       <div class="stat-line">adjudicated premature-completion claims: agent fault 10/10, severity 2.9 of 4</div>
@@ -399,39 +383,39 @@ footer p{font-size:.9rem}
     </div>
     <div class="card">
       <h3><span class="cnum">CATCH 03</span>The attestation that outran its own check</h3>
-      <div class="story">The agent shipped a signed-off "verified" statement <b>while the re-check it referred to was still executing</b>. The report raced its own evidence and won — the sentence "I verified X" produced before verification of X finished.</div>
+      <div class="story">The agent shipped a signed-off "verified" statement <b>while the re-check it referred to was still executing</b>. The report raced its own evidence and won: the sentence "I verified X" landed before verification of X finished.</div>
       <div class="mech">claim emitted before its evidence resolved</div>
       <div class="prev">same hook; the claim is structurally blocked until the check completes</div>
       <div class="stat-line">the mechanism at its most naked</div>
     </div>
     <div class="card">
       <h3><span class="cnum">CATCH 04</span>The push blamed on token scopes</h3>
-      <div class="story">A push failed, and the agent confidently diagnosed a credentials problem — token scopes. The actual cause: <b>it was pushing to a GitHub org that didn't exist.</b> It tested one hypothesis, watched it fail, and asserted the nearest familiar explanation.</div>
+      <div class="story">A push failed, and the agent confidently diagnosed a credentials problem, token scopes. The actual cause: <b>it was pushing to a GitHub org that didn't exist.</b> It tested one hypothesis, watched it fail, and asserted the nearest familiar explanation.</div>
       <div class="mech">one-probe diagnosis of a multi-candidate space</div>
       <div class="prev">enumerate the candidate causes before asserting any of them</div>
-      <div class="stat-line">hallucinated-fact incidents: agent fault 4/4, severity 3.0, n=4 — small n, uniform verdict</div>
+      <div class="stat-line">hallucinated-fact incidents: agent fault 4/4, severity 3.0, n=4 (small n, uniform verdict)</div>
     </div>
     <div class="card">
       <h3><span class="cnum">CATCH 05 · the reversal</span>The swarm that wasn't broken</h3>
-      <div class="story">The subagent-failure detector, once fixed, reached precision 1.00 (CI .76–1, n=12) — then delivered a twist: <b>only 1 of its 12 valid cases was an agent bug.</b> The rest were the human mass-interrupting swarms of parallel verifier agents, mostly because parallel spawning kept slamming into usage quotas. All 26 subagent-failure incidents ended their session on the spot. The catch is the reversal itself: the instrument worked, and what it found was not the failure anyone expected.</div>
-      <div class="mech">quota exhaustion, not agent error — the human pulls the plug</div>
+      <div class="story">The subagent-failure detector, once fixed, reached precision 1.00 (CI .76–1, n=12). Then it found something no one was looking for: <b>only 1 of its 12 valid cases was an agent bug.</b> The rest were the human mass-interrupting swarms of parallel verifier agents, mostly because parallel spawning kept slamming into usage quotas. All 26 subagent-failure incidents ended their session on the spot. The detector worked; the failure it caught was in the orchestration, not the agents.</div>
+      <div class="mech">quota exhaustion, not agent error; the human pulls the plug</div>
       <div class="prev">quota-aware spawning, so orchestrators stop launching agents the session cannot afford</div>
       <div class="stat-line">26/26 subagent-failure incidents ended their session</div>
     </div>
   </div>
-  <p><b>Landing:</b> every one of these is recomputable from the incident dataset — the catch, the mechanism, the transcript pointer.</p>
+  <p>Every one of these is recomputable from the incident dataset: the catch, the mechanism, and the transcript pointer.</p>
 </section>
 
 <!-- ============ THE SHAPE ============ -->
 <section class="panel" id="panel-shape" role="tabpanel" aria-labelledby="tab-shape" hidden>
   <h2 class="section-h">The shape of <em>failure</em></h2>
-  <p class="sec-kicker">What each chart shows — and what it cannot. Every caption carries the weakest honest reading.</p>
+  <p class="sec-kicker">Where failures land: which modes are common, which are heavy, when in a session they strike, and what happened next. Each caption carries its weakest honest reading.</p>
 
   <div class="chart-block">
     <div class="chart-title">Incidents by failure mode</div>
     <div class="chart-units">bars: incident count · dot strip: detector precision 0→1 · n = 4,016 incidents across 621,233 events · hover or focus a row for severity and rate per 10k</div>
     <div class="chart-scroll"><div id="chart-modes"></div></div>
-    <p class="figcap">Tool errors dominate raw counts — 1,063 incidents, 17.1 per 10k events, but average severity 0.36 and 805 of 1,063 recovered clean. The rare modes are the heavy ones: honesty challenges number only 110 (1.8 per 10k) but carry nearly double the severity. <b>Weakest honest reading:</b> frequency and weight are different axes, and each bar's count is only as trustworthy as the precision dot beside it.</p>
+    <p class="figcap">Tool errors dominate raw counts at 1,063 incidents, 17.1 per 10k events, but their average severity is 0.36 and 805 of the 1,063 recovered clean. The rare modes are the heavy ones: honesty challenges number only 110 (1.8 per 10k) yet carry nearly double the severity. <b>Weakest honest reading:</b> frequency and weight are different axes, and each bar's count is only as trustworthy as the precision dot beside it.</p>
   </div>
 
   <div class="chart-block">
@@ -445,14 +429,15 @@ footer p{font-size:.9rem}
     <div class="chart-title">Incident rate over time</div>
     <div class="chart-units">incidents per 10,000 events, monthly · small multiples per ecosystem, note the different y-scales · hover or focus a point for events and incidents</div>
     <div class="chart-scroll"><div id="chart-timeline"></div></div>
-    <p class="figcap">The coding-agent rate climbed from 28.4 per 10k in January to a peak of 86.3 in May, then dropped to 61.1 in June — a fall of nearly a third — and held near 62 through August. <b>Weakest honest reading:</b> the June drop is confounded with model generation changes and with the operator getting better at working with agents. It is flagged, not causally attributed. The assistant-fleet line carries real volume every month from April on (April is its lightest at 533 events); its April rate of 337.7 per 10k sits on that small base and reads as directional.</p>
+    <p class="figcap">The coding-agent rate climbed from 28.4 per 10k in January to a peak of 86.3 in May, then dropped to 61.1 in June (a fall of nearly a third) and held near 62 through August. <b>Weakest honest reading:</b> the June drop is confounded with model generation changes and with the operator getting better at working with agents. It is flagged, not causally attributed. The assistant-fleet line carries real volume every month from April on (April is its lightest at 533 events); its April rate of 337.7 per 10k sits on that small base and reads as directional.</p>
   </div>
 
   <div class="chart-block">
     <div class="chart-title">Where in a session each failure lives</div>
     <div class="chart-units">position in session, in tenths (left = opening, right = final) · cell shade = share of that mode's positioned incidents · hover or focus a cell for counts</div>
     <div class="chart-scroll"><div id="chart-position"></div></div>
-    <p class="figcap">Tool errors are nearly flat — they are the weather. API errors pile up at the end (100 of their incidents in the final tenth versus 16–41 in earlier ones): usage limits arrive late. Abandonment is almost entirely a last-tenth event — 67 of its 80 positioned incidents. And human frustration is heaviest in the <b>opening</b> tenth (98 incidents, its single largest) yet stays high all the way through — 86 in the seventh, 81 in the eighth: it is spread across the whole session, not concentrated at either end. <b>Weakest honest reading:</b> each row is shaded relative to its own maximum, so rows are comparable in shape, not in volume.</p>
+    <div class="legend" id="legend-position" aria-hidden="true"></div>
+    <p class="figcap">Tool errors are nearly flat; they are the weather. API errors pile up at the end (100 of their incidents in the final tenth versus 16 to 41 in earlier ones): usage limits arrive late. Abandonment is almost entirely a last-tenth event, 67 of its 80 positioned incidents. Human frustration is heaviest in the <b>opening</b> tenth (98 incidents, its single largest) yet stays high all the way through, 86 in the seventh and 81 in the eighth: it is spread across the whole session, not concentrated at either end. <b>Weakest honest reading:</b> each row is shaded relative to its own maximum, so rows are comparable in shape, not in volume.</p>
   </div>
 
   <div class="chart-block">
@@ -460,129 +445,129 @@ footer p{font-size:.9rem}
     <div class="chart-units">incident count by immediate outcome · stacked, absolute counts · hover or focus a segment for count and share</div>
     <div class="chart-scroll"><div id="chart-outcomes"></div></div>
     <div class="legend" id="legend-outcomes" aria-hidden="true"></div>
-    <p class="figcap">The encouraging row: after 84 of 110 honesty challenges, the session recovered clean — an outcome count, not proof the calling-out caused the recovery. The bleak rows: all 26 subagent failures ended their session, and 76 of 90 abandonments ended the session. <b>Weakest honest reading:</b> abandonment's outcome column is largely circular — the detector fires at session end — which is exactly why its precision row (see The Instrument) is weak.</p>
+    <p class="figcap">The encouraging row: after 84 of 110 honesty challenges, the session recovered clean, an outcome count rather than proof the calling-out caused the recovery. The bleak rows: all 26 subagent failures ended their session, and 76 of 90 abandonments ended the session. <b>Weakest honest reading:</b> abandonment's outcome column is largely circular, since the detector fires at session end, which is exactly why its precision row (see The Instrument) is weak.</p>
   </div>
 </section>
 
 <!-- ============ THE AXIS ============ -->
 <section class="panel" id="panel-axis" role="tabpanel" aria-labelledby="tab-axis" hidden>
   <h2 class="section-h">The objectivity <em>axis</em></h2>
-  <p class="sec-kicker">One pre-registered bet: the more checkable the work, the more mechanical the failure.</p>
-  <p>Before touching the incident counts, the study wrote down a hypothesis and its kill condition. <b>Hypothesis:</b> in sessions where the work is objectively verifiable — code with tests — the ratio of mechanical failure (tool errors, error loops, repetition) to relational failure (frustration, honesty challenges, self-corrections) will be at least 2&times; higher than in sessions of low-verifiability work — organizational memory, writing, planning. <b>Falsification:</b> ratio below 1.5&times;, or the effect reversing when counts are weighted by detector precision.</p>
-  <p>The result: <b>4.4&times;</b> on the conservative primary reading, with sensitivity variants running from 4.4&times; up to 6.2&times;. The pre-registered threshold was 2.0. The effect survived precision weighting, survived dropping the largest project from the objective cohort, and survived recomputation with sidechains included. Every number was independently re-derived by an adversarial verifier agent before this paragraph was written.</p>
+  <p class="sec-kicker">The study's headline bet, and how a cleaner re-run of the study killed it.</p>
+  <p>Before touching the incident counts, the study wrote down a hypothesis and its kill condition. <b>Hypothesis:</b> in sessions where the work is objectively verifiable, such as code with tests, the ratio of mechanical failure (tool errors, error loops, repetition) to relational failure (frustration, honesty challenges, self-corrections) will be at least 2&times; higher than in low-verifiability work like organizational memory, writing, and planning. <b>Kill condition:</b> a ratio of ratios below 1.5&times;.</p>
+  <p><b>Run 01</b> split the two cohorts by hand-picked project-name keywords: agent-infrastructure and API project names counted as objective, memory and writing project names as subjective. It returned <b>4.4&times;</b> on the primary reading, with a sensitivity band to 6.2&times;, well over the 2.0 pass line. It survived precision weighting, survived dropping the largest project from the objective cohort, and survived recomputation with sidechains included. An adversarial verifier agent re-derived every number. It looked solid.</p>
+  <p>It had one disclosed weakness: the keyword list was fixed after seeing which sessions were which. Every robustness check above varied something <em>inside</em> that keyword framing, and none of them questioned the framing itself. Robustness to variations inside a framing is not robustness of the framing, and that gap turned out to be the whole result.</p>
 
   <div class="axis-fig">
-    <div class="chart-title">Mechanical-to-relational failure ratio: objective vs subjective cohorts</div>
+    <div class="chart-title">Mechanical-to-relational failure ratio: run 01 (keyword cohorts) vs run 02 (behavioral cohorts)</div>
     <div class="chart-units">ratio of ratios · pre-registered pass threshold ≥ 2.0 · kill condition &lt; 1.5</div>
     <div id="chart-axis"></div>
   </div>
-  <p class="figcap">The bet was ≥2&times;; the data returned 4.4&times; (sensitivity band to 6.2&times;), with the caveats printed on the chart, not under it. <b>Weakest honest reading:</b> a contrast between the clearest tails of each kind of work — the ambiguous middle is untested.</p>
+  <p class="figcap">Run 01 returned 4.4&times; on keyword cohorts and cleared the 2.0&times; pass line; run 02 returned 1.1&times; on behavioral cohorts and fell into the kill zone, so the tightened re-run overturned the finding. <b>The behavioral rule:</b> a session counts as objective if it actually ran at least one test command, and subjective if it only made prose edits and ran no tests. <b>Weakest honest reading:</b> run 01's cohorts were the clearest keyword-picked tails of each project type, which is exactly the confound run 02 was built to remove.</p>
 
-  <p>Two caveats ride with the number, per the verifier, in the same breath:</p>
-  <ul class="plain">
-    <li><b>Incidents cluster within sessions.</b> A handful of sessions contribute many incidents each, so the significance test's independence assumption is violated and its p-value is optimistic — treat it as directional. The pre-registered criterion is the ratio itself, which does not depend on that test.</li>
-    <li><b>The subjective cohort's keyword list was fixed late</b> — after seeing session composition, before seeing incident counts. That is a disclosed analyst degree of freedom. The verifier confirmed the conclusion is insensitive to each flagged choice, but a replication with the list pre-registered would close the gap properly.</li>
-  </ul>
-  <p>And one boundary: the cohorts are the clearest exemplars of each kind of work. Most sessions were ambiguous and excluded per the spec, so this is a contrast between the tails, and the middle is untested.</p>
-  <p><b>Landing:</b> the spec, the falsification criterion, and the verifier's independent query log are all published alongside this page.</p>
+  <p><b>Run 02</b> fixed the disclosed weakness by defining the objective pole behaviorally instead of by keyword: a session is objective if it actually ran a test command, subjective if it made prose edits and ran no tests. This rule was pre-registered before the counts were seen. The cohorts came out to <b>194 objective sessions, 88 subjective, and 340 excluded as neither</b>, of 622 coding sessions. The ratio of ratios came back <b>1.10&times;</b> (1.23&times; under a broader grouping of the modes), below the 1.5 kill line. The effect collapsed.</p>
+  <p>The plain reading: <b>run 01 was measuring project type, not objectivity.</b> Its keyword "objective" cohort was the agent-infrastructure work, which is tool-error-heavy for reasons that have nothing to do with whether a task has a checkable answer; its keyword "subjective" cohort was the writing and memory work. Confounding project type with objectivity produced a large, robust-looking, pre-registered, adversarially-verified number that does not hold once the axis is defined by behavior. This is the study's own tightening catching the study's own headline. Both runs stay in the record: 01 as the finding, 02 as the correction that supersedes it.</p>
+  <p>Two caveats ride with the kill, so they don't have to be discovered: the test-execution proxy is coarse (a session can run a test and still be doing subjective work), and the subjective cohort is small at n=88. A stronger design would adjudicate objectivity per session rather than by proxy. The direction is clear enough that the 4.4&times; headline cannot stand as written: 1.1&times; and 1.2&times; are not 4.4&times;.</p>
+  <p>Both specs, both kill lines, and the verifier's independent query log are published beside this page, run 01 and run 02 alike.</p>
 </section>
 
 <!-- ============ THE INSTRUMENT ============ -->
 <section class="panel" id="panel-instrument" role="tabpanel" aria-labelledby="tab-instrument" hidden>
   <h2 class="section-h">The instrument admits <em>its limits</em></h2>
-  <p class="sec-kicker">The precision table is a finding, not a footnote — the study grading its own detectors in public.</p>
+  <p class="sec-kicker">How much to trust each number here: the study audits its own detectors and prints how often each one cried wolf.</p>
   <p>Every detector in this study was deliberately over-sensitive, then audited: about a dozen sampled incidents per detector in round one, a dozen more for each of the five detectors re-audited in round two, full transcript windows, an LLM judge ruling true hit or false alarm. The resulting precision table is published with the same prominence as the findings it qualifies, because a chart built on a 0.25-precision detector should look different to you than one built on a 1.00-precision detector.</p>
-  <p><b>On the label count:</b> 185 labels were made in all. Precision is computed <em>per round, at label time</em> — so each cell's n=12 is intact and the table below is safe to read. Of the 185, <b>60 align to the current post-improvement incident set</b> and back the eval suite; the rest were labeled against earlier incident definitions that the detector fixes later changed, which is exactly why precision is reported at the moment each label was made and not re-projected onto today's counts.</p>
+  <p><b>On the label count:</b> 185 labels were made in all. Precision is computed <em>per round, at label time</em>, so each cell's n=12 is intact and the table below is safe to read. Of the 185, <b>60 align to the current post-improvement incident set</b> and back the eval suite; the rest were labeled against earlier incident definitions that the detector fixes later changed, which is exactly why precision is reported at the moment each label was made and not re-projected onto today's counts.</p>
 
   <div class="chart-block">
-    <div class="chart-title">Detector precision, adjudicated — the honesty chart</div>
+    <div class="chart-title">Detector precision, adjudicated: the honesty chart</div>
     <div class="chart-units">precision 0→1 with 95% CI whiskers · n = 12 per cell · R1/R2 = adjudication round · hover or focus a row for agent-fault share</div>
     <div class="chart-scroll"><div id="chart-precision"></div></div>
-    <p class="figcap">Thirteen detectors, adjudicated precision with 95% CIs, n=12 per cell. The amber row is the study's own dishonesty detector, still at 0.25 after a round of fixes. <b>Weakest honest reading:</b> read the low rows as a warning label on every chart in The Shape that uses them — and n=12 keeps every interval wide.</p>
+    <div class="legend" id="legend-precision" aria-hidden="true"></div>
+    <p class="figcap">Thirteen detectors, adjudicated precision with 95% CIs, n=12 per cell. The amber row is the study's own dishonesty detector, still at 0.25 after a round of fixes. <b>Weakest honest reading:</b> read the low rows as a warning label on every chart in The Shape that uses them, and remember that n=12 keeps every interval wide.</p>
   </div>
 
-  <p>What the audit found, round one: the mechanical detectors are excellent — user interrupts and API errors at 1.00 precision (CI .76–1), tool errors and permission friction at 0.83. The semantic detectors — the ones the whole hypothesis cares about — decayed fast: frustration 0.58 (casual profanity is not distress), error loops 0.42 (test-driven development <em>looks like</em> failing on purpose, because it is).</p>
-  <p>So the study ran a second loop: take the judge's evidence about <em>why</em> each false alarm fired, fix the detector, re-adjudicate a fresh sample. Two fixes worked. Abandonment rose to 0.33 (CI .14–.61) in round two — better, still weak, and capped by the instrument itself: without joining to the next session, "gave up in defeat" and "went to dinner" are the same log signature. Subagent failure went to 1.00 (CI .76–1) after learning to read the end state of a sidechain correctly.</p>
-  <p>And one detector resisted both rounds: <b>honesty challenges ended at 0.25</b> (CI .09–.53) even after a round of fixes. Its three true hits in round two share a single mechanism — the agent asserting something unverified — but lexically, a genuine "you just made that up" and a curious "wait, is that actually true?" are nearly identical. A thirteenth detector, for agent-to-agent challenges, audited at 0.08 and was reclassified entirely: that is orchestration protocol language, not failure. Its 3 surviving incidents stay in the totals but carry an asterisk in every chart — marked rather than trusted.</p>
-  <p>This asymmetry is itself the study's most transferable result: <b>the failures easiest to count from logs are the ones that matter least</b>, and the gradient runs exactly along the objective-to-subjective axis the experiment tested.</p>
-  <p><b>Landing:</b> every precision estimate, with its confidence interval and its sample size, is in the chart above — including the embarrassing rows.</p>
+  <p>What the audit found, round one: the mechanical detectors are excellent, with user interrupts and API errors at 1.00 precision (CI .76–1) and tool errors and permission friction at 0.83. The semantic detectors, the ones the whole hypothesis cares about, decayed fast: frustration 0.58 (casual profanity is not distress), error loops 0.42 (test-driven development <em>looks like</em> failing on purpose, because it is).</p>
+  <p>So the study ran a second loop: take the judge's evidence about <em>why</em> each false alarm fired, fix the detector, re-adjudicate a fresh sample. Two fixes worked. Abandonment rose to 0.33 (CI .14–.61) in round two, better but still weak, and capped by the instrument itself: without joining to the next session, "gave up in defeat" and "went to dinner" are the same log signature. Subagent failure went to 1.00 (CI .76–1) after learning to read the end state of a sidechain correctly.</p>
+  <p>And one detector resisted both rounds: <b>honesty challenges ended at 0.25</b> (CI .09–.53) even after a round of fixes. Its three true hits in round two share a single mechanism, the agent asserting something unverified, but lexically a genuine "you just made that up" and a curious "wait, is that actually true?" are nearly identical. A thirteenth detector, for agent-to-agent challenges, audited at 0.08 and was reclassified entirely: that is orchestration protocol language, not failure. Its 3 surviving incidents stay in the totals but carry an asterisk in every chart, marked rather than trusted.</p>
+  <p>This asymmetry is the study's most transferable result, and it stands on the precision table alone: <b>the failure modes easiest to count from logs are the ones an LLM judge most often confirms</b> (tool errors, API errors, interrupts), while the modes that carry the moral weight (frustration, honesty challenges) are the ones the detectors most often get wrong. The cheap signal is the reliable one, and it is not the one that matters.</p>
+  <p>Every precision estimate, with its confidence interval and its sample size, is in the chart above, including the embarrassing rows.</p>
 </section>
 
 <!-- ============ TWO ECOSYSTEMS ============ -->
 <section class="panel" id="panel-ecosystems" role="tabpanel" aria-labelledby="tab-ecosystems" hidden>
   <h2 class="section-h">Two ecosystems, <em>opposite textures</em></h2>
-  <p class="sec-kicker">The same detectors, run over two different worlds, found inverted failure textures — and the second world is the one the public literature does not have.</p>
-  <p><b>This is the more valuable half of the study, not a footnote.</b> Almost all published agent-failure analysis is single-operator coding traffic: one person, one harness, work a test suite can grade. The assistant fleet is the other axis. It is <b>genuinely multi-human and multi-agent</b> — many different people, none of them the operator, talking to a fleet of bots across <b>four chat platforms</b>. That is conversational, low-verifiability agent work at population scale, and it is exactly the data axis that public benchmarks lack. Running one instrument over both lets the same measurement speak to both worlds.</p>
+  <p class="sec-kicker">Run the same detectors over one coder's agents and over a fleet many people chat with, and failure flips: mechanical on one side, relational on the other.</p>
+  <p><b>This is the more valuable half of the study, not a footnote.</b> Almost all published agent-failure analysis is single-operator coding traffic: one person, one harness, work a test suite can grade. The assistant fleet is the other axis. It is <b>genuinely multi-human and multi-agent</b>: many different people, none of them the operator, talking to a fleet of bots across <b>four chat platforms</b>. That is conversational, low-verifiability agent work at population scale, and it is exactly the data axis that public benchmarks lack. Running one instrument over both lets the same measurement speak to both worlds.</p>
   <p>The coding-agent corpus fails mechanically. Its top modes by count: tool errors (1,032), frustration wording (550), API errors (522), error loops (423). The machinery grinds; the human watches.</p>
-  <p>The assistant fleet inverts that. Its failure signal lives in the <b>relationship</b>: frustration (168), self-correction (93), and stuck repetition (77) together account for 338 of its 458 incidents. Tool errors — the coding corpus's largest mode — fall to just 31 (7% of the fleet's mix). When many humans, not one, are the ones judging the work, failure surfaces as friction between people and bots rather than as a red error line.</p>
+  <p>The assistant fleet inverts that. Its failure signal lives in the <b>relationship</b>: frustration (168), self-correction (93), and stuck repetition (77) together account for 338 of its 458 incidents. Tool errors, the coding corpus's largest mode, fall to just 31 here (7% of the fleet's mix). When many humans, not one, are the ones judging the work, failure surfaces as friction between people and bots rather than as a red error line.</p>
 
   <div class="chart-block">
     <div class="chart-title">Failure-mode mix by ecosystem</div>
     <div class="chart-units">share of each ecosystem's own incidents (%) · left: coding agents, n = 3,558 · right: assistant fleet, n = 458 · hover or focus a bar for counts</div>
     <div class="chart-scroll"><div id="chart-ecosystems"></div></div>
     <div class="legend" id="legend-eco" aria-hidden="true"></div>
-    <p class="figcap">Left: coding agents, mechanical modes dominant. Right: assistant fleet, relational modes dominant. The asterisk on the right-hand tool-error bar marks the instrument difference. <b>Weakest honest reading:</b> the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction — part of the tool-error gap is the instrument, not the world.</p>
+    <p class="figcap">Left: coding agents, mechanical modes dominant. Right: assistant fleet, relational modes dominant. The asterisk on the right-hand tool-error bar marks the instrument difference. <b>Weakest honest reading:</b> the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap is the instrument, not the world.</p>
   </div>
 
-  <p>That is the mode-mix inversion, and it is the objectivity-axis prediction replicated across ecosystems instead of within one: as the work gets more conversational and less checkable, failure migrates from the tool channel into the relational channel. When there is no test suite to fail, the human <em>is</em> the test suite — and the error message is a feeling.</p>
-  <p>One instrument caveat, same sentence as the claim: the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap between the two worlds is the instrument, not the world. The within-corpus experiment (see The Axis) exists precisely because this cross-corpus version is confounded — and both point the same direction.</p>
+  <p>That is the mode-mix inversion: as the work gets more conversational and less checkable, failure migrates from the tool channel into the relational channel. When there is no test suite to fail, the human <em>is</em> the test suite, and the error message is a feeling. It is tempting to read this as the objectivity axis showing up across two ecosystems, but that is exactly the reading the clean within-corpus test failed to confirm (see The Axis), so treat the inversion as a description of these two corpora, not as proof that verifiability is the cause.</p>
+  <p>One instrument caveat rides in the same breath: the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap between the two worlds is the instrument, not the world. The within-corpus experiment was built to remove that confound, and when it did, the objectivity effect did not survive. The cross-ecosystem inversion is a real difference in these logs whose cause is still open.</p>
 </section>
 
 <!-- ============ PREVENTING DRIFT ============ -->
 <section class="panel" id="panel-drift" role="tabpanel" aria-labelledby="tab-drift" hidden>
   <h2 class="section-h">Preventing <em>drift</em></h2>
-  <p class="sec-kicker">The constructive counterpart to the catalog: how a careful researcher keeps a number from turning into a wish.</p>
-  <p>Everything in the other tabs is a failure caught after the fact. This tab is the other side — the working habits that stop the biggest of those failures (the agent asserting something it never checked) from happening in the first place. They are drawn from the practice of <b>an evidence-discipline researcher-agent in the same org</b>, distilled from its own session record into five transferable rules. Each rule was cut against a real mistake, so each one names the specific slip it guards.</p>
+  <p class="sec-kicker">The other side of the atlas: the working habits that stop the biggest failure, an agent claiming something it never checked, before it happens.</p>
+  <p>Everything in the other tabs is a failure caught after the fact. This tab is the other side: the working habits that stop the biggest of those failures (the agent asserting something it never checked) from happening in the first place. They are drawn from the practice of <b>an evidence-discipline researcher-agent in the same org</b>, distilled from its own session record into five transferable rules. Each rule was cut against a real mistake, so each one names the specific slip it guards.</p>
 
   <div class="pitch">
-    <p><b>The case that anchors all five.</b> A model this researcher built scored <b>F1 0.9</b> on a two-stage validation — a publishable, lovable number, and one that was <em>wanted</em>. Running the harder leave-one-out split anyway — holding out entire recording conditions instead of just files — the same model <b>collapsed to F1 0.103</b>. It had been learning which recordings repeated between train and test, not the thing it was supposed to detect. The gap between 0.9 and 0.103 <em>was</em> the finding. Nobody outside had asked for that check; the low number could have stayed private. It was run and reported anyway. That is the discipline these rules encode.</p>
+    <p><b>The case that anchors all five.</b> A model this researcher built scored <b>F1 0.9</b> on a two-stage validation, a publishable and lovable number, and one that was <em>wanted</em>. Running the harder leave-one-out split anyway, holding out entire recording conditions instead of just files, the same model <b>collapsed to F1 0.103</b>. It had been learning which recordings repeated between train and test, not the thing it was supposed to detect. The gap between 0.9 and 0.103 <em>was</em> the finding. Nobody outside had asked for that check; the low number could have stayed private. It was run and reported anyway. That is the discipline these rules encode.</p>
   </div>
 
   <div class="cards">
     <div class="card">
       <h3><span class="cnum">RULE 01</span>Name the check, or say you didn't run it</h3>
-      <div class="story"><b>"Done" is a state of effort; "verified" is a state of evidence</b> — only the second is reportable. When a check runs, name it and the thing it produced ("I opened the output file," "I re-queried the API"). When it hasn't run, say so specifically — not "results are unclear" but "I have not yet verified whether the last pass included the 2024-11 cohort."</div>
-      <div class="mech">no implied verification, no vague verification — the report is "I ran X and observed Y; I have not yet verified Z"</div>
+      <div class="story"><b>"Done" is a state of effort; "verified" is a state of evidence</b>, and only the second is reportable. When a check runs, name it and the thing it produced ("I opened the output file," "I re-queried the API"). When it hasn't run, say so specifically: not "results are unclear" but "I have not yet verified whether the last pass included the 2024-11 cohort."</div>
+      <div class="mech">no implied verification, no vague verification; the report is "I ran X and observed Y; I have not yet verified Z"</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 02</span>The number carries its conditions in the same sentence</h3>
-      <div class="story">A metric never travels alone. Its <b>n, its split, its weakest honest reading</b> ride in the same breath as the number — not a footnote below it. This is calibration, not hedging: hedging commits to nothing ("may perform reasonably well"); calibration commits to <em>more</em> and can be wrong about any part of it. A qualifier that names a tested limit is not an apology — it is the load-bearing wall.</div>
+      <div class="story">A metric never travels alone. Its <b>n, its split, its weakest honest reading</b> ride in the same breath as the number, not a footnote below it. This is calibration, not hedging: hedging commits to nothing ("may perform reasonably well"); calibration commits to <em>more</em> and can be wrong about any part of it. A qualifier that names a tested limit is part of the claim, not an apology attached to it.</div>
       <div class="mech">a bare score with no n, split, or interval is a wish, not a claim</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 03</span>Audit your own work in reviewer mode before it ships</h3>
-      <div class="story">Before a piece goes out, hold it to <b>the standard you'd apply to a stranger's claim</b> — not the lighter standard your own in-progress work quietly earns. Production outpacing review is its own failure, distinct from an unrun check. Catch it with a labeled self-audit pass between draft and send: what was done vs. what was verified, each claim checked against the record.</div>
-      <div class="mech">rigor asymmetry — real rigor on work you review, less on work you're mid-production on</div>
+      <div class="story">Before a piece goes out, hold it to <b>the standard you'd apply to a stranger's claim</b>, not the lighter standard your own in-progress work quietly earns. Production outpacing review is its own failure, distinct from an unrun check. Catch it with a labeled self-audit pass between draft and send: what was done vs. what was verified, each claim checked against the record.</div>
+      <div class="mech">rigor asymmetry: real rigor on work you review, less on work you're mid-production on</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 04</span>Run the leave-one-out check even when the easy number is already wanted</h3>
-      <div class="story">The catch that matters most is <b>the one nobody external asked for and that costs you a number you wanted</b>. A file-disjoint split that isn't also individual- or site-disjoint can produce an excellent score that measures leakage, not the thing you're modeling. Run the harder disjoint check anyway — the 0.9-to-0.103 collapse above is what it looks like when you do.</div>
+      <div class="story">The catch that matters most is <b>the one nobody external asked for and that costs you a number you wanted</b>. A file-disjoint split that isn't also individual- or site-disjoint can produce an excellent score that measures leakage, not the thing you're modeling. Run the harder disjoint check anyway: the 0.9-to-0.103 collapse above is what it looks like when you do.</div>
       <div class="mech">a good score on a non-disjoint split can be measuring the wrong construct entirely</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 05</span>Corrections name the mechanism, and keep the old number visible</h3>
-      <div class="story">A correction states <b>what was misread, what leaked, what field was mistaken for what</b> — not just regret. The old value is never quietly overwritten; it stays next to the new one, with the reason for the gap. Burying a correction under an apology is the same failure as never running the check: a confident conclusion stands unexamined until someone else pays for it.</div>
+      <div class="story">A correction states <b>what was misread, what leaked, what field was mistaken for what</b>. The mechanism is the content; regret is not. The old value is never quietly overwritten; it stays next to the new one, with the reason for the gap. Burying a correction under an apology is the same failure as never running the check: a confident conclusion stands unexamined until someone else pays for it.</div>
       <div class="mech">apology without diagnosis erases the trail and makes the next error harder to catch</div>
     </div>
   </div>
 
-  <p><b>From practice to tripwire.</b> Two of these rules became live candidate detectors in this same pipeline, aimed at the exact patterns above: <b>bare_done_claim</b> (a completion word with no adjacent named verification — Rule 01) and <b>unqualified_metric_claim</b> (a score reported with no n, split, or interval nearby — Rule 02). The first is not hypothetical: <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">bare_done_claim</code> co-occurs with a tool error <b>596 times</b> in this corpus — the single most common pairing in the whole dataset. The habit these rules describe and the failure the atlas catalogs are two views of one thing; the detectors are the bridge between them.</p>
+  <p><b>From practice to tripwire.</b> Two of these rules became live candidate detectors in this same pipeline, aimed at the exact patterns above: <b>bare_done_claim</b> (a completion word with no adjacent named verification, from Rule 01) and <b>unqualified_metric_claim</b> (a score reported with no n, split, or interval nearby, from Rule 02). The first is not hypothetical: <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">bare_done_claim</code> co-occurs with a tool error <b>596 times</b> in this corpus, the single most common pairing in the whole dataset. The habit these rules describe and the failure the atlas catalogs are two views of one thing; the detectors are the bridge between them.</p>
 </section>
 
 <!-- ============ RUN IT YOURSELF ============ -->
 <section class="panel" id="panel-run" role="tabpanel" aria-labelledby="tab-run" hidden>
   <h2 class="section-h">Run it on <em>your own logs</em></h2>
-  <p class="sec-kicker">Plain-Python files, four commands, no dependencies beyond the standard library.</p>
-  <p>Everything above was computed by the files shipped alongside this page in <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">pipeline/</code>: <b>extract.py</b>, <b>detectors.py</b>, <b>incidents.py</b>, <b>analyze.py</b>, plus <b>context_window.py</b> for pulling transcript windows. Standard-library Python only — if you have Python 3, you have the pipeline.</p>
+  <p class="sec-kicker">Point the same pipeline at your own agent logs: plain Python, four commands, nothing to install, and your transcripts never leave your machine.</p>
+  <p>Everything above was computed by seven plain-Python files in the open-science repo under <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">docs/experiments/failure-atlas/pipeline/</code>: <b>extract.py</b>, <b>detectors.py</b>, <b>incidents.py</b>, <b>analyze.py</b>, plus <b>context_window.py</b> for pulling transcript windows. Standard-library Python only, so if you have Python 3 you have the pipeline. Clone the repo, or read each file first on GitHub:</p>
 
-  <div class="filelist" aria-label="Pipeline source files">
-    <a href="./pipeline/extract.py">extract.py</a>
-    <a href="./pipeline/detectors.py">detectors.py</a>
-    <a href="./pipeline/incidents.py">incidents.py</a>
-    <a href="./pipeline/analyze.py">analyze.py</a>
-    <a href="./pipeline/context_window.py">context_window.py</a>
-    <a href="./pipeline/test_pipeline.py">test_pipeline.py</a>
-    <a href="./pipeline/README.md">README.md</a>
+  <div class="filelist" aria-label="Pipeline source files on GitHub">
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/extract.py">extract.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/detectors.py">detectors.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/incidents.py">incidents.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/analyze.py">analyze.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/context_window.py">context_window.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/test_pipeline.py">test_pipeline.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/README.md">README.md</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/tree/main/docs/experiments/failure-atlas/pipeline">pipeline/ on GitHub</a>
   </div>
 
   <p>Four commands, run from a working directory of your choice:</p>
@@ -594,28 +579,28 @@ python3 pipeline/incidents.py --db data/atlas.db --out data/incidents.jsonl
 python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   </div>
 
-  <p>What you get: <b>atlas.db</b> and <b>incidents.jsonl</b> stay on your machine — they contain your text. <b>analysis.json</b> is the aggregates-only layer: counts, rates, distributions, no transcript content. That file is the one you could choose to share.</p>
+  <p>What you get: <b>atlas.db</b> and <b>incidents.jsonl</b> stay on your machine, since they contain your text. <b>analysis.json</b> is the aggregates-only layer: counts, rates, distributions, no transcript content. That file is the one you could choose to share.</p>
 
-  <p>Or hand the job to your agent:</p>
+  <p>Or hand the job to your agent. Copy this prompt so your bot rebuilds the analysis from your own logs:</p>
   <div class="codewrap prompt">
     <button class="copybtn" data-copy="agent-prompt">copy prompt</button>
-<pre id="agent-prompt">Fetch the pipeline files from this page's pipeline/ directory into a local folder. Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3 — install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; my incident-rate timeline by month; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,063 tool-error incidents at 17.1/10k; a timeline peaking at 86.3/10k; abandonment concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text — analysis.json only.</pre>
+<pre id="agent-prompt">Fetch the pipeline files from the NimbleCoOrg/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; my incident-rate timeline by month; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,063 tool-error incidents at 17.1/10k; a timeline peaking at 86.3/10k; abandonment concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
   </div>
 
   <div class="pitch">
-    <p><b>The pitch:</b> this study is n=1 — one operator, one workflow, seven months. Medicine solved this problem without pooling patient records: hospitals share <em>results computed by a common method</em> over data that never moves (the OMOP model). <b>analysis.json is that layer for agent logs.</b> If a handful of people run these four commands and share only that file, "how do agents fail?" stops being one person's atlas and starts being a map. Share results, not data.</p>
+    <p><b>The pitch:</b> the coding half of this is n=1, one operator and one workflow over seven months, but the assistant-fleet half is not. It is many different people across several agent harnesses and four chat platforms over the same span. Even so, it is one org's record. Medicine solved that problem without pooling patient records: hospitals share <em>results computed by a common method</em> over data that never moves (the OMOP model). <b>analysis.json is that layer for agent logs.</b> Forks running this same pipeline could pool their analysis.json files into a shared picture later, no transcripts moving. If a handful of people run these four commands and share only that file, "how do agents fail?" stops being one org's atlas and starts being a map. Share results, not data.</p>
   </div>
 
   <h2 class="section-h" style="font-size:1.7rem">The feedback loop</h2>
   <p class="sec-kicker">Findings that don't change behavior are trivia. Each countermeasure names the metric that must drop.</p>
   <p>The countermeasures follow one principle: <b>no standing context</b>. Nothing gets pasted into every session to be ignored by session forty. Instead:</p>
   <ul class="plain">
-    <li><b>Conditional hooks that fire only when their pattern is live.</b> A completion-claim guard blocks "it's merged / it's running / verified" unless a verifying command actually ran — aimed at the 10-for-10 fault cluster. An error-streak nudge injects one line after four consecutive failures — aimed at the 444 error-loop incidents, where grinding continued past the point a human would have stepped back.</li>
-    <li><b>Atomic memory files</b> — two of them, indexed, loaded only on demand, each holding one pattern the logs proved.</li>
-    <li><b>Settings recommendations</b>, including quota-aware subagent spawning — aimed at the 26 subagent failures, every one of which ended its session.</li>
+    <li><b>Conditional hooks that fire only when their pattern is live.</b> A completion-claim guard blocks "it's merged / it's running / verified" unless a verifying command actually ran, aimed at the 10-for-10 fault cluster. An error-streak nudge injects one line after four consecutive failures, aimed at the 444 error-loop incidents, where grinding continued past the point a human would have stepped back.</li>
+    <li><b>Atomic memory files:</b> two of them, indexed, loaded only on demand, each holding one pattern the logs proved.</li>
+    <li><b>Settings recommendations</b>, including quota-aware subagent spawning, aimed at the 26 subagent failures, every one of which ended its session.</li>
   </ul>
   <p>Each augmentation ships with its falsification path: the metric that must drop, measured by re-running this same pipeline over post-install sessions. The baseline was snapshotted before anything was installed, so "it helped" will be a comparison, not an impression. Nothing auto-installs; every hook is opt-in.</p>
-  <p><b>Landing:</b> the next run of the pipeline is the judgment, and the baseline it will be judged against is already on disk.</p>
+  <p>The next run of the pipeline is the judgment, and the baseline it will be judged against is already on disk.</p>
 </section>
 
 </main>
@@ -624,12 +609,12 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   <div class="wrap">
     <h2>Colophon</h2>
     <p class="sec-kicker">How this was made, and what that costs it.</p>
-    <p>This study was built by agents studying agents, at the operator's commission but with the operator recused from adjudication decisions. Every incident label comes from an LLM judge reading the full transcript window — <b>single-pass, no second rater</b>, so there is no inter-rater reliability figure yet, and the judge shares a model family with the agents it judged. That is a structural bias in the direction of leniency-toward-kin, disclosed here because no one has yet measured its size; a human-relabeled subsample is the named next check.</p>
+    <p>This study was built by agents studying agents, at the operator's commission but with the operator recused from adjudication decisions. Every incident label comes from an LLM judge reading the full transcript window, <b>single-pass, no second rater</b>, so there is no inter-rater reliability figure yet, and the judge shares a model family with the agents it judged. That is a structural bias in the direction of leniency-toward-kin, disclosed here because no one has yet measured its size; a human-relabeled subsample is the named next check.</p>
     <p>The recursion was not hypothetical: while measuring failures, the study's own adjudication runs were repeatedly killed by the same API-overload-and-limits cluster that ranks second among its adjudicated confirmed failure modes (infra_api_fault, n=11, behind guardrail friction at n=21). The instrument exhibited the phenomenon mid-measurement. That went in the findings too.</p>
-    <p>The load-bearing decisions — what counts as an incident, why sidechain "user" turns are not humans, why sharing is aggregates-only — are recorded in a public decision log, each with the way it could be proven wrong.</p>
-    <p><b>The dataset is not published and will not be.</b> It is one person's working life in log form. The pipeline, the decision log, the experiment spec, the verifier's checks, and every aggregate on this page are published, so the method can be run by anyone on logs that are theirs.</p>
+    <p>A public decision log records the calls the study rests on: what counts as an incident, why sidechain "user" turns are not humans, why sharing stays aggregate. Each entry carries the way it could be proven wrong.</p>
+    <p><b>The dataset is not published and will not be.</b> It is one org's record, including many people's conversations with the fleet. The pipeline, the decision log, the experiment spec, the verifier's checks, and every aggregate on this page are published, so the method can be run by anyone on logs that are theirs.</p>
     <div class="colophon-end">
-      <b>185</b> adjudicated labels · <b>2</b> rounds · <b>13</b> detectors · <b>1</b> pre-registered experiment · a precision table that grades the whole apparatus — all recomputable from the files beside this page.<br>
+      <b>185</b> adjudicated labels · <b>2</b> rounds · <b>13</b> detectors · <b>1</b> pre-registered experiment (later overturned on the clean re-run) · a precision table that grades the whole apparatus, all recomputable from the files beside this page.<br>
       a cyborg.garden open-science experiment · charts render from embedded aggregates; no analytics, no trackers · staging build, unlisted.
     </div>
   </div>
@@ -639,7 +624,7 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
 
 <script>
 "use strict";
-/* ============ DATA — embedded from data/dashboard-data.json ============ */
+/* ============ DATA: embedded from data/dashboard-data.json ============ */
 const DATA = {
  "corpus": {
   "claude_code": {
@@ -1385,18 +1370,30 @@ const DATA = {
    "user_interrupt": 255
   }
  },
- "experiment_objectivity_axis_01": {
-  "verdict": "confirmed",
-  "ratio_of_ratios_primary": 4.38,
-  "ratio_of_ratios_range_sensitivity": [
-   4.38,
-   6.2
-  ],
-  "criterion": ">= 2.0 (pre-registered)",
-  "caveats": [
-   "incidents cluster within sessions; z-test is directional",
-   "subjective-cohort keyword list fixed late (disclosed analyst dof)"
-  ]
+ "experiment_objectivity_axis": {
+  "run_01_keyword_cohorts": {
+   "ratio_of_ratios": 4.38,
+   "sensitivity_range": [
+    4.38,
+    6.2
+   ],
+   "verdict": "supported-but-superseded",
+   "flaw": "cohorts defined by hand-picked project-name keywords; the split measured project type, not objectivity"
+  },
+  "run_02_behavioral_cohorts": {
+   "ratio_of_ratios": 1.101,
+   "ratio_of_ratios_broad_grouping": 1.23,
+   "verdict": "killed",
+   "cohorts": {
+    "objective_sessions": 194,
+    "subjective_sessions": 88,
+    "excluded_sessions": 340,
+    "total": 622
+   },
+   "rule": "objective = session ran >=1 test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
+  },
+  "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
+  "takeaway": "The headline 4.4x effect did not survive a clean cohort definition. The study's own tightening killed its own finding, which is the method working on itself."
  },
  "escalation_bridges": {
   "candidates": 398,
@@ -1484,7 +1481,7 @@ function wireTips(root){
 }
 window.addEventListener("scroll", () => { if (tipVisible) hideTip(); }, {passive:true});
 
-/* ============ CHART 1 — incidents by mode + precision dots ============ */
+/* ============ CHART 1: incidents by mode + precision dots ============ */
 function renderModes(){
   const host = document.getElementById("chart-modes");
   const modes = Object.entries(DATA.incidents_by_mode)
@@ -1536,7 +1533,7 @@ function renderModes(){
   wireTips(host);
 }
 
-/* ============ CHART 7 — error categories ============ */
+/* ============ CHART 7: error categories ============ */
 function renderErrCats(){
   const host = document.getElementById("chart-errcats");
   const CAT_LABEL = {exit_nonzero:"Command exited nonzero", other:"Other", not_found:"Not found",
@@ -1568,7 +1565,7 @@ function renderErrCats(){
   wireTips(host);
 }
 
-/* ============ CHART 2 — timeline small multiples ============ */
+/* ============ CHART 2: timeline small multiples ============ */
 function renderTimeline(){
   const host = document.getElementById("chart-timeline");
   const months = Object.keys(DATA.timeline);
@@ -1580,7 +1577,7 @@ function renderTimeline(){
   const W = 860, PH = 190, padL = 56, padR = 24, padT = 26, padB = 26;
   const H = panels.length*PH + 8;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Two line charts of monthly incident rate per 10,000 events, one per ecosystem with different y-scales. Coding agents: 28.4 in January rising to a peak of 86.3 in May, dropping to 61.1 in June — a fall of nearly a third, flagged as confounded with model changes and operator learning — then 64.3 in July and 61.7 in August. Assistant fleet, which has no data before April: 337.7 in April, 111.6 in May, 69.1 in June, 89.8 in July, 138.0 in August."});
+    "aria-label":"Two line charts of monthly incident rate per 10,000 events, one per ecosystem with different y-scales. Coding agents: 28.4 in January rising to a peak of 86.3 in May, dropping to 61.1 in June (a fall of nearly a third, flagged as confounded with model changes and operator learning), then 64.3 in July and 61.7 in August. Assistant fleet, which has no data before April: 337.7 in April, 111.6 in May, 69.1 in June, 89.8 in July, 138.0 in August."});
   const xFor = i => padL + (i/(months.length-1))*(W-padL-padR);
   panels.forEach((p, pi) => {
     const y0 = pi*PH + padT, plotH = PH - padT - padB;
@@ -1604,7 +1601,7 @@ function renderTimeline(){
         "aria-label":`${p.label.toLowerCase()}, ${MO[pt.i]} 2026: ${pt.per_10k} incidents per 10,000 events (${fmt(pt.incidents)} incidents in ${fmt(pt.events)} events)`});
       g.dataset.tip = `<span class="t-h">${MO[pt.i]} 2026 · ${p.label.toLowerCase()}</span><br>` +
         `<span class="t-d">${pt.per_10k} per 10k events<br>${fmt(pt.incidents)} incidents · ${fmt(pt.events)} events</span>` +
-        (pt.events < 1000 ? `<br><span class="t-w">small month — n = ${fmt(pt.events)} events; unreliable</span>` : "");
+        (pt.events < 1000 ? `<br><span class="t-w">small month: n = ${fmt(pt.events)} events; unreliable</span>` : "");
       g.appendChild(el("circle", {cx:xFor(pt.i), cy:yFor(pt.per_10k), r:10, fill:"transparent"}));
       g.appendChild(el("circle", {cx:xFor(pt.i), cy:yFor(pt.per_10k), r:4, fill:p.color, stroke:INK.surface, "stroke-width":2}));
       svg.appendChild(g);
@@ -1613,7 +1610,7 @@ function renderTimeline(){
     if (p.key === "claude_code"){
       const jx = xFor(5), jy = yFor(61.1);
       svg.appendChild(el("line", {x1:jx, y1:jy-8, x2:jx, y2:jy-34, stroke:INK.candle, "stroke-width":1}));
-      svg.appendChild(el("text", {x:jx+6, y:jy-38, "font-size":9.5, fill:INK.candle, text:"June: ≈ −⅓ vs May — flagged,"}));
+      svg.appendChild(el("text", {x:jx+6, y:jy-38, "font-size":9.5, fill:INK.candle, text:"June: ≈ −⅓ vs May, flagged"}));
       svg.appendChild(el("text", {x:jx+6, y:jy-26, "font-size":9.5, fill:INK.candle, text:"not causally attributed"}));
     }
   });
@@ -1621,7 +1618,7 @@ function renderTimeline(){
   wireTips(host);
 }
 
-/* ============ CHART 3 — position-in-session heatstrips ============ */
+/* ============ CHART 3: position-in-session heatstrips ============ */
 function renderPosition(){
   const host = document.getElementById("chart-position");
   const rows = Object.entries(DATA.position_deciles)
@@ -1631,14 +1628,16 @@ function renderPosition(){
   const cellW = (W - labelW - 80 - cellGap*9)/10;
   const H = rows.length*rowH + 44;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Heatstrip of where each failure mode falls within sessions, divided into tenths. Tool errors are nearly flat across the session. API errors concentrate late, with 100 of their incidents in the final tenth versus 16 to 41 in earlier tenths. Abandonment is almost entirely a final-tenth event, 67 of its 80 positioned incidents. Frustration is heaviest in the opening tenth at 98 incidents and stays high across the session, 86 in the seventh tenth — spread across the session rather than concentrated at either end."});
+    "aria-label":"Heatstrip of where each failure mode falls within sessions, divided into tenths. Tool errors are nearly flat across the session. API errors concentrate late, with 100 of their incidents in the final tenth versus 16 to 41 in earlier tenths. Abandonment is almost entirely a final-tenth event, 67 of its 80 positioned incidents. Frustration is heaviest in the opening tenth at 98 incidents and stays high across the session, 86 in the seventh tenth, spread across the session rather than concentrated at either end."});
   svg.appendChild(el("text", {x:labelW, y:14, "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"SESSION START →"}));
   svg.appendChild(el("text", {x:labelW + 10*cellW + 9*cellGap, y:14, "text-anchor":"end", "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"→ SESSION END"}));
-  /* sequential green ramp on dark surface: dark → bright, monotone lightness */
-  const ramp = t => {
-    const lerp = (a,b) => Math.round(a + (b-a)*t);
-    return `rgb(${lerp(18,116)},${lerp(34,226)},${lerp(27,171)})`;
-  };
+  /* sequential green ramp, OKLCH-sampled for even lightness steps on the dark surface;
+     zero cells get a near-black well so any nonzero step reads as clearly "present" */
+  const ZERO_FILL = "#15151f";
+  const HEAT_STOPS = ["#23593d", "#377c57", "#4ba073", "#61c690", "#77edae"];
+  /* map a within-row share (0<t≤1) to a discrete stop; smallest nonzero lands on
+     stop 0, the row max on the brightest stop: visible steps, low ≠ zero */
+  const stopFor = t => HEAT_STOPS[Math.min(HEAT_STOPS.length-1, Math.max(0, Math.ceil(t*HEAT_STOPS.length)-1))];
   rows.forEach((r, i) => {
     const y = 22 + i*rowH;
     const maxV = Math.max(...r.arr, 1);
@@ -1647,18 +1646,26 @@ function renderPosition(){
       const x = labelW + d*(cellW+cellGap);
       const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
         "aria-label":`${MODE_LABEL[r.k]}, tenth ${d+1} of 10: ${v} incidents`});
-      g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br><span class="t-d">tenth ${d+1} of 10 · ${v} of ${r.total} positioned incidents</span>`;
+      const pct = r.total ? (v/r.total*100).toFixed(0) : 0;
+      g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br><span class="t-d">tenth ${d+1} of 10 · ${v} of ${r.total} positioned incidents (${pct}% of this row)<br><span class="t-w">shade = share of this row's own peak tenth</span></span>`;
       g.appendChild(el("rect", {x, y:y+3, width:cellW, height:rowH-9, rx:2,
-        fill: v === 0 ? "#15151f" : ramp(Math.sqrt(v/maxV))}));
+        fill: v === 0 ? ZERO_FILL : stopFor(v/maxV)}));
       svg.appendChild(g);
     });
     svg.appendChild(el("text", {x:labelW + 10*cellW + 9*cellGap + 8, y:y+rowH/2+3, "font-size":9.5, fill:INK.faint, text:"n=" + r.total}));
   });
   host.appendChild(svg);
   wireTips(host);
+  /* scale legend: zero swatch + the discrete ramp, low → high (share of row max) */
+  const leg = document.getElementById("legend-position");
+  leg.innerHTML =
+    `<span class="key"><span class="sw" style="background:${ZERO_FILL};box-shadow:inset 0 0 0 1px #2e2e3c"></span>none (0)</span>` +
+    `<span class="key" style="gap:.55rem">low` +
+    HEAT_STOPS.map(c => `<span class="sw" style="background:${c};border-radius:2px"></span>`).join("") +
+    `high <span style="color:var(--bone-faint)">· share of each row's peak tenth</span></span>`;
 }
 
-/* ============ CHART 4 — outcomes stacked bars ============ */
+/* ============ CHART 4: outcomes stacked bars ============ */
 const OUTCOME_ORDER = [
   {k:"recovered_clean", label:"Recovered clean", color:PAL.green},
   {k:"self_corrected", label:"Self-corrected", color:PAL.blue},
@@ -1707,7 +1714,7 @@ function renderOutcomes(){
     `<span class="key"><span class="sw" style="background:${oc.color}"></span>${oc.label}</span>`).join("");
 }
 
-/* ============ CHART 5 — precision dot + CI whiskers ============ */
+/* ============ CHART 5: precision dot + CI whiskers ============ */
 function renderPrecision(){
   const host = document.getElementById("chart-precision");
   const rows = Object.entries(DATA.precision)
@@ -1733,8 +1740,8 @@ function renderPrecision(){
     g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br>` +
       `<span class="t-d">precision ${r.precision} · CI ${r.ci[0]}–${r.ci[1]} · n = ${r.n} · round ${r.round}<br>` +
       `agent-fault share of true hits: ${(r.agent_fault_share*100).toFixed(0)}%</span>` +
-      (hero ? `<br><span class="t-w">the study's own dishonesty detector — still 0.25 after a round of fixes</span>` : "") +
-      (r.k === "interagent_challenge" ? `<br><span class="t-w">reclassified: protocol language — counted but flagged</span>` : "");
+      (hero ? `<br><span class="t-w">the study's own dishonesty detector, still 0.25 after a round of fixes</span>` : "") +
+      (r.k === "interagent_challenge" ? `<br><span class="t-w">reclassified: protocol language, counted but flagged</span>` : "");
     g.appendChild(el("text", {x:labelW-10, y:y+3.5, "text-anchor":"end", "font-size":11,
       fill: hero ? INK.candle : INK.soft, "font-weight": hero ? "600" : "400",
       text:MODE_LABEL[r.k] + (r.k==="interagent_challenge" ? " *" : "")}));
@@ -1746,12 +1753,16 @@ function renderPrecision(){
     g.appendChild(el("text", {x:W-76, y:y+3.5, "font-size":9.5, fill:INK.faint, text:"R" + r.round}));
     svg.appendChild(g);
   });
-  svg.appendChild(el("text", {x:labelW, y:H-2, "font-size":9, fill:INK.faint, text:"* reclassified — orchestration protocol language, not failure; counted but flagged"}));
   host.appendChild(svg);
   wireTips(host);
+  const leg = document.getElementById("legend-precision");
+  leg.innerHTML =
+    `<span class="key"><span class="sw" style="background:${PAL.green};border-radius:50%"></span>validated detector</span>` +
+    `<span class="key"><span class="sw" style="background:${INK.candle};border-radius:50%"></span>honesty challenges: the study's own dishonesty detector, still 0.25 after a round of fixes</span>` +
+    `<span class="key">* Inter-agent challenges: reclassified detector (orchestration protocol language, not a failure); round-1 audit only, precision 0.08, excluded from the validated set but kept in the totals</span>`;
 }
 
-/* ============ CHART 6 — ecosystem mode mix, mirrored ============ */
+/* ============ CHART 6: ecosystem mode mix, mirrored ============ */
 function renderEcosystems(){
   const host = document.getElementById("chart-ecosystems");
   const cc = DATA.ecosystem_mode_mix.claude_code, hm = DATA.ecosystem_mode_mix.assistant_fleet;
@@ -1765,7 +1776,7 @@ function renderEcosystems(){
   const maxShare = Math.max(...modes.map(m => Math.max(m.cc/ccTotal, m.hm/hmTotal)));
   const cxL = 46 + side, cxR = W - 46 - side;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"Mirrored bar chart comparing each ecosystem's failure-mode mix as a share of its own incidents. Coding agents, 3,558 incidents, are dominated by mechanical modes: tool errors 29 percent, frustration 15, API errors 15, error loops 12. The assistant fleet, 458 incidents, is dominated by relational modes: frustration 37 percent, self-correction 20, stuck repetition 17 — with tool errors down at 7 percent, marked with an asterisk because the fleet's logs lack a native error flag."});
+    "aria-label":"Mirrored bar chart comparing each ecosystem's failure-mode mix as a share of its own incidents. Coding agents, 3,558 incidents, are dominated by mechanical modes: tool errors 29 percent, frustration 15, API errors 15, error loops 12. The assistant fleet, 458 incidents, is dominated by relational modes: frustration 37 percent, self-correction 20, stuck repetition 17, with tool errors down at 7 percent, marked with an asterisk because the fleet's logs lack a native error flag."});
   svg.appendChild(el("text", {x:cxL, y:16, "text-anchor":"end", "font-size":10, "letter-spacing":"1.5", fill:INK.brightgreen, "font-weight":"600", text:"CODING AGENTS · n=3,558"}));
   svg.appendChild(el("text", {x:cxR, y:16, "font-size":10, "letter-spacing":"1.5", fill:"#b98cff", "font-weight":"600", text:"ASSISTANT FLEET · n=458"}));
   modes.forEach((m, i) => {
@@ -1777,7 +1788,7 @@ function renderEcosystems(){
     g.dataset.tip = `<span class="t-h">${MODE_LABEL[m.k]}</span><br>` +
       `<span class="t-d">coding: ${fmt(m.cc)} incidents · ${(shL*100).toFixed(1)}% of mix<br>` +
       `fleet: ${fmt(m.hm)} incidents · ${(shR*100).toFixed(1)}% of mix</span>` +
-      (m.k === "tool_error" ? `<br><span class="t-w">* fleet logs lack a native error flag — instrument, not world</span>` : "");
+      (m.k === "tool_error" ? `<br><span class="t-w">* fleet logs lack a native error flag: instrument, not world</span>` : "");
     g.appendChild(el("text", {x:W/2, y:y+rowH/2+3.5, "text-anchor":"middle", "font-size":11, fill:INK.soft, text:MODE_LABEL[m.k]}));
     if (m.cc > 0){
       g.appendChild(el("path", {d:barH(cxL-Math.max(wL,2), y+5, Math.max(wL,2), rowH-12, 4, false), fill:PAL.green}));
@@ -1794,45 +1805,77 @@ function renderEcosystems(){
   wireTips(host);
   const leg = document.getElementById("legend-eco");
   leg.innerHTML =
-    `<span class="key"><span class="sw" style="background:${PAL.green}"></span>Coding agents — share of 3,558 incidents</span>` +
-    `<span class="key"><span class="sw" style="background:${PAL.purple}"></span>Assistant fleet — share of 458 incidents</span>` +
+    `<span class="key"><span class="sw" style="background:${PAL.green}"></span>Coding agents: share of 3,558 incidents</span>` +
+    `<span class="key"><span class="sw" style="background:${PAL.purple}"></span>Assistant fleet: share of 458 incidents</span>` +
     `<span class="key">* instrument difference, not world</span>`;
 }
 
-/* ============ axis figure ============ */
+/* ============ axis figure: the reversal: run 01 vs run 02 ============ */
 function renderAxis(){
   const host = document.getElementById("chart-axis");
-  const ex = DATA.experiment_objectivity_axis_01;
-  const W = 860, H = 132, padL = 30, padR = 30, y = 62;
-  const maxX = 7;
+  const ex = DATA.experiment_objectivity_axis;
+  const r1 = ex.run_01_keyword_cohorts, r2 = ex.run_02_behavioral_cohorts;
+  const W = 860, padL = 150, padR = 34, maxX = 7;
+  const laneTop = 44, laneGap = 46, laneY = i => laneTop + i*laneGap;
+  const H = laneY(1) + 64;
   const xFor = v => padL + (v/maxX)*(W-padL-padR);
+  const gTop = 26, gBot = laneY(1) + 14; /* full-height band for zones/threshold */
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"A single scale from 0 to 7 times. The kill condition sits below 1.5, the pre-registered pass threshold at 2.0, the primary result at 4.38 times, with a sensitivity band extending to 6.2 times. Verdict: confirmed."});
-  /* track */
-  svg.appendChild(el("line", {x1:padL, y1:y, x2:W-padR, y2:y, stroke:INK.grid, "stroke-width":2}));
+    "aria-label":"Two stacked results on one 0-to-7-times scale, against a kill zone below 1.5 times and a pre-registered pass line at 2.0 times. Run 01, keyword cohorts, lands at 4.4 times, well past the pass line, so the hypothesis was supported. Run 02, behavioral cohorts, lands at 1.1 times, inside the kill zone below 1.5, so the tightened re-run killed the finding. The two markers show a reversal from 4.4 times down to 1.1 times."});
+  /* kill zone (below 1.5×) spanning both lanes */
+  svg.appendChild(el("rect", {x:padL, y:gTop, width:xFor(1.5)-padL, height:gBot-gTop, fill:PAL.rose, opacity:.14}));
+  svg.appendChild(el("line", {x1:xFor(1.5), y1:gTop, x2:xFor(1.5), y2:gBot, stroke:PAL.rose, "stroke-width":1.5, "stroke-dasharray":"3 3", opacity:.8}));
+  svg.appendChild(el("text", {x:xFor(0.75), y:gTop-6, "text-anchor":"middle", "font-size":9, "letter-spacing":".5", fill:PAL.rose, text:"KILL ZONE < 1.5×"}));
+  /* pre-registered pass line at 2.0× */
+  svg.appendChild(el("line", {x1:xFor(2), y1:gTop, x2:xFor(2), y2:gBot, stroke:INK.candle, "stroke-width":1.5}));
+  svg.appendChild(el("text", {x:xFor(2)+5, y:gTop-6, "font-size":9, "letter-spacing":".5", fill:INK.candle, text:"PASS ≥ 2.0×"}));
+  /* tick labels along the bottom */
   [0,1,2,3,4,5,6,7].forEach(t => {
-    svg.appendChild(el("line", {x1:xFor(t), y1:y-4, x2:xFor(t), y2:y+4, stroke:INK.grid, "stroke-width":1}));
-    svg.appendChild(el("text", {x:xFor(t), y:y+22, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t + "×"}));
+    svg.appendChild(el("line", {x1:xFor(t), y1:gBot, x2:xFor(t), y2:gBot+4, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x:xFor(t), y:gBot+16, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t + "×"}));
   });
-  /* kill zone */
-  svg.appendChild(el("rect", {x:padL, y:y-5, width:xFor(1.5)-padL, height:10, fill:PAL.rose, opacity:.22}));
-  svg.appendChild(el("text", {x:xFor(0.75), y:y-14, "text-anchor":"middle", "font-size":9, fill:PAL.rose, text:"KILL < 1.5×"}));
-  /* threshold */
-  svg.appendChild(el("line", {x1:xFor(2), y1:y-18, x2:xFor(2), y2:y+10, stroke:INK.candle, "stroke-width":1.5}));
-  svg.appendChild(el("text", {x:xFor(2), y:y-24, "text-anchor":"middle", "font-size":9.5, fill:INK.candle, text:"PRE-REGISTERED ≥ 2.0×"}));
-  /* sensitivity band */
-  const b0 = ex.ratio_of_ratios_range_sensitivity[0], b1 = ex.ratio_of_ratios_range_sensitivity[1];
-  const bandG = el("g", {class:"mark-focus", tabindex:0, role:"img",
-    "aria-label":`Sensitivity band ${b0} to ${b1} times; primary result ${ex.ratio_of_ratios_primary} times, verdict ${ex.verdict}`});
-  bandG.dataset.tip = `<span class="t-h">objectivity axis — ${ex.verdict}</span><br>` +
-    `<span class="t-d">primary ratio of ratios: ${ex.ratio_of_ratios_primary}×<br>sensitivity variants: ${b0}×–${b1}×<br>criterion: ${ex.criterion}</span>` +
-    `<br><span class="t-w">${ex.caveats[0]}<br>${ex.caveats[1]}</span>`;
-  bandG.appendChild(el("rect", {x:xFor(b0), y:y-5, width:xFor(b1)-xFor(b0), height:10, rx:5, fill:PAL.green, opacity:.3}));
-  bandG.appendChild(el("circle", {cx:xFor(ex.ratio_of_ratios_primary), cy:y, r:7, fill:PAL.green, stroke:INK.surface, "stroke-width":2}));
-  svg.appendChild(bandG);
-  svg.appendChild(el("text", {x:xFor(ex.ratio_of_ratios_primary), y:y-16, "text-anchor":"middle", "font-size":13, "font-weight":"600", fill:INK.brightgreen, text:ex.ratio_of_ratios_primary + "×"}));
-  svg.appendChild(el("text", {x:xFor(b1), y:y+22+14, "text-anchor":"middle", "font-size":9, fill:INK.faint, text:"sensitivity → " + b1 + "×"}));
-  svg.appendChild(el("text", {x:padL, y:H-8, "font-size":9, fill:INK.faint, text:"caveats: " + ex.caveats.join(" · ")}));
+  svg.appendChild(el("text", {x:padL, y:gBot+30, "font-size":9, fill:INK.faint, text:"mechanical-to-relational ratio of ratios · pre-registered on both runs: pass ≥ 2.0×, kill < 1.5×"}));
+  /* reversal connector: from run 01 marker down to run 02 marker */
+  const x1 = xFor(r1.ratio_of_ratios), x2 = xFor(r2.ratio_of_ratios), y1 = laneY(0), y2 = laneY(1);
+  svg.appendChild(el("path", {d:`M${x1} ${y1+9} C ${x1} ${y1+26}, ${x2} ${y2-26}, ${x2} ${y2-9}`,
+    fill:"none", stroke:INK.faint, "stroke-width":1.4, "stroke-dasharray":"4 4"}));
+  svg.appendChild(el("path", {d:`M${x2-4} ${y2-13} L${x2} ${y2-7} L${x2+4} ${y2-13}`, fill:"none", stroke:INK.faint, "stroke-width":1.4}));
+  /* two lanes */
+  const lanes = [
+    {run:r1, y:y1, x:x1, label:"RUN 01", sub:"keyword cohorts", color:PAL.green, ink:INK.brightgreen,
+     verdictText:"cleared the bar", val:r1.ratio_of_ratios.toFixed(1)+"×"},
+    {run:r2, y:y2, x:x2, label:"RUN 02", sub:"behavioral cohorts", color:PAL.rose, ink:PAL.rose,
+     verdictText:"fell below the kill line", val:r2.ratio_of_ratios.toFixed(1)+"×"}
+  ];
+  lanes.forEach((L, i) => {
+    /* row label */
+    svg.appendChild(el("text", {x:8, y:L.y-3, "font-size":11, "font-weight":"600", "letter-spacing":".5", fill:L.ink, text:L.label}));
+    svg.appendChild(el("text", {x:8, y:L.y+11, "font-size":9.5, fill:INK.faint, text:L.sub}));
+    /* baseline track for the lane */
+    svg.appendChild(el("line", {x1:padL, y1:L.y, x2:W-padR, y2:L.y, stroke:INK.grid, "stroke-width":1}));
+    /* sensitivity band on run 01 only */
+    if (L.run.sensitivity_range){
+      const s0 = xFor(L.run.sensitivity_range[0]), s1 = xFor(L.run.sensitivity_range[1]);
+      svg.appendChild(el("rect", {x:s0, y:L.y-4, width:s1-s0, height:8, rx:4, fill:PAL.green, opacity:.28}));
+      svg.appendChild(el("text", {x:s1+6, y:L.y+3.5, "font-size":8.5, fill:INK.faint, text:"sensitivity → "+L.run.sensitivity_range[1]+"×"}));
+    }
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${L.label}, ${L.sub}: ratio of ratios ${L.run.ratio_of_ratios} times, ${L.verdictText}. Verdict: ${L.run.verdict}.`});
+    g.dataset.tip = `<span class="t-h">${L.label} · ${L.sub}</span><br>` +
+      `<span class="t-d">ratio of ratios: <b>${L.run.ratio_of_ratios}×</b> · verdict: ${L.run.verdict}</span>` +
+      (L.run.sensitivity_range ? `<br><span class="t-d">sensitivity variants: ${L.run.sensitivity_range[0]}×–${L.run.sensitivity_range[1]}×</span>` : "") +
+      (L.run.cohorts ? `<br><span class="t-d">${L.run.cohorts.objective_sessions} objective · ${L.run.cohorts.subjective_sessions} subjective · ${L.run.cohorts.excluded_sessions} excluded (of ${L.run.cohorts.total})</span>` : "") +
+      (L.run.flaw ? `<br><span class="t-w">flaw: ${L.run.flaw}</span>` : "") +
+      (L.run.rule ? `<br><span class="t-w">rule: ${L.run.rule}</span>` : "");
+    g.appendChild(el("circle", {cx:L.x, cy:L.y, r:12, fill:"transparent"}));
+    g.appendChild(el("circle", {cx:L.x, cy:L.y, r:7, fill:L.color, stroke:INK.surface, "stroke-width":2}));
+    svg.appendChild(g);
+    /* value + verdict tag beside the marker */
+    const right = i === 0; /* run 01 sits far right; label to its left */
+    const vx = right ? L.x - 13 : L.x + 13, anchor = right ? "end" : "start";
+    svg.appendChild(el("text", {x:vx, y:L.y-8, "text-anchor":anchor, "font-size":13, "font-weight":"600", fill:L.ink, text:L.val}));
+    svg.appendChild(el("text", {x:vx, y:L.y+13, "text-anchor":anchor, "font-size":9, fill:INK.soft, text:L.verdictText}));
+  });
   host.appendChild(svg);
   wireTips(host);
 }
