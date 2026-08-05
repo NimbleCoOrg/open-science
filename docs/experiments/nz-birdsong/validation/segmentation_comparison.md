@@ -1,5 +1,81 @@
 # Segmentation Validation: Energy-Threshold vs AviaNZ Wavelet Denoising
 
+---
+
+> ## ⚠ Correction (5 August 2026) — both "winner" claims in this document are withdrawn
+>
+> **This file is served publicly and was never corrected when the claims it contains were
+> superseded. It is being corrected now rather than edited quietly. The original text below is
+> left exactly as published; nothing has been deleted.**
+>
+> Two comparative-superiority claims in this document are wrong. Both are withdrawn.
+>
+> ### 1. "Our energy-threshold method currently outperforms AviaNZ wavelet denoising" (Key Findings §1, F1=0.81 vs 0.36) — **withdrawn**
+>
+> That claim rests on **5 files**, of which only 4 carried ≥5 segments. It is contradicted by the
+> larger sweep **already present further down this same document** (Next Steps §1, 48 test files,
+> 583 ground-truth VUs), which scores:
+>
+> | Method | F1 (48 files) |
+> |---|---|
+> | AviaNZ Trained Wavelet (N=5) | **0.516** |
+> | Energy-Threshold | **0.440** |
+> | AviaNZ Wavelet Denoise | 0.381 |
+>
+> On the larger sample the energy-threshold method **loses** to AviaNZ's trained wavelet
+> recogniser. The 0.81-vs-0.36 comparison also pitted our tuned pipeline against only AviaNZ's
+> *denoising step*, not its detection pipeline — a limitation this document states plainly in
+> Limitations §1 and which the headline claim then ignored. **We should not have published a
+> superiority claim over a method we had explicitly not evaluated at full strength.**
+>
+> ### 2. "Winner: FIR Envelope at threshold 0.05 … dramatically outperforms all other methods" (F1=0.732) — **withdrawn**
+>
+> Three separate defects:
+>
+> - **"All other methods" meant only the classical methods in that table.** No learned segmenter
+>   was in the comparison. On a held-out split scored under a single matcher, a TweetyNet-style
+>   CNN reaches **F1 = 0.8577** against **FIR 0.7212** (see below). The FIR envelope is not the
+>   best method available; it is the best of six classical methods on one tuning run.
+> - **The reported optimum sits at the floor of the swept grid.** The FIR threshold was swept
+>   `0.05–0.9` and the winner is `0.05` — the lowest value tested. An optimum at the edge of a
+>   sweep means the sweep did not contain the optimum, so 0.732 is a boundary artefact, not a
+>   located maximum.
+> - **The threshold was chosen on the same 48 files the score is reported on.** There was no
+>   validation split. 0.732 is an optimistic upper bound on that configuration, not a held-out
+>   estimate — the same defect already disclosed for the CNN's 0.784 on the main dashboard page.
+>
+> ### What the current best-provenanced comparison actually says
+>
+> On split `88513a3aaa91` — **15 held-out test files, 246 ground-truth segments** — with **one
+> matching criterion applied to both arms** (`IoU ≥ 0.3 OR overlap ≥ 0.5`, greedy by detected
+> length) and **both operating thresholds chosen by argmax F1 on a separate validation split**:
+>
+> | Method | Threshold | Precision | Recall | **F1** |
+> |---|---|---|---|---|
+> | CNN (TweetyNet-style) | 0.45 | 0.846 | 0.870 | **0.8577** |
+> | FIR envelope | 0.70 | 0.882 | 0.610 | **0.7212** |
+>
+> Δ F1 = **+0.137** in favour of the CNN. Paired sign test across the 15 test files: **12 favour
+> the CNN, 2 favour FIR, 1 tie**; **p = 0.035 two-sided** (the value recorded in the source
+> artifact, 0.0176, is one-sided).
+> Source: `rescore_final_results.json`, 29 July 2026.
+>
+> **Read that with its caveats, which are not small:** n = 15 files, all from **one site (CUV)**
+> in **one week of November 2016**; **4 of the 12 test bird IDs also appear in training** and
+> **6 of 12 also appear in validation** — and because the operating threshold is an argmax on
+> validation, the operating point was selected on birds that are in the test set. This is
+> **within-individual, within-site, within-week** segmentation performance. **It is not evidence
+> that any of these methods generalise.**
+>
+> ### Still true in this document
+>
+> The *mechanism* findings survive: wavelet denoising fragments contiguous vocalisations into many
+> short segments (431 FP vs 90); sparse ground truth depresses precision for every method; and
+> default AviaNZ parameters transfer badly to bellbird. Those were the useful results here. The
+> rankings built on top of them were not.
+
+---
+
 **Date:** 2026-07-24
 **Ground truth:** Koe bellbird dataset (60 WAVs, human-annotated segment timestamps)
 **Circularity check:** ✅ No circularity — Koe annotations were made by humans in the Koe web tool (Fukuzawa et al. 2020), not using AviaNZ's wavelet detection.
@@ -40,6 +116,9 @@
 ## Key Findings
 
 1. **Our energy-threshold method currently outperforms AviaNZ wavelet denoising** (F1=0.81 vs 0.36).
+   > **⚠ WITHDRAWN 5 August 2026** — contradicted by the 48-file sweep further down this same
+   > document (Energy-Threshold F1=0.440 vs AviaNZ Trained Wavelet 0.516). See the correction at
+   > the top of this file. Text retained as published.
 2. **AviaNZ's wavelet denoising fragments the signal** — it produces 431 false positives vs our 90, because denoising splits contiguous vocalisations into many small segments.
 3. **Both methods have high recall** on well-annotated files, but precision is limited by sparse ground truth (many "false positives" may be unlabelled real vocalisations).
 4. **Per-file variation is significant** — our method ranges from F1=0.63 to F1=0.94, suggesting recording-specific effects (noise level, distance, overlap).
@@ -76,6 +155,12 @@
 
    **Winner: FIR Envelope at threshold 0.05** (F1=0.732). With proper parameter tuning, the simple FIR envelope method dramatically outperforms all other methods — including the trained wavelet recogniser. The default AviaNZ threshold of 0.7 was far too high for bellbird; at 0.05 the FIR envelope catches 71% of VUs with 76% precision. This is the best classical method tested and requires no training data.
 
+   > **⚠ WITHDRAWN 5 August 2026** — "all other methods" covered only the six classical methods in
+   > this table; a CNN reaches F1=0.8577 vs FIR 0.7212 on a held-out split under one matcher. The
+   > winning threshold 0.05 is also the **floor of the swept grid** (0.05–0.9), and it was selected
+   > on the same 48 files the score is reported on. See the correction at the top of this file.
+   > Text retained as published.
+
    **FIR threshold sweep highlights:**
    - thr=0.05: F1=0.732 (best — high precision AND recall)
    - thr=0.10: F1=0.561 (recall drops sharply)
@@ -88,6 +173,12 @@
    - thr=3.0: F1=0.020 (AviaNZ default — too aggressive)
 
    **Key insight:** Parameter tuning matters more than algorithm choice for classical methods. The FIR envelope with the right threshold is simple, fast, needs no training data, and outperforms the more complex trained wavelet recogniser. Species-specific threshold optimisation is essential — default parameters from one species do not transfer to another.
+
+   > **⚠ QUALIFIED 5 August 2026** — the narrow comparison here (FIR 0.732 > trained wavelet 0.516
+   > *within this table*) still stands, and "default parameters do not transfer between species" is
+   > a finding we stand by. But the 0.732 is a grid-floor optimum tuned on its own test files, so
+   > the *margin* is not trustworthy, and the sentence is scoped to classical methods only. See the
+   > correction at the top of this file.
 
    **Caveats remain:**
    - Sparse ground truth inflates FP counts for both methods (many "false positives" are likely unlabelled real VUs)
