@@ -82,6 +82,23 @@ REJECTION_RX = [
     r"hook (error|blocked)", r"PreToolUse:.*(error|block)", r"boundary consent needed",
     r"protected branch",
 ]
+# --- Evidence-drift detectors (mined from an evidence-discipline researcher-
+# agent's practice: name the check, carry the metric's conditions). These fire
+# on the ASSISTANT and are UNVALIDATED (no adjudication precision yet) — kept
+# separate from validated detectors so they inform without contaminating results.
+DONE_CLAIM_RX = re.compile(
+    r"\b(all done|it'?s done|done and (dusted|working)|fixed( it)?|working now|"
+    r"all set|good to go|that'?s (fixed|working|sorted)|is (now )?(fixed|working|live|running))\b",
+    re.I)
+VERIFY_NEARBY_RX = re.compile(
+    r"\b(verified|confirmed|re-?ran|re-?queried|opened the (output|log|file)|"
+    r"gh pr view|git status|checked|tests? pass|exit code 0)\b", re.I)
+METRIC_CLAIM_RX = re.compile(
+    r"\b(F1|accuracy|precision|recall|AUC|R2|score)\b\s*[:=]?\s*0?\.\d{2,4}", re.I)
+METRIC_ACHIEVE_RX = re.compile(r"\b(achiev\w+|reach\w+|gets?|scor\w+|hits?)\b", re.I)
+METRIC_CONDITION_RX = re.compile(
+    r"\b(n\s*=|held[- ]?out|test set|leave-one-out|disjoint|validation split|"
+    r"CI|confidence interval|±|out-of-sample|unseen)\b", re.I)
 ERROR_CATEGORIES = [
     ("user_rejected", re.compile(r"user doesn'?t want to proceed|user rejected", re.I)),
     ("permission_denied", re.compile(r"permission.{0,30}denied|not allowed", re.I)),
@@ -193,6 +210,21 @@ def detect_session(rows: list[dict], out: list[dict]) -> None:
             if sc:
                 emit(r, "self_correction", 0.25 + 0.15 * min(len(sc), 3),
                      markers=sc[:4], preview=text[:200])
+            # --- evidence-drift (Matilde-derived, UNVALIDATED). A "done" claim
+            # with no verification language in the same turn, when the turn also
+            # did real work (a preceding tool call), is a candidate for the
+            # premature-completion failure this study ranks #1.
+            if DONE_CLAIM_RX.search(text) and not VERIFY_NEARBY_RX.search(text):
+                did_work = any(rows[j]["tool_name"] for j in range(max(0, i - 6), i))
+                if did_work:
+                    emit(r, "bare_done_claim", 0.3,
+                         preview=text[:200], candidate=True)
+            # A metric asserted with an achievement verb but no co-located
+            # condition (n, split, CI) — Matilde's signature evidence lapse.
+            if (METRIC_CLAIM_RX.search(text) and METRIC_ACHIEVE_RX.search(text)
+                    and not METRIC_CONDITION_RX.search(text)):
+                emit(r, "unqualified_metric_claim", 0.3,
+                     preview=text[:200], candidate=True)
 
     # -- pass 2: sequences
     # error loops: runs of errors within a sliding window of 12 events

@@ -17,10 +17,11 @@ import sqlite3
 import sys
 from pathlib import Path
 
+# Map each root alias (as recorded by extract.py) back to its config dir.
+# Add a line here for every ~/.claude* root you extracted from.
 ROOT_BASES = {
     ".claude": Path.home() / ".claude",
-    # Add additional config roots here if you run multiple Claude Code
-    # profiles, e.g. ".claude-work": Path.home() / ".claude-work",
+    # ".claude-work": Path.home() / ".claude-work",   # example: extra config root
 }
 
 

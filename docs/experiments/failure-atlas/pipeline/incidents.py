@@ -15,6 +15,7 @@ Writes `incidents` table + data/incidents.jsonl export.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sqlite3
 import sys
@@ -29,6 +30,9 @@ PRECEDENCE = [
     "model_escalation", "stuck_repetition", "user_interrupt",
     "permission_friction", "api_error", "abandonment", "tool_error",
     "interagent_challenge", "self_correction",
+    # evidence-drift candidates rank last: they inform but never outrank a
+    # validated detector as an incident's primary_mode
+    "bare_done_claim", "unqualified_metric_claim",
 ]
 RANK = {d: i for i, d in enumerate(PRECEDENCE)}
 
@@ -81,10 +85,13 @@ def main() -> int:
         # drop pure-noise incidents: single low-score mechanical signal
         if len(cluster) == 1 and cluster[0][3] < 0.25 and cluster[0][2] in ("tool_error", "api_error"):
             return
-        # interagent_challenge alone is verification protocol, not a failure
-        # (8% precision in round-1 adjudication); it only contributes when it
-        # co-occurs with other signals
-        if all(c[2] == "interagent_challenge" for c in cluster):
+        # Candidate/low-precision detectors don't form incidents ALONE — they
+        # only contribute when co-occurring with a validated signal. interagent
+        # _challenge (8% r1 precision) and the unvalidated evidence-drift
+        # detectors are informative context, not standalone failures.
+        CANDIDATE_ONLY = {"interagent_challenge", "bare_done_claim",
+                          "unqualified_metric_claim"}
+        if all(c[2] in CANDIDATE_ONLY for c in cluster):
             return
         root, project, cwd, slug, entrypoint, sidechain, models, file = sess_meta.get(
             sk, ("?", "?", None, None, None, 0, "", "?"))
@@ -92,7 +99,14 @@ def main() -> int:
         detectors = Counter(s[2] for s in sigs)
         primary = min(detectors, key=lambda d: RANK.get(d, 99))
         n_inc += 1
-        iid = f"inc-{n_inc:06d}"
+        # Content-addressed id: stable across re-runs and corpus growth, so
+        # adjudication labels keyed by incident_id never drift onto the wrong
+        # incident. (Positional ids caused exactly that after a mid-study
+        # re-ingest — see DECISIONS D9.) Keyed on the incident's location, not
+        # its detector set, so a detector tweak that shifts boundaries by a line
+        # still resolves to the same labeled incident via the remap tool.
+        iid = "inc-" + hashlib.sha1(
+            f"{sk}|{sigs[0][0]}|{sigs[-1][0]}".encode()).hexdigest()[:12]
         def load_ev(raw):
             if not raw:
                 return {}

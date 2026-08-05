@@ -22,14 +22,13 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-# Project-category rules are operator-specific: edit these regexes so they
-# group YOUR project roots into named buckets before running. The shipped
-# defaults are generic placeholders.
+# EDIT ME: map your own projects to categories. These are example rules —
+# replace the patterns with your repo/project names so the category-mix
+# analysis reflects your work. Matching is on project + cwd, first rule wins.
 CATEGORY_RULES = [
-    ("org-framework", re.compile(r"org-framework", re.I)),
-    ("agent-infra", re.compile(r"agent-infra|fleet", re.I)),
-    ("web-sites", re.compile(r"site|web", re.I)),
-    ("experiments", re.compile(r"tmp|scratch|probe|test|acme", re.I)),
+    ("infra", re.compile(r"infra|platform|backend|api|pipeline", re.I)),
+    ("web", re.compile(r"site|web|frontend|ui|landing", re.I)),
+    ("experiments", re.compile(r"tmp|scratch|probe|test|sandbox", re.I)),
 ]
 
 
