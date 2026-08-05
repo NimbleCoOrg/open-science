@@ -546,7 +546,7 @@ p b{font-weight:600}
 
   <div class="callout">
     <b>The point:</b> In reading mode, this looks like a normal Introduction. Every sentence has a citation. It reads as authoritative. But switch to evidence mode and you discover that one claim has strong replicated backing, another rests on a single study that hasn't been independently replicated, one is unsupported by its cited source, and another cites something we couldn't verify at all. <b>The citation gives the same visual signal regardless of evidentiary strength. The overlay breaks that illusion.</b>
-    <span class="src">— Citation-resolution is live: the demo's references were run through Matilde's verifier (Crossref, OpenAlex, Retraction Watch) on 2026-08-05 — click any claim to see its check. Claim extraction and evidence-support scoring are still a mockup. The pipeline is buildable with existing tools.</span>
+    <span class="src">— Citation-resolution is real, but not live: the demo's references were run through Matilde's verifier (Crossref, OpenAlex, Retraction Watch) on 2026-08-05, and each claim shows that dated result recorded in the page — it is not re-checked when you load this. Click any claim to see it. Claim extraction and evidence-support scoring are still a mockup. The pipeline is buildable with existing tools.</span>
   </div>
 
   <p>
@@ -1212,7 +1212,7 @@ overlayText.addEventListener('click', (e) => {
   overlayDetail.innerHTML = `
     <span class="label">Claim [${id}]:</span> "${data.text}"<br>
     <span class="label">Cited source:</span> ${data.source}<br>
-    <span class="label">Citation check (live, 2026-08-05):</span> ${data.citecheck}<br>
+    <span class="label">Citation check (Crossref, checked 2026-08-05):</span> ${data.citecheck}<br>
     <span class="label">Evidence:</span> <span class="verdict ${data.verdict}">${data.verdict.toUpperCase()}</span><br>
     <span class="label">Assessment:</span> ${data.status}
   `;
