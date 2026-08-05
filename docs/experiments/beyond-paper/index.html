@@ -546,7 +546,7 @@ p b{font-weight:600}
 
   <div class="callout">
     <b>The point:</b> In reading mode, this looks like a normal Introduction. Every sentence has a citation. It reads as authoritative. But switch to evidence mode and you discover that one claim has strong replicated backing, another rests on a single study that hasn't been independently replicated, one is unsupported by its cited source, and another cites something we couldn't verify at all. <b>The citation gives the same visual signal regardless of evidentiary strength. The overlay breaks that illusion.</b>
-    <span class="src">— This is a mockup. The claim-extraction, citation-resolution, and evidence-scoring pipeline is buildable with existing tools.</span>
+    <span class="src">— Citation-resolution is real, but not live: the demo's references were run through Matilde's verifier (Crossref, OpenAlex, Retraction Watch) on 2026-08-05, and each claim shows that dated result recorded in the page — it is not re-checked when you load this. Click any claim to see it. Claim extraction and evidence-support scoring are still a mockup. The pipeline is buildable with existing tools.</span>
   </div>
 
   <p>
@@ -572,7 +572,7 @@ p b{font-weight:600}
   </div>
 
   <div class="note">
-    <b>What exists already:</b> Matilde's citation verification tools (Crossref, OpenAlex, Retraction Watch, Unpaywall) already do steps 1–3 for individual citations. The birdsong dashboard already demonstrates live-evidence display. The overlay is the same principle — making evidence status visible at the point of reading — applied to scientific prose.
+    <b>What exists already:</b> Matilde's citation verification tools (Crossref, OpenAlex, Retraction Watch, Unpaywall) already do step 2 for individual citations — they verified every reference in the demo above. Steps 1 and 3 (claim extraction, evidence-support grading) are not yet automated; the demo's extraction and grades are authored. The birdsong dashboard already demonstrates live-evidence display. The overlay is the same principle — making evidence status visible at the point of reading — applied to scientific prose.
   </div>
 
 </section>
@@ -1162,13 +1162,13 @@ const overlayBtns = document.querySelectorAll('.overlay-controls button[data-mod
 
 // Claim data — each span has data-ev and a detail string
 const claimData = {
-  '1': { ev: 'strong', text: 'Sleep is critical for memory consolidation', source: 'Diekelmann & Born (2010), Nature Neuroscience', status: 'Three independent meta-analyses confirm. Multiple species. Strong evidence.', verdict: 'strong' },
-  '2': { ev: 'strong', text: 'Hippocampal replay during slow-wave sleep reactivates waking sequences', source: 'Wilson & McNaughton (1994), Science; Lee & Wilson (2002), Neuron; multiple replications', status: 'Directly observed in rodents, replicated across labs. Strong.', verdict: 'strong' },
-  '3': { ev: 'moderate', text: 'Disrupting replay impairs spatial memory in rodents', source: 'Girardeau et al. (2009), Science; Ego-Stengel & Wilson (2010), Neuron', status: 'Two studies, same lab lineage. No fully independent replication found.', verdict: 'moderate' },
-  '4': { ev: 'weak', text: 'Sleep deprivation affects emotional regulation via amygdala–PFC connectivity', source: 'Yoo et al. (2007), Current Biology — single fMRI study, n=26', status: 'Single small study. Cited as established fact. No independent replication of the connectivity finding specifically.', verdict: 'weak' },
-  '5': { ev: 'unknown', text: 'Mechanisms by which sleep loss alters decision-making remain poorly understood', source: 'No specific citation — general statement', status: 'Vague claim, no traceable source. Could not verify.', verdict: 'unknown' },
-  '6': { ev: 'none', text: '24h sleep deprivation reduces PFC–amygdala connectivity and increases impulsive choice', source: 'Unpublished data — this is the current study\'s own finding', status: 'The cited source [6] is the paper itself. This is the study\'s result being presented as established evidence in the Introduction. Circular.', verdict: 'none' },
-  '7': { ev: 'weak', text: 'Sleep loss produces a distinctive neural signature underlying real-world risk-taking', source: 'Inferred from current study + Yoo et al. (2007)', status: 'Extrapolation from one small study + own unpublished data. The leap to "real-world risk-taking" is not supported by cited evidence.', verdict: 'weak' }
+  '1': { ev: 'strong', text: 'Sleep is critical for memory consolidation', source: 'Diekelmann & Born (2010), Nature Reviews Neuroscience', status: 'Three independent meta-analyses confirm. Multiple species. Strong evidence.', verdict: 'strong', citecheck: 'Reference verified: DOI 10.1038/nrn2762 resolves, metadata matches, no retraction (Crossref, 2026-08-05).' },
+  '2': { ev: 'strong', text: 'Hippocampal replay during slow-wave sleep reactivates waking sequences', source: 'Wilson & McNaughton (1994), Science; Lee & Wilson (2002), Neuron; multiple replications', status: 'Directly observed in rodents, replicated across labs. Strong.', verdict: 'strong', citecheck: 'Both references verified: DOI 10.1126/science.8036517 and DOI 10.1016/S0896-6273(02)01096-6 resolve, metadata matches, no retractions (Crossref, 2026-08-05).' },
+  '3': { ev: 'moderate', text: 'Disrupting replay impairs spatial memory in rodents', source: 'Girardeau et al. (2009), Nature Neuroscience; Ego-Stengel & Wilson (2010), Hippocampus', status: 'Two studies, same lab lineage. No fully independent replication found.', verdict: 'moderate', citecheck: 'Both references verified: DOI 10.1038/nn.2384 resolves cleanly; DOI 10.1002/hipo.20707 resolves with one metadata flag — the article went online 2009 but the print issue is dated 2010 (Crossref, 2026-08-05).' },
+  '4': { ev: 'weak', text: 'Sleep deprivation affects emotional regulation via amygdala–PFC connectivity', source: 'Yoo et al. (2007), Current Biology — single fMRI study, n=26', status: 'Single small study. Cited as established fact. No independent replication of the connectivity finding specifically.', verdict: 'weak', citecheck: 'Reference verified: DOI 10.1016/j.cub.2007.08.007 resolves, metadata matches, no retraction (Crossref, 2026-08-05). Verification covers the reference, not whether it supports the claim.' },
+  '5': { ev: 'unknown', text: 'Mechanisms by which sleep loss alters decision-making remain poorly understood', source: 'No specific citation — general statement', status: 'Vague claim, no traceable source. Could not verify.', verdict: 'unknown', citecheck: 'Nothing to resolve: no reference was given, so there is nothing to verify. This is what the unverified tier looks like when it is real.' },
+  '6': { ev: 'none', text: '24h sleep deprivation reduces PFC–amygdala connectivity and increases impulsive choice', source: 'Unpublished data — this is the current study\'s own finding', status: 'The cited source [6] is the paper itself. This is the study\'s result being presented as established evidence in the Introduction. Circular.', verdict: 'none', citecheck: 'No external reference to resolve — the citation points at the paper itself. Circular by construction.' },
+  '7': { ev: 'weak', text: 'Sleep loss produces a distinctive neural signature underlying real-world risk-taking', source: 'Inferred from current study + Yoo et al. (2007)', status: 'Extrapolation from one small study + own unpublished data. The leap to "real-world risk-taking" is not supported by cited evidence.', verdict: 'weak', citecheck: 'Rests on Yoo et al. (2007), verified above. The extrapolation itself has no source to check — that gap is the finding.' }
 };
 
 // Wrap claims in spans
@@ -1212,6 +1212,7 @@ overlayText.addEventListener('click', (e) => {
   overlayDetail.innerHTML = `
     <span class="label">Claim [${id}]:</span> "${data.text}"<br>
     <span class="label">Cited source:</span> ${data.source}<br>
+    <span class="label">Citation check (Crossref, checked 2026-08-05):</span> ${data.citecheck}<br>
     <span class="label">Evidence:</span> <span class="verdict ${data.verdict}">${data.verdict.toUpperCase()}</span><br>
     <span class="label">Assessment:</span> ${data.status}
   `;
