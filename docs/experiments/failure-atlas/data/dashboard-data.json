@@ -801,14 +801,20 @@
   }
  ],
  "mast_crosswalk": {
-  "sampled": 23,
-  "mapped": 13,
-  "mapped_share": 0.57,
-  "unmapped_share": 0.43,
-  "mapped_clean": "13 of 23 sampled incidents (57%) map to a MAST mode",
-  "unmapped": "43% have no clean fit: our human-in-loop detectors (frustration, honesty-challenge, permission friction) and single-session infrastructure failures (quota kills, permission loops) are families MAST's autonomous-benchmark taxonomy has no word for",
-  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's inter-agent-misalignment modes are near-zero here",
-  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories"
+  "sampled": 75,
+  "mapped": 16,
+  "mapped_share": 0.21,
+  "extension_share": 0.53,
+  "unclear_share": 0.25,
+  "weighted_mast_share": 0.19,
+  "weighted_infrastructure_share": 0.48,
+  "mast_source_traces": 1600,
+  "mapped_clean": "16 of 75 stratified incidents (21%) fit a real MAST mode; population-weighted, MAST reaches 19% of our failures",
+  "unmapped": "53% need an extension family and 25% are unclear (mostly detector false positives on successful work). Weighted by incidents, the infrastructure family (quota kills, permission loops, environment faults) alone is 48%, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
+  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives",
+  "self_critical": "a proposed fan-out-coordination extension family had zero coded members; the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
+  "caveat": "single coder per incident, no inter-rater reliability yet, ~6 per mode, and our detectors are the sampling frame",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces"
  },
  "adjudication": {
   "total_labels": 185,

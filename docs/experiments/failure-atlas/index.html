@@ -531,16 +531,16 @@ footer p{font-size:.9rem}
   <p>Read that as a description of two corpora, not proof that verifiability drives failure. The within-corpus test built to check exactly that did not survive (see What Didn't Hold), and part of the tool-error gap is the fleet's missing error flag rather than the world. The inversion is a real difference in these logs whose cause is still open.</p>
 
   <h2 class="section-h" style="font-size:1.7rem">Against the field's taxonomy</h2>
-  <p>MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>) is the reference catalogue of multi-agent failure: 14 modes in 3 categories, built from autonomous-agent benchmarks. Cross-walk our incidents against it and <b>13 of 23 sampled (57%) map cleanly to a MAST mode</b>. The other <b>43%</b> have no fit, and the reason is structural, not a scoring miss.</p>
+  <p>MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>) is the reference catalogue of multi-agent failure: 14 modes in 3 categories, built from ~1,600 conversational multi-agent traces. Cross-walk 75 of our incidents against it, stratified across every detector, and only <b>16 (21%) fit a real MAST mode</b>. Weighted by how often each failure actually occurs, MAST reaches <b>19%</b> of our failures. The reason is structural, not a scoring miss.</p>
 
   <div class="chart-block">
     <div class="chart-title">MAST cross-walk: what the field's taxonomy has a word for</div>
-    <div class="chart-units">share of 23 sampled incidents · maps to a MAST mode vs no clean fit · hover or focus a segment for detail</div>
+    <div class="chart-units">share of 75 stratified incidents · fits a MAST mode vs needs an extension vs unclear · hover or focus a segment for detail</div>
     <div class="chart-scroll"><div id="chart-mast"></div></div>
-    <p class="figcap">57% (13 of 23) map cleanly to one of MAST's 14 modes. The unmapped 43% are two families an autonomous-benchmark taxonomy has no word for: <b>human-in-the-loop</b> failures (frustration, honesty challenges, permission friction) and <b>single-session infrastructure</b> (quota kills, permission loops). <b>Weakest honest reading:</b> n=23 is a small hand-sampled cross-walk, and "no clean fit" is a judgment call at the boundary.</p>
+    <p class="figcap">21% (16 of 75) fit one of MAST's 14 modes. Another 53% need an extension family and 25% are unclear, mostly detectors firing on work that succeeded. The two families MAST lacks are <b>human-in-the-loop</b> failures (frustration, honesty challenges, permission friction) and <b>single-session infrastructure</b> (quota kills, permission loops); weighted by incidents, infrastructure alone is 48%. A proposed third family for fan-out coordination drew zero coded cases. <b>Weakest honest reading:</b> one coder per incident, about six per mode, no inter-rater reliability yet.</p>
   </div>
 
-  <p>Half our failures are human-in-the-loop (frustration, honesty challenges, permission friction) or single-session infrastructure (quota kills, permission loops). An autonomous-benchmark taxonomy has no word for those, because its benchmarks have no human in the loop and no shared quota to exhaust. And our multi-agent is orchestrator fan-out, parallel stateless workers, not the conversational agent chains MAST studied, so its inter-agent-misalignment modes sit near zero here. The 43% gap marks a slice of the agent world the benchmarks do not cover.</p>
+  <p>Most of our failures are human-in-the-loop (frustration, honesty challenges, permission friction) or single-session infrastructure (quota kills, permission loops). An autonomous-benchmark taxonomy has no word for those, because its benchmarks have no human in the loop and no shared quota to exhaust. Our multi-agent is orchestrator fan-out, parallel stateless workers, not the conversational agent chains MAST studied, so its largest category, inter-agent misalignment, sits near zero here. Only its verification and termination category survives the translation. Four-fifths of what breaks in these logs is a slice of the agent world the reference taxonomy does not cover.</p>
 </section>
 
 <!-- ============ PREVENTING DRIFT ============ -->
@@ -1450,10 +1450,20 @@ const DATA = {
   }
  ],
  "mast_crosswalk": {
-  "mapped_clean": "13 of 23 sampled incidents (57%) map to a MAST mode",
-  "unmapped": "43% have no clean fit: our human-in-loop detectors (frustration, honesty-challenge, permission friction) and single-session infrastructure failures (quota kills, permission loops) are families MAST's autonomous-benchmark taxonomy has no word for",
-  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's inter-agent-misalignment modes are near-zero here",
-  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories"
+  "sampled": 75,
+  "mapped": 16,
+  "mapped_share": 0.21,
+  "extension_share": 0.53,
+  "unclear_share": 0.25,
+  "weighted_mast_share": 0.19,
+  "weighted_infrastructure_share": 0.48,
+  "mast_source_traces": 1600,
+  "mapped_clean": "16 of 75 stratified incidents (21%) fit a real MAST mode; population-weighted, MAST reaches 19% of our failures",
+  "unmapped": "53% need an extension family and 25% are unclear (mostly detector false positives on successful work). Weighted by incidents, the infrastructure family (quota kills, permission loops, environment faults) alone is 48%, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
+  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives",
+  "self_critical": "a proposed fan-out-coordination extension family had zero coded members; the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
+  "caveat": "single coder per incident, no inter-rater reliability yet, ~6 per mode, and our detectors are the sampling frame",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces"
  },
  "adjudication": {
   "total_labels": 185,
@@ -1983,40 +1993,43 @@ function renderAxis(){
   wireTips(host);
 }
 
-/* ============ MAST cross-walk: 57% mapped / 43% unmapped ============ */
+/* ============ MAST cross-walk: 21% fits / 53% needs extension / 25% unclear (n=75) ============ */
 function renderMast(){
   const host = document.getElementById("chart-mast");
   if (!host) return;
-  const MAPPED = 13, UNMAPPED = 10, TOTAL = 23;      /* 57% / 43% of 23 sampled */
-  const W = 860, padX = 8, H = 172;
+  const mc = DATA.mast_crosswalk || {};
+  const TOTAL = mc.sampled || 75, MAPPED = mc.mapped || 16;
+  const EXT = Math.round((mc.extension_share || 0.53) * TOTAL);   /* 40 */
+  const UNC = TOTAL - MAPPED - EXT;                               /* 19 */
+  const W = 860, padX = 8, H = 178;
   const barY = 46, barHt = 48, plotW = W - padX*2, gap = 2;
-  const mapW = (MAPPED/TOTAL)*plotW, unW = plotW - mapW - gap, ux = padX + mapW + gap;
+  const segs = [
+    {n:MAPPED, pct:Math.round(MAPPED/TOTAL*100), fill:PAL.green,  head:"FITS A MAST MODE",   hc:INK.brightgreen,
+     tip:`<span class="t-h">Fits a MAST mode</span><br><span class="t-d">${MAPPED} of ${TOTAL} · ${Math.round(MAPPED/TOTAL*100)}%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span>`},
+    {n:EXT, pct:Math.round(EXT/TOTAL*100), fill:PAL.amber, head:"NEEDS AN EXTENSION", hc:INK.candle,
+     tip:`<span class="t-h">Needs an extension family</span><br><span class="t-d">${EXT} of ${TOTAL} · ${Math.round(EXT/TOTAL*100)}%</span><br><span class="t-w">two families MAST lacks: human-in-the-loop, and single-session infrastructure (48% of failures by weight)</span>`},
+    {n:UNC, pct:Math.round(UNC/TOTAL*100), fill:INK.faint, head:"UNCLEAR", hc:INK.soft,
+     tip:`<span class="t-h">Unclear</span><br><span class="t-d">${UNC} of ${TOTAL} · ${Math.round(UNC/TOTAL*100)}%</span><br><span class="t-w">mostly detectors firing on work that actually succeeded</span>`},
+  ];
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":`MAST cross-walk of 23 sampled incidents: 13 (57%) map cleanly to a MAST failure mode; 10 (43%) have no clean fit. The unmapped 43% are two families the autonomous-benchmark taxonomy has no word for: human-in-the-loop failures (frustration, honesty challenges, permission friction) and single-session infrastructure (quota kills, permission loops).`});
-  /* headers over each segment */
-  svg.appendChild(el("text", {x:padX+mapW/2, y:28, "text-anchor":"middle", "font-size":10, "letter-spacing":"1", "font-weight":"600", fill:INK.brightgreen, text:"MAPS TO A MAST MODE"}));
-  svg.appendChild(el("text", {x:ux+unW/2, y:28, "text-anchor":"middle", "font-size":10, "letter-spacing":"1", "font-weight":"600", fill:INK.candle, text:"NO CLEAN FIT"}));
-  /* mapped segment, rounded on the left (outer) end */
-  const gm = el("g", {class:"mark-focus", tabindex:0, role:"img",
-    "aria-label":"Maps to a MAST mode: 13 of 23 sampled incidents, 57 percent."});
-  gm.dataset.tip = `<span class="t-h">Maps to a MAST mode</span><br><span class="t-d">13 of 23 sampled · 57%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span>`;
-  gm.appendChild(el("path", {d:barH(padX, barY, mapW, barHt, 5, false), fill:PAL.green}));
-  gm.appendChild(el("text", {x:padX+16, y:barY+barHt/2+3, "font-size":15, "font-weight":"600", fill:INK.surface, text:"57%"}));
-  gm.appendChild(el("text", {x:padX+16, y:barY+barHt/2+19, "font-size":9.5, fill:INK.surface, opacity:.85, text:"13 of 23"}));
-  svg.appendChild(gm);
-  /* unmapped segment, rounded on the right (outer) end */
-  const gu = el("g", {class:"mark-focus", tabindex:0, role:"img",
-    "aria-label":"No clean fit: 10 of 23 sampled incidents, 43 percent."});
-  gu.dataset.tip = `<span class="t-h">No clean fit</span><br><span class="t-d">10 of 23 sampled · 43%</span><br><span class="t-w">two families MAST has no word for: human-in-the-loop, and single-session infrastructure</span>`;
-  gu.appendChild(el("path", {d:barH(ux, barY, unW, barHt, 5, true), fill:PAL.amber}));
-  gu.appendChild(el("text", {x:ux+unW-16, y:barY+barHt/2+3, "text-anchor":"end", "font-size":15, "font-weight":"600", fill:INK.surface, text:"43%"}));
-  gu.appendChild(el("text", {x:ux+unW-16, y:barY+barHt/2+19, "text-anchor":"end", "font-size":9.5, fill:INK.surface, opacity:.85, text:"10 of 23"}));
-  svg.appendChild(gu);
-  /* bracket the two unmapped families under the amber segment */
-  const bY = barY + barHt + 10;
-  svg.appendChild(el("path", {d:`M${ux} ${bY} V${bY+6} H${ux+unW} V${bY}`, fill:"none", stroke:INK.candle, "stroke-width":1, opacity:.55}));
-  svg.appendChild(el("text", {x:ux+unW/2, y:bY+22, "text-anchor":"middle", "font-size":10.5, fill:INK.soft, text:"No autonomous-benchmark word for these two families:"}));
-  svg.appendChild(el("text", {x:ux+unW/2, y:bY+38, "text-anchor":"middle", "font-size":10.5, "font-weight":"600", fill:INK.text, text:"human-in-the-loop  ·  single-session infrastructure"}));
+    "aria-label":`MAST cross-walk of ${TOTAL} stratified incidents: ${MAPPED} (${Math.round(MAPPED/TOTAL*100)}%) fit a MAST mode, ${EXT} (${Math.round(EXT/TOTAL*100)}%) need an extension family MAST lacks (human-in-the-loop and single-session infrastructure), ${UNC} (${Math.round(UNC/TOTAL*100)}%) are unclear, mostly detectors firing on successful work. Population-weighted, MAST reaches 19% of failures and infrastructure alone is 48%.`});
+  let x = padX;
+  segs.forEach((s, i) => {
+    const w = (s.n/TOTAL)*plotW - (i < segs.length-1 ? gap : 0);
+    svg.appendChild(el("text", {x:x+w/2, y:28, "text-anchor":"middle", "font-size":9.5, "letter-spacing":"1", "font-weight":"600", fill:s.hc, text:s.head}));
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${s.head}: ${s.n} of ${TOTAL} incidents, ${s.pct} percent.`});
+    g.dataset.tip = s.tip;
+    g.appendChild(el("path", {d:barH(x, barY, w, barHt, 5, i===segs.length-1), fill:s.fill}));
+    const anchor = i===0 ? "start" : "middle", tx = i===0 ? x+16 : x+w/2;
+    g.appendChild(el("text", {x:tx, y:barY+barHt/2+3, "text-anchor":anchor, "font-size":15, "font-weight":"600", fill:INK.surface, text:s.pct+"%"}));
+    g.appendChild(el("text", {x:tx, y:barY+barHt/2+19, "text-anchor":anchor, "font-size":9.5, fill:INK.surface, opacity:.85, text:s.n+" of "+TOTAL}));
+    svg.appendChild(g);
+    x += (s.n/TOTAL)*plotW;
+  });
+  const bY = barY + barHt + 12;
+  svg.appendChild(el("text", {x:padX, y:bY+16, "font-size":10.5, fill:INK.soft, text:"The extension MAST lacks, by weighted share of all failures:"}));
+  svg.appendChild(el("text", {x:padX, y:bY+32, "font-size":10.5, "font-weight":"600", fill:INK.text, text:"single-session infrastructure 48%  ·  human-in-the-loop  ·  fan-out coordination (0 observed)"}));
   host.appendChild(svg);
   wireTips(host);
 }
