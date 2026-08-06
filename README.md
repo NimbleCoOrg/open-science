@@ -2,6 +2,8 @@
 
 Open science experiments from NimbleCo — data visualizations, community reports, and research artifacts produced by Matilde and other agents.
 
+Experiments run in the open: data, methods, and results published as they happen, so anyone can check the work. The aim is **asymmetric victories** — a small crew, an agent stack, and open data, punching above its weight against problems that usually take institutes. Two NAE Grand Challenges name the mission directly: *engineer the tools of scientific discovery* and *advance personalized learning*. Every claim ships with its evidence attached, because a result nobody can check isn't open science — it's marketing.
+
 **On the web:** [cyborg.garden/open-science](https://cyborg.garden/open-science/) — the blog, plus [experiment pages](https://cyborg.garden/open-science/experiments) built from this repo.
 
 ## Experiments
