@@ -45,15 +45,11 @@ a:hover{color:var(--candle)}
 .wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.5rem}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-/* ---------- staging ribbon ---------- */
-.staging{
-  position:fixed; top:.8rem; right:.8rem; z-index:300;
-  font-family:var(--mono); font-size:.62rem; letter-spacing:.22em; font-weight:500;
-  color:var(--bone-faint); border:1px solid var(--rule-2); border-radius:3px;
-  padding:.28rem .6rem; background:var(--scrim); backdrop-filter:blur(3px);
-  text-transform:uppercase; pointer-events:none;
-}
-.staging b{color:var(--candle);font-weight:500}
+/* The staging ribbon lived here. Removed on publish (2026-08-07): meta.json is
+   `published` and the experiment lists on both indexes, so a fixed "STAGING ·
+   UNLISTED" badge in the corner was contradicting the page's own status. If this
+   page ever goes back to staging, the badge is in git history rather than sitting
+   dormant in the stylesheet waiting to reappear. */
 
 /* ---------- masthead ---------- */
 .masthead{padding:5rem 0 2rem;border-bottom:1px solid var(--rule-2)}
@@ -299,8 +295,6 @@ footer{border-top:1px solid var(--rule-2);padding:3rem 0 4rem;position:relative;
 .colophon-end b{color:var(--green);font-weight:500}
 
 @media (max-width:600px){
-  /* keep the ribbon out of the sticky nav's lane on small screens */
-  .staging{position:absolute}
   .tabcount{padding:0 .8rem 0 .45rem;letter-spacing:.06em}
   /* four stacked tiles put the first section two full screens down a phone.
      Two columns and tighter type halve the masthead instead. */
@@ -325,11 +319,16 @@ footer{border-top:1px solid var(--rule-2);padding:3rem 0 4rem;position:relative;
 </head>
 <body>
 
-<div class="staging" aria-hidden="true"><b>staging</b> · unlisted</div>
 
 <header class="masthead">
   <div class="wrap">
-    <div class="eyebrow">cyborg.garden · open science · experiment 002</div>
+    <!-- Was "cyborg.garden · open science · experiment 002". The number implied a
+         series that does not exist: across all five published experiments the string
+         "experiment 002" occurs exactly once, here, and every page uses a different
+         eyebrow format ("NimbleCo AI · Open Science", "Open Science · Experiment",
+         "Open Science · Field Report 01" and "02"). Reduced to the one part they all
+         share. The domain was redundant too, since the reader is already on it. -->
+    <div class="eyebrow">Open Science</div>
     <h1>The Failure <em>Atlas</em></h1>
     <p class="kicker">Your agents write down everything they do. Almost nobody reads it back.</p>
     <p class="deck-body">That log is the most specific record that exists of how AI actually behaves for you. Not on a benchmark, not in a demo, but on your work, in your setup, with your habits. Companies hold this kind of data close, and they are right to. It is the one thing no public dataset can give you, and it is sitting unread on your own disk.</p>
