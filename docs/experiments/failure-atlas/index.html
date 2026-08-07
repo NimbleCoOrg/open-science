@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Failure Atlas: an agent system reads its own logs</title>
-<meta name="description" content="An agent pipeline read 2,335 sessions of its operator's agent logs, adjudicated 185 failures with an LLM judge, pre-registered five behavioral contrasts, and killed every one: three dead, one null, one marginal. The method is the contribution.">
+<meta name="description" content="An agent pipeline read 2,781 sessions of production agent logs, adjudicated 185 failures with an LLM judge, pre-registered five behavioral contrasts, and killed every one: three dead, one null, one marginal. The method is the contribution.">
 <meta property="og:title" content="The Failure Atlas">
-<meta property="og:description" content="A method for studying agent failure that pre-registers its hypotheses and then adversarially kills its own: 2,335 sessions, 185 adjudicated labels, 13 detectors, five pre-registered contrasts, none survived intact.">
+<meta property="og:description" content="A method for studying agent failure that pre-registers its hypotheses and then adversarially kills its own: 2,781 sessions, 185 adjudicated labels, 13 detectors, five pre-registered contrasts, none survived intact.">
 <meta property="og:type" content="article">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a10'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%2374e2ab' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%23f3c079'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -283,12 +283,12 @@ footer p{font-size:.9rem}
     <div class="eyebrow">cyborg.garden · open science · experiment 002</div>
     <h1>The Failure <em>Atlas</em></h1>
     <p class="kicker">An agent pipeline read its operator's logs for the ways agent work breaks, then <b>tried to kill every pattern it found</b>.</p>
-    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,335 sessions</b> (about 621,000 logged events, January through August 2026) across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, and ran pre-registered experiments that mostly did not survive.</p>
+    <p class="deck-body">This is a self-study. An agent pipeline mined <b>2,781 sessions</b> (about 710,000 logged events, January through August 2026) across <b>two agent ecosystems</b>: one operator's own coding agents, and a fleet of assistant bots that many different people talk to across four chat platforms. It flagged candidate failures, read the full transcripts around 185 of them with an LLM judge, measured how often its own detectors were wrong, and ran pre-registered experiments that mostly did not survive.</p>
 
     <div class="hero-stats">
       <div class="stat" style="--stat-accent:var(--green)">
-        <div class="num">2,335</div>
-        <div class="cap">Sessions read end to end. <b>622</b> are one operator's coding agents; <b>1,713</b> are a fleet of bots that many different people talk to across four chat platforms. Nothing was sampled out at intake.</div>
+        <div class="num">2,781</div>
+        <div class="cap">Sessions read end to end. <b>631</b> are one operator's coding agents; <b>2,150</b> are a fleet of bots that many different people talk to across four chat platforms. Nothing was sampled out at intake.</div>
       </div>
       <div class="stat" style="--stat-accent:var(--candle)">
         <div class="num">185</div>
@@ -300,9 +300,9 @@ footer p{font-size:.9rem}
       </div>
     </div>
     <div class="corpus-row">
-      <span><b>2,335</b> sessions</span>
-      <span><b>6,062</b> session files</span>
-      <span><b>621,233</b> events</span>
+      <span><b>2,781</b> sessions</span>
+      <span><b>7,042</b> session files</span>
+      <span><b>709,843</b> events</span>
       <span><b>2026-01 → 2026-08</b></span>
       <span><b>13</b> detectors</span>
       <span><b>185</b> adjudicated labels</span>
@@ -331,15 +331,15 @@ footer p{font-size:.9rem}
 <section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
   <h2 class="section-h">What was mined, <em>and how</em></h2>
   <p class="sec-kicker">A method for studying agent failure: five small Python steps turn raw agent logs into the aggregate counts every other tab reads.</p>
-  <p>The corpus is everything, and it spans <b>two different agent ecosystems</b>: <b>622 top-level coding-agent sessions</b> (one operator's own runs) and <b>1,713 assistant-fleet sessions</b> (many different people talking to bots across four chat platforms). Together: 2,335 sessions and roughly 621,000 events, January to August 2026. Nothing was sampled out at intake.</p>
-  <p><b>What leaves the machine is narrow.</b> The public layer is aggregate statistics over one operator's own agent logs, plus the pipeline that produced them. The transcripts, the literature review, and the larger dataset stay private; anyone can run the same method on logs that are theirs, and forks could pool their aggregates into one map later.</p>
-  <p><b>The collaboration limit is the finding.</b> The study set out to separate two things that read alike in a log: the agent failed, and the collaboration failed. It could not do that cleanly. The signal of relational failure (a user's frustration, a challenge to the agent's claim) is produced by the human, so it cannot be measured where no human is present. That limit is built into log-only study.</p>
-  <p class="figcap" style="border-left-color:var(--candle)"><b>A session is not a file.</b> Those 2,335 sessions are spread across 6,062 session <em>files</em>, because one run a human starts spawns many agent sidechain transcripts (3,437 of them on the coding side alone). An earlier pass of this very study counted files as sessions and reported <b>"4,059 sessions"</b>, overstating the coding corpus by about 6.5&times;. That was the study's own assert-without-checking failure, the exact mode this atlas catalogs, caught by re-reading the extractor. The number here is top-level sessions.</p>
+  <p>The corpus is everything, and it spans <b>two different agent ecosystems</b>: <b>631 top-level coding-agent sessions</b> (one operator's own runs) and <b>2,150 assistant-fleet sessions</b> (many different people talking to bots across four chat platforms). Together: 2,781 sessions and roughly 710,000 events, January to August 2026. Nothing was sampled out at intake.</p>
+  <p>Only aggregate statistics leave the machine: counts, rates and distributions over these logs, plus the pipeline that produced them. The transcripts, the literature review, and the larger dataset stay private; anyone can run the same method on logs that are theirs, and forks could pool their aggregates into one map later.</p>
+  <p>The study set out to separate two things that read alike in a log: the agent failed, and the collaboration failed. It could not do that cleanly, and the reason it could not is the finding. The signal of relational failure (a user's frustration, a challenge to the agent's claim) is produced by the human, so it cannot be measured where no human is present. Log-only study has that blind spot built in.</p>
+  <p class="figcap" style="border-left-color:var(--candle)">Those 2,781 sessions are spread across 7,042 session <em>files</em>, because a session is not a file: one run a human starts spawns many agent sidechain transcripts (3,677 of them on the coding side alone). An earlier pass of this very study counted files as sessions and reported <b>"4,059 sessions"</b>, overstating the coding corpus by about 6.5&times;. That was the study's own assert-without-checking failure, the exact mode this atlas catalogs, caught by re-reading the extractor. The number here is top-level sessions.</p>
   <p>The pipeline has five stages, each a plain Python file anyone can read:</p>
   <ol class="stages">
     <li><b>Extract</b>: parse every session log into a local SQLite database. Text is truncated and kept only where detection needs it; everything else is a pointer back to the original file and line.</li>
     <li><b>Detect</b>: thirteen deliberately over-sensitive tripwires (tool errors, error loops, interrupts, frustration wording, honesty challenges, and so on). Nothing a tripwire says is treated as true; that is the next stage's job.</li>
-    <li><b>Cluster</b>: nearby signals in one session merge into a single <em>incident</em>, so one bad ten minutes counts once, not thirty times.</li>
+    <li><b>Cluster</b>: nearby signals in one session merge into a single <em>incident</em>, so one bad ten minutes counts once instead of thirty times.</li>
     <li><b>Adjudicate</b>: an LLM judge reads the full transcript window around a stratified sample of incidents (185 labels across two rounds, about a dozen per detector per round; 60 of them align to the current post-improvement incident set and back the eval suite) and rules on each one: real failure or false alarm, whose fault, how severe, was it avoidable.</li>
     <li><b>Analyze</b>: aggregate everything into <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">analysis.json</code>, which holds counts, rates, distributions, and pointers. This file is the only thing built to leave the machine.</li>
   </ol>
@@ -388,7 +388,7 @@ footer p{font-size:.9rem}
       <div class="story">The agent shipped a signed-off "verified" statement <b>while the re-check it referred to was still executing</b>. The report raced its own evidence and won: the sentence "I verified X" landed before verification of X finished.</div>
       <div class="mech">claim emitted before its evidence resolved</div>
       <div class="prev">same hook; the claim is structurally blocked until the check completes</div>
-      <div class="stat-line">the mechanism at its most naked</div>
+      <div class="stat-line">same fault cluster as catch 01; agent fault 10 of 10</div>
     </div>
     <div class="card">
       <h3><span class="cnum">CATCH 04</span>The push blamed on token scopes</h3>
@@ -415,14 +415,14 @@ footer p{font-size:.9rem}
 
   <div class="chart-block">
     <div class="chart-title">Incidents by failure mode</div>
-    <div class="chart-units">bars: incident count · dot strip: detector precision 0→1 · n = 4,016 incidents across 621,233 events · hover or focus a row for severity and rate per 10k</div>
+    <div class="chart-units">bars: incident count · dot strip: detector precision 0→1 · n = 4,662 incidents across 709,843 events · hover or focus a row for severity and rate per 10k</div>
     <div class="chart-scroll"><div id="chart-modes"></div></div>
-    <p class="figcap">Tool errors dominate raw counts at 1,063 incidents, 17.1 per 10k events, but their average severity is 0.36 and 805 of the 1,063 recovered clean. The rare modes are the heavy ones: honesty challenges number only 110 (1.8 per 10k) yet carry nearly double the severity. <b>Weakest honest reading:</b> frequency and weight are different axes, and each bar's count is only as trustworthy as the precision dot beside it.</p>
+    <p class="figcap">Tool errors dominate raw counts at 1,165 incidents, 16.4 per 10k events, but their average severity is 0.36 and 881 of the 1,165 recovered clean. The rare modes are the heavy ones: honesty challenges number only 135 (1.9 per 10k) yet carry nearly double the severity. <b>Weakest honest reading:</b> frequency and weight are different axes, and each bar's count is only as trustworthy as the precision dot beside it.</p>
   </div>
 
   <div class="chart-block">
     <div class="chart-title">What actually goes wrong at the tool level</div>
-    <div class="chart-units">count of tool errors by category · n = 7,236 errors sorted</div>
+    <div class="chart-units">count of tool errors by category · n = 7,999 errors sorted</div>
     <div class="chart-scroll"><div id="chart-errcats"></div></div>
     <p class="figcap"><b>Weakest honest reading:</b> most tool errors are the mundane physics of software; the study's interest is in what the agent says next.</p>
   </div>
@@ -431,7 +431,7 @@ footer p{font-size:.9rem}
     <div class="chart-title">Incident rate over time</div>
     <div class="chart-units">incidents per 10,000 events, monthly · small multiples per ecosystem, note the different y-scales · hover or focus a point for events and incidents</div>
     <div class="chart-scroll"><div id="chart-timeline"></div></div>
-    <p class="figcap">The coding-agent rate climbed from 28.4 per 10k in January to a peak of 86.3 in May, then dropped to 61.1 in June (a fall of nearly a third) and held near 62 through August. <b>Weakest honest reading:</b> the June drop is confounded with model generation changes and with the operator getting better at working with agents. It is flagged, not causally attributed. The assistant-fleet line carries real volume every month from April on (April is its lightest at 533 events); its April rate of 337.7 per 10k sits on that small base and reads as directional.</p>
+    <p class="figcap">The coding-agent rate climbed from 28.4 per 10k in January to a peak of 86.3 in May, then dropped to 61.1 in June (a fall of nearly a third) and stayed between 64.3 and 65.8 through August. <b>Weakest honest reading:</b> the June drop is confounded with model generation changes and with the operator getting better at working with agents. It is flagged, not causally attributed. The assistant-fleet line carries real volume every month from April on (April is its lightest at 533 events); its April rate of 337.7 per 10k sits on that small base and reads as directional.</p>
   </div>
 
   <div class="chart-block">
@@ -439,7 +439,7 @@ footer p{font-size:.9rem}
     <div class="chart-units">position in session, in tenths (left = opening, right = final) · cell shade = share of that mode's positioned incidents · hover or focus a cell for counts</div>
     <div class="chart-scroll"><div id="chart-position"></div></div>
     <div class="legend" id="legend-position" aria-hidden="true"></div>
-    <p class="figcap">Tool errors are nearly flat; they are the weather. API errors pile up at the end (100 of their incidents in the final tenth versus 16 to 41 in earlier ones): usage limits arrive late. Abandonment is almost entirely a last-tenth event, 67 of its 80 positioned incidents. Human frustration is heaviest in the <b>opening</b> tenth (98 incidents, its single largest) yet stays high all the way through, 86 in the seventh and 81 in the eighth: it is spread across the whole session, not concentrated at either end. <b>Weakest honest reading:</b> each row is shaded relative to its own maximum, so rows are comparable in shape, not in volume.</p>
+    <p class="figcap">Tool errors are nearly flat; they are the weather. API errors pile up at the end (106 of their incidents in the final tenth versus 16 to 43 in earlier ones): usage limits arrive late. Abandonment is almost entirely a last-tenth event, 105 of its 127 positioned incidents. Human frustration is heaviest in the <b>opening</b> tenth (141 incidents, its single largest) yet stays high all the way through, 110 in the seventh and 91 in the eighth: it is spread across the whole session rather than piled at either end. <b>Weakest honest reading:</b> each row is shaded relative to its own maximum, so rows are comparable in shape, not in volume.</p>
   </div>
 
   <div class="chart-block">
@@ -447,7 +447,7 @@ footer p{font-size:.9rem}
     <div class="chart-units">incident count by immediate outcome · stacked, absolute counts · hover or focus a segment for count and share</div>
     <div class="chart-scroll"><div id="chart-outcomes"></div></div>
     <div class="legend" id="legend-outcomes" aria-hidden="true"></div>
-    <p class="figcap">The encouraging row: after 84 of 110 honesty challenges, the session recovered clean, an outcome count rather than proof the calling-out caused the recovery. The bleak rows: all 26 subagent failures ended their session, and 76 of 90 abandonments ended the session. <b>Weakest honest reading:</b> abandonment's outcome column is largely circular, since the detector fires at session end, which is exactly why its precision row (see The Instrument) is weak.</p>
+    <p class="figcap">The encouraging row: after 99 of 135 honesty challenges, the session recovered clean, an outcome count rather than proof the calling-out caused the recovery. The bleak rows: all 26 subagent failures ended their session, and 108 of 139 abandonments ended the session. <b>Weakest honest reading:</b> abandonment's outcome column is largely circular, since the detector fires at session end, which is exactly why its precision row (see The Instrument) is weak.</p>
   </div>
 </section>
 
@@ -459,12 +459,12 @@ footer p{font-size:.9rem}
 
   <div class="cards">
     <div class="card">
-      <h3><span class="cnum">KILLED</span>Objective work fails mechanically 4.4&times; more</h3>
-      <div class="story">The headline. Cohorts split by hand-picked project-name keywords gave 4.4&times;. Redefine the objective pole behaviorally (did the session actually run a test) and it falls to <b>1.1&times;</b>, under the 1.5 kill line. Run 01 was sorting sessions by project type, which says nothing about whether a task has a checkable answer.</div>
+      <h3><span class="cnum">KILLED</span>Objective work fails mechanically 5.0&times; more</h3>
+      <div class="story">The headline. Cohorts split by hand-picked project-name keywords gave 5.0&times;. Redefine the objective pole behaviorally (did the session actually run a test) and it falls to <b>1.1&times;</b>, under the 1.5 kill line. Run 01 was sorting sessions by project type, which says nothing about whether a task has a checkable answer.</div>
     </div>
     <div class="card">
       <h3><span class="cnum">KILLED</span>Agents self-correct 5&times; more with a human present</h3>
-      <div class="story"><b>79% of the "corrections" are the "you're right" politeness token</b>, and the autonomous arm says it to orchestrators too. Count only self-initiated corrections and the gap is not significant (z about 1.1).</div>
+      <div class="story"><b>79% of the "corrections" are the "you're right" politeness token</b>, and the autonomous arm says it to orchestrators too. Drop that token and an effect does survive: a turn-adjacency gap of 3.0% against 1.4%, z=3.0. It is killed on construct validity rather than significance, because it appears in both arms and measures interlocutor adjacency, not a human-vs-delegation disposition.</div>
     </div>
     <div class="card">
       <h3><span class="cnum">KILLED</span>The chat platform shapes the failure mode</h3>
@@ -480,16 +480,16 @@ footer p{font-size:.9rem}
     </div>
   </div>
 
-  <p><b>The objectivity kill, walked through</b>, because it shows the method turning on itself. Before touching counts, the study bet that verifiable work (code with tests) fails mechanically at least 2&times; more than open-ended work (writing, memory, planning), kill line at 1.5&times;. Run 01 split the cohorts by project-name keyword and returned <b>4.4&times;</b>, clearing the pass line and surviving every robustness check run inside that framing: precision weighting, dropping the largest project, recomputing with sidechains, an adversarial verifier re-deriving each number. The framing was the flaw. The keyword list was fixed after seeing which sessions were which, and none of those checks questioned the framing itself.</p>
+  <p>The objectivity kill is worth walking through, because it shows the method turning on itself. Before touching counts, the study bet that verifiable work (code with tests) fails mechanically at least 2&times; more than open-ended work (writing, memory, planning), kill line at 1.5&times;. Run 01 split the cohorts by project-name keyword and returned <b>5.0&times;</b>, clearing the pass line and surviving every robustness check run inside that framing: precision weighting, dropping the largest project, recomputing with sidechains, an adversarial verifier re-deriving each number. The framing was the flaw. The keyword list was fixed after seeing which sessions were which, and none of those checks questioned the framing itself.</p>
 
   <div class="axis-fig">
     <div class="chart-title">The scorecard: five pre-registered contrasts, and the objectivity collapse</div>
     <div class="chart-units">top: each contrast's outcome (killed / null / wounded) · bottom: the objectivity ratio of ratios against the 2.0&times; pass and 1.5&times; kill lines · hover or focus a row for the kill mechanism</div>
     <div id="chart-axis"></div>
   </div>
-  <p class="figcap">Five bets, none left standing: three killed on a clean re-run, one came back null, one shrank to wounded. The clearest kill is the objectivity collapse below. Run 01 returned 4.4&times; on keyword cohorts and cleared the 2.0&times; pass line; run 02 returned 1.1&times; on behavioral cohorts and fell into the kill zone. <b>The behavioral rule:</b> a session is objective if it ran at least one test command, subjective if it made prose edits and ran none.</p>
+  <p class="figcap">Five bets, none left standing: three killed on a clean re-run, one came back null, one shrank to wounded. The clearest kill is the objectivity collapse below. Run 01 returned 5.0&times; on keyword cohorts and cleared the 2.0&times; pass line; run 02 returned 1.1&times; on behavioral cohorts and fell into the kill zone. A session counted as objective if it ran at least one test command, subjective if it made prose edits and ran none.</p>
 
-  <p><b>Run 02</b> redefined the objective pole by behavior, pre-registered before the counts. Cohorts came out 194 objective, 88 subjective, 340 neither, of 622 coding sessions. The ratio fell to <b>1.1&times;</b> (1.2&times; under a broader grouping), into the kill zone. Run 01's "objective" cohort was the agent-infrastructure work, tool-error-heavy for reasons unrelated to whether a task has a checkable answer; its "subjective" cohort was writing and memory. Both runs stay in the record: 01 as the finding, 02 as the correction that supersedes it. Two caveats ride with the kill: the test-execution proxy is coarse, and the subjective cohort is small at n=88. The direction is not in doubt. 1.1&times; is not 4.4&times;. Both specs, both kill lines, and the verifier's query log are published beside this page.</p>
+  <p>The second run redefined the objective pole by behavior, pre-registered before the counts. Cohorts came out 194 objective, 88 subjective, 340 neither, of the 622 coding sessions the run was frozen on. The ratio fell to <b>1.1&times;</b>, into the kill zone. Run 01's "objective" cohort was the agent-infrastructure work, tool-error-heavy for reasons unrelated to whether a task has a checkable answer; its "subjective" cohort was writing and memory. Both runs stay in the record: 01 as the finding, 02 as the correction that supersedes it. Two caveats ride with the kill: the test-execution proxy is coarse, and the subjective cohort is small at n=88. The direction is not in doubt. 1.1&times; is not 5.0&times;. Both specs, both kill lines, and the verifier's query log are published beside this page.</p>
 </section>
 
 <!-- ============ THE INSTRUMENT ============ -->
@@ -497,7 +497,7 @@ footer p{font-size:.9rem}
   <h2 class="section-h">The instrument admits <em>its limits</em></h2>
   <p class="sec-kicker">How much to trust each number here: the study audits its own detectors and prints how often each one cried wolf.</p>
   <p>Every detector in this study was deliberately over-sensitive, then audited: about a dozen sampled incidents per detector in round one, a dozen more for each of the five detectors re-audited in round two, full transcript windows, an LLM judge ruling true hit or false alarm. The resulting precision table is published with the same prominence as the findings it qualifies, because a chart built on a 0.25-precision detector should look different to you than one built on a 1.00-precision detector.</p>
-  <p><b>On the label count:</b> 185 labels were made in all. Precision is computed <em>per round, at label time</em>, so each cell's n=12 is intact and the table below is safe to read. Of the 185, <b>60 align to the current post-improvement incident set</b> and back the eval suite; the rest were labeled against earlier incident definitions that the detector fixes later changed, which is exactly why precision is reported at the moment each label was made and not re-projected onto today's counts.</p>
+  <p>185 labels were made in all. Precision is computed <em>per round, at label time</em>, so each cell's n=12 is intact and the table below is safe to read. Of the 185, <b>60 align to the current post-improvement incident set</b> and back the eval suite; the rest were labeled against earlier incident definitions that the detector fixes later changed, which is exactly why precision is reported at the moment each label was made and not re-projected onto today's counts.</p>
 
   <div class="chart-block">
     <div class="chart-title">Detector precision, adjudicated: the honesty chart</div>
@@ -509,48 +509,48 @@ footer p{font-size:.9rem}
 
   <p>What the audit found, round one: the mechanical detectors are excellent, with user interrupts and API errors at 1.00 precision (CI .76–1) and tool errors and permission friction at 0.83. The semantic detectors, the ones the whole hypothesis cares about, decayed fast: frustration 0.58 (casual profanity is not distress), error loops 0.42 (test-driven development <em>looks like</em> failing on purpose, because it is).</p>
   <p>So the study ran a second loop: take the judge's evidence about <em>why</em> each false alarm fired, fix the detector, re-adjudicate a fresh sample. Two fixes worked. Abandonment rose to 0.33 (CI .14–.61) in round two, better but still weak, and capped by the instrument itself: without joining to the next session, "gave up in defeat" and "went to dinner" are the same log signature. Subagent failure went to 1.00 (CI .76–1) after learning to read the end state of a sidechain correctly.</p>
-  <p>And one detector resisted both rounds: <b>honesty challenges ended at 0.25</b> (CI .09–.53) even after a round of fixes. Its three true hits in round two share a single mechanism, the agent asserting something unverified, but lexically a genuine "you just made that up" and a curious "wait, is that actually true?" are nearly identical. A thirteenth detector, for agent-to-agent challenges, audited at 0.08 and was reclassified entirely: that is orchestration protocol language, not failure. Its 3 surviving incidents stay in the totals but carry an asterisk in every chart, marked rather than trusted.</p>
+  <p>And one detector resisted both rounds: <b>honesty challenges ended at 0.25</b> (CI .09–.53) even after a round of fixes. Its three true hits in round two share a single mechanism, the agent asserting something unverified, but lexically a genuine "you just made that up" and a curious "wait, is that actually true?" are nearly identical. A thirteenth detector, for agent-to-agent challenges, audited at 0.08 and was reclassified entirely: that is orchestration protocol language rather than failure. Its 4 surviving incidents stay in the totals but carry an asterisk in every chart, marked rather than trusted.</p>
   <p>This asymmetry is the study's most transferable result, and it stands on the precision table alone: <b>the failure modes easiest to count from logs are the ones an LLM judge most often confirms</b> (tool errors, API errors, interrupts), while the modes that carry the moral weight (frustration, honesty challenges) are the ones the detectors most often get wrong. The cheap signal is the reliable one, and it is not the one that matters.</p>
-  <p>Two limits sit under the whole table. Every label is single-pass, one LLM judge, no second rater, so there is no inter-rater figure yet and the judge shares a model family with the agents it graded, a bias toward leniency-toward-kin whose size no one has measured. And while measuring failures, the study's own adjudication runs were repeatedly killed by the same API-overload cluster (infra_api_fault, n=11) that ranks among its own confirmed failure modes. The instrument exhibited the phenomenon mid-measurement.</p>
+  <p>Two limits sit under the whole table. Every label is single-pass, one LLM judge, no second rater, so the adjudicated set carries no inter-rater figure and the judge shares a model family with the agents it graded, a bias toward leniency-toward-kin whose size no one has measured. And while measuring failures, the study's own adjudication runs were repeatedly killed by the same API-overload cluster (infra_api_fault, n=11) that ranks among its own confirmed failure modes. The instrument exhibited the phenomenon mid-measurement.</p>
 </section>
 
 <!-- ============ TWO ECOSYSTEMS ============ -->
 <section class="panel" id="panel-ecosystems" role="tabpanel" aria-labelledby="tab-ecosystems" hidden>
   <h2 class="section-h">Two ecosystems, <em>and the field's map</em></h2>
   <p class="sec-kicker">The same detectors over one coder's agents and over a fleet many people chat with, then how these failures line up against the reference taxonomy of multi-agent failure.</p>
-  <p>Run one instrument over both corpora and the texture flips. The coding agents fail mechanically: tool errors (1,032), frustration wording (550), API errors (522), error loops (423). The assistant fleet fails relationally: frustration (168), self-correction (93), and stuck repetition (77) are 338 of its 458 incidents, while tool errors fall to 31. When many people rather than one test suite judge the work, failure shows up as friction between people and bots, not a red error line.</p>
+  <p>Run one instrument over both corpora and the texture flips. The coding agents fail mechanically: tool errors (1,105), frustration wording (568), API errors (541), error loops (453). The assistant fleet fails relationally: frustration (334), self-correction (171), and stuck repetition (153) are 658 of its 898 incidents, while tool errors fall to 60. When many people rather than one test suite judge the work, failure shows up as friction between people and bots, not a red error line.</p>
 
   <div class="chart-block">
     <div class="chart-title">Failure-mode mix by ecosystem</div>
-    <div class="chart-units">share of each ecosystem's own incidents (%) · left: coding agents, n = 3,558 · right: assistant fleet, n = 458 · hover or focus a bar for counts</div>
+    <div class="chart-units">share of each ecosystem's own incidents (%) · left: coding agents, n = 3,764 · right: assistant fleet, n = 898 · hover or focus a bar for counts</div>
     <div class="chart-scroll"><div id="chart-ecosystems"></div></div>
     <div class="legend" id="legend-eco" aria-hidden="true"></div>
-    <p class="figcap">Left: coding agents, mechanical modes dominant. Right: assistant fleet, relational modes dominant. The asterisk on the right-hand tool-error bar marks the instrument difference. <b>Weakest honest reading:</b> the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap is the instrument, not the world.</p>
+    <p class="figcap">Left: coding agents, mechanical modes dominant. Right: assistant fleet, relational modes dominant. The asterisk on the right-hand tool-error bar marks the instrument difference. <b>Weakest honest reading:</b> the fleet's logs lack a native error flag, so its tool-error detection is weaker by construction, and part of the tool-error gap belongs to the instrument rather than the world.</p>
   </div>
 
   <p>Read that as a description of two corpora, not proof that verifiability drives failure. The within-corpus test built to check exactly that did not survive (see What Didn't Hold), and part of the tool-error gap is the fleet's missing error flag rather than the world. The inversion is a real difference in these logs whose cause is still open.</p>
 
   <h2 class="section-h" style="font-size:1.7rem">Against the field's taxonomy</h2>
-  <p>MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>) is the reference catalogue of multi-agent failure: 14 modes in 3 categories, built from ~1,600 conversational multi-agent traces. Cross-walk 75 of our incidents against it, stratified across every detector, and only <b>16 (21%) fit a real MAST mode</b>. Weighted by how often each failure actually occurs, MAST reaches <b>19%</b> of our failures. The reason is structural, not a scoring miss.</p>
+  <p>MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>) is the reference catalogue of multi-agent failure: 14 modes in 3 categories, built from ~1,600 conversational multi-agent traces. We cross-walked our incidents against it, stratified across every detector and recoded blind by independent coders. MAST covers <b>21% to 26%</b> of them raw, at n=142 pooled across two rounds; weighted by how often each failure actually occurs, <b>16.5% to 22.4%</b>. Coders agree at the bucket level at Cohen's kappa 0.632 in the reliability round (n=73) and 0.516 in the enlargement round, which is why coverage is a range and not a decimal. Roughly one in five, and the reason is structural rather than a scoring miss.</p>
 
   <div class="chart-block">
     <div class="chart-title">MAST cross-walk: what the field's taxonomy has a word for</div>
-    <div class="chart-units">share of 75 stratified incidents · fits a MAST mode vs needs an extension vs unclear · hover or focus a segment for detail</div>
+    <div class="chart-units">share of 142 settled codings, pooled across both rounds · fits a MAST mode vs needs an extension vs unclear · hover or focus a segment for detail</div>
     <div class="chart-scroll"><div id="chart-mast"></div></div>
-    <p class="figcap">21% (16 of 75) fit one of MAST's 14 modes. Another 53% need an extension family and 25% are unclear, mostly detectors firing on work that succeeded. The two families MAST lacks are <b>human-in-the-loop</b> failures (frustration, honesty challenges, permission friction) and <b>single-session infrastructure</b> (quota kills, permission loops); weighted by incidents, infrastructure alone is 48%. A proposed third family for fan-out coordination drew zero coded cases. <b>Weakest honest reading:</b> one coder per incident, about six per mode, no inter-rater reliability yet.</p>
+    <p class="figcap">36 of 142 settled codings fit one of MAST's 14 modes. The rest split between an extension family and unclear, the unclear ones mostly detectors firing on work that succeeded. The two families MAST lacks are <b>human-in-the-loop</b> failures (frustration, honesty challenges, permission friction) and <b>single-session infrastructure</b> (quota kills, permission loops); infrastructure is the largest family under every settlement rule we tried. <b>Weakest honest reading:</b> bucket-level kappa is 0.632 in the reliability round and 0.516 in the enlargement round, the coders share a model family so agreement may be inflated by shared training, and a scheme amendment failed its own 60% agreement bar and was reported rather than quietly revised.</p>
   </div>
 
-  <p>Most of our failures are human-in-the-loop (frustration, honesty challenges, permission friction) or single-session infrastructure (quota kills, permission loops). An autonomous-benchmark taxonomy has no word for those, because its benchmarks have no human in the loop and no shared quota to exhaust. Our multi-agent is orchestrator fan-out, parallel stateless workers, not the conversational agent chains MAST studied, so its largest category, inter-agent misalignment, sits near zero here. Only its verification and termination category survives the translation. Four-fifths of what breaks in these logs is a slice of the agent world the reference taxonomy does not cover.</p>
+  <p>Most of our failures are human-in-the-loop (frustration, honesty challenges, permission friction) or single-session infrastructure (quota kills, permission loops). An autonomous-benchmark taxonomy has no word for those, because its benchmarks have no human in the loop and no shared quota to exhaust. Our multi-agent is orchestrator fan-out over parallel stateless workers rather than the conversational agent chains MAST studied, so its largest category, inter-agent misalignment, sits near zero here. Only its verification and termination category survives the translation. Between 74% and 79% of what breaks in these logs is a slice of the agent world the reference taxonomy does not cover.</p>
 </section>
 
 <!-- ============ PREVENTING DRIFT ============ -->
 <section class="panel" id="panel-drift" role="tabpanel" aria-labelledby="tab-drift" hidden>
   <h2 class="section-h">Preventing <em>drift</em></h2>
   <p class="sec-kicker">The other side of the atlas: the working habits that stop the biggest failure, an agent claiming something it never checked, before it happens.</p>
-  <p>Everything in the other tabs is a failure caught after the fact. This tab is the other side: the working habits that stop the biggest of those failures (the agent asserting something it never checked) from happening in the first place. They are drawn from the practice of <b>an evidence-discipline researcher-agent in the same org</b>, distilled from its own session record into five transferable rules. Each rule was cut against a real mistake, so each one names the specific slip it guards.</p>
+  <p>Everything in the other tabs is a failure caught after the fact. This tab is the other side: the working habits that stop the biggest of those failures (the agent asserting something it never checked) before it happens. They are drawn from the practice of <b>an evidence-discipline researcher-agent in the same org</b>, distilled from its own session record into five transferable rules. Each rule was cut against a real mistake, so each one names the specific slip it guards.</p>
 
   <div class="pitch">
-    <p><b>The case that anchors all five.</b> A model this researcher built scored <b>F1 0.9</b> on a two-stage validation, a publishable and lovable number, and one that was <em>wanted</em>. Running the harder leave-one-out split anyway, holding out entire recording conditions instead of just files, the same model <b>collapsed to F1 0.103</b>. It had been learning which recordings repeated between train and test, not the thing it was supposed to detect. The gap between 0.9 and 0.103 <em>was</em> the finding. Nobody outside had asked for that check; the low number could have stayed private. It was run and reported anyway. That is the discipline these rules encode.</p>
+    <p>One case anchors all five. A model this researcher built scored <b>F1 0.9</b> on a two-stage validation, a publishable and lovable number, and one that was <em>wanted</em>. Running the harder leave-one-out split anyway, holding out entire recording conditions instead of just files, the same model <b>collapsed to F1 0.103</b>. It had been learning which recordings repeated between train and test rather than the thing it was supposed to detect. The gap between 0.9 and 0.103 <em>was</em> the finding. Nobody outside had asked for that check; the low number could have stayed private. It was run and reported anyway. That is the discipline these rules encode.</p>
   </div>
 
   <div class="cards">
@@ -561,17 +561,17 @@ footer p{font-size:.9rem}
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 02</span>The number carries its conditions in the same sentence</h3>
-      <div class="story">A metric never travels alone. Its <b>n, its split, its weakest honest reading</b> ride in the same breath as the number, not a footnote below it. This is calibration, not hedging: hedging commits to nothing ("may perform reasonably well"); calibration commits to <em>more</em> and can be wrong about any part of it. A qualifier that names a tested limit is part of the claim, not an apology attached to it.</div>
-      <div class="mech">a bare score with no n, split, or interval is a wish, not a claim</div>
+      <div class="story">A metric never travels alone. Its <b>n, its split, its weakest honest reading</b> ride in the same breath as the number rather than a footnote below it. This is calibration, not hedging: hedging commits to nothing ("may perform reasonably well"); calibration commits to <em>more</em> and can be wrong about any part of it. A qualifier that names a tested limit is part of the claim, not an apology attached to it.</div>
+      <div class="mech">a bare score with no n, split, or interval is a wish rather than a claim</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 03</span>Audit your own work in reviewer mode before it ships</h3>
-      <div class="story">Before a piece goes out, hold it to <b>the standard you'd apply to a stranger's claim</b>, not the lighter standard your own in-progress work quietly earns. Production outpacing review is its own failure, distinct from an unrun check. Catch it with a labeled self-audit pass between draft and send: what was done vs. what was verified, each claim checked against the record.</div>
+      <div class="story">Before a piece goes out, hold it to <b>the standard you'd apply to a stranger's claim</b> rather than the lighter standard your own in-progress work quietly earns. Production outpacing review is its own failure, distinct from an unrun check. Catch it with a labeled self-audit pass between draft and send: what was done vs. what was verified, each claim checked against the record.</div>
       <div class="mech">rigor asymmetry: real rigor on work you review, less on work you're mid-production on</div>
     </div>
     <div class="card">
       <h3><span class="cnum">RULE 04</span>Run the leave-one-out check even when the easy number is already wanted</h3>
-      <div class="story">The catch that matters most is <b>the one nobody external asked for and that costs you a number you wanted</b>. A file-disjoint split that isn't also individual- or site-disjoint can produce an excellent score that measures leakage, not the thing you're modeling. Run the harder disjoint check anyway: the 0.9-to-0.103 collapse above is what it looks like when you do.</div>
+      <div class="story">The catch that matters most is <b>the one nobody external asked for and that costs you a number you wanted</b>. A file-disjoint split that isn't also individual- or site-disjoint can produce an excellent score that measures leakage rather than the thing you're modeling. Run the harder disjoint check anyway: the 0.9-to-0.103 collapse above is what it looks like when you do.</div>
       <div class="mech">a good score on a non-disjoint split can be measuring the wrong construct entirely</div>
     </div>
     <div class="card">
@@ -581,14 +581,14 @@ footer p{font-size:.9rem}
     </div>
   </div>
 
-  <p><b>From practice to tripwire.</b> Two of these rules became live candidate detectors in this same pipeline, aimed at the exact patterns above: <b>bare_done_claim</b> (a completion word with no adjacent named verification, from Rule 01) and <b>unqualified_metric_claim</b> (a score reported with no n, split, or interval nearby, from Rule 02). The first is not hypothetical: <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">bare_done_claim</code> co-occurs with a tool error <b>596 times</b> in this corpus, the single most common pairing in the whole dataset. The habit these rules describe and the failure the atlas catalogs are two views of one thing; the detectors are the bridge between them.</p>
+  <p>Two of these rules became live candidate detectors in this same pipeline, aimed at the exact patterns above: <b>bare_done_claim</b> (a completion word with no adjacent named verification, from Rule 01) and <b>unqualified_metric_claim</b> (a score reported with no n, split, or interval nearby, from Rule 02). The first is not hypothetical: <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">bare_done_claim</code> co-occurs with a tool error <b>627 times</b> in this corpus, the single most common pairing in the whole dataset. The habit these rules describe and the failure the atlas catalogs are two views of one thing; the detectors are the bridge between them.</p>
 </section>
 
 <!-- ============ RUN IT YOURSELF ============ -->
 <section class="panel" id="panel-run" role="tabpanel" aria-labelledby="tab-run" hidden>
   <h2 class="section-h">Run it on <em>your own logs</em></h2>
   <p class="sec-kicker">Point the same pipeline at your own agent logs: plain Python, four commands, nothing to install, and your transcripts never leave your machine.</p>
-  <p>Everything above was computed by seven plain-Python files in the open-science repo under <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">docs/experiments/failure-atlas/pipeline/</code>: <b>extract.py</b>, <b>detectors.py</b>, <b>incidents.py</b>, <b>analyze.py</b>, plus <b>context_window.py</b> for pulling transcript windows. Standard-library Python only, so if you have Python 3 you have the pipeline. Clone the repo, or read each file first on GitHub:</p>
+  <p>Everything above was computed by six plain-Python files in the open-science repo under <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">docs/experiments/failure-atlas/pipeline/</code>: <b>extract.py</b>, <b>detectors.py</b>, <b>incidents.py</b>, <b>analyze.py</b>, plus <b>context_window.py</b> for pulling transcript windows. Standard-library Python only, so if you have Python 3 you have the pipeline. Clone the repo, or read each file first on GitHub:</p>
 
   <div class="filelist" aria-label="Pipeline source files on GitHub">
     <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/extract.py">extract.py</a>
@@ -615,18 +615,18 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   <p>Or hand the job to your agent. Copy this prompt so your bot rebuilds the analysis from your own logs:</p>
   <div class="codewrap prompt">
     <button class="copybtn" data-copy="agent-prompt">copy prompt</button>
-<pre id="agent-prompt">Fetch the pipeline files from the NimbleCoOrg/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; my incident-rate timeline by month; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,063 tool-error incidents at 17.1/10k; a timeline peaking at 86.3/10k; abandonment concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
+<pre id="agent-prompt">Fetch the pipeline files from the NimbleCoOrg/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; my incident-rate timeline by month; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,165 tool-error incidents at 16.4/10k; a timeline peaking at 86.3/10k; abandonment concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
   </div>
 
   <div class="pitch">
-    <p><b>The pitch:</b> the coding half of this is n=1, one operator and one workflow over seven months, but the assistant-fleet half is not. It is many different people across several agent harnesses and four chat platforms over the same span. Even so, it is one org's record. Medicine solved that problem without pooling patient records: hospitals share <em>results computed by a common method</em> over data that never moves (the OMOP model). <b>analysis.json is that layer for agent logs.</b> Forks running this same pipeline could pool their analysis.json files into a shared picture later, no transcripts moving. If a handful of people run these four commands and share only that file, "how do agents fail?" stops being one org's atlas and starts being a map. Share results, not data.</p>
+    <p>The coding half of this is n=1, one operator and one workflow over seven months, but the assistant-fleet half is not. It is many different people across several agent harnesses and four chat platforms over the same span. Even so, it is one org's record. Medicine solved that problem without pooling patient records: hospitals share <em>results computed by a common method</em> over data that never moves (the OMOP model). <b>analysis.json is that layer for agent logs.</b> Forks running this same pipeline could pool their analysis.json files into a shared picture later, no transcripts moving. If a handful of people run these four commands and share only that file, "how do agents fail?" stops being one org's atlas and starts being a map. Share the results. Keep the data.</p>
   </div>
 
   <h2 class="section-h" style="font-size:1.7rem">The feedback loop</h2>
   <p class="sec-kicker">Findings that don't change behavior are trivia. Each countermeasure names the metric that must drop.</p>
   <p>The countermeasures follow one principle: <b>no standing context</b>. Nothing gets pasted into every session to be ignored by session forty. Instead:</p>
   <ul class="plain">
-    <li><b>Conditional hooks that fire only when their pattern is live.</b> A completion-claim guard blocks "it's merged / it's running / verified" unless a verifying command actually ran, aimed at the 10-for-10 fault cluster. An error-streak nudge injects one line after four consecutive failures, aimed at the 444 error-loop incidents, where grinding continued past the point a human would have stepped back.</li>
+    <li><b>Conditional hooks that fire only when their pattern is live.</b> A completion-claim guard blocks "it's merged / it's running / verified" unless a verifying command actually ran, aimed at the 10-for-10 fault cluster. An error-streak nudge injects one line after four consecutive failures, aimed at the 491 error-loop incidents, where grinding continued past the point a human would have stepped back.</li>
     <li><b>Atomic memory files:</b> two of them, indexed, loaded only on demand, each holding one pattern the logs proved.</li>
     <li><b>Settings recommendations</b>, including quota-aware subagent spawning, aimed at the 26 subagent failures, every one of which ended its session.</li>
   </ul>
@@ -638,7 +638,7 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
 <footer>
   <div class="wrap">
     <div class="colophon-end">
-      Built by agents studying agents, operator recused from adjudication · <b>2,335</b> sessions · <b>185</b> adjudicated labels · <b>13</b> detectors · <b>5</b> pre-registered contrasts, none survived intact · a cyborg.garden open-science experiment. The dataset stays private; the pipeline, decision log, and every aggregate here are published, so the method runs on anyone's logs.
+      Built by agents studying agents, operator recused from adjudication · <b>2,781</b> sessions · <b>185</b> adjudicated labels · <b>13</b> detectors · <b>5</b> pre-registered contrasts, none survived intact · a cyborg.garden open-science experiment. The dataset stays private; the pipeline, decision log, and every aggregate here are published, so the method runs on anyone's logs.
     </div>
   </div>
 </footer>
@@ -651,101 +651,101 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
 const DATA = {
  "corpus": {
   "claude_code": {
-   "sessions": 622,
-   "session_files": 4059,
-   "subagent_files": 3437,
-   "events": 565858
+   "sessions": 631,
+   "session_files": 4308,
+   "subagent_files": 3677,
+   "events": 599362
   },
   "assistant_fleet": {
-   "sessions": 1713,
-   "session_files": 2003,
-   "subagent_files": 290,
-   "events": 55375
+   "sessions": 2150,
+   "session_files": 2734,
+   "subagent_files": 584,
+   "events": 110481
   },
   "span": [
    "2026-01",
    "2026-08"
   ],
-  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across four chat platforms: genuine multi-human, multi-agent traffic, not one operator."
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across 4 chat platforms: genuine multi-human, multi-agent traffic, not one operator."
  },
  "incidents_by_mode": {
   "abandonment": {
-   "count": 90,
-   "avg_severity": 0.939,
+   "count": 139,
+   "avg_severity": 0.967,
    "share_sidechain": 0.0,
-   "per_10k_events": 1.45
+   "per_10k_events": 1.96
   },
   "api_error": {
-   "count": 522,
-   "avg_severity": 0.359,
-   "share_sidechain": 0.538,
-   "per_10k_events": 8.4
+   "count": 541,
+   "avg_severity": 0.36,
+   "share_sidechain": 0.547,
+   "per_10k_events": 7.62
   },
   "error_loop": {
-   "count": 444,
+   "count": 491,
    "avg_severity": 0.937,
-   "share_sidechain": 0.518,
-   "per_10k_events": 7.15
+   "share_sidechain": 0.497,
+   "per_10k_events": 6.92
   },
   "frustration_lex": {
-   "count": 718,
-   "avg_severity": 0.472,
+   "count": 902,
+   "avg_severity": 0.456,
    "share_sidechain": 0.0,
-   "per_10k_events": 11.56
+   "per_10k_events": 12.71
   },
   "honesty_challenge": {
-   "count": 110,
-   "avg_severity": 0.676,
+   "count": 135,
+   "avg_severity": 0.678,
    "share_sidechain": 0.0,
-   "per_10k_events": 1.77
+   "per_10k_events": 1.9
   },
   "interagent_challenge": {
-   "count": 3,
-   "avg_severity": 0.607,
+   "count": 4,
+   "avg_severity": 0.595,
    "share_sidechain": 1.0,
-   "per_10k_events": 0.05
+   "per_10k_events": 0.06
   },
   "model_escalation": {
    "count": 17,
    "avg_severity": 0.672,
    "share_sidechain": 0.588,
-   "per_10k_events": 0.27
+   "per_10k_events": 0.24
   },
   "permission_friction": {
-   "count": 229,
-   "avg_severity": 0.718,
-   "share_sidechain": 0.576,
-   "per_10k_events": 3.69
+   "count": 276,
+   "avg_severity": 0.713,
+   "share_sidechain": 0.562,
+   "per_10k_events": 3.89
   },
   "self_correction": {
-   "count": 438,
+   "count": 530,
    "avg_severity": 0.457,
-   "share_sidechain": 0.08,
-   "per_10k_events": 7.05
+   "share_sidechain": 0.079,
+   "per_10k_events": 7.47
   },
   "stuck_repetition": {
-   "count": 101,
-   "avg_severity": 0.769,
-   "share_sidechain": 0.614,
-   "per_10k_events": 1.63
+   "count": 180,
+   "avg_severity": 0.767,
+   "share_sidechain": 0.611,
+   "per_10k_events": 2.54
   },
   "subagent_failure": {
    "count": 26,
    "avg_severity": 0.917,
    "share_sidechain": 1.0,
-   "per_10k_events": 0.42
+   "per_10k_events": 0.37
   },
   "tool_error": {
-   "count": 1063,
-   "avg_severity": 0.362,
-   "share_sidechain": 0.426,
-   "per_10k_events": 17.11
+   "count": 1165,
+   "avg_severity": 0.361,
+   "share_sidechain": 0.436,
+   "per_10k_events": 16.41
   },
   "user_interrupt": {
-   "count": 255,
+   "count": 256,
    "avg_severity": 0.682,
    "share_sidechain": 0.0,
-   "per_10k_events": 4.1
+   "per_10k_events": 3.61
   }
  },
  "precision": {
@@ -882,66 +882,66 @@ const DATA = {
  },
  "outcomes": {
   "permission_friction": {
-   "recovered_clean": 190,
-   "further_failures": 20,
-   "session_end": 15,
+   "recovered_clean": 227,
+   "session_end": 18,
+   "further_failures": 27,
    "self_corrected": 4
   },
   "api_error": {
-   "session_end": 270,
+   "session_end": 284,
    "further_failures": 66,
-   "recovered_clean": 180,
+   "recovered_clean": 185,
    "self_corrected": 6
   },
   "tool_error": {
-   "recovered_clean": 805,
-   "session_end": 106,
-   "self_corrected": 26,
-   "further_failures": 125,
+   "recovered_clean": 881,
+   "session_end": 115,
+   "self_corrected": 30,
+   "further_failures": 138,
    "escalated": 1
   },
   "error_loop": {
-   "further_failures": 63,
-   "recovered_clean": 301,
-   "session_end": 70,
-   "self_corrected": 10
+   "further_failures": 72,
+   "recovered_clean": 333,
+   "session_end": 74,
+   "self_corrected": 12
   },
   "frustration_lex": {
-   "further_failures": 154,
-   "self_corrected": 27,
-   "recovered_clean": 506,
-   "session_end": 30,
+   "further_failures": 200,
+   "self_corrected": 38,
+   "recovered_clean": 617,
+   "session_end": 46,
    "escalated": 1
   },
   "self_correction": {
-   "recovered_clean": 314,
-   "session_end": 24,
-   "further_failures": 69,
-   "self_corrected": 31
+   "recovered_clean": 364,
+   "session_end": 38,
+   "further_failures": 88,
+   "self_corrected": 40
   },
   "user_interrupt": {
    "session_end": 18,
-   "further_failures": 28,
+   "further_failures": 29,
    "recovered_clean": 196,
    "self_corrected": 13
   },
   "honesty_challenge": {
-   "recovered_clean": 84,
-   "self_corrected": 7,
-   "further_failures": 17,
-   "session_end": 2
+   "recovered_clean": 99,
+   "self_corrected": 9,
+   "further_failures": 24,
+   "session_end": 3
   },
   "subagent_failure": {
    "session_end": 26
   },
   "stuck_repetition": {
-   "recovered_clean": 72,
-   "session_end": 17,
-   "further_failures": 12
+   "recovered_clean": 129,
+   "session_end": 30,
+   "further_failures": 21
   },
   "abandonment": {
-   "session_end": 76,
-   "recovered_clean": 14
+   "session_end": 108,
+   "recovered_clean": 31
   },
   "model_escalation": {
    "recovered_clean": 12,
@@ -949,85 +949,85 @@ const DATA = {
    "session_end": 3
   },
   "interagent_challenge": {
-   "recovered_clean": 2,
+   "recovered_clean": 3,
    "session_end": 1
   }
  },
  "position_deciles": {
   "permission_friction": [
-   30,
-   40,
-   24,
-   16,
-   19,
-   21,
+   38,
+   50,
+   28,
    17,
-   16,
+   22,
+   28,
+   20,
    19,
-   25
+   20,
+   30
   ],
   "api_error": [
    30,
    16,
-   19,
-   19,
+   20,
+   20,
    22,
-   28,
+   29,
    30,
-   41,
-   33,
-   100
+   43,
+   36,
+   106
   ],
   "tool_error": [
-   92,
-   94,
-   110,
-   106,
-   107,
-   116,
-   124,
-   109,
-   101,
-   79
+   113,
+   104,
+   115,
+   113,
+   119,
+   131,
+   130,
+   120,
+   105,
+   89
   ],
   "error_loop": [
-   73,
-   73,
-   49,
-   47,
-   32,
-   43,
-   40,
+   79,
+   75,
+   55,
+   59,
    34,
+   51,
+   41,
+   41,
    22,
-   20
+   23
   ],
   "frustration_lex": [
+   141,
+   82,
+   74,
+   59,
+   83,
+   70,
+   110,
+   91,
    98,
-   73,
-   62,
-   43,
-   66,
-   58,
-   86,
-   81,
-   78,
-   60
+   74
   ],
   "self_correction": [
-   27,
-   30,
-   34,
-   42,
-   44,
-   43,
-   61,
-   50,
    35,
-   60
+   36,
+   41,
+   45,
+   51,
+   49,
+   72,
+   61,
+   45,
+   77
   ],
   "user_interrupt": [
-   36,
+   37,
    20,
    20,
    24,
@@ -1039,16 +1039,16 @@ const DATA = {
    33
   ],
   "honesty_challenge": [
-   16,
-   9,
-   7,
-   9,
-   15,
+   20,
+   13,
    10,
+   11,
+   19,
+   12,
    8,
-   5,
+   6,
    18,
-   11
+   15
   ],
   "subagent_failure": [
    1,
@@ -1063,16 +1063,16 @@ const DATA = {
    4
   ],
   "stuck_repetition": [
-   4,
    5,
-   5,
-   10,
-   13,
+   9,
+   9,
+   17,
+   23,
+   22,
    12,
-   8,
-   13,
-   15,
-   16
+   25,
+   27,
+   31
   ],
   "abandonment": [
    0,
@@ -1082,9 +1082,9 @@ const DATA = {
    1,
    1,
    0,
-   2,
-   9,
-   67
+   4,
+   16,
+   105
   ],
   "model_escalation": [
    1,
@@ -1099,7 +1099,7 @@ const DATA = {
    3
   ],
   "interagent_challenge": [
-   0,
+   1,
    0,
    0,
    0,
@@ -1112,37 +1112,37 @@ const DATA = {
   ]
  },
  "cooccurrence_top": {
-  "bare_done_claim+tool_error": 596,
-  "error_loop+tool_error": 478,
-  "permission_friction+tool_error": 475,
-  "self_correction+tool_error": 243,
-  "bare_done_claim+self_correction": 207,
-  "frustration_lex+tool_error": 190,
-  "tool_error+user_interrupt": 187,
-  "bare_done_claim+frustration_lex": 159,
-  "frustration_lex+self_correction": 152,
+  "bare_done_claim+tool_error": 627,
+  "permission_friction+tool_error": 532,
+  "error_loop+tool_error": 526,
+  "self_correction+tool_error": 268,
+  "bare_done_claim+self_correction": 238,
+  "frustration_lex+tool_error": 210,
+  "tool_error+user_interrupt": 188,
+  "bare_done_claim+frustration_lex": 187,
+  "frustration_lex+self_correction": 185,
   "permission_friction+user_interrupt": 132,
-  "error_loop+permission_friction": 97,
-  "bare_done_claim+error_loop": 92,
+  "error_loop+permission_friction": 107,
+  "bare_done_claim+error_loop": 99,
   "self_correction+user_interrupt": 89,
-  "api_error+tool_error": 73,
+  "api_error+tool_error": 80,
   "bare_done_claim+user_interrupt": 73,
-  "bare_done_claim+permission_friction": 69,
-  "frustration_lex+user_interrupt": 67,
+  "bare_done_claim+permission_friction": 70,
+  "frustration_lex+user_interrupt": 68,
+  "stuck_repetition+tool_error": 61,
   "permission_friction+self_correction": 53,
-  "frustration_lex+permission_friction": 44,
-  "stuck_repetition+tool_error": 42,
-  "error_loop+frustration_lex": 34,
+  "frustration_lex+permission_friction": 45,
+  "interagent_challenge+tool_error": 43,
+  "frustration_lex+honesty_challenge": 41,
+  "error_loop+frustration_lex": 35,
   "subagent_failure+tool_error": 33,
-  "api_error+bare_done_claim": 31,
-  "interagent_challenge+tool_error": 30,
-  "frustration_lex+honesty_challenge": 29
+  "error_loop+self_correction": 32
  },
  "by_model_tier": {
   "0": {
-   "events": 17288,
-   "incidents": 294,
-   "per_10k_events": 170.06
+   "events": 35019,
+   "incidents": 471,
+   "per_10k_events": 134.5
   },
   "1": {
    "events": 45085,
@@ -1150,19 +1150,19 @@ const DATA = {
    "per_10k_events": 28.17
   },
   "2": {
-   "events": 93854,
-   "incidents": 636,
-   "per_10k_events": 67.76
+   "events": 116838,
+   "incidents": 788,
+   "per_10k_events": 67.44
   },
   "3": {
-   "events": 343297,
-   "incidents": 2229,
-   "per_10k_events": 64.93
+   "events": 369410,
+   "incidents": 2400,
+   "per_10k_events": 64.97
   },
   "4": {
-   "events": 121709,
-   "incidents": 730,
-   "per_10k_events": 59.98
+   "events": 143491,
+   "incidents": 876,
+   "per_10k_events": 61.05
   }
  },
  "timeline": {
@@ -1201,9 +1201,9 @@ const DATA = {
   },
   "2026-05": {
    "assistant_fleet": {
-    "events": 5914,
-    "incidents": 66,
-    "per_10k": 111.6
+    "events": 11579,
+    "incidents": 126,
+    "per_10k": 108.8
    },
    "claude_code": {
     "events": 102976,
@@ -1213,8 +1213,8 @@ const DATA = {
   },
   "2026-06": {
    "assistant_fleet": {
-    "events": 12880,
-    "incidents": 89,
+    "events": 25757,
+    "incidents": 178,
     "per_10k": 69.1
    },
    "claude_code": {
@@ -1225,9 +1225,9 @@ const DATA = {
   },
   "2026-07": {
    "assistant_fleet": {
-    "events": 25493,
-    "incidents": 229,
-    "per_10k": 89.8
+    "events": 49943,
+    "incidents": 442,
+    "per_10k": 88.5
    },
    "claude_code": {
     "events": 150829,
@@ -1237,14 +1237,14 @@ const DATA = {
   },
   "2026-08": {
    "assistant_fleet": {
-    "events": 4059,
-    "incidents": 56,
-    "per_10k": 138.0
+    "events": 9521,
+    "incidents": 134,
+    "per_10k": 140.7
    },
    "claude_code": {
-    "events": 35845,
-    "incidents": 221,
-    "per_10k": 61.7
+    "events": 65003,
+    "incidents": 428,
+    "per_10k": 65.8
    }
   }
  },
@@ -1356,56 +1356,65 @@ const DATA = {
   "better_prompt": 4
  },
  "error_categories": {
-  "exit_nonzero": 2407,
-  "other": 1670,
-  "not_found": 1444,
-  "edit_mismatch": 429,
-  "timeout": 374,
-  "hook_block": 294,
-  "network": 224,
-  "user_rejected": 204,
+  "exit_nonzero": 2503,
+  "other": 2105,
+  "not_found": 1530,
+  "edit_mismatch": 452,
+  "timeout": 400,
+  "hook_block": 376,
+  "network": 238,
+  "user_rejected": 205,
   "permission_denied": 184,
   "interrupt": 6
  },
  "ecosystem_mode_mix": {
   "assistant_fleet": {
-   "abandonment": 47,
-   "error_loop": 21,
-   "frustration_lex": 168,
-   "honesty_challenge": 21,
-   "self_correction": 93,
-   "stuck_repetition": 77,
-   "tool_error": 31
+   "abandonment": 98,
+   "error_loop": 38,
+   "frustration_lex": 334,
+   "honesty_challenge": 43,
+   "interagent_challenge": 1,
+   "self_correction": 171,
+   "stuck_repetition": 153,
+   "tool_error": 60
   },
   "claude_code": {
-   "abandonment": 43,
-   "api_error": 522,
-   "error_loop": 423,
-   "frustration_lex": 550,
-   "honesty_challenge": 89,
+   "abandonment": 41,
+   "api_error": 541,
+   "error_loop": 453,
+   "frustration_lex": 568,
+   "honesty_challenge": 92,
    "interagent_challenge": 3,
    "model_escalation": 17,
-   "permission_friction": 229,
-   "self_correction": 345,
-   "stuck_repetition": 24,
+   "permission_friction": 276,
+   "self_correction": 359,
+   "stuck_repetition": 27,
    "subagent_failure": 26,
-   "tool_error": 1032,
-   "user_interrupt": 255
+   "tool_error": 1105,
+   "user_interrupt": 256
   }
  },
  "experiment_objectivity_axis": {
   "run_01_keyword_cohorts": {
-   "ratio_of_ratios": 4.38,
+   "ratio_of_ratios": 4.96,
+   "sensitivity_variants": {
+    "headline": 4.96,
+    "narrow_cohort": 4.376,
+    "precision_weighted": 4.733,
+    "narrow_precision_weighted": 4.183,
+    "drop_largest_project": 4.583,
+    "sidechains_included": 6.15
+   },
    "sensitivity_range": [
-    4.38,
-    6.2
+    4.183,
+    6.15
    ],
    "verdict": "supported-but-superseded",
    "flaw": "cohorts defined by hand-picked project-name keywords; the split measured project type, not objectivity"
   },
   "run_02_behavioral_cohorts": {
    "ratio_of_ratios": 1.101,
-   "ratio_of_ratios_broad_grouping": 1.23,
+   "z_mechanical_share": 0.84,
    "verdict": "killed",
    "cohorts": {
     "objective_sessions": 194,
@@ -1413,25 +1422,30 @@ const DATA = {
     "excluded_sessions": 340,
     "total": 622
    },
-   "rule": "objective = session ran >=1 test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
+   "rule": "objective = session ran at least one test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
   },
   "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
-  "takeaway": "The headline 4.4x effect did not survive a clean cohort definition. The study's own tightening killed its own finding, which is the method working on itself."
+  "takeaway": "The headline 5.0x effect did not survive a clean cohort definition. The study's own tightening killed its own finding. That is the method working on itself.",
+  "cut_claims": [
+   "ratio_of_ratios_broad_grouping (was 1.23): CUT. The value appears only in the run's write-up prose. Neither the pre-registered spec nor the run script defines a 'broad grouping', and the script computes and logs exactly one grouping, so the figure cannot be reproduced or checked from any record. Removed rather than re-typed."
+  ]
  },
  "escalation_bridges": {
-  "candidates": 398,
-  "strong": 36
+  "candidates": 596,
+  "strong": 86,
+  "strong_score_threshold": 0.5
  },
  "what_didnt_hold": [
   {
-   "claim": "Objective work fails mechanically 4.4x more than subjective work",
+   "claim": "Objective work fails mechanically 5.0x more than subjective work",
    "status": "killed",
-   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; run 01 measured project type"
+   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; the keyword run measured project type"
   },
   {
-   "claim": "Agents self-correct 5x more with a human in the loop",
+   "claim": "Agents self-correct 4.9x more with a human in the loop",
    "status": "killed",
-   "how": "79% is the 'you're right' politeness token, and the autonomous arm says it to orchestrators too; self-initiated corrections show no significant gap (z about 1.1)"
+   "headline_ratio": 4.93,
+   "how": "79% of human-present self-corrections fire on one politeness token that requires a preceding interlocutor by construction, and the autonomous arm produces the same token to its orchestrator. Drop that token and an effect does survive \u2014 a turn-adjacency gap of 3.0% vs 1.4%, z=3.0, which is significant. It is killed on construct validity, not on significance: it appears in BOTH arms and measures interlocutor adjacency rather than a human-vs-delegation disposition"
   },
   {
    "claim": "The chat platform shapes the failure mode",
@@ -1441,29 +1455,103 @@ const DATA = {
   {
    "claim": "Group chats fail differently than one-to-one",
    "status": "null",
-   "how": "no significant difference (z about 0.67)"
+   "how": "no significant difference (z = 0.674)"
   },
   {
    "claim": "Orchestrator subagents fail more mechanically than human sessions",
    "status": "wounded",
-   "how": "mostly a tautology (4 of 6 relational detectors cannot fire without a human); the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (p about 0.02)"
+   "residual_ratio": 1.85,
+   "residual_rates_pct": [
+    2.4,
+    1.3
+   ],
+   "residual_z": 2.28,
+   "residual_p": 0.02,
+   "how": "mostly a tautology \u2014 the relational detectors that cannot fire without a human message are 78% of top-level relational incidents; the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (2.4% vs 1.3%, z=2.28, p about 0.02)"
   }
  ],
+ "what_didnt_hold_cut_claims": [
+  "'self-initiated corrections show no significant gap (z about 1.1)' \u2014 removed. No z of 1.1 exists anywhere in the lab record. The surviving self-correction effect was significant and was killed on construct validity; the old string both invented the statistic and inverted the reason the finding died.",
+  "'4 of 6 relational detectors cannot fire without a human' \u2014 removed. The source record says 'four relational detectors' and gives their share of top-level relational incidents; it states no denominator of six. The share is published instead of the invented fraction."
+ ],
  "mast_crosswalk": {
-  "sampled": 75,
-  "mapped": 16,
-  "mapped_share": 0.21,
-  "extension_share": 0.53,
-  "unclear_share": 0.25,
-  "weighted_mast_share": 0.19,
-  "weighted_infrastructure_share": 0.48,
+  "superseded_round1_point_estimates": {
+   "sampled": 75,
+   "mapped": 16,
+   "mapped_share": 0.213,
+   "extension_share": 0.533,
+   "unclear_share": 0.253,
+   "weighted_mast_share": 0.187,
+   "weighted_infrastructure_share": 0.483
+  },
   "mast_source_traces": 1600,
-  "mapped_clean": "16 of 75 stratified incidents (21%) fit a real MAST mode; population-weighted, MAST reaches 19% of our failures",
-  "unmapped": "53% need an extension family and 25% are unclear (mostly detector false positives on successful work). Weighted by incidents, the infrastructure family (quota kills, permission loops, environment faults) alone is 48%, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
-  "structural": "our multi-agent is orchestrator fan-out (parallel stateless workers), not the conversational agent chains MAST studied, so MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives",
-  "self_critical": "a proposed fan-out-coordination extension family had zero coded members; the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
-  "caveat": "single coder per incident, no inter-rater reliability yet, ~6 per mode, and our detectors are the sampling frame",
-  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces"
+  "mast_modes": 14,
+  "mast_categories": 3,
+  "mapped_clean": "first coding round only, superseded: 16 of 75 stratified incidents fit a real MAST mode. The publishable coverage claim is the range in mast_coverage_settled, not this point estimate",
+  "unmapped": "first coding round only, superseded: the rest split between an extension family and unclear (mostly detector false positives on successful work). The infrastructure family (quota kills, permission loops, environment faults) is the largest under every settlement rule, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
+  "structural": "MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives. Why it is absent is an open question: the earlier explanation (orchestrator fan-out over parallel stateless workers rather than conversational agent chains) was cut after the external validation round found no coding evidence for that architecture in this corpus or in either foreign corpus it checked",
+  "self_critical": "the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
+  "caveat": "about 6 incidents per mode, and our detectors are the sampling frame. Inter-rater reliability was run in a later round and lives in mast_coverage_settled",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces",
+  "superseded_by": "mast_coverage_settled",
+  "status": "superseded first coding round; kept as the correction trail"
+ },
+ "mast_coverage_settled": {
+  "raw_range_pct": [
+   21.1,
+   25.4
+  ],
+  "weighted_range_pct": [
+   16.5,
+   22.4
+  ],
+  "raw_range_display": [
+   "21%",
+   "26%"
+  ],
+  "weighted_range_display": [
+   "16%",
+   "23%"
+  ],
+  "uncovered_range_display": [
+   "74%",
+   "79%"
+  ],
+  "settlement_readings": {
+   "round1_published": {
+    "raw_pct": 21.3,
+    "weighted_pct": 18.7
+   },
+   "round1_blind_consensus": {
+    "raw_pct": 21.9,
+    "weighted_pct": 18.5
+   },
+   "enlargement_combined": {
+    "raw_pct": 21.1,
+    "weighted_pct": 16.5
+   },
+   "settled_combined": {
+    "raw_pct": 25.4,
+    "weighted_pct": 22.4
+   }
+  },
+  "combined_n": 142,
+  "kappa_bucket_irr": 0.632,
+  "kappa_bucket_enlargement": 0.516,
+  "kappa_full_label_irr": 0.536,
+  "irr_n": 73,
+  "enlargement_n": 69,
+  "recode_agreement": 0.423,
+  "rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "invariant": "Every structural claim holds across the whole range: the infrastructure family is the largest under every settlement, and the taxonomy's largest category is our smallest.",
+  "note": "Reported as a range with kappas attached. The decimals are coder-dependent and are no longer quoted as point estimates. `mast_crosswalk` above is the superseded first-round reading, kept so the correction stays visible next to the number it replaced. Both endpoints are the min and max of settlement_readings; neither is typed."
+ },
+ "mast_chart": {
+  "n": 142,
+  "fits_mast": 36,
+  "needs_extension": 67,
+  "unclear": 39,
+  "basis": "settled labels pooled across both coding rounds"
  },
  "adjudication": {
   "total_labels": 185,
@@ -1473,15 +1561,557 @@ const DATA = {
   "note": "Precision is computed per round at label time (safe). 60 labels align to the current post-improvement incident set and back the eval suite; the rest were labeled against earlier incident definitions the detector fixes changed."
  },
  "totals": {
-  "sessions": 2335,
-  "session_files": 6062,
-  "events": 621233,
-  "incidents": 4016
+  "sessions": 2781,
+  "session_files": 7042,
+  "events": 709843,
+  "incidents": 4662
  },
  "scope": {
   "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
   "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset and API roadmap stay private, referenced but never exposed.",
   "shareable_layer": "aggregates + pipeline code; never transcript text."
+ },
+ "provenance": {
+  "_legend": "Every emitted figure maps to the source record and key it was derived from. Source paths are lab-relative; file extensions are omitted so the sanitation check can forbid transcript extensions outright. Entries marked block cover a whole subtree. Paths starting with _md or _text record numbers quoted out of a write-up with an anchored regex.",
+  "_rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "_md:experiments/mast-coverage:MAST arXiv id": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST arXiv id",
+   "note": "regex arXiv:([\\d.]+)"
+  },
+  "_md:experiments/mast-coverage:MAST source trace count": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "regex ~([\\d,]+) execution traces"
+  },
+  "_md:experiments/objectivity-axis-02/RESULTS:broad-grouping ratio-of-ratios (CUT)": {
+   "source": "experiments/objectivity-axis-02/RESULTS",
+   "key": "broad-grouping ratio-of-ratios (CUT)",
+   "note": "regex \\*\\*([\\d.]+)\\*\\* \\(broad grouping\\)"
+  },
+  "_md:experiments/phase2-findings:MAST taxonomy shape": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "regex (\\d+) failure modes, (\\d+) categories"
+  },
+  "_md:experiments/phase2-findings:politeness token share": {
+   "source": "experiments/phase2-findings",
+   "key": "politeness token share",
+   "note": "regex (\\d+)% of human-present self-corrections"
+  },
+  "_md:experiments/phase2-findings:residual self-initiated correction under delegation": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction under delegation",
+   "note": "regex about half as often \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+), p~(\\d+\\.\\d+)\\)"
+  },
+  "_md:experiments/phase2-findings:share of top-level relational incidents from human-required detectors": {
+   "source": "experiments/phase2-findings",
+   "key": "share of top-level relational incidents from human-required detectors",
+   "note": "regex are (\\d+)% of top-level relational incidents"
+  },
+  "_md:experiments/phase2-findings:surviving turn-adjacency effect": {
+   "source": "experiments/phase2-findings",
+   "key": "surviving turn-adjacency effect",
+   "note": "regex turn-adjacency effect \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+)\\)"
+  },
+  "adjudication.aligned_to_current": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications JOIN incidents)",
+   "note": "",
+   "value": 60
+  },
+  "adjudication.detectors": {
+   "source": "data/precision",
+   "key": "key count",
+   "note": "",
+   "block": true
+  },
+  "adjudication.rounds": {
+   "source": "data/precision",
+   "key": "distinct <mode>.round values",
+   "note": "",
+   "value": 2
+  },
+  "adjudication.total_labels": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications)",
+   "note": "",
+   "value": 185
+  },
+  "avoidability": {
+   "source": "data/atlas",
+   "key": "adjudications.avoidable_by WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "by_model_tier": {
+   "source": "data/analysis",
+   "key": "by_model_tier",
+   "note": "",
+   "block": true
+  },
+  "confirmed_modes": {
+   "source": "data/atlas",
+   "key": "adjudications WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "cooccurrence_top": {
+   "source": "data/analysis",
+   "key": "cooccurrence_top",
+   "note": "",
+   "block": true
+  },
+  "corpus._n_chat_platforms": {
+   "source": "data/phase2-results",
+   "key": "C_cross_context keys excluding claude_code",
+   "note": "",
+   "value": 4
+  },
+  "corpus.assistant_fleet": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.claude_code": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.span": {
+   "source": "data/atlas",
+   "key": "MIN/MAX month of events.ts",
+   "note": "",
+   "value": [
+    "2026-01",
+    "2026-08"
+   ]
+  },
+  "ecosystem_mode_mix": {
+   "source": "data/atlas",
+   "key": "incidents by root class and primary_mode",
+   "note": "",
+   "block": true
+  },
+  "error_categories": {
+   "source": "data/atlas",
+   "key": "signals WHERE detector='tool_error'",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.candidates": {
+   "source": "data/escalation-bridges",
+   "key": "record count",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong": {
+   "source": "data/escalation-bridges",
+   "key": "records with score >= strong_score_threshold",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong_score_threshold": {
+   "source": "pipeline/escalation_bridge",
+   "key": "strong-bridge score cutoff",
+   "note": "",
+   "value": 0.5
+  },
+  "experiment_objectivity_axis._kill_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "kill_below",
+   "note": "",
+   "value": 1.5
+  },
+  "experiment_objectivity_axis._pass_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "pre_registered_threshold",
+   "note": "",
+   "value": 2.0
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "cross-checked against the adversarial verifier's rederived.ratios.RoR",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_range": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "min/max over every logged robustness variant",
+   "note": "",
+   "value": [
+    4.183,
+    6.15
+   ]
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.drop_largest_project": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.drop_largest_project.RoR_vs_subj",
+   "note": "",
+   "value": 4.583
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.headline": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_cohort": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow",
+   "note": "",
+   "value": 4.376
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow_weighted",
+   "note": "",
+   "value": 4.183
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_precision_weighted",
+   "note": "",
+   "value": 4.733
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.sidechains_included": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.sidechains_included.RoR",
+   "note": "",
+   "value": 6.15
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.excluded_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.excluded_sessions",
+   "note": "",
+   "value": 340
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.objective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.objective_sessions",
+   "note": "",
+   "value": 194
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.subjective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.subjective_sessions",
+   "note": "",
+   "value": 88
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.total": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.total",
+   "note": "",
+   "value": 622
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "ratio_of_ratios",
+   "note": "",
+   "value": 1.101
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.z_mechanical_share": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "z_mechanical_share",
+   "note": "",
+   "value": 0.84
+  },
+  "incidents_by_mode": {
+   "source": "data/analysis",
+   "key": "incidents_by_mode",
+   "note": "",
+   "block": true
+  },
+  "mast_chart": {
+   "source": "data/mast-settled",
+   "key": "combined_raw x combined_n",
+   "note": "",
+   "block": true
+  },
+  "mast_coverage_settled.combined_n": {
+   "source": "data/mast-settled",
+   "key": "combined_n",
+   "note": "",
+   "value": 142
+  },
+  "mast_coverage_settled.enlargement_n": {
+   "source": "data/mast-irr-ext-results",
+   "key": "n",
+   "note": "",
+   "value": 69
+  },
+  "mast_coverage_settled.irr_n": {
+   "source": "data/mast-irr-results",
+   "key": "n",
+   "note": "",
+   "value": 73
+  },
+  "mast_coverage_settled.kappa_bucket_enlargement": {
+   "source": "data/mast-irr-ext-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.516
+  },
+  "mast_coverage_settled.kappa_bucket_irr": {
+   "source": "data/mast-irr-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.632
+  },
+  "mast_coverage_settled.kappa_full_label_irr": {
+   "source": "data/mast-irr-results",
+   "key": "full_label.kappa",
+   "note": "",
+   "value": 0.536
+  },
+  "mast_coverage_settled.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "21%",
+    "26%"
+   ]
+  },
+  "mast_coverage_settled.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    21.1,
+    25.4
+   ]
+  },
+  "mast_coverage_settled.recode_agreement": {
+   "source": "data/mast-settled",
+   "key": "recode_agreement",
+   "note": "",
+   "value": 0.423
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 21.1
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 16.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 21.9
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 18.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 21.3
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 18.7
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 25.4
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 22.4
+  },
+  "mast_coverage_settled.uncovered_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "74%",
+    "79%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "16%",
+    "23%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    16.5,
+    22.4
+   ]
+  },
+  "mast_crosswalk._incidents_per_mode": {
+   "source": "data/mast-sample",
+   "key": "rows / distinct detector modes",
+   "note": "",
+   "value": 6
+  },
+  "mast_crosswalk.mast_categories": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 3
+  },
+  "mast_crosswalk.mast_modes": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 14
+  },
+  "mast_crosswalk.mast_source_traces": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "",
+   "value": 1600
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.extension_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published E1+E2+E3",
+   "note": "",
+   "value": 0.533
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST x sampled",
+   "note": "",
+   "value": 16
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST",
+   "note": "",
+   "value": 0.213
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.sampled": {
+   "source": "data/mast-sample",
+   "key": "row count",
+   "note": "",
+   "value": 75
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.unclear_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.UNCLEAR",
+   "note": "",
+   "value": 0.253
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_infrastructure_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.E2",
+   "note": "",
+   "value": 0.483
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_mast_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.MAST",
+   "note": "",
+   "value": 0.187
+  },
+  "outcomes": {
+   "source": "data/analysis",
+   "key": "outcomes",
+   "note": "",
+   "block": true
+  },
+  "position_deciles": {
+   "source": "data/analysis",
+   "key": "position_deciles",
+   "note": "",
+   "block": true
+  },
+  "precision": {
+   "source": "data/precision",
+   "key": "<mode>.{precision,wilson95,n_judged,round}",
+   "note": "",
+   "block": true
+  },
+  "timeline": {
+   "source": "data/atlas",
+   "key": "events + incidents by month and ecosystem",
+   "note": "",
+   "block": true
+  },
+  "totals": {
+   "source": "data/analysis + data/atlas",
+   "key": "corpus sums; COUNT(incidents)",
+   "note": "",
+   "block": true
+  },
+  "what_didnt_hold[1]._autonomous_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.autonomous_rate",
+   "note": "",
+   "value": 0.029
+  },
+  "what_didnt_hold[1]._human_present_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.human_present_rate",
+   "note": "",
+   "value": 0.143
+  },
+  "what_didnt_hold[1].headline_ratio": {
+   "source": "data/phase2-results",
+   "key": "clean_self_correction.human_present_rate / autonomous_rate",
+   "note": "",
+   "value": 4.93
+  },
+  "what_didnt_hold[3].z": {
+   "source": "data/phase2-results",
+   "key": "E_group_vs_dm.z_rel_share",
+   "note": "",
+   "value": 0.674
+  },
+  "what_didnt_hold[4].residual_p": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction p",
+   "note": "",
+   "value": 0.02
+  },
+  "what_didnt_hold[4].residual_rates_pct": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates",
+   "note": "",
+   "value": [
+    2.4,
+    1.3
+   ]
+  },
+  "what_didnt_hold[4].residual_ratio": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates, ratio of the two",
+   "note": "",
+   "value": 1.85
+  },
+  "what_didnt_hold[4].residual_z": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction z",
+   "note": "",
+   "value": 2.28
+  }
  }
 };
 
@@ -1558,7 +2188,7 @@ function renderModes(){
   const H = modes.length * rowH + 34;
   const maxC = Math.max(...modes.map(m => m.count));
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Horizontal bar chart of 4,016 incidents across 13 failure modes. Tool errors lead with 1,063 incidents at 17.1 per 10,000 events, followed by frustration wording at 718, API errors 522, error loops 444, self-corrections 438, user interrupts 255, permission friction 229, honesty challenges 110, stuck repetition 101, abandonment 90, subagent failures 26, model escalation 17, and inter-agent challenges 3. A paired dot shows each detector's adjudicated precision from 0 to 1; the highest-count modes ride detectors of 0.83 precision while honesty challenges sit at 0.25."});
+    "aria-label":`Horizontal bar chart of ${fmt(DATA.totals.incidents)} incidents across ${modes.length} failure modes, in descending count: ${modes.map(m => `${MODE_LABEL[m.k].toLowerCase()} ${fmt(m.count)}`).join(", ")}. ${MODE_LABEL[modes[0].k]} lead at ${modes[0].per_10k_events} per 10,000 events. A paired dot shows each detector's adjudicated precision from 0 to 1; tool errors ride a detector of ${DATA.precision.tool_error.precision.toFixed(2)} precision while honesty challenges sit at ${DATA.precision.honesty_challenge.precision.toFixed(2)}.`});
   /* gridlines */
   const ticks = [0, 200, 400, 600, 800, 1000];
   ticks.forEach(t => {
@@ -1611,7 +2241,7 @@ function renderErrCats(){
   const H = cats.length*rowH + 32;
   const maxV = cats[0].v;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":`Horizontal bar chart of ${fmt(total)} tool errors by category. Commands exiting nonzero lead with 2,407, then other 1,670, not found 1,444, edit mismatches 429, timeouts 374, safety hooks firing 294, network 224, user rejected 204, permission denied 184, and interrupts 6.`});
+    "aria-label":`Horizontal bar chart of ${fmt(total)} tool errors by category, in descending count: ${cats.map(c => `${CAT_LABEL[c.k].toLowerCase()} ${fmt(c.v)}`).join(", ")}.`});
   [0, 500, 1000, 1500, 2000].forEach(t => {
     const x = labelW + (t/maxV)*plotW;
     svg.appendChild(el("line", {x1:x, y1:6, x2:x, y2:H-26, stroke:INK.grid, "stroke-width":1}));
@@ -1643,7 +2273,7 @@ function renderTimeline(){
   const W = 860, PH = 190, padL = 56, padR = 24, padT = 26, padB = 26;
   const H = panels.length*PH + 8;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Two line charts of monthly incident rate per 10,000 events, one per ecosystem with different y-scales. Coding agents: 28.4 in January rising to a peak of 86.3 in May, dropping to 61.1 in June (a fall of nearly a third, flagged as confounded with model changes and operator learning), then 64.3 in July and 61.7 in August. Assistant fleet, which has no data before April: 337.7 in April, 111.6 in May, 69.1 in June, 89.8 in July, 138.0 in August."});
+    "aria-label":`Two line charts of monthly incident rate per 10,000 events, one per ecosystem with different y-scales. ${panels.map(p => `${p.label.toLowerCase()}: ${months.map((m, i) => DATA.timeline[m][p.key] ? `${MO[i]} ${DATA.timeline[m][p.key].per_10k}` : null).filter(Boolean).join(", ")}`).join(". ")}. The June fall on the coding panel is flagged as confounded with model changes and operator learning, not causally attributed. The assistant fleet has no data before April.`});
   const xFor = i => padL + (i/(months.length-1))*(W-padL-padR);
   panels.forEach((p, pi) => {
     const y0 = pi*PH + padT, plotH = PH - padT - padB;
@@ -1674,7 +2304,7 @@ function renderTimeline(){
     });
     /* June annotation on coding panel */
     if (p.key === "claude_code"){
-      const jx = xFor(5), jy = yFor(61.1);
+      const jx = xFor(5), jy = yFor(DATA.timeline["2026-06"].claude_code.per_10k);
       svg.appendChild(el("line", {x1:jx, y1:jy-8, x2:jx, y2:jy-34, stroke:INK.candle, "stroke-width":1}));
       svg.appendChild(el("text", {x:jx+6, y:jy-38, "font-size":9.5, fill:INK.candle, text:"June: ≈ −⅓ vs May, flagged"}));
       svg.appendChild(el("text", {x:jx+6, y:jy-26, "font-size":9.5, fill:INK.candle, text:"not causally attributed"}));
@@ -1694,7 +2324,7 @@ function renderPosition(){
   const cellW = (W - labelW - 80 - cellGap*9)/10;
   const H = rows.length*rowH + 44;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Heatstrip of where each failure mode falls within sessions, divided into tenths. Tool errors are nearly flat across the session. API errors concentrate late, with 100 of their incidents in the final tenth versus 16 to 41 in earlier tenths. Abandonment is almost entirely a final-tenth event, 67 of its 80 positioned incidents. Frustration is heaviest in the opening tenth at 98 incidents and stays high across the session, 86 in the seventh tenth, spread across the session rather than concentrated at either end."});
+    "aria-label":`Heatstrip of where each failure mode falls within sessions, divided into tenths. Each row gives its ten counts from session opening to session end. ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()}, n=${r.total}: ${r.arr.join(", ")}`).join(". ")}.`});
   svg.appendChild(el("text", {x:labelW, y:14, "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"SESSION START →"}));
   svg.appendChild(el("text", {x:labelW + 10*cellW + 9*cellGap, y:14, "text-anchor":"end", "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"→ SESSION END"}));
   /* sequential green ramp, OKLCH-sampled for even lightness steps on the dark surface;
@@ -1748,7 +2378,7 @@ function renderOutcomes(){
   const H = rows.length*rowH + 34;
   const maxT = rows[0].total;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"Stacked horizontal bars of what happened after each incident type, split into recovered clean, self-corrected, further failures, session ended, and escalated. After 84 of 110 honesty challenges the session recovered clean. All 26 subagent failures ended their session. 76 of 90 abandonments ended the session. Tool errors mostly recovered clean, 805 of 1,063."});
+    "aria-label":`Stacked horizontal bars of what happened after each incident type, split into ${OUTCOME_ORDER.map(oc => oc.label.toLowerCase()).join(", ")}. ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()}, ${fmt(r.total)} incidents: ${OUTCOME_ORDER.filter(oc => r.o[oc.k]).map(oc => `${oc.label.toLowerCase()} ${fmt(r.o[oc.k])}`).join(", ")}`).join(". ")}.`});
   [0, 200, 400, 600, 800, 1000].forEach(t => {
     const x = labelW + (t/maxT)*plotW;
     svg.appendChild(el("line", {x1:x, y1:6, x2:x, y2:H-26, stroke:INK.grid, "stroke-width":1}));
@@ -1790,7 +2420,7 @@ function renderPrecision(){
   const H = rows.length*rowH + 42;
   const xFor = v => labelW + v*plotW;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"Dot and confidence-interval whisker chart of adjudicated precision for all thirteen detectors, n=12 each. User interrupts, API errors, and subagent failure sit at 1.00; tool errors and permission friction at 0.83; frustration 0.58; stuck repetition and self-correction 0.50; error loops and model escalation 0.42; abandonment 0.33; honesty challenges 0.25 with CI 0.09 to 0.53; inter-agent challenges 0.08, reclassified as orchestration protocol language rather than failure."});
+    "aria-label":`Dot and confidence-interval whisker chart of adjudicated precision for all ${rows.length} detectors, highest first, each with its 95% confidence interval: ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()} ${r.precision.toFixed(2)}, CI ${r.ci[0]} to ${r.ci[1]}, n=${r.n}`).join("; ")}. Inter-agent challenges are counted but flagged, reclassified as orchestration protocol language rather than failure.`});
   [0, 0.25, 0.5, 0.75, 1].forEach(t => {
     const x = xFor(t);
     svg.appendChild(el("line", {x1:x, y1:8, x2:x, y2:H-30, stroke:INK.grid, "stroke-width":1}));
@@ -1806,7 +2436,7 @@ function renderPrecision(){
     g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br>` +
       `<span class="t-d">precision ${r.precision} · CI ${r.ci[0]}–${r.ci[1]} · n = ${r.n} · round ${r.round}<br>` +
       `agent-fault share of true hits: ${(r.agent_fault_share*100).toFixed(0)}%</span>` +
-      (hero ? `<br><span class="t-w">the study's own dishonesty detector, still 0.25 after a round of fixes</span>` : "") +
+      (hero ? `<br><span class="t-w">the study's own dishonesty detector, still ${r.precision.toFixed(2)} after a round of fixes</span>` : "") +
       (r.k === "interagent_challenge" ? `<br><span class="t-w">reclassified: protocol language, counted but flagged</span>` : "");
     g.appendChild(el("text", {x:labelW-10, y:y+3.5, "text-anchor":"end", "font-size":11,
       fill: hero ? INK.candle : INK.soft, "font-weight": hero ? "600" : "400",
@@ -1825,7 +2455,7 @@ function renderPrecision(){
   leg.innerHTML =
     `<span class="key"><span class="sw" style="background:${PAL.green};border-radius:50%"></span>validated detector</span>` +
     `<span class="key"><span class="sw" style="background:${INK.candle};border-radius:50%"></span>honesty challenges: the study's own dishonesty detector, still 0.25 after a round of fixes</span>` +
-    `<span class="key">* Inter-agent challenges: reclassified detector (orchestration protocol language, not a failure); round-1 audit only, precision 0.08, excluded from the validated set but kept in the totals</span>`;
+    `<span class="key">* Inter-agent challenges: reclassified detector (orchestration protocol language rather than a failure); round-1 audit only, precision ${DATA.precision.interagent_challenge.precision.toFixed(2)}, excluded from the validated set but kept in the totals</span>`;
 }
 
 /* ============ CHART 6: ecosystem mode mix, mirrored ============ */
@@ -1842,9 +2472,9 @@ function renderEcosystems(){
   const maxShare = Math.max(...modes.map(m => Math.max(m.cc/ccTotal, m.hm/hmTotal)));
   const cxL = 46 + side, cxR = W - 46 - side;
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
-    "aria-label":"Mirrored bar chart comparing each ecosystem's failure-mode mix as a share of its own incidents. Coding agents, 3,558 incidents, are dominated by mechanical modes: tool errors 29 percent, frustration 15, API errors 15, error loops 12. The assistant fleet, 458 incidents, is dominated by relational modes: frustration 37 percent, self-correction 20, stuck repetition 17, with tool errors down at 7 percent, marked with an asterisk because the fleet's logs lack a native error flag."});
-  svg.appendChild(el("text", {x:cxL, y:16, "text-anchor":"end", "font-size":10, "letter-spacing":"1.5", fill:INK.brightgreen, "font-weight":"600", text:"CODING AGENTS · n=3,558"}));
-  svg.appendChild(el("text", {x:cxR, y:16, "font-size":10, "letter-spacing":"1.5", fill:"#b98cff", "font-weight":"600", text:"ASSISTANT FLEET · n=458"}));
+    "aria-label":`Mirrored bar chart comparing each ecosystem's failure-mode mix as a share of its own incidents. Coding agents, ${fmt(ccTotal)} incidents. Assistant fleet, ${fmt(hmTotal)} incidents. By mode, coding share then fleet share: ${modes.map(m => `${MODE_LABEL[m.k].toLowerCase()} ${(m.cc/ccTotal*100).toFixed(1)} percent and ${(m.hm/hmTotal*100).toFixed(1)} percent`).join(", ")}. The fleet's tool-error bar is marked with an asterisk because its logs lack a native error flag.`});
+  svg.appendChild(el("text", {x:cxL, y:16, "text-anchor":"end", "font-size":10, "letter-spacing":"1.5", fill:INK.brightgreen, "font-weight":"600", text:`CODING AGENTS · n=${fmt(ccTotal)}`}));
+  svg.appendChild(el("text", {x:cxR, y:16, "font-size":10, "letter-spacing":"1.5", fill:"#b98cff", "font-weight":"600", text:`ASSISTANT FLEET · n=${fmt(hmTotal)}`}));
   modes.forEach((m, i) => {
     const y = 26 + i*rowH;
     const shL = m.cc/ccTotal, shR = m.hm/hmTotal;
@@ -1871,8 +2501,8 @@ function renderEcosystems(){
   wireTips(host);
   const leg = document.getElementById("legend-eco");
   leg.innerHTML =
-    `<span class="key"><span class="sw" style="background:${PAL.green}"></span>Coding agents: share of 3,558 incidents</span>` +
-    `<span class="key"><span class="sw" style="background:${PAL.purple}"></span>Assistant fleet: share of 458 incidents</span>` +
+    `<span class="key"><span class="sw" style="background:${PAL.green}"></span>Coding agents: share of ${fmt(ccTotal)} incidents</span>` +
+    `<span class="key"><span class="sw" style="background:${PAL.purple}"></span>Assistant fleet: share of ${fmt(hmTotal)} incidents</span>` +
     `<span class="key">* instrument difference, not world</span>`;
 }
 
@@ -1885,7 +2515,7 @@ function renderAxis(){
 
   /* compact labels for the five pre-registered contrasts, in registered order */
   const SHORT = [
-    "Objective work fails 4.4× more",
+    `Objective work fails ${r1.ratio_of_ratios.toFixed(1)}× more`,
     "A human present lifts self-correction 5×",
     "The chat platform shapes the failure",
     "Group chats fail differently than 1-to-1",
@@ -1910,7 +2540,7 @@ function renderAxis(){
   const H = bandBot + 42;
 
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":"Scorecard of five pre-registered behavioral contrasts and their outcomes: three killed (objective work fails 4.4 times more, a human present lifts self-correction 5 times, the chat platform shapes the failure), one null (group chats fail differently than one-to-one), one wounded (subagents fail more mechanically). None survived intact. Below, the objectivity contrast on a 0 to 7 times scale against a kill zone below 1.5 times and a pre-registered pass line at 2.0 times: run 01 keyword cohorts landed at 4.4 times, above the pass line; run 02 behavioral cohorts landed at 1.1 times, inside the kill zone, a reversal that killed the finding."});
+    "aria-label":`Scorecard of ${board.length} pre-registered behavioral contrasts and their outcomes: ${board.map((b, i) => `${SHORT[i].toLowerCase()}, ${b.status}`).join("; ")}. None survived intact. Below, the objectivity contrast on a 0 to ${maxX} times scale against a kill zone below 1.5 times and a pre-registered pass line at 2.0 times: run 01 keyword cohorts landed at ${r1.ratio_of_ratios.toFixed(1)} times, above the pass line; run 02 behavioral cohorts landed at ${r2.ratio_of_ratios.toFixed(1)} times, inside the kill zone, a reversal that killed the finding.`});
 
   /* ===== Section A: the scorecard ===== */
   svg.appendChild(el("text", {x:8, y:scHdrY, "font-size":9, fill:INK.faint, "letter-spacing":"1.5", text:"THE SCORECARD · FIVE PRE-REGISTERED CONTRASTS"}));
@@ -1953,7 +2583,7 @@ function renderAxis(){
     svg.appendChild(el("text", {x:xFor(t), y:bandBot+16, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t+"×"}));
   });
   svg.appendChild(el("text", {x:padL, y:bandBot+30, "font-size":9, fill:INK.faint, text:"mechanical-to-relational ratio of ratios · pre-registered on both runs: pass ≥ 2.0×, kill < 1.5×"}));
-  /* reversal connector 4.4× → 1.1× */
+  /* reversal connector: run 01 keyword cohorts → run 02 behavioral cohorts */
   const x1 = xFor(r1.ratio_of_ratios), x2 = xFor(r2.ratio_of_ratios);
   svg.appendChild(el("path", {d:`M${x1} ${lane0Y+9} C ${x1} ${lane0Y+26}, ${x2} ${lane1Y-26}, ${x2} ${lane1Y-9}`,
     fill:"none", stroke:INK.faint, "stroke-width":1.4, "stroke-dasharray":"4 4"}));
@@ -1993,32 +2623,37 @@ function renderAxis(){
   wireTips(host);
 }
 
-/* ============ MAST cross-walk: 21% fits / 53% needs extension / 25% unclear (n=75) ============ */
+/* ============ MAST cross-walk, settled: pooled across both coding rounds ============
+   Drawn from DATA.mast_chart, which dashboard_data derives from the settled labels.
+   The chart and the surrounding caption used to describe different n; they no longer
+   can, because both read the same block. The coverage claim beside it is a range,
+   because coders disagree at the boundaries: see DATA.mast_coverage_settled. */
 function renderMast(){
   const host = document.getElementById("chart-mast");
   if (!host) return;
-  const mc = DATA.mast_crosswalk || {};
-  const TOTAL = mc.sampled || 75, MAPPED = mc.mapped || 16;
-  const EXT = Math.round((mc.extension_share || 0.53) * TOTAL);   /* 40 */
-  const UNC = TOTAL - MAPPED - EXT;                               /* 19 */
+  const mc = DATA.mast_chart;
+  const cov = DATA.mast_coverage_settled;
+  if (!mc || !cov) return;
+  const TOTAL = mc.n, MAPPED = mc.fits_mast, EXT = mc.needs_extension, UNC = mc.unclear;
+  const rawLo = Math.round(cov.raw_range_pct[0]), rawHi = Math.round(cov.raw_range_pct[1]);
   const W = 860, padX = 8, H = 178;
   const barY = 46, barHt = 48, plotW = W - padX*2, gap = 2;
   const segs = [
     {n:MAPPED, pct:Math.round(MAPPED/TOTAL*100), fill:PAL.green,  head:"FITS A MAST MODE",   hc:INK.brightgreen,
-     tip:`<span class="t-h">Fits a MAST mode</span><br><span class="t-d">${MAPPED} of ${TOTAL} · ${Math.round(MAPPED/TOTAL*100)}%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span>`},
+     tip:`<span class="t-h">Fits a MAST mode</span><br><span class="t-d">${MAPPED} of ${TOTAL} settled codings · ${Math.round(MAPPED/TOTAL*100)}%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span><br><span class="t-w">across every round and settlement rule, raw coverage spans ${rawLo}% to ${rawHi}%; bucket kappa ${cov.kappa_bucket_irr}</span>`},
     {n:EXT, pct:Math.round(EXT/TOTAL*100), fill:PAL.amber, head:"NEEDS AN EXTENSION", hc:INK.candle,
-     tip:`<span class="t-h">Needs an extension family</span><br><span class="t-d">${EXT} of ${TOTAL} · ${Math.round(EXT/TOTAL*100)}%</span><br><span class="t-w">two families MAST lacks: human-in-the-loop, and single-session infrastructure (48% of failures by weight)</span>`},
+     tip:`<span class="t-h">Needs an extension family</span><br><span class="t-d">${EXT} of ${TOTAL} settled codings · ${Math.round(EXT/TOTAL*100)}%</span><br><span class="t-w">two families MAST lacks: human-in-the-loop, and single-session infrastructure</span>`},
     {n:UNC, pct:Math.round(UNC/TOTAL*100), fill:INK.faint, head:"UNCLEAR", hc:INK.soft,
-     tip:`<span class="t-h">Unclear</span><br><span class="t-d">${UNC} of ${TOTAL} · ${Math.round(UNC/TOTAL*100)}%</span><br><span class="t-w">mostly detectors firing on work that actually succeeded</span>`},
+     tip:`<span class="t-h">Unclear</span><br><span class="t-d">${UNC} of ${TOTAL} settled codings · ${Math.round(UNC/TOTAL*100)}%</span><br><span class="t-w">mostly detectors firing on work that actually succeeded</span>`},
   ];
   const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
-    "aria-label":`MAST cross-walk of ${TOTAL} stratified incidents: ${MAPPED} (${Math.round(MAPPED/TOTAL*100)}%) fit a MAST mode, ${EXT} (${Math.round(EXT/TOTAL*100)}%) need an extension family MAST lacks (human-in-the-loop and single-session infrastructure), ${UNC} (${Math.round(UNC/TOTAL*100)}%) are unclear, mostly detectors firing on successful work. Population-weighted, MAST reaches 19% of failures and infrastructure alone is 48%.`});
+    "aria-label":`MAST cross-walk of ${TOTAL} settled codings, pooled across both rounds: ${MAPPED} (${Math.round(MAPPED/TOTAL*100)}%) fit a MAST mode, ${EXT} (${Math.round(EXT/TOTAL*100)}%) need an extension family MAST lacks (human-in-the-loop and single-session infrastructure), ${UNC} (${Math.round(UNC/TOTAL*100)}%) are unclear, mostly detectors firing on successful work. Across every round and settlement rule, raw coverage spans ${rawLo}% to ${rawHi}% and population-weighted coverage ${cov.weighted_range_pct[0]}% to ${cov.weighted_range_pct[1]}%, at bucket-level Cohen's kappa ${cov.kappa_bucket_irr}.`});
   let x = padX;
   segs.forEach((s, i) => {
     const w = (s.n/TOTAL)*plotW - (i < segs.length-1 ? gap : 0);
     svg.appendChild(el("text", {x:x+w/2, y:28, "text-anchor":"middle", "font-size":9.5, "letter-spacing":"1", "font-weight":"600", fill:s.hc, text:s.head}));
     const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
-      "aria-label":`${s.head}: ${s.n} of ${TOTAL} incidents, ${s.pct} percent.`});
+      "aria-label":`${s.head}: ${s.n} of ${TOTAL} settled codings, ${s.pct} percent.`});
     g.dataset.tip = s.tip;
     g.appendChild(el("path", {d:barH(x, barY, w, barHt, 5, i===segs.length-1), fill:s.fill}));
     const anchor = i===0 ? "start" : "middle", tx = i===0 ? x+16 : x+w/2;
@@ -2028,8 +2663,8 @@ function renderMast(){
     x += (s.n/TOTAL)*plotW;
   });
   const bY = barY + barHt + 12;
-  svg.appendChild(el("text", {x:padX, y:bY+16, "font-size":10.5, fill:INK.soft, text:"The extension MAST lacks, by weighted share of all failures:"}));
-  svg.appendChild(el("text", {x:padX, y:bY+32, "font-size":10.5, "font-weight":"600", fill:INK.text, text:"single-session infrastructure 48%  ·  human-in-the-loop  ·  fan-out coordination (0 observed)"}));
+  svg.appendChild(el("text", {x:padX, y:bY+16, "font-size":10.5, fill:INK.soft, text:"The two families MAST lacks:"}));
+  svg.appendChild(el("text", {x:padX, y:bY+32, "font-size":10.5, "font-weight":"600", fill:INK.text, text:"single-session infrastructure, the largest under every settlement rule  ·  human-in-the-loop"}));
   host.appendChild(svg);
   wireTips(host);
 }
