@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pooling Small-N fMRI — When Does Merging Studies Actually Work?</title>
-<meta name="description" content="A controlled test of whether many small open fMRI studies can be merged into one shared space — a clean negative on a visual tone-poem, a synthetic positive control, and a narrative-film test of where functional alignment earns its keep.">
+<meta name="description" content="A controlled test of whether many small open fMRI studies can be merged into one shared space — a clean negative on a visual tone-poem, a synthetic positive control, and a narrative audio-description test of where functional alignment earns its keep.">
 <meta property="og:title" content="Pooling Small-N fMRI">
-<meta property="og:description" content="Where cross-study functional alignment helps, where it hurts, and the boundary condition nobody had measured.">
+<meta property="og:description" content="Where cross-study functional alignment helps, where it hurts, and the boundary condition this design could not yet isolate.">
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,6 +123,8 @@ em{font-style:italic}
 .metric .val.pos{color:var(--pos)}
 .metric .sub{font-size:.82rem;color:var(--ink-soft);margin-top:.4rem;font-family:var(--mono)}
 
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.2rem 0}
+.table-scroll table.data{margin:0}
 table.data{width:100%;border-collapse:collapse;font-size:.92rem;margin:1.2rem 0;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--rule)}
 table.data caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding:.6rem .8rem;background:var(--surface-2)}
 table.data th{background:var(--surface-2);font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--rule)}
@@ -234,19 +236,19 @@ footer a{color:var(--accent)}
   <h2><span class="k">02 · The Method</span>The pipeline, and the test it has to pass</h2>
   <p>
     The design is deliberately simple and deterministic, because the claim is about linear
-    algebra, not model capacity. For a set of subjects who all watched the same film:
+    algebra, not model capacity. For a set of subjects who all received the same stimulus:
   </p>
   <div class="card">
     <span class="tag method">Pipeline</span>
     <p style="margin-bottom:.6rem">
       1. <strong>Z-score</strong> every voxel/vertex's timecourse per subject.
-      2. Split the film into a <strong>train</strong> segment (first ⅔) and a held-out
+      2. Split the stimulus into a <strong>train</strong> segment (first ⅔) and a held-out
       <strong>test</strong> segment (last ⅓).
       3. Compute a <strong>PCA shared basis</strong> (k = 100) from the <em>other</em>
       subjects' mean train response — never the subject being evaluated (leave-one-subject-out).
       4. Fit a per-subject <strong>orthogonal Procrustes rotation</strong> on train only.
       5. Score on the held-out test segment with <strong>time-segment matching</strong>: can we
-      find the right moment of the film in the group mean, given one subject's response?
+      find the right moment of the stimulus in the group mean, given one subject's response?
     </p>
     <p style="margin-bottom:0;font-size:.92rem;color:var(--ink-soft)">
       The comparison is <strong>anatomical-only</strong> alignment (everyone in a common
@@ -258,35 +260,48 @@ footer a{color:var(--accent)}
     </p>
   </div>
   <p>
-    The two datasets are both public on OpenNeuro, both movie-watching, and chosen because they
-    differ in the one way that matters for the hypothesis:
+    Both datasets are public on OpenNeuro and both use long, continuous naturalistic
+    stimulation. They differ in the way the hypothesis cares about — narrative vs. no narrative
+    — and, unavoidably, in several other ways as well:
   </p>
+  <div class="table-scroll">
   <table class="data">
     <caption>The two stimuli</caption>
-    <thead><tr><th>Dataset</th><th>Film</th><th>N used</th><th>Space</th><th>Narrative?</th></tr></thead>
+    <thead><tr><th>Dataset</th><th>Stimulus</th><th>N used</th><th>Space</th><th>Narrative?</th></tr></thead>
     <tbody>
       <tr>
         <td><strong>AOMIC-ID1000</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">ds003097</span></td>
-        <td><em>Koyaanisqatsi</em></td>
-        <td class="num">93</td>
+        <td><em>Koyaanisqatsi</em><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">visual film · 3T</span></td>
+        <td class="num">93<br><span style="font-size:.78em;color:var(--ink-faint)">of ~927 available</span></td>
         <td>fsaverage5 cortical surface</td>
         <td><strong>No</strong> — non-narrative visual tone-poem, no story, no dialogue</td>
       </tr>
       <tr>
         <td><strong>StudyForrest</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">ds000113</span></td>
-        <td><em>Forrest Gump</em></td>
+        <td><em>Forrest Gump</em> <strong>audio description</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">auditory only · no visual · 7T</span></td>
         <td class="num" id="forrest-n-cell">8 (run-01)</td>
         <td>grpbold7Tad group template (volumetric)</td>
-        <td><strong>Yes</strong> — a driven narrative with dialogue and plot</td>
+        <td><strong>Yes</strong> — a driven narrative with dialogue and plot, <em>heard</em> as a spoken German audio description of the film rather than watched</td>
       </tr>
     </tbody>
   </table>
+  </div>
+  <p style="font-size:.9rem;color:var(--ink-soft)">
+    That second row is easy to misread, so it is worth stating plainly: the
+    <code style="font-family:var(--mono);font-size:.85em">grpbold7Tad</code> acquisition in
+    ds000113 is the <strong>7T audio-description</strong> phase of StudyForrest. Participants
+    listened to an audio description of <em>Forrest Gump</em>; there was no visual stimulus
+    (Hanke et al., 2014, describe it as "prolonged stimulation with an auditory feature film").
+    It is a narrative, but it is not a movie-watching scan.
+  </p>
   <p style="font-size:.9rem;color:var(--ink-soft)">
     A note on rigor: the two datasets live in different reference spaces (surface vs. volume)
     because that is the form in which each is publicly distributed with all subjects in a common
     frame. The question — <em>does functional alignment beat anatomical alignment?</em> — is
     asked <strong>within</strong> each dataset, against its own anatomical baseline, so the
-    cross-space difference does not confound the comparison.
+    cross-space difference does not confound that comparison. It does, however, mean the
+    <em>between</em>-dataset comparison is not a clean stimulus manipulation — see the
+    limitation in §06.
   </p>
 </section>
 
@@ -382,20 +397,22 @@ footer a{color:var(--accent)}
       functional rotation only injects noise. That matches a specific prediction: hyperalignment
       earns its keep on the <em>idiosyncratic fine-grained topography</em> that narrative
       drives, and Koyaanisqatsi has little of it. But that is an interpretation, not a result.
-      The result needs a narrative film.
+      The result needs a narrative stimulus.
     </p>
   </div>
 </section>
 
 <!-- ================= RESULT 2 ================= -->
 <section id="result2">
-  <h2><span class="k">05 · The Narrative Test</span>Forrest Gump: does the story flip the sign?</h2>
+  <h2><span class="k">05 · The Narrative Test</span>Forrest Gump, heard not watched: does the story flip the sign?</h2>
   <div id="forrest-result">
     <p class="intro">
-      This is the discriminating test. The literature predicts functional alignment should
-      <em>help</em> on a narrative film. If it does, the Koyaanisqatsi negative is a boundary
-      condition on the <em>stimulus</em>, not a flaw in the pooling idea — and the two results
-      together map where pooling works.
+      This is the discriminating test — with one wrinkle that has to be named up front: the
+      StudyForrest data available in a common group template is the <strong>7T audio
+      description</strong>, so the narrative arrives through the ears, not the eyes. The
+      literature predicts functional alignment should <em>help</em> on a narrative stimulus. If
+      it does, the Koyaanisqatsi negative is a boundary condition on the <em>stimulus</em>, not
+      a flaw in the pooling idea — and the two results together map where pooling works.
     </p>
     <div class="card lead" id="forrest-card">
       <span class="tag pending">Inconclusive · underpowered</span>
@@ -422,7 +439,8 @@ footer a{color:var(--accent)}
         </div>
       </div>
       <p style="margin-bottom:.6rem">
-        On the single fully-downloaded run (run-01, 8 subjects, 151 held-out TRs), neither
+        On the single fully-downloaded audio-description run (run-01, 8 subjects, 151 held-out
+        TRs), neither
         alignment condition recovered much signal — both sit just above the nominal floor
         (~0.007) and far below the Koyaanisqatsi accuracies. Functional alignment gives a
         statistically meaningless Δ = +0.002 (5/8 subjects, permutation p = 0.86).
@@ -453,7 +471,7 @@ footer a{color:var(--accent)}
     </p>
     <p>
       The narrative test, run honestly, came back <strong>underpowered rather than decisive.</strong>
-      On the one fully-downloaded Forrest Gump run (8 subjects), both conditions sat near the
+      On the one fully-downloaded Forrest Gump audio-description run (8 subjects), both conditions sat near the
       floor and alignment gave a null Δ = +0.002 (5/8, p = 0.86). We therefore cannot yet say
       whether the Koyaanisqatsi negative is a stimulus boundary (the interesting case — alignment
       helps only where narrative drives idiosyncratic topography) or a more general property.
@@ -462,6 +480,26 @@ footer a{color:var(--accent)}
       detect. That is a measurement-plan statement, not a retreat — the next run is already
       scoped, and this page will be updated when it lands.
     </p>
+    <div class="note warn">
+      <div class="nh">Limitation · narrative is not isolated by this design</div>
+      <p>
+        The stimulus-boundary reading — <em>alignment helps where narrative drives idiosyncratic
+        topography</em> — is the interpretation we find most plausible, but this pair of datasets
+        cannot separate it from the alternatives. Going from Koyaanisqatsi to StudyForrest
+        changes narrative <em>and</em> at least four other things at once: <strong>modality</strong>
+        (visual film vs. auditory audio description), <strong>field strength</strong> (3T vs. 7T),
+        <strong>reference space</strong> (fsaverage5 surface vs. volumetric group template),
+        <strong>subject count</strong> (93 vs. 8), and <strong>how much of the stimulus was
+        pooled</strong> (full moviewatching run vs. one run of eight).
+      </p>
+      <p style="margin-bottom:0">
+        So narrative is one of at least five candidate explanations for any difference between the
+        two datasets, and this design cannot tell them apart. That does not make the boundary
+        reading wrong — it makes it untested. Isolating it needs a comparison that holds modality,
+        field strength and space fixed and varies only the stimulus: for example, narrative vs.
+        scrambled-narrative within a single acquisition.
+      </p>
+    </div>
     <div class="note">
       <div class="nh">What would change our mind</div>
       <p>
@@ -478,18 +516,70 @@ footer a{color:var(--accent)}
 
 <!-- ================= REPRODUCE ================= -->
 <section id="reproduce">
-  <h2><span class="k">07 · Reproduce</span>Every number here is checkable</h2>
+  <h2><span class="k">07 · Reproduce</span>Where the data came from and what we did to it</h2>
   <p>
-    The data are public and the analysis is deterministic. Each result carries its seeds, its
-    subject list, and its parameter values in a machine-readable results file, and the scripts
-    are the exact ones that produced the numbers — not a cleaned-up retelling.
+    The data are public and the analysis is deterministic, so the numbers above are recoverable
+    from scratch. The scripts and result JSONs themselves are <strong>not yet published in this
+    repository</strong> — they live on the research machine that ran the analysis (see the
+    provenance note below). What follows is enough to rebuild the pipeline independently:
+    the exact accessions, the derivative type, how the subset was chosen, and what was computed.
   </p>
-  <details>
-    <summary>Datasets &amp; access</summary>
+  <details open>
+    <summary>Provenance · where the data came from</summary>
     <div class="body">
-      <p><strong>AOMIC-ID1000</strong> — OpenNeuro <code>ds003097</code>, snapshot v1.2.0. 93 subjects with complete fsaverage5 moviewatching derivatives (L+R), ~2.4GB. Film: Koyaanisqatsi.</p>
-      <p><strong>StudyForrest</strong> — OpenNeuro <code>ds000113</code>, snapshot 1.3.0. Group-template (<code>grpbold7Tad</code>) non-linearly aligned movie BOLD, masked to the group brain-mask intersection (493,857 voxels). Film: Forrest Gump, run-01, 451 TRs.</p>
-      <p>Both pulled directly from the OpenNeuro file API. No bespoke preprocessing: the distributed derivatives are used as shipped, because the claim is about alignment on top of a common space, not about preprocessing choices.</p>
+      <p><strong>AOMIC-ID1000</strong> — the Amsterdam Open MRI Collection, OpenNeuro accession
+      <code>ds003097</code>, snapshot v1.2.0 (Snoek et al., 2021). Stimulus: a non-narrative
+      visual excerpt of <em>Koyaanisqatsi</em> (no story, no dialogue), acquired at 3T
+      (<code>task-moviewatching</code>). We used the distributed
+      <strong>fMRIPrep</strong> derivatives resampled to the <strong>fsaverage5</strong> cortical
+      surface, both hemispheres (L+R).</p>
+      <p><strong>StudyForrest</strong> — OpenNeuro accession <code>ds000113</code>, snapshot 1.3.0
+      (Hanke et al., 2014). Stimulus: a spoken German <strong>audio description</strong> of
+      <em>Forrest Gump</em>, acquired at 7T — auditory only, no visual presentation. We used the
+      <code>grpbold7Tad</code> group-template derivative (non-linearly aligned BOLD in a common
+      volumetric group space), masked to the group brain-mask intersection (493,857 voxels),
+      run-01, 451 TRs, 8 subjects.</p>
+      <p>Both were pulled directly from the OpenNeuro file API. There is no bespoke
+      preprocessing: the distributed derivatives are used as shipped, because the claim is about
+      alignment on top of a common space, not about preprocessing choices.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Subset selection · why 93 and why 8</summary>
+    <div class="body">
+      <p><strong>AOMIC — 93 of ~927.</strong> AOMIC-ID1000 ships moviewatching derivatives for
+      roughly 927 subjects. The 93 used here are a <strong>bandwidth-limited download
+      subsample</strong> — ~2.4&nbsp;GB of fsaverage5 L+R derivatives — not a property of the
+      dataset. An earlier version of this page described "93 subjects with complete fsaverage5
+      moviewatching derivatives" as though 93 were all the dataset offered; that was wrong.
+      The 93 are the subjects whose L+R pair had downloaded completely when the analysis ran,
+      and nothing was excluded on the basis of its result — but the subsample was not drawn under
+      a pre-specified randomisation, so it should be treated as convenience, not a random sample.
+      A re-run at full N is open to anyone with the bandwidth and would be a stronger test than
+      ours.</p>
+      <p><strong>StudyForrest — 8 subjects, run-01 only.</strong> The group-template
+      audio-description data spans 8 runs; at the time of the analysis only run-01 had downloaded
+      completely for every subject (several later runs remained truncated <code>.part</code>
+      files, and a container restart OOM-killed the first pass). The loader skips truncated
+      <code>.nii.gz</code> files rather than silently reading partial volumes. This is the direct
+      cause of the underpowered narrative test described in §05.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Analysis · what was done to the data</summary>
+    <div class="body">
+      <p>Within each dataset, per-vertex/per-voxel timecourses are z-scored, split into a
+      contiguous train (first ⅔) and test (last ⅓) segment, and reduced to a
+      <strong>k=100 PCA shared basis</strong> computed from the other subjects' mean train
+      response. Each subject gets an <strong>orthogonal Procrustes rotation</strong> into that
+      basis — the hyperalignment step — fit on train only, under strict
+      leave-one-subject-out.</p>
+      <p>The <strong>pooling comparison</strong> is then the held-out
+      <strong>time-segment-matching</strong> accuracy of anatomical-only alignment versus
+      functionally aligned data, scored per subject, tested with a paired sign test and a
+      1000-draw permutation test on the mean difference. The synthetic positive control applies
+      the same code path to 40 simulated subjects sharing a response under known random
+      rotations.</p>
     </div>
   </details>
   <details>
@@ -506,21 +596,37 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
     </div>
   </details>
   <details>
-    <summary>Machine-readable results</summary>
+    <summary>Machine-readable results &amp; scripts — <em>not yet published</em></summary>
     <div class="body">
+      <p style="font-weight:600;color:var(--ink)">
+        These files exist but are <strong>not in this repository and are not downloadable from
+        this page</strong>. They live on the research machine that ran the analysis. Listing them
+        here is a record of what was produced, not an offer of access. Publishing them in-repo is
+        outstanding work.
+      </p>
       <p><code>aomic_loso_results.json</code> — the Koyaanisqatsi leakage-free result (N=93, per-subject accuracies, sign, permutation p, seed, runtime).</p>
       <p><code>aomic_tier1_results.json</code> — the corrected pilot (N=93), consistent with the LOSO result.</p>
-      <p><code>forrest_loso_results.json</code> — the narrative-film control (run-01, N=8): anatomical 0.0248 / aligned 0.0265, Δ=+0.0017, sign 5/8, permutation p=0.86. Written by <code>hyperalign_forrest.py</code>; underpowered as described above.</p>
+      <p><code>forrest_loso_results.json</code> — the narrative audio-description control (run-01, N=8): anatomical 0.0248 / aligned 0.0265, Δ=+0.0017, sign 5/8, permutation p=0.86. Written by <code>hyperalign_forrest.py</code>; underpowered as described above.</p>
+      <p>Until they are published, the reproduction path is the one in the sections above:
+      the accessions and derivative types are named exactly, the parameters are fully specified,
+      and the pipeline is short enough to rebuild from the description.</p>
     </div>
   </details>
   <div class="note">
     <div class="nh">Honesty log</div>
     <p>
-      Two errors were caught and fixed during this work and are recorded rather than smoothed
+      Four errors were caught and fixed during this work and are recorded rather than smoothed
       over. (1) A measurement bug made the first pilot's accuracies unreliable; it was found on
       adversarial re-read and everything was re-run. (2) The dataset paper for AOMIC-ID1000 was
       initially cited under a wrong DOI that resolves to an unrelated paper; it was corrected to
       Snoek et al. (2021) after a title match. The references below are the verified set.
+      (3) The first published version of this page described the StudyForrest
+      <code>grpbold7Tad</code> data as a <em>film</em> the subjects watched. It is the 7T
+      <strong>audio description</strong> — auditory only, no visual stimulus. The page's own
+      citation (Hanke et al., 2014, "an audio movie") said so; we misread it. Corrected
+      throughout. (4) The same version presented "93 subjects" as the dataset's complement of
+      complete moviewatching derivatives; AOMIC ships roughly 927, and 93 was our download
+      subsample. Corrected in §07.
     </p>
   </div>
 </section>
