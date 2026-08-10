@@ -211,7 +211,7 @@ footer a{color:var(--accent)}
     </div>
     <div class="t">
       <div class="h pos">Act II · The flip</div>
-      <p>On a story-driven film (<em>Forrest Gump</em>, 19 people × 8 runs), alignment <strong>helped</strong>: +0.011, p &lt; 0.0001, 15 of 19 subjects improved.</p>
+      <p>On a story-driven film (<em>Forrest Gump</em>, 19 people × 8 runs), alignment <strong>helped</strong>: +0.011, p &lt; 0.001, 15 of 19 subjects improved.</p>
     </div>
     <div class="t">
       <div class="h map">The map</div>
@@ -360,7 +360,8 @@ footer a{color:var(--accent)}
     </div>
   </div>
   <p>
-    Both accuracies sit far above the empirical chance level (~0.01), so there <em>is</em> real
+    Both accuracies sit far above the empirical chance level (~0.01, measured by circular
+    time-shift on the identical pilot design), so there <em>is</em> real
     shared movie signal to find — this is not a floor effect. But the per-subject rotation
     reliably <em>removed</em> accuracy rather than adding it, and the result is stable across
     the basis dimension (k = 10, 20, 50, 100), so it's not a tuning artifact.
@@ -408,8 +409,8 @@ footer a{color:var(--accent)}
     <h3>Not a bad k</h3>
     <p style="margin-bottom:0">
       The negative replicates at k = 10, 20, 50 on a 40-subject subset (Δ between −0.006 and
-      −0.017). The effect doesn't flip at any tested dimensionality, so it's not a
-      shared-space bottleneck.
+      −0.017; sweep values recorded in the lab notebook). The effect doesn't flip at any
+      tested dimensionality, so it's not a shared-space bottleneck.
     </p>
   </div>
 
@@ -456,14 +457,14 @@ footer a{color:var(--accent)}
       <div class="metric">
         <div class="lab">Sign test</div>
         <div class="val pos">15 / 19</div>
-        <div class="sub">subjects improved · p &lt; 0.0001</div>
+        <div class="sub">subjects improved · p &lt; 0.001</div>
       </div>
     </div>
     <p style="margin-bottom:.6rem">
       The sign flipped. On the narrative film, functional alignment gives a small but
       <strong>reliable</strong> improvement: every run contributed, the effect isn't carried by
       one outlier subject or one lucky run (19 × 8 subject-by-run delta matrix, pooled per
-      subject), and the permutation p-value is below 0.0001.
+      subject), and the permutation p-value is below 0.001.
     </p>
     <p style="margin-bottom:0;font-size:.88rem;color:var(--ink-soft)">
       Same code path, same seeds, same z-scoring and split rule as the Koyaanisqatsi analysis —
@@ -495,7 +496,7 @@ footer a{color:var(--accent)}
   </p>
   <p>
     <strong>2. On a narrative film, the sign flips.</strong> Alignment reliably <em>helps</em>
-    (Forrest Gump: N = 19 × 8 runs, Δ = +0.011, 95% CI excludes zero, p &lt; 0.0001). This is
+    (Forrest Gump: N = 19 × 8 runs, Δ = +0.011, 95% CI excludes zero, p &lt; 0.001). This is
     the empirical core of the pooling pitch — now measured head-to-head against its own
     negative control rather than assumed from single-dataset studies.
   </p>
@@ -558,7 +559,7 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
     <div class="body">
       <p><code>aomic_loso_results.json</code> — the Koyaanisqatsi leakage-free result (N=93, per-subject accuracies, sign, permutation p, seed, runtime).</p>
       <p><code>aomic_tier1_results.json</code> — the corrected pilot (N=93), consistent with the LOSO result.</p>
-      <p><code>forrest_loso_allruns_results.json</code> — the narrative test at full power (19 subjects × 8 runs): anatomical 0.0408 / aligned 0.0517, Δ = +0.0109, 95% CI [0.0065, 0.0153], sign 15/19, permutation p &lt; 0.0001, plus the full 19 × 8 per-run delta matrix. Written by <code>hyperalign_forrest_allruns.py</code>.</p>
+      <p><code>forrest_loso_allruns_results.json</code> — the narrative test at full power (19 subjects × 8 runs): anatomical 0.0408 / aligned 0.0517, Δ = +0.0109, 95% CI [0.0065, 0.0153], sign 15/19, permutation p &lt; 0.001 (Monte-Carlo bound with 1000 draws; exact enumeration of the full 2^19 sign-flip distribution gives p = 0.00018, so the bound is conservative), plus the full 19 × 8 per-run delta matrix. Written by <code>hyperalign_forrest_allruns.py</code>.</p>
       <p><code>forrest_loso_results.json</code> — the run-01 pilot (N=8): Δ = +0.002, p = 0.86. Kept as the honest record of what an underpowered slice looked like.</p>
     </div>
   </details>
@@ -589,7 +590,7 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
   </p>
   <ol class="refs">
     <li>Haxby, J. V., Guntupalli, J. S., Nastase, S. A., &amp; Feilong, M. (2020). Hyperalignment: Modeling shared information encoded in idiosyncratic cortical topographies. <em>eLife</em>, 9, e56601. <span class="doi">doi:10.7554/eLife.56601</span><span class="vbadge">verified</span></li>
-    <li>Nastase, S. A., et al. (2020). Leveraging shared connectivity to aggregate heterogeneous datasets into a common response space. <em>NeuroImage</em>, 216, 116865. <span class="doi">doi:10.1016/j.neuroimage.2020.116865</span><span class="vbadge">verified</span></li>
+    <li>Nastase, S. A., et al. (2020). Leveraging shared connectivity to aggregate heterogeneous datasets into a common response space. <em>NeuroImage</em>, 217, 116865. <span class="doi">doi:10.1016/j.neuroimage.2020.116865</span><span class="vbadge">verified</span></li>
     <li>Hasson, U., Nir, Y., Levy, I., Fuhrmann, G., &amp; Malach, R. (2004). Intersubject synchronization of cortical activity during natural vision. <em>Science</em>, 303, 1634–1640. <span class="doi">doi:10.1126/science.1089506</span><span class="vbadge">verified</span></li>
     <li>Button, K. S., et al. (2013). Power failure: why small sample size undermines the reliability of neuroscience. <em>Nature Reviews Neuroscience</em>, 14, 365–376. <span class="doi">doi:10.1038/nrn3475</span><span class="vbadge">verified</span></li>
     <li>Snoek, L., van der Miesen, M. M., Beemsterboer, T., van der Leij, A., Eigenhuis, A., &amp; Scholte, H. S. (2021). The Amsterdam Open MRI Collection, a set of multimodal MRI datasets for individual difference analyses. <em>Scientific Data</em>, 8, 85. <span class="doi">doi:10.1038/s41597-021-00870-6</span><span class="vbadge">verified</span></li>
