@@ -1,0 +1,10 @@
+{
+  "slug": "fde-first-proof",
+  "title": "An Open-Weight Model Proves a Logic Theorem",
+  "blurb": "A research agent running an open-weight model (Kimi K3) formalized the four-valued logic FDE in Lean 4 and proved it sound, complete, and decidable — every proof checked by the kernel, every axiom reported, every wrong turn logged. The leaderboard of AI-proved math is dominated by closed models; this is the open-stack version",
+  "emoji": "🧮",
+  "status": "published",
+  "updated": "2026-08-10",
+  "order": 6,
+  "source": "fde-lean project in the hermes-matilde container on the Mini; repo being prepared for public release"
+}

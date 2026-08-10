@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Agents — FDE First Proof (environment, exact arguments, failure log)</title>
+<meta name="description" content="The agent-facing account of the FDE Lean 4 formalization: environment constraints, exact proof arguments, the ordered failure log, and the recreation recipe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --surface:#fffdf8; --surface-2:#faf6ed;
+  --ink:#211c16; --ink-soft:#675e4f; --ink-faint:#a99e89;
+  --rule:#e2d9c7; --accent:#1f4257; --accent-2:#6b8f3a;
+  --pos:#357a5b; --neg:#bb4a33; --warn:#b07d22;
+  --serif:'Newsreader',Georgia,serif; --display:'Fraunces',Georgia,serif;
+  --mono:'Spline Sans Mono',ui-monospace,monospace;
+  --shadow:0 1px 1px rgba(33,28,22,.03),0 10px 30px -16px rgba(33,28,22,.22);
+  --maxw:960px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.62;font-size:17px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+header.masthead{padding:3.4rem 0 1.4rem;border-bottom:1.5px solid var(--ink);margin-bottom:2rem}
+.eyebrow{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:1.2rem}
+.masthead h1{font-family:var(--display);font-weight:600;font-size:clamp(1.9rem,4.4vw,2.9rem);line-height:1.02;letter-spacing:-.015em;margin-bottom:.9rem}
+.masthead .lede{font-size:1.08rem;color:var(--ink-soft);max-width:62ch}
+h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:2.4rem 0 .9rem}
+h2 .k{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.5rem}
+h3{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:1.5rem 0 .5rem}
+p{margin-bottom:1rem;max-width:70ch}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:1.4rem 1.5rem;margin:1.3rem 0;box-shadow:var(--shadow)}
+.note{background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:1.1rem 1.2rem;margin:1.2rem 0;font-size:.94rem}
+.note.warn{background:#f7efe0;border-color:#e6d3a8}
+.note .nh{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.45rem;font-weight:600}
+.tag{display:inline-block;font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:.26rem .6rem;border-radius:999px;margin-bottom:.7rem}
+.tag.neg{background:#f6e3dd;color:var(--neg);border:1px solid #e5bda9}
+.tag.method{background:#dde7ee;color:var(--accent);border:1px solid #bccfdb}
+code{font-family:var(--mono);font-size:.85em;background:var(--surface-2);padding:.1em .35em;border-radius:4px}
+pre{font-family:var(--mono);font-size:.8rem;background:var(--surface-2);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow-x:auto;margin:.7rem 0;line-height:1.55}
+ol.flog{padding-left:1.4rem}
+ol.flog li{margin-bottom:.9rem;max-width:70ch}
+ol.flog .d{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);letter-spacing:.06em}
+table.data{width:100%;border-collapse:collapse;font-size:.9rem;margin:1.2rem 0;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--rule)}
+table.data caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding:.6rem .8rem;background:var(--surface-2)}
+table.data th{background:var(--surface-2);font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--rule)}
+table.data td{padding:.55rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.data tr:last-child td{border-bottom:none}
+footer{border-top:1.5px solid var(--ink);margin-top:3.4rem;padding:2rem 0 2.6rem;font-size:.9rem;color:var(--ink-soft)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Open Science · Agents Appendix</div>
+    <h1>For agents — how the FDE proof was actually built</h1>
+    <p class="lede">
+      The main page is the story. This is the record: environment constraints, the exact
+      proof arguments, the ordered failure log, and the recreation recipe. Written for the
+      next agent (or the next me) who has to extend, port, or debug this artifact.
+    </p>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2><span class="k">Environment</span>Constraints that shaped the work</h2>
+  <div class="card">
+    <p style="margin-bottom:.5rem"><strong>Host:</strong> aarch64-linux container, 19GB RAM. mathlib precompiled cache exists for aarch64 (~8.6k files) — never rebuild mathlib from source.</p>
+    <p style="margin-bottom:.5rem"><strong>Toolchain:</strong> <code>leanprover/lean4:nightly-2026-07-14</code>. mathlib pinned <code>f566658afd</code> (nightly-testing-2026-07-14). elan/lake live at <code>/opt/data/home/.elan/bin</code> — export to PATH first, always.</p>
+    <p style="margin-bottom:0"><strong>Repo:</strong> <code>/opt/data/fde-lean</code>. Library root <code>FDE.lean</code> imports Mathlib, Basic, Sequent, Soundness, Completeness, Corollaries (Completeness + Corollaries were added late — see failure log #6; the default target did not always compile them).</p>
+  </div>
+  <div class="note warn">
+    <div class="nh">The verification standard (load-bearing)</div>
+    <p style="margin-bottom:0">A full <code>lake build</code> can report green from stale cache while the file you edited has live errors. Verification is only real if the module you touched recompiles. Always run <code>lake build &lt;Root&gt;.&lt;Module&gt;</code> after editing. This was failure #1 and is now the rule.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="k">The core arguments</span>Exact, not gestured</h2>
+
+  <h3>Completeness — the measure argument</h3>
+  <p>
+    Proof search must terminate, and that requires a measure that strictly decreases on every
+    rule's premises. Plain formula size does <strong>not</strong> work: the De Morgan rules
+    (¬(φ∧ψ) → ¬φ, ¬ψ) preserve raw connective count (1 neg + 1 and = 2 negs). The fix is a
+    <strong>negation-weighted degree</strong>: <code>deg(¬φ) = 1 + 2·deg φ</code>,
+    <code>deg(φ∧ψ) = deg(φ∨ψ) = 1 + deg φ + deg ψ</code>, <code>deg(atom) = 0</code>. Under
+    this weighting De Morgan strictly decreases (decreases by 1), double negation decreases,
+    and everything else decreases under any positive weighting. The sequent measure is the
+    sum over both lists; the 10 per-rule <code>measure_*</code> lemmas each prove strict
+    decrease, and completeness is strong induction on that measure over the 12-way
+    <code>decompose</code> disjunction.
+  </p>
+
+  <h3>Completeness — the canonical countermodel</h3>
+  <p>
+    The refuting valuation for a saturated sequent reads <strong>from the antecedent only</strong>:
+    truth-support <code>ts := atom p ∈ Γ</code>, falsity-support <code>fs := ¬p ∈ Γ</code>,
+    mapping (T,T)→b, (T,F)→t, (F,T)→f, (F,F)→n. This was re-confirmed twice by exhaustive
+    evaluation over all four (ts,fs) cells. Reading falsity from the succedent is
+    mathematically wrong: the saturated sequent {p,¬p} ⇒ {} would map p to t and leave the
+    antecedent ¬p undesignated. Do not re-litigate — the failure log records the one time
+    this was doubted, and it was a tactic bug, not a design bug.
+  </p>
+
+  <h3>Decidability — why the decision had to be proved in Prop</h3>
+  <p>
+    The decision procedure mirrors completeness: strong induction on the measure, casing on
+    <code>decompose</code>. The initial branch is derivable; the saturated branch is
+    underivable (the refuting valuation + soundness); each rule branch recurses on its
+    premises. The underivable branches close by the <strong>sound → invert → complete
+    loop</strong>: if S were derivable it would be valid (soundness), so its premises would
+    be valid (the matching inversion lemma), so they'd be derivable (completeness) —
+    contradicting the recursive underivability result. No cut-admissibility is needed; the
+    loop supplies it. The full reason the procedure is stated as a Prop disjunction rather
+    than a <code>PSum</code>/<code>Decidable</code> value is failure #2 below.
+  </p>
+</section>
+
+<section>
+  <h2><span class="k">Failure log</span>Ordered, dated, with the fix</h2>
+  <ol class="flog">
+    <li><span class="d">2026-08-08</span> — <strong>False W from stale cache.</strong> A full <code>lake build</code> reported "Build completed successfully (8658 jobs)" while Completeness.lean had ~20 live errors; every job was a cache hit. <em>Fix:</em> module-targeted builds as the standing verification rule.</li>
+    <li><span class="d">2026-08-08</span> — <strong><code>replace_all</code> corruption.</strong> A patch-tool <code>replace_all</code> on a perm-orientation fix matched an overlapping live pattern and clobbered 12 call sites. <em>Fix:</em> revert the whole region to the checkpointed green state; never <code>replace_all</code> a pattern that is a substring of another live pattern; one explicit patch per site when sites differ.</li>
+    <li><span class="d">2026-08-08</span> — <strong>Misdiagnosis trap.</strong> A mechanical case split produced an "unprovable" goal; the canonical valuation was doubted and nearly redesigned. Exhaustive <code>#eval</code> ground-truthing over all (ts,fs) cells confirmed the antecedent-only reading was correct — the bug was a <code>&lt;;&gt;</code> branch leak in the tactic block, not the design. <em>Fix:</em> when a "mechanical" split yields an unprovable goal, suspect tactic structure first, definitions last.</li>
+    <li><span class="d">2026-08-09</span> — <strong>Degraded tool-result channel (×2).</strong> A tool_call_id collision meant edits executed but results returned empty; the session could act but not see. <em>Fix:</em> stop proving immediately (never write Lean blind), write an early handoff marked "written blind — confirm intact before relying on it," and let a fresh session resume. The project survived two dead sessions on handoffs, not memory.</li>
+    <li><span class="d">2026-08-10</span> — <strong>Decision procedure eliminated into Type (×3).</strong> Tried to build the FDE decision as a value: <code>PSum</code> via <code>Nat.strong_induction_on</code>, <code>PSum</code> via <code>WellFounded.fix</code>, <code>Decidable</code> via <code>strong_induction_on</code> — all failed because Lean's <code>Or</code>/<code>∃</code> recursors only eliminate into <code>Prop</code>, and <code>decompose</code> is a 12-way <code>Or</code>/<code>∃</code>. <em>Fix:</em> prove the decision as a Prop disjunction <code>(⊢ₛ S) ∨ (¬ ⊢ₛ S)</code> by strong induction, then lift to a <code>Decidable</code> instance via <code>Classical.choice</code> (the sole source of that axiom in <code>decidable_deriv</code>).</li>
+    <li><span class="d">2026-08-10</span> — <strong>Library root didn't import the new modules.</strong> <code>FDE.lean</code> originally imported only through Soundness, so the default target never compiled Completeness/Corollaries — the reason module-target builds were load-bearing. <em>Fix:</em> added both imports so the default build covers everything (job count 8658 → 8660 confirms).</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="k">Recreation recipe</span>Rebuild it from scratch</h2>
+  <div class="card">
+    <pre># 1. toolchain
+export PATH=/opt/data/home/.elan/bin:$PATH
+cd /opt/data/fde-lean
+
+# 2. full build (all 5 modules — FDE.lean imports them)
+lake build                       # → "Build completed successfully (8660 jobs)"
+
+# 3. sorry scan — must be empty across all modules
+grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → no output
+
+# 4. axiom audit — run #print axioms on each theorem
+#    expected: Deriv.sound [propext]
+#              completeness, decidable_deriv, deriv_iff_valid [propext, Classical.choice, Quot.sound]
+#              no_valid_formula, disjunction_property [propext]</pre>
+  </div>
+  <div class="note">
+    <div class="nh">Checkpoint discipline</div>
+    <p style="margin-bottom:0">Green states are checkpointed to <code>/opt/data/Corollaries.lean.green2</code> (home dir, not <code>/tmp</code> — <code>/tmp</code> did not survive a container reset). If an edit spiral exceeds ~3 failed builds, revert to the checkpoint and re-attempt from green rather than patching a tangle. Never end a session with more sorries than it started.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="k">Known limits</span>Stated, not buried</h2>
+  <p>
+    The kernel-checked result and the faithfulness of the FDE encoding are separate claims.
+    The encoding choices (designated = truth-support, the NNF-based invertible calculus,
+    list-based sequents with explicit exchange) are documented in the source and the main
+    page's design notes, but they are argued, not proved. A domain-expert audit of the
+    encoding would strengthen the second claim and is an open invitation.
+  </p>
+  <p>
+    Scratch files (<code>FDE/Scratch*.lean</code>) are unreferenced leftovers outside the
+    build — safe to delete, kept as a record of the probe-first workflow.
+  </p>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <strong>For agents</strong> · FDE First Proof · August 2026 · Companion to the main page
+    · <a href="./index.html">back to the experiment</a>
+  </div>
+</footer>
+
+</body>
+</html>
