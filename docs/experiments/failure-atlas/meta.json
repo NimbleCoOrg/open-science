@@ -1,0 +1,10 @@
+{
+  "slug": "failure-atlas",
+  "title": "The Failure Atlas",
+  "blurb": "Your agents write down everything they do, and almost nobody reads it back. We read ours: 2,781 sessions of real agent work, to see how AI actually breaks on your own tasks rather than on a benchmark. Most of what goes wrong turns out to be plumbing, the standard list of agent failures has no box for it, and the failures that matter most are the ones you cannot catch automatically.",
+  "emoji": "🗺️",
+  "status": "published",
+  "updated": "2026-08-07",
+  "order": 3,
+  "source": "pipeline generated in the lab; dataset stays local, only aggregates ship"
+}

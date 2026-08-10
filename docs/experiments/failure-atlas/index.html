@@ -1,0 +1,3662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Failure Atlas: what an agent's own logs say about how it breaks</title>
+<meta name="description" content="Your agents write down everything they do. We read 2,781 sessions and 709,843 logged events of ours back, judged 185 failures in full, and found that the biggest kind of real-world agent failure is plumbing, which the standard research list of agent failures has no box for.">
+<meta property="og:title" content="The Failure Atlas">
+<meta property="og:description" content="Two things we have not seen written down anywhere else, out of 2,781 sessions of real agent logs. Plus the four commands that run the same read on your own.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a10'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%2374e2ab' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%23f3c079'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0a0a10; --panel:#11111a; --panel-2:#16161f; --well:#0d0d14;
+  --scrim:rgba(10,10,16,.94);
+  --bone:#e9e3d4; --bone-soft:#b3ac99; --bone-faint:#767162;
+  --rule:#23232e; --rule-2:#2e2e3c;
+  --green:#74e2ab; --candle:#f3c079; --grimoire:#b98cff;
+  /* chart palette: validated (dataviz six checks, dark surface #11111a) */
+  --c-green:#2fa06b; --c-blue:#3d7fc4; --c-amber:#bd8434; --c-rose:#c9567e; --c-purple:#8a68d6;
+  --serif:'Source Serif 4',Georgia,serif;
+  --display:'Instrument Serif',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+  --maxw:1080px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif); background:var(--void); color:var(--bone);
+  line-height:1.65; font-size:17.5px;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+::selection{background:#2f4a3c;color:#eef7ee}
+a{color:var(--green);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--candle)}
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.5rem}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* The staging ribbon lived here. Removed on publish (2026-08-07): meta.json is
+   `published` and the experiment lists on both indexes, so a fixed "STAGING ·
+   UNLISTED" badge in the corner was contradicting the page's own status. If this
+   page ever goes back to staging, the badge is in git history rather than sitting
+   dormant in the stylesheet waiting to reappear. */
+
+/* ---------- masthead ---------- */
+.masthead{padding:5rem 0 2rem;border-bottom:1px solid var(--rule-2)}
+.eyebrow{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; font-weight:500;
+  text-transform:uppercase; color:var(--green); display:flex; align-items:center; gap:.8rem;
+  margin-bottom:1.6rem;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule-2)}
+.masthead h1{
+  font-family:var(--display); font-weight:400; font-size:clamp(2.9rem,7.5vw,5.4rem);
+  line-height:.98; letter-spacing:-.01em; margin-bottom:1.1rem; max-width:16ch;
+}
+.masthead h1 em{font-style:italic;color:var(--candle)}
+.kicker{
+  font-size:clamp(1.18rem,2.6vw,1.62rem); line-height:1.35; color:var(--bone);
+  max-width:26ch; margin-bottom:1.4rem; font-weight:600;
+}
+.deck-body{max-width:64ch;color:var(--bone-soft);margin-bottom:.9rem}
+.deck-body b{color:var(--bone)}
+
+/* hero stats */
+.hero-stats{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(212px,1fr)); gap:1.2rem;
+  margin:2.4rem 0 .4rem;
+}
+.stat{
+  background:var(--panel); border:1px solid var(--rule); border-radius:8px;
+  padding:1.4rem 1.4rem 1.2rem; position:relative; overflow:hidden;
+}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--stat-accent,var(--green));opacity:.75}
+.stat .num{
+  font-family:var(--mono); font-weight:600; font-size:clamp(2.1rem,4.2vw,2.9rem);
+  line-height:1.05; color:var(--bone); letter-spacing:-.02em; margin-bottom:.5rem;
+}
+.stat .num.range{font-size:clamp(1.6rem,3.1vw,2.1rem)}
+.stat .num small{font-size:.42em;color:var(--bone-faint);font-weight:500;letter-spacing:0}
+.stat .cap{font-size:.86rem;line-height:1.5;color:var(--bone-soft)}
+.stat .cap b{color:var(--bone)}
+.corpus-row{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--bone-faint);
+  display:flex; flex-wrap:wrap; gap:.4rem 1.6rem; padding:1.1rem 0 1.6rem;
+}
+.corpus-row b{color:var(--bone-soft);font-weight:500}
+
+/* ---------- section nav ----------
+   Every colour here is a token, and the edge fade is an alpha mask rather than a
+   colour gradient, so the whole control inverts correctly with the token set and
+   never has to know what the surface behind it is. */
+.tabnav-outer{
+  position:sticky; top:0; z-index:200;
+  background:var(--scrim); backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--rule-2);
+}
+.tabnav-rail{display:flex;align-items:stretch;max-width:var(--maxw);margin:0 auto}
+.tabnav-scroll{position:relative;flex:1 1 auto;min-width:0}
+.tabnav{
+  display:flex; gap:0; padding:0 1.5rem;
+  overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  scroll-snap-type:x proximity;
+  --fade:2.1rem;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+          mask-image:linear-gradient(to right,transparent 0,#000 var(--fade),#000 calc(100% - var(--fade)),transparent 100%);
+}
+.tabnav::-webkit-scrollbar{display:none}
+/* at-start / at-end are set by script: the fade only appears on an edge that
+   actually has more sections hidden behind it. */
+.tabnav.at-start{
+  -webkit-mask-image:linear-gradient(to right,#000 0,#000 calc(100% - var(--fade)),transparent 100%);
+          mask-image:linear-gradient(to right,#000 0,#000 calc(100% - var(--fade)),transparent 100%);
+}
+.tabnav.at-end{
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--fade),#000 100%);
+          mask-image:linear-gradient(to right,transparent 0,#000 var(--fade),#000 100%);
+}
+.tabnav.at-start.at-end{-webkit-mask-image:none;mask-image:none}
+.tabnav button{
+  font-family:var(--mono); font-size:.72rem; font-weight:500; letter-spacing:.1em;
+  background:none; border:none; border-bottom:2px solid transparent;
+  padding:1rem .95rem; cursor:pointer; color:var(--bone-faint);
+  transition:color .18s,border-color .18s; white-space:nowrap; text-transform:uppercase;
+  scroll-snap-align:center;
+}
+.tabnav button:hover{color:var(--bone)}
+.tabnav button:focus-visible{outline:2px solid var(--green);outline-offset:-2px;border-radius:2px}
+.tabnav button.active{color:var(--green);border-bottom-color:var(--green)}
+.tabnav .tn{color:var(--rule-2);margin-right:.45em}
+.tabnav button.active .tn{color:var(--candle)}
+/* the nudge arrows sit over the faded edge, so they never change the scroller's
+   width and cannot oscillate with it */
+.tabnudge{
+  position:absolute; top:0; bottom:0; width:2.1rem; z-index:3;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:none; cursor:pointer; padding:0;
+  font-family:var(--mono); font-size:1.05rem; line-height:1; color:var(--bone-soft);
+  text-shadow:0 0 9px var(--void),0 0 4px var(--void),0 0 2px var(--void);
+  transition:color .15s;
+}
+.tabnudge:hover{color:var(--green)}
+.tabnudge:focus-visible{outline:2px solid var(--green);outline-offset:-3px;border-radius:3px}
+.tabnudge[hidden]{display:none}
+.tabnudge-l{left:0}
+.tabnudge-r{right:0}
+.tabcount{
+  flex:0 0 auto; display:flex; align-items:center; gap:.15em;
+  padding:0 1.2rem 0 .55rem; white-space:nowrap;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; color:var(--bone-faint);
+  border-left:1px solid var(--rule);
+}
+.tabcount b{color:var(--green);font-weight:600}
+
+/* ---------- panels ---------- */
+.panel{display:none;padding:2.8rem 0 4.5rem}
+.panel.active{display:block;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section-h{
+  font-family:var(--display); font-weight:400; font-size:clamp(1.9rem,4.4vw,2.8rem);
+  line-height:1.05; margin:2.8rem 0 1rem;
+}
+.section-h:first-child{margin-top:0}
+.section-h em{font-style:italic;color:var(--candle)}
+.sec-kicker{
+  font-family:var(--mono); font-size:.76rem; letter-spacing:.06em; line-height:1.7;
+  color:var(--green); margin-bottom:1.4rem; max-width:70ch;
+}
+p{margin-bottom:1.15rem;max-width:68ch;color:var(--bone-soft)}
+p b,p strong{color:var(--bone);font-weight:600}
+p em{color:var(--bone)}
+.lede{font-size:1.06em;color:var(--bone)}
+ul.plain{max-width:68ch;color:var(--bone-soft);margin:0 0 1.2rem 1.2rem}
+ul.plain li{margin-bottom:.7rem}
+ul.plain b{color:var(--bone)}
+
+/* pipeline strip */
+.pipe{
+  display:flex; align-items:stretch; gap:.5rem; margin:1.8rem 0 .6rem;
+  overflow-x:auto; padding-bottom:.4rem;
+}
+.pipe .stage{
+  flex:1; min-width:118px; background:var(--panel); border:1px solid var(--rule);
+  border-radius:6px; padding:.75rem .8rem; font-family:var(--mono);
+}
+.pipe .stage .sname{font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--green);text-transform:uppercase;margin-bottom:.3rem}
+.pipe .stage .sdesc{font-size:.68rem;line-height:1.55;color:var(--bone-faint)}
+.pipe .arrow{align-self:center;color:var(--rule-2);font-family:var(--mono);flex:0 0 auto}
+.pipe .wall{
+  flex:0 0 auto; width:0; border-left:1px dashed var(--candle); opacity:.75; position:relative; margin:0 .35rem;
+}
+.pipe .wall span{
+  position:absolute; top:-1.15rem; left:50%; transform:translateX(-50%);
+  font-family:var(--mono); font-size:.56rem; letter-spacing:.16em; color:var(--candle); white-space:nowrap;
+}
+.figcap{
+  font-family:var(--mono); font-size:.7rem; line-height:1.75; color:var(--bone-faint);
+  max-width:76ch; margin:.6rem 0 2rem; padding-left:.9rem; border-left:2px solid var(--rule-2);
+}
+.figcap b{color:var(--bone-soft);font-weight:500}
+
+/* ---------- catch cards ---------- */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:1.8rem 0}
+.card{
+  background:var(--panel); border:1px solid var(--rule); border-radius:8px;
+  padding:1.5rem 1.5rem 1.3rem; display:flex; flex-direction:column; gap:.7rem;
+}
+.card h3{font-family:var(--display);font-weight:400;font-size:1.5rem;line-height:1.15}
+.card h3 .cnum{font-family:var(--mono);font-size:.68rem;color:var(--bone-faint);letter-spacing:.18em;display:block;margin-bottom:.4rem}
+.card .story{font-size:.94rem;line-height:1.6;color:var(--bone-soft);flex:1}
+.card .story b{color:var(--bone)}
+.card .mech{
+  font-family:var(--mono); font-size:.72rem; line-height:1.6; color:var(--green);
+  background:var(--well); border:1px solid var(--rule); border-radius:5px; padding:.55rem .7rem;
+}
+.card .mech::before{content:"WHAT WENT WRONG · ";color:var(--bone-faint);letter-spacing:.1em}
+.card .prev{font-family:var(--mono);font-size:.72rem;line-height:1.6;color:var(--candle)}
+.card .prev::before{content:"WHAT STOPS IT · ";color:var(--bone-faint);letter-spacing:.1em}
+.card .stat-line{font-family:var(--mono);font-size:.66rem;color:var(--bone-faint);letter-spacing:.04em}
+
+/* ---------- charts ---------- */
+.chart-block{margin:2.4rem 0 0}
+.chart-title{font-family:var(--mono);font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--bone);margin-bottom:.15rem}
+.chart-units{font-family:var(--mono);font-size:.68rem;color:var(--bone-faint);margin-bottom:.9rem}
+.chart-scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:1.1rem 1rem}
+.chart-scroll svg{display:block;width:100%;height:auto}
+.chart-scroll svg.needs-min{min-width:640px}
+svg text{font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem 1.3rem;font-family:var(--mono);font-size:.68rem;color:var(--bone-soft);margin:.7rem .2rem 0}
+.legend .key{display:inline-flex;align-items:center;gap:.45rem}
+.legend .sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+.mark-focus:focus{outline:none}
+.mark-focus:focus-visible rect,.mark-focus:focus-visible circle,.mark-focus:focus-visible path{stroke:var(--bone);stroke-width:1.5}
+
+/* tooltip */
+#tip{
+  position:fixed; z-index:400; pointer-events:none; display:none;
+  background:var(--panel-2); border:1px solid var(--rule-2); border-radius:6px;
+  padding:.55rem .75rem; font-family:var(--mono); font-size:.7rem; line-height:1.7;
+  color:var(--bone); max-width:280px; box-shadow:0 10px 30px -10px rgba(0,0,0,.7);
+}
+#tip .t-h{color:var(--green);font-weight:600;letter-spacing:.06em}
+#tip .t-d{color:var(--bone-soft)}
+#tip .t-w{color:var(--candle)}
+
+/* ---------- run it ---------- */
+.codewrap{position:relative;margin:1.2rem 0 1.6rem;max-width:100%}
+.codewrap pre{
+  background:var(--well); border:1px solid var(--rule); border-radius:8px;
+  padding:1.1rem 1.2rem; overflow-x:auto; font-family:var(--mono); font-size:.76rem;
+  line-height:1.8; color:var(--bone); white-space:pre;
+}
+.codewrap.prompt pre{white-space:pre-wrap;font-size:.72rem;color:var(--bone-soft);padding-top:2.4rem}
+.copybtn{
+  position:absolute; top:.6rem; right:.6rem;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  background:var(--panel-2); color:var(--bone-soft); border:1px solid var(--rule-2);
+  border-radius:4px; padding:.35rem .7rem; cursor:pointer; transition:color .15s,border-color .15s;
+}
+.copybtn:hover{color:var(--green);border-color:var(--green)}
+.copybtn:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.copybtn.done{color:var(--candle);border-color:var(--candle)}
+.filelist{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 1.6rem}
+.filelist a{
+  font-family:var(--mono); font-size:.7rem; color:var(--green); text-decoration:none;
+  border:1px solid var(--rule-2); border-radius:4px; padding:.35rem .7rem; transition:border-color .15s;
+}
+.filelist a:hover{border-color:var(--green)}
+.pitch{
+  border-left:2px solid var(--grimoire); padding:.2rem 0 .2rem 1.2rem; margin:1.8rem 0;
+}
+.pitch p{color:var(--bone-soft)}
+.pitch p b{color:var(--grimoire)}
+.deeper{
+  border:1px solid var(--rule-2); border-radius:8px; padding:1.1rem 1.3rem;
+  margin:2rem 0 0; max-width:68ch; background:var(--panel);
+}
+.deeper p{margin-bottom:0;font-size:.94rem}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule-2);padding:3rem 0 4rem;position:relative;z-index:1}
+.colophon-end{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; line-height:1.9;
+  color:var(--bone-faint); padding-top:.2rem;
+}
+.colophon-end b{color:var(--green);font-weight:500}
+
+@media (max-width:600px){
+  .tabcount{padding:0 .8rem 0 .45rem;letter-spacing:.06em}
+  /* four stacked tiles put the first section two full screens down a phone.
+     Two columns and tighter type halve the masthead instead. */
+  .hero-stats{grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1.9rem}
+  .stat{padding:1rem .85rem .9rem}
+  .stat .num{font-size:1.85rem;margin-bottom:.35rem}
+  .stat .num.range{font-size:1.2rem}
+  .stat .num small{font-size:.46em}
+  .stat .cap{font-size:.78rem;line-height:1.45}
+  .masthead{padding-bottom:1.4rem}
+  .corpus-row{gap:.3rem 1rem;padding:.9rem 0 1.2rem}
+}
+@media (max-width:820px){
+  .cards{grid-template-columns:1fr}
+  body{font-size:16.5px}
+  .masthead{padding-top:3.6rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+
+<header class="masthead">
+  <div class="wrap">
+    <!-- Was "cyborg.garden · open science · experiment 002". The number implied a
+         series that does not exist: across all five published experiments the string
+         "experiment 002" occurs exactly once, here, and every page uses a different
+         eyebrow format ("NimbleCo AI · Open Science", "Open Science · Experiment",
+         "Open Science · Field Report 01" and "02"). Reduced to the one part they all
+         share. The domain was redundant too, since the reader is already on it. -->
+    <div class="eyebrow">Open Science</div>
+    <h1>The Failure <em>Atlas</em></h1>
+    <p class="kicker">Your agents write down everything they do. Almost nobody reads it back.</p>
+    <p class="deck-body">That log is the most specific record that exists of how AI actually behaves for you. Not on a benchmark, not in a demo, but on your work, in your setup, with your habits. Companies hold this kind of data close, and they are right to. It is the one thing no public dataset can give you, and it is sitting unread on your own disk.</p>
+    <p class="deck-body">So we read ours. Here is what was in there.</p>
+
+    <!-- Tile order is load-bearing. A cold read on a 390px screen found no finding
+         above the fold: the corpus-size tile led, and the method paragraph sat where
+         the fold lands, so the first thing a phone reader met was what we did rather
+         than what we found. Findings now lead and the corpus size closes, because it
+         is context for the findings rather than a result. Tiles 1 and 2 must stay
+         adjacent and in this order: tile 2's caption opens "of them" and takes its
+         subject from tile 1. -->
+    <div class="hero-stats">
+      <div class="stat" style="--stat-accent:var(--grimoire)">
+        <div class="num range">74% to 79%</div>
+        <div class="cap">of the failures we sorted by hand have <b>no box</b> on the research world's standard list of ways agent systems fail.</div>
+      </div>
+      <div class="stat" style="--stat-accent:var(--candle)">
+        <div class="num range">31% to 38%</div>
+        <div class="cap">of them are <b>plumbing</b>: quota kills, permission blocks, network faults. The single biggest group, and the one with no box.</div>
+      </div>
+      <div class="stat" style="--stat-accent:var(--c-rose)">
+        <div class="num">1 in 4</div>
+        <div class="cap">How often our own dishonesty detector was right when it fired: 3 of the 12 cases we checked. <b>The failures that matter most are the hardest to catch automatically.</b> That is a finding, not an apology.</div>
+      </div>
+      <div class="stat" style="--stat-accent:var(--green)">
+        <div class="num">2,781<small> sessions</small></div>
+        <div class="cap">Seven months of real agent work, January to August 2026. Two setups that could not be less alike, and nothing sampled out at intake.</div>
+      </div>
+    </div>
+
+    <p class="deck-body">How we got there: a pipeline of agents went through <b>2,781 sessions and 709,843 logged events</b> from January to August 2026, across two setups that could not be less alike: one person's coding agents, and a fleet of assistant bots that lots of different people talk to across four chat platforms. It flagged anything that looked like a failure. Then a language model read the full transcript around 185 of those flags and ruled on what had really gone wrong. Then we checked how often the flagging itself was wrong, which turned out to be the more interesting half.</p>
+
+    <div class="corpus-row">
+      <span><b>2,781</b> sessions</span>
+      <span><b>7,042</b> session files</span>
+      <span><b>709,843</b> events</span>
+      <span><b>2026-01 → 2026-08</b></span>
+      <span><b>13</b> detectors</span>
+      <span><b>185</b> failures judged in full</span>
+    </div>
+  </div>
+</header>
+
+<div class="tabnav-outer">
+  <div class="tabnav-rail">
+    <div class="tabnav-scroll">
+      <button class="tabnudge tabnudge-l" type="button" aria-label="Show earlier sections" hidden>&#8249;</button>
+      <nav class="tabnav" role="tablist" aria-label="Sections">
+        <button role="tab" id="tab-shape" aria-controls="panel-shape" aria-selected="true" data-tab="shape"><span class="tn">01</span>What goes wrong</button>
+        <button role="tab" id="tab-gap" aria-controls="panel-gap" aria-selected="false" tabindex="-1" data-tab="gap"><span class="tn">02</span>The missing box</button>
+        <button role="tab" id="tab-blind" aria-controls="panel-blind" aria-selected="false" tabindex="-1" data-tab="blind"><span class="tn">03</span>Two worlds</button>
+        <button role="tab" id="tab-catches" aria-controls="panel-catches" aria-selected="false" tabindex="-1" data-tab="catches"><span class="tn">04</span>Five catches</button>
+        <button role="tab" id="tab-run" aria-controls="panel-run" aria-selected="false" tabindex="-1" data-tab="run"><span class="tn">05</span>Run it yourself</button>
+        <button role="tab" id="tab-trust" aria-controls="panel-trust" aria-selected="false" tabindex="-1" data-tab="trust"><span class="tn">06</span>What to believe</button>
+      </nav>
+      <button class="tabnudge tabnudge-r" type="button" aria-label="Show later sections" hidden>&#8250;</button>
+    </div>
+    <div class="tabcount" aria-hidden="true"><b id="tabpos"></b><span>/</span><span id="tabtot"></span></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ============ 01 WHAT GOES WRONG ============ -->
+<section class="panel active" id="panel-shape" role="tabpanel" aria-labelledby="tab-shape">
+  <h2 class="section-h">What actually <em>goes wrong</em></h2>
+  <p class="sec-kicker">Four pictures of seven months of agent work. No vocabulary required.</p>
+  <p class="lede">Two of the things we found we have not seen written down anywhere else. The biggest single kind of real-world agent failure is plumbing, and the research world's standard list of agent failures has no box to put it in. And the same detection toolkit, pointed at chat assistants instead of coding agents, goes partly blind without saying so.</p>
+  <p class="lede">Here is what we found, how far it honestly got, and how to run it on your own logs.</p>
+
+  <div class="chart-block">
+    <div class="chart-title">What broke, and how often</div>
+    <div class="chart-units">bars: how many times each kind of failure happened · dots: how often that detector was right when it fired, 0→1 · n = 4,662 incidents across 709,843 events · hover or focus a row for more</div>
+    <div class="chart-scroll"><div id="chart-modes"></div></div>
+    <p class="figcap">The commonest failure is the cheapest one. Tool errors happen <b>1,165 times, 16.4 for every 10,000 logged actions, and 881 of those 1,165</b> were shrugged off before the session carried on. The rare ones are the messier ones. An agent getting challenged on something it claimed happens only <b>135 times</b>, but those moments set off far more tripwires at once (0.68 against 0.36 for a tool error). Counting failures, on its own, tells you almost nothing.</p>
+  </div>
+
+  <div class="chart-block">
+    <div class="chart-title">What "tool error" actually means</div>
+    <div class="chart-units">tool errors by kind · n = 7,999 errors sorted</div>
+    <div class="chart-scroll"><div id="chart-errcats"></div></div>
+    <p class="figcap">Mostly the ordinary physics of software. A command exits non-zero. A file is not where the agent thought it was. An edit no longer matches the text it was written against. The interesting part is never the error itself. It is what the agent says next.</p>
+  </div>
+
+  <div class="chart-block">
+    <div class="chart-title">Where in a session things break</div>
+    <div class="chart-units">position in the session, in tenths (left = start, right = end) · shade = how far above or below an even spread · hover or focus a cell for counts</div>
+    <div class="chart-scroll"><div id="chart-position"></div></div>
+    <div class="legend" id="legend-position" aria-hidden="true"></div>
+    <p class="figcap">Tool errors are flat: they are the weather. Running out of API quota piles up at the very end (<b>106 of their incidents in the final tenth versus 16 to 43 in earlier ones</b>), because limits arrive late. Giving up is almost entirely a last-tenth event, <b>105 of its 127 positioned incidents</b>. Human frustration is heaviest in the <em>opening</em> tenth (141 incidents, its single largest) and stays high the whole way through, 110 in the seventh and 91 in the eighth. Each row is shaded against its own biggest cell, so rows compare in shape, not in size.</p>
+  </div>
+
+  <div class="chart-block">
+    <div class="chart-title">What happened next</div>
+    <div class="chart-units">what each incident led to, immediately afterwards · stacked, absolute counts · hover or focus a segment for count and share</div>
+    <div class="chart-scroll"><div id="chart-outcomes"></div></div>
+    <div class="legend" id="legend-outcomes" aria-hidden="true"></div>
+    <p class="figcap">The hopeful row: after <b>99 of 135</b> times a person pushed back on something the agent claimed, the session recovered and carried on. That is a count of what came next, not proof the pushback caused it. The bleak rows: all <b>26 subagent failures</b> ended their session on the spot, and <b>108 of 139 abandonments</b> ended the session, which is close to circular, since that detector fires at session end.</p>
+  </div>
+</section>
+
+<!-- ============ 02 THE MISSING BOX ============ -->
+<section class="panel" id="panel-gap" role="tabpanel" aria-labelledby="tab-gap" hidden>
+  <h2 class="section-h">The failure nobody <em>has a name for</em></h2>
+  <p class="sec-kicker">Most of what actually breaks is plumbing. The standard research list of agent failures has no box for plumbing.</p>
+
+  <p>When researchers write down how agent systems fail, they mostly mean agents talking past each other. One agent misreads another, the group never converges, nobody checks the final answer. The reference list for that is MAST (<a href="https://arxiv.org/abs/2503.13657">Cemri et al., 2025</a>), and it is a good list: <b>14 modes in 3 categories, built from ~1,600 conversational multi-agent traces</b>.</p>
+
+  <p>So we took our own failures, <b>sorted by hand into 142 settled codings</b>, and asked which of those boxes each one belonged in. <b>21% to 26%</b> fit. The other <b>74% to 79%</b> did not. It is a range rather than a single number because two people sorting the same failure disagree at the edges often enough that one number would claim more certainty than we have.</p>
+
+  <div class="chart-block">
+    <div class="chart-title">What the field's list has a word for</div>
+    <div class="chart-units">share of 142 settled codings, pooled across both rounds · fits a listed mode vs needs a new family vs unclear · hover or focus a segment for detail</div>
+    <div class="chart-scroll"><div id="chart-mast"></div></div>
+    <p class="figcap"><b>36 of 142 settled codings fit one of MAST's 14 modes</b>. The rest split between two families the list does not have and a pile marked unclear, and the unclear ones are mostly a detector firing on work that actually succeeded.</p>
+  </div>
+
+  <p>The biggest thing in the leftover pile is <b>plumbing</b>. A quota runs out mid-run. A permission prompt blocks a command. A network call dies. Weighted by how often each kind of failure actually happens, that family is <b>40% to 49%</b> of everything that went wrong, and it is the largest group under every way we tried settling the coders' disagreements. The second family is people: someone getting frustrated, someone pushing back on a claim, someone being asked for permission and saying no. That is <b>the human-in-the-loop family, 6% to 9%</b>. Neither has a box on the standard list, and the reason is structural rather than an oversight: the benchmarks that list was built from have no human in the loop and no shared quota to run out of, so neither failure can happen there.</p>
+
+  <p>We also predicted a third new family, coordination failures when one agent fans work out to many at once. It <b>drew 0% of our incidents and 0% of the field's benchmark traces</b>. We wrote it down in advance and it is simply not there.</p>
+
+  <p>Then we ran it backwards, which is the part that stops this being special pleading. We pointed our new families at the field's own benchmark traces. They explain <b>5 of the 149 benchmark traces we coded</b>, <b>3.36% of them</b>, and <b>the two families that carry our own corpus explain 1</b>. The blindness runs both ways: their list has no cell for most of what breaks here, and our additions barely touch what breaks there. Said plainly, in the same breath as the number: <b>one person labelled all 149 of them</b>, so there is no second opinion on this half.</p>
+
+  <h2 class="section-h" style="font-size:1.7rem">The agent that was never there</h2>
+  <p>One thing we found while reading those benchmark traces is worth the whole section. In <b>4 of the 72 AG2 traces</b> we coded, the group manager stamps a sandbox's output with the name of an agent that never speaks in the run. A second agent, whose job is to verify, then reports that silent agent as having submitted its own solution, and closes the run on a submission that does not exist. That is <b>5.6%</b> of that framework's traces.</p>
+  <p>The field's own benchmark corpus contains a failure the field's own list never recorded, which is the coverage argument made on its home ground rather than ours. It rests on <b>4 cases, one framework, one coder</b>, so treat the rate as rough. The mechanism is not rough: the check that the credited agent's only appearance is that output, and that the verifier credits it anyway, passes on all four.</p>
+</section>
+
+<!-- ============ 03 TWO WORLDS ============ -->
+<section class="panel" id="panel-blind" role="tabpanel" aria-labelledby="tab-blind" hidden>
+  <h2 class="section-h">Same toolkit, <em>two different worlds</em></h2>
+  <p class="sec-kicker">Point a failure detector at a different kind of agent and it can go completely blind without telling you.</p>
+
+  <p>We pointed the same <b>13 detectors</b> at two very different piles of logs: one person's coding agents, and a fleet of assistant bots that many different people chat with. The texture flips completely. The coding agents fail mechanically: <b>tool errors (1,105), frustration wording (568), API errors (541), error loops (453)</b>. The assistant fleet fails relationally: <b>frustration (334), self-correction (171), and stuck repetition (153) are 658 of its 898 incidents, while tool errors fall to 60</b>.</p>
+
+  <div class="chart-block">
+    <div class="chart-title">The same detectors, two different worlds</div>
+    <div class="chart-units">share of each side's own incidents (%) · left: coding agents, n = 3,764 · right: assistant fleet, n = 898 · hover or focus a bar for counts</div>
+    <div class="chart-scroll"><div id="chart-ecosystems"></div></div>
+    <div class="legend" id="legend-eco" aria-hidden="true"></div>
+    <p class="figcap">Left, machines breaking. Right, people and bots grinding against each other. The asterisk on the right-hand tool-error bar is honest bookkeeping: the fleet's logs carry no native error flag, so some of that gap belongs to the instrument rather than the world.</p>
+  </div>
+
+  <p>Here is the part that should worry anyone who runs a detector over their own logs. <b>5 of the 13 detectors</b> fire <b>1,865 times on the coding logs and exactly zero times on the chat logs</b>. Not rarely. Zero. <b>The permission detector alone fires 758 times</b> on one side and never once on the other.</p>
+
+  <p>That is not chat bots behaving better. Those detectors key on things a chat transcript simply does not contain, so pointing this toolkit at chat logs quietly loses whole kinds of failure and reports nothing missing. The comparison covers <b>599,353 events of coding-agent logs against 97,333 of chat logs</b>. The silence is safe to state. The rate differences sitting next to it are not: the two piles differ in task, in who is driving, and in transcript format all at once, so nothing about which side "fails more" can be read off this chart.</p>
+
+  <h2 class="section-h" style="font-size:1.7rem">A detector that travelled well and was wrong the whole way</h2>
+  <p>The same blindness has a mirror image, and we walked into it on purpose. We wrote down in advance that our permission detector would return exactly zero on four outside benchmark collections, because none of those setups has a permission layer for it to see. It <b>fired 171 times across all 4 outside corpora</b>, <b>in 4 of 4</b>. What it is actually matching is ordinary permission-denied text in command output, which any system can produce, rather than the consent layer it was written for. A detector can be perfectly portable and perfectly wrong at once, and the portability is what hides the wrongness.</p>
+  <p>One more, smaller and sharper. On another outside collection <b>our frustration detector fired 14 times</b>, and <b>all 14 firings come from 1 pattern</b>: a sentence ending in the word "again". The samples we looked at are people pasting error logs that finish "Please try again." The detector is reading a machine's apology as a person's temper. Those firings were never checked one by one, so this is a diagnosis of the marker rather than a measured error rate. Before you trust what a tool reports, check what it cannot see.</p>
+</section>
+
+<!-- ============ 04 FIVE CATCHES ============ -->
+<section class="panel" id="panel-catches" role="tabpanel" aria-labelledby="tab-catches" hidden>
+  <h2 class="section-h">Five things <em>it caught</em></h2>
+  <p class="sec-kicker">Specific failures, each with the thing that would have stopped it.</p>
+  <p>Each of these came out of a transcript a language model read in full, so it is a real moment rather than a pattern in a count. Each is named by its mechanism, because the mechanism is the part a fix can grip.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3><span class="cnum">CATCH 01 · the common one</span>The merge that never ran</h3>
+      <div class="story">The agent announced that both pull requests were merged. <b>No merge command appears anywhere in the session.</b> This is not lying in any deep sense. The agent described the state it had planned to produce rather than the state it had checked.</div>
+      <div class="mech">asserting from intent instead of from output</div>
+      <div class="prev">a hook that blocks completion claims until a verifying command has run</div>
+      <div class="stat-line">judged the agent's fault 10 times out of 10</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">CATCH 02</span>The bot that was declared alive</h3>
+      <div class="story">"The bot is running!" It had crashed, and the very next poll showed it. Same mechanism, sharper timing: <b>the launch command returning is not the service being healthy.</b></div>
+      <div class="mech">exit code mistaken for health</div>
+      <div class="prev">the claim waits for the health check, not the exit code</div>
+      <div class="stat-line">same cluster as catch 01</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">CATCH 03</span>The all-clear that outran its own check</h3>
+      <div class="story">The agent shipped a signed-off "verified" statement <b>while the re-check it referred to was still running</b>. The report raced its own evidence and won. The sentence "I verified X" landed before the verification of X finished.</div>
+      <div class="mech">claim emitted before its evidence resolved</div>
+      <div class="prev">same hook; the claim is blocked until the check completes</div>
+      <div class="stat-line">same cluster as catch 01, again the agent's fault 10 of 10</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">CATCH 04</span>The push blamed on token scopes</h3>
+      <div class="story">A push failed, and the agent confidently diagnosed a credentials problem. The actual cause: <b>it was pushing to a GitHub org that did not exist.</b> It tested one guess, watched it fail, and asserted the nearest familiar explanation instead of listing the others.</div>
+      <div class="mech">one-probe diagnosis of a many-candidate problem</div>
+      <div class="prev">list the candidate causes before asserting any of them</div>
+      <div class="stat-line">made-up-fact cases: the agent's fault 4 times out of 4, and only 4 cases</div>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">CATCH 05 · the reversal</span>The swarm that was not broken</h3>
+      <div class="story">The subagent-failure detector, once fixed, was <b>right on every one of the 12 cases we checked</b>. Then it found something nobody was looking for: <b>only 1 of its 12 valid cases was an agent bug.</b> The rest were the human mass-cancelling swarms of helper agents, because spawning them kept slamming into usage limits. <b>All 26 subagent-failure incidents ended their session on the spot.</b> The detector worked. The failure was in the orchestration, not the agents.</div>
+      <div class="mech">quota exhaustion, not agent error; the human pulls the plug</div>
+      <div class="prev">quota-aware spawning, so orchestrators stop launching agents the session cannot afford</div>
+      <div class="stat-line">26/26 subagent-failure incidents ended their session</div>
+    </div>
+  </div>
+
+  <h2 class="section-h" style="font-size:1.7rem">What we changed because of them</h2>
+  <p>One rule governs all three: nothing gets pasted into every session, because standing instructions get ignored by session forty. Each fires only when its pattern is live.</p>
+  <ul class="plain">
+    <li><b>A completion-claim guard.</b> The agent cannot say "merged", "running" or "verified" until a command that checks it has actually run. Aimed at the <b>10-for-10 fault cluster</b> above.</li>
+    <li><b>An error-streak nudge.</b> One line injected after four failures in a row, aimed at the <b>491 error-loop incidents</b> where grinding continued well past the point a person would have stepped back.</li>
+    <li><b>Quota-aware spawning</b>, so an orchestrator stops launching helper agents the session cannot afford. Aimed at the <b>26 subagent failures</b>, every one of which ended its session.</li>
+  </ul>
+  <p>Each ships with the number that has to move. The baseline was snapshotted before anything was installed, so "it helped" gets measured by re-running this pipeline afterwards rather than asserted. Nothing auto-installs.</p>
+</section>
+
+<!-- ============ 05 RUN IT YOURSELF ============ -->
+<section class="panel" id="panel-run" role="tabpanel" aria-labelledby="tab-run" hidden>
+  <h2 class="section-h">Run it on <em>your own logs</em></h2>
+  <p class="sec-kicker">Four commands, nothing to install, and your transcripts never leave your machine.</p>
+  <p>Everything above was computed by six plain Python files in the open-science repo under <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">docs/experiments/failure-atlas/pipeline/</code>. Standard library only, so <b>if you have Python 3 you have the pipeline</b>. Clone the repo, or read each file first on GitHub:</p>
+
+  <div class="filelist" aria-label="Pipeline source files on GitHub">
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/extract.py">extract.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/detectors.py">detectors.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/incidents.py">incidents.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/analyze.py">analyze.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/context_window.py">context_window.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/test_pipeline.py">test_pipeline.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/README.md">README.md</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/tree/main/docs/experiments/failure-atlas/pipeline">pipeline/ on GitHub</a>
+  </div>
+
+  <p>Four commands, from a working directory of your choice:</p>
+  <div class="codewrap">
+    <button class="copybtn" data-copy="cmds">copy</button>
+<pre id="cmds">python3 pipeline/extract.py   --roots ~/.claude --db data/atlas.db
+python3 pipeline/detectors.py --db data/atlas.db
+python3 pipeline/incidents.py --db data/atlas.db --out data/incidents.jsonl
+python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
+  </div>
+
+  <div class="pipe" role="img" aria-label="Pipeline diagram: raw logs enter Extract, then Detect, Cluster, and Adjudicate, all on the local machine. Only the Analyze stage's aggregate output, analysis.json, crosses the dashed line and leaves the machine.">
+    <div class="stage"><div class="sname">extract</div><div class="sdesc">logs → SQLite, text truncated</div></div>
+    <div class="arrow">→</div>
+    <div class="stage"><div class="sname">detect</div><div class="sdesc">13 over-sensitive tripwires</div></div>
+    <div class="arrow">→</div>
+    <div class="stage"><div class="sname">cluster</div><div class="sdesc">signals → incidents</div></div>
+    <div class="arrow">→</div>
+    <div class="stage"><div class="sname">judge</div><div class="sdesc">LLM judge, 185 labels</div></div>
+    <div class="arrow">→</div>
+    <div class="wall"><span>text stays inside</span></div>
+    <div class="arrow">→</div>
+    <div class="stage" style="border-color:var(--candle)"><div class="sname" style="color:var(--candle)">analyze</div><div class="sdesc">aggregates only: analysis.json</div></div>
+  </div>
+  <p class="figcap">The privacy model in one picture. <code style="font-family:var(--mono);font-size:.9em;color:var(--green)">atlas.db</code> and <code style="font-family:var(--mono);font-size:.9em;color:var(--green)">incidents.jsonl</code> hold your text and never cross the dashed line. <code style="font-family:var(--mono);font-size:.9em;color:var(--green)">analysis.json</code> is counts and rates with no transcript content in it, and it is the only file you would ever hand to anyone.</p>
+
+  <p>Or hand the job to your agent. Copy this and paste it at your own bot:</p>
+  <div class="codewrap prompt">
+    <button class="copybtn" data-copy="agent-prompt">copy prompt</button>
+<pre id="agent-prompt">Fetch the pipeline files from the NimbleCoOrg/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,165 tool-error incidents at 16.4/10k; giving up concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
+  </div>
+
+  <div class="pitch">
+    <p>The coding half of this is <b>n=1, one operator and one workflow over seven months</b>. The assistant-fleet half is not: it is many different people across several agent setups and four chat platforms over the same span. Even so, it is one org's record. Medicine solved this exact problem without pooling patient records: hospitals share <em>results computed by a common method</em> over data that never moves. <b>analysis.json is that layer for agent logs.</b> If a handful of people run these four commands and share only that file, "how do agents fail?" stops being one org's atlas and starts being a map. Share the results. Keep the data.</p>
+  </div>
+</section>
+
+<!-- ============ 06 WHAT TO BELIEVE ============ -->
+<section class="panel" id="panel-trust" role="tabpanel" aria-labelledby="tab-trust" hidden>
+  <h2 class="section-h">How much of this <em>to believe</em></h2>
+  <p class="sec-kicker">We graded our own instruments in public. Here is which numbers not to lean on.</p>
+
+  <p>Before looking at any counts, <b>we wrote down 5 guesses about how agents fail. 3 were wrong. 1 was a coin flip. 1 shrank to almost nothing.</b> None of them survived the way we bet it would. But <b>2 of the 5 left a small real effect behind</b> once the flawed part was stripped out, so "none survived intact" is true and "we found nothing" is not. Those five and their post-mortems are written out in full in the companion document.</p>
+
+  <p>The bigger piece of self-grading is the instruments. Every detector here was built deliberately over-sensitive, then a language model read the full transcript around a sample of what each one caught and ruled on whether it was a real failure or a false alarm.</p>
+
+  <div class="chart-block">
+    <div class="chart-title">How often each detector was right when it fired</div>
+    <div class="chart-units">0→1, with the range the small sample allows · n = 12 judged cases per detector · R1/R2 = which round of judging · hover or focus a row for how often the agent was at fault</div>
+    <div class="chart-scroll"><div id="chart-precision"></div></div>
+    <div class="legend" id="legend-precision" aria-hidden="true"></div>
+    <p class="figcap">The amber row is our own dishonesty detector, still right about <b>1 in 4</b> times it fired after a full round of fixes. Read the low rows as a warning label on every chart above that leans on them, and remember that <b>12 judged cases</b> keeps every range wide.</p>
+  </div>
+
+  <p>There is a pattern in that chart, and it is the most useful thing on this page. <b>Across 13 detectors</b>, the ones that are almost never wrong are watching for cheap mechanical breakage: a command failed, a person hit escape, the API returned an error. The ones aimed at failures that actually cost something, an agent asserting what it never checked, a person losing patience, are wrong most of the time. The signal that is easy to count is not the signal that matters.</p>
+  <p>That rests on <b>12 judged cases each</b>, <b>156 judgements in total</b>, all by a single language model. Treat the direction as the finding and the ordering between neighbouring rows as noise.</p>
+
+  <p>Two limits sit under everything on this page. Every judgement is single-pass, one model, no second opinion, and that judge shares a model family with the agents it graded, a bias toward going easy on its own kind whose size nobody has measured. And while we were measuring failures, our own judging runs kept getting killed by the same API-overload failure that ranks among the modes we catalogued <b>(infra_api_fault, n=11)</b>. The instrument exhibited the phenomenon mid-measurement.</p>
+
+  <div class="deeper">
+    <p>Everything above is the short version. The detectors and what each one looks for, how the judging worked, the full cross-walk against the field's list, every prediction we registered and what happened to it, and everything we know is wrong with this study, are written out in the companion document: <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">Every method and every caveat, in full</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="colophon-end">
+      Built by agents studying agents, operator recused from judging · <b>2,781</b> sessions · <b>709,843</b> events · <b>185</b> failures judged in full · <b>13</b> detectors · a cyborg.garden open-science experiment. The dataset stays private; the pipeline and every aggregate here are published, so the method runs on anyone's logs. Full method and every caveat: <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">the companion document</a>.
+    </div>
+  </div>
+</footer>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+"use strict";
+"use strict";
+/* ============ DATA: embedded from data/dashboard-data.json ============ */
+const DATA = {
+ "corpus": {
+  "claude_code": {
+   "sessions": 631,
+   "session_files": 4308,
+   "subagent_files": 3677,
+   "events": 599362
+  },
+  "assistant_fleet": {
+   "sessions": 2150,
+   "session_files": 2734,
+   "subagent_files": 584,
+   "events": 110481
+  },
+  "span": [
+   "2026-01",
+   "2026-08"
+  ],
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across 4 chat platforms: genuine multi-human, multi-agent traffic, not one operator."
+ },
+ "incidents_by_mode": {
+  "abandonment": {
+   "count": 139,
+   "avg_severity": 0.967,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.96
+  },
+  "api_error": {
+   "count": 541,
+   "avg_severity": 0.36,
+   "share_sidechain": 0.547,
+   "per_10k_events": 7.62
+  },
+  "error_loop": {
+   "count": 491,
+   "avg_severity": 0.937,
+   "share_sidechain": 0.497,
+   "per_10k_events": 6.92
+  },
+  "frustration_lex": {
+   "count": 902,
+   "avg_severity": 0.456,
+   "share_sidechain": 0.0,
+   "per_10k_events": 12.71
+  },
+  "honesty_challenge": {
+   "count": 135,
+   "avg_severity": 0.678,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.9
+  },
+  "interagent_challenge": {
+   "count": 4,
+   "avg_severity": 0.595,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.06
+  },
+  "model_escalation": {
+   "count": 17,
+   "avg_severity": 0.672,
+   "share_sidechain": 0.588,
+   "per_10k_events": 0.24
+  },
+  "permission_friction": {
+   "count": 276,
+   "avg_severity": 0.713,
+   "share_sidechain": 0.562,
+   "per_10k_events": 3.89
+  },
+  "self_correction": {
+   "count": 530,
+   "avg_severity": 0.457,
+   "share_sidechain": 0.079,
+   "per_10k_events": 7.47
+  },
+  "stuck_repetition": {
+   "count": 180,
+   "avg_severity": 0.767,
+   "share_sidechain": 0.611,
+   "per_10k_events": 2.54
+  },
+  "subagent_failure": {
+   "count": 26,
+   "avg_severity": 0.917,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.37
+  },
+  "tool_error": {
+   "count": 1165,
+   "avg_severity": 0.361,
+   "share_sidechain": 0.436,
+   "per_10k_events": 16.41
+  },
+  "user_interrupt": {
+   "count": 256,
+   "avg_severity": 0.682,
+   "share_sidechain": 0.0,
+   "per_10k_events": 3.61
+  }
+ },
+ "precision": {
+  "abandonment": {
+   "precision": 0.333,
+   "ci": [
+    0.138,
+    0.609
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.25
+  },
+  "api_error": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.0
+  },
+  "error_loop": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "frustration_lex": {
+   "precision": 0.583,
+   "ci": [
+    0.32,
+    0.807
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.857
+  },
+  "honesty_challenge": {
+   "precision": 0.25,
+   "ci": [
+    0.089,
+    0.532
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "interagent_challenge": {
+   "precision": 0.083,
+   "ci": [
+    0.015,
+    0.354
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "model_escalation": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "permission_friction": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.2
+  },
+  "stuck_repetition": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.833
+  },
+  "subagent_failure": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.083
+  },
+  "tool_error": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.6
+  },
+  "user_interrupt": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.417
+  },
+  "self_correction": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  }
+ },
+ "outcomes": {
+  "permission_friction": {
+   "recovered_clean": 227,
+   "session_end": 18,
+   "further_failures": 27,
+   "self_corrected": 4
+  },
+  "api_error": {
+   "session_end": 284,
+   "further_failures": 66,
+   "recovered_clean": 185,
+   "self_corrected": 6
+  },
+  "tool_error": {
+   "recovered_clean": 881,
+   "session_end": 115,
+   "self_corrected": 30,
+   "further_failures": 138,
+   "escalated": 1
+  },
+  "error_loop": {
+   "further_failures": 72,
+   "recovered_clean": 333,
+   "session_end": 74,
+   "self_corrected": 12
+  },
+  "frustration_lex": {
+   "further_failures": 200,
+   "self_corrected": 38,
+   "recovered_clean": 617,
+   "session_end": 46,
+   "escalated": 1
+  },
+  "self_correction": {
+   "recovered_clean": 364,
+   "session_end": 38,
+   "further_failures": 88,
+   "self_corrected": 40
+  },
+  "user_interrupt": {
+   "session_end": 18,
+   "further_failures": 29,
+   "recovered_clean": 196,
+   "self_corrected": 13
+  },
+  "honesty_challenge": {
+   "recovered_clean": 99,
+   "self_corrected": 9,
+   "further_failures": 24,
+   "session_end": 3
+  },
+  "subagent_failure": {
+   "session_end": 26
+  },
+  "stuck_repetition": {
+   "recovered_clean": 129,
+   "session_end": 30,
+   "further_failures": 21
+  },
+  "abandonment": {
+   "session_end": 108,
+   "recovered_clean": 31
+  },
+  "model_escalation": {
+   "recovered_clean": 12,
+   "further_failures": 2,
+   "session_end": 3
+  },
+  "interagent_challenge": {
+   "recovered_clean": 3,
+   "session_end": 1
+  }
+ },
+ "position_deciles": {
+  "permission_friction": [
+   38,
+   50,
+   28,
+   17,
+   22,
+   28,
+   20,
+   19,
+   20,
+   30
+  ],
+  "api_error": [
+   30,
+   16,
+   20,
+   20,
+   22,
+   29,
+   30,
+   43,
+   36,
+   106
+  ],
+  "tool_error": [
+   113,
+   104,
+   115,
+   113,
+   119,
+   131,
+   130,
+   120,
+   105,
+   89
+  ],
+  "error_loop": [
+   79,
+   75,
+   55,
+   59,
+   34,
+   51,
+   41,
+   41,
+   22,
+   23
+  ],
+  "frustration_lex": [
+   141,
+   82,
+   74,
+   59,
+   83,
+   70,
+   110,
+   91,
+   98,
+   74
+  ],
+  "self_correction": [
+   35,
+   36,
+   41,
+   45,
+   51,
+   49,
+   72,
+   61,
+   45,
+   77
+  ],
+  "user_interrupt": [
+   37,
+   20,
+   20,
+   24,
+   16,
+   17,
+   17,
+   28,
+   40,
+   33
+  ],
+  "honesty_challenge": [
+   20,
+   13,
+   10,
+   11,
+   19,
+   12,
+   8,
+   6,
+   18,
+   15
+  ],
+  "subagent_failure": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   4
+  ],
+  "stuck_repetition": [
+   5,
+   9,
+   9,
+   17,
+   23,
+   22,
+   12,
+   25,
+   27,
+   31
+  ],
+  "abandonment": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   4,
+   16,
+   105
+  ],
+  "model_escalation": [
+   1,
+   3,
+   1,
+   1,
+   4,
+   3,
+   0,
+   1,
+   0,
+   3
+  ],
+  "interagent_challenge": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   0
+  ]
+ },
+ "cooccurrence_top": {
+  "bare_done_claim+tool_error": 627,
+  "permission_friction+tool_error": 532,
+  "error_loop+tool_error": 526,
+  "self_correction+tool_error": 268,
+  "bare_done_claim+self_correction": 238,
+  "frustration_lex+tool_error": 210,
+  "tool_error+user_interrupt": 188,
+  "bare_done_claim+frustration_lex": 187,
+  "frustration_lex+self_correction": 185,
+  "permission_friction+user_interrupt": 132,
+  "error_loop+permission_friction": 107,
+  "bare_done_claim+error_loop": 99,
+  "self_correction+user_interrupt": 89,
+  "api_error+tool_error": 80,
+  "bare_done_claim+user_interrupt": 73,
+  "bare_done_claim+permission_friction": 70,
+  "frustration_lex+user_interrupt": 68,
+  "stuck_repetition+tool_error": 61,
+  "permission_friction+self_correction": 53,
+  "frustration_lex+permission_friction": 45,
+  "interagent_challenge+tool_error": 43,
+  "frustration_lex+honesty_challenge": 41,
+  "error_loop+frustration_lex": 35,
+  "subagent_failure+tool_error": 33,
+  "error_loop+self_correction": 32
+ },
+ "by_model_tier": {
+  "0": {
+   "events": 35019,
+   "incidents": 471,
+   "per_10k_events": 134.5
+  },
+  "1": {
+   "events": 45085,
+   "incidents": 127,
+   "per_10k_events": 28.17
+  },
+  "2": {
+   "events": 116838,
+   "incidents": 788,
+   "per_10k_events": 67.44
+  },
+  "3": {
+   "events": 369410,
+   "incidents": 2400,
+   "per_10k_events": 64.97
+  },
+  "4": {
+   "events": 143491,
+   "incidents": 876,
+   "per_10k_events": 61.05
+  }
+ },
+ "timeline": {
+  "2026-01": {
+   "claude_code": {
+    "events": 704,
+    "incidents": 2,
+    "per_10k": 28.4
+   }
+  },
+  "2026-02": {
+   "claude_code": {
+    "events": 4293,
+    "incidents": 25,
+    "per_10k": 58.2
+   }
+  },
+  "2026-03": {
+   "claude_code": {
+    "events": 72044,
+    "incidents": 488,
+    "per_10k": 67.7
+   }
+  },
+  "2026-04": {
+   "assistant_fleet": {
+    "events": 533,
+    "incidents": 18,
+    "per_10k": 337.7
+   },
+   "claude_code": {
+    "events": 51011,
+    "incidents": 392,
+    "per_10k": 76.8
+   }
+  },
+  "2026-05": {
+   "assistant_fleet": {
+    "events": 11579,
+    "incidents": 126,
+    "per_10k": 108.8
+   },
+   "claude_code": {
+    "events": 102976,
+    "incidents": 889,
+    "per_10k": 86.3
+   }
+  },
+  "2026-06": {
+   "assistant_fleet": {
+    "events": 25757,
+    "incidents": 178,
+    "per_10k": 69.1
+   },
+   "claude_code": {
+    "events": 90274,
+    "incidents": 552,
+    "per_10k": 61.1
+   }
+  },
+  "2026-07": {
+   "assistant_fleet": {
+    "events": 49943,
+    "incidents": 442,
+    "per_10k": 88.5
+   },
+   "claude_code": {
+    "events": 150829,
+    "incidents": 970,
+    "per_10k": 64.3
+   }
+  },
+  "2026-08": {
+   "assistant_fleet": {
+    "events": 9521,
+    "incidents": 134,
+    "per_10k": 140.7
+   },
+   "claude_code": {
+    "events": 65003,
+    "incidents": 428,
+    "per_10k": 65.8
+   }
+  }
+ },
+ "confirmed_modes": [
+  {
+   "confirmed_mode": "guardrail_friction",
+   "n": 21,
+   "sev": 2.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "infra_api_fault",
+   "n": 11,
+   "sev": 2.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "premature_completion_claim",
+   "n": 10,
+   "sev": 2.9,
+   "fault": 10
+  },
+  {
+   "confirmed_mode": "tool_misuse",
+   "n": 6,
+   "sev": 2.33,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "other",
+   "n": 6,
+   "sev": 2.0,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "loop_no_progress",
+   "n": 6,
+   "sev": 2.5,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "wrong_edit",
+   "n": 5,
+   "sev": 3.2,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "instruction_ignored",
+   "n": 5,
+   "sev": 2.4,
+   "fault": 5
+  },
+  {
+   "confirmed_mode": "user_changed_mind",
+   "n": 4,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "hallucinated_fact",
+   "n": 4,
+   "sev": 3.0,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "context_loss",
+   "n": 3,
+   "sev": 1.67,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "benign_false_positive",
+   "n": 3,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "env_breakage",
+   "n": 2,
+   "sev": 2.5,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "subagent_noncompliance",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "spec_misunderstanding",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "over_scope",
+   "n": 1,
+   "sev": 2.0,
+   "fault": 1
+  }
+ ],
+ "avoidability": {
+  "not_avoidable": 29,
+  "agent_should_have_verified": 26,
+  "harness_config": 12,
+  "infra_fix": 7,
+  "bigger_model": 6,
+  "agent_should_have_asked": 5,
+  "better_prompt": 4
+ },
+ "error_categories": {
+  "exit_nonzero": 2503,
+  "other": 2105,
+  "not_found": 1530,
+  "edit_mismatch": 452,
+  "timeout": 400,
+  "hook_block": 376,
+  "network": 238,
+  "user_rejected": 205,
+  "permission_denied": 184,
+  "interrupt": 6
+ },
+ "ecosystem_mode_mix": {
+  "assistant_fleet": {
+   "abandonment": 98,
+   "error_loop": 38,
+   "frustration_lex": 334,
+   "honesty_challenge": 43,
+   "interagent_challenge": 1,
+   "self_correction": 171,
+   "stuck_repetition": 153,
+   "tool_error": 60
+  },
+  "claude_code": {
+   "abandonment": 41,
+   "api_error": 541,
+   "error_loop": 453,
+   "frustration_lex": 568,
+   "honesty_challenge": 92,
+   "interagent_challenge": 3,
+   "model_escalation": 17,
+   "permission_friction": 276,
+   "self_correction": 359,
+   "stuck_repetition": 27,
+   "subagent_failure": 26,
+   "tool_error": 1105,
+   "user_interrupt": 256
+  }
+ },
+ "ecosystem_detector_split": {
+  "events": {
+   "claude_code": 599353,
+   "assistant_fleet": 97333
+  },
+  "detectors": [
+   {
+    "detector": "abandonment",
+    "claude_code_signals": 67,
+    "assistant_fleet_signals": 119,
+    "claude_code_per_10k_events": 1.12,
+    "assistant_fleet_per_10k_events": 12.23
+   },
+   {
+    "detector": "api_error",
+    "claude_code_signals": 654,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 10.91,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "error_loop",
+    "claude_code_signals": 688,
+    "assistant_fleet_signals": 68,
+    "claude_code_per_10k_events": 11.48,
+    "assistant_fleet_per_10k_events": 6.99
+   },
+   {
+    "detector": "frustration_lex",
+    "claude_code_signals": 647,
+    "assistant_fleet_signals": 488,
+    "claude_code_per_10k_events": 10.79,
+    "assistant_fleet_per_10k_events": 50.14
+   },
+   {
+    "detector": "honesty_challenge",
+    "claude_code_signals": 96,
+    "assistant_fleet_signals": 59,
+    "claude_code_per_10k_events": 1.6,
+    "assistant_fleet_per_10k_events": 6.06
+   },
+   {
+    "detector": "interagent_challenge",
+    "claude_code_signals": 245,
+    "assistant_fleet_signals": 30,
+    "claude_code_per_10k_events": 4.09,
+    "assistant_fleet_per_10k_events": 3.08
+   },
+   {
+    "detector": "model_escalation",
+    "claude_code_signals": 19,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 0.32,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "permission_friction",
+    "claude_code_signals": 758,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 12.65,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "self_correction",
+    "claude_code_signals": 864,
+    "assistant_fleet_signals": 331,
+    "claude_code_per_10k_events": 14.42,
+    "assistant_fleet_per_10k_events": 34.01
+   },
+   {
+    "detector": "stuck_repetition",
+    "claude_code_signals": 43,
+    "assistant_fleet_signals": 266,
+    "claude_code_per_10k_events": 0.72,
+    "assistant_fleet_per_10k_events": 27.33
+   },
+   {
+    "detector": "subagent_failure",
+    "claude_code_signals": 33,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 0.55,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "tool_error",
+    "claude_code_signals": 7478,
+    "assistant_fleet_signals": 521,
+    "claude_code_per_10k_events": 124.77,
+    "assistant_fleet_per_10k_events": 53.53
+   },
+   {
+    "detector": "user_interrupt",
+    "claude_code_signals": 401,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 6.69,
+    "assistant_fleet_per_10k_events": 0.0
+   }
+  ],
+  "silent_on_assistant_fleet": [
+   "api_error",
+   "model_escalation",
+   "permission_friction",
+   "subagent_failure",
+   "user_interrupt"
+  ],
+  "n_silent_on_assistant_fleet": 5,
+  "n_detectors_compared": 13,
+  "silent_detector_coding_signals": 1865,
+  "basis": "Detector firings (rows in signals), not incidents. Numerator and denominator come from the same atlas.db join so the rates are internally consistent.",
+  "reading": "5 of the 13 adjudicated detectors fire 1865 times across the coding-agent logs and exactly zero times across the assistant-fleet logs. The silence is structural, not a rate difference: these detectors key on events a chat transcript does not contain, so pointing this toolkit at chat logs loses those failure kinds without reporting a gap. The other detectors' rate differences between the two ecosystems are NOT evidence of anything here; the ecosystems differ in task, operator, and transcript format at the same time.",
+  "denominator_reconciliation": {
+   "atlas_db_events": 696686,
+   "analysis_corpus_events": 709843,
+   "gap": 13157,
+   "note": "data/analysis counts 13,157 more events than atlas.db stores (709,843 against 696,686), almost all of it on the assistant-fleet side. The published corpus totals use the data/analysis figure; the rates in this block use the atlas.db figure, because that is where the detector firings come from. The cause of the disagreement has not been established and is not claimed here. Any rate that mixes the two sources is wrong."
+  }
+ },
+ "experiment_objectivity_axis": {
+  "run_01_keyword_cohorts": {
+   "ratio_of_ratios": 4.96,
+   "sensitivity_variants": {
+    "headline": 4.96,
+    "narrow_cohort": 4.376,
+    "precision_weighted": 4.733,
+    "narrow_precision_weighted": 4.183,
+    "drop_largest_project": 4.583,
+    "sidechains_included": 6.15
+   },
+   "sensitivity_range": [
+    4.183,
+    6.15
+   ],
+   "verdict": "supported-but-superseded",
+   "flaw": "cohorts defined by hand-picked project-name keywords; the split measured project type, not objectivity"
+  },
+  "run_02_behavioral_cohorts": {
+   "ratio_of_ratios": 1.101,
+   "z_mechanical_share": 0.84,
+   "verdict": "killed",
+   "cohorts": {
+    "objective_sessions": 194,
+    "subjective_sessions": 88,
+    "excluded_sessions": 340,
+    "total": 622
+   },
+   "rule": "objective = session ran at least one test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
+  },
+  "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
+  "takeaway": "The headline 5.0x effect did not survive a clean cohort definition. The study's own tightening killed its own finding. That is the method working on itself.",
+  "cut_claims": [
+   "ratio_of_ratios_broad_grouping (was 1.23): CUT. The value appears only in the run's write-up prose. Neither the pre-registered spec nor the run script defines a 'broad grouping', and the script computes and logs exactly one grouping, so the figure cannot be reproduced or checked from any record. Removed rather than re-typed."
+  ]
+ },
+ "escalation_bridges": {
+  "candidates": 596,
+  "strong": 86,
+  "strong_score_threshold": 0.5
+ },
+ "what_didnt_hold": [
+  {
+   "claim": "Objective work fails mechanically 5.0x more than subjective work",
+   "status": "killed",
+   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; the keyword run measured project type"
+  },
+  {
+   "claim": "Agents self-correct 4.9x more with a human in the loop",
+   "status": "killed",
+   "headline_ratio": 4.93,
+   "how": "79% of human-present self-corrections fire on one politeness token that requires a preceding interlocutor by construction, and the autonomous arm produces the same token to its orchestrator. Drop that token and an effect does survive \u2014 a turn-adjacency gap of 3.0% vs 1.4%, z=3.0, which is significant. It is killed on construct validity, not on significance: it appears in BOTH arms and measures interlocutor adjacency rather than a human-vs-delegation disposition"
+  },
+  {
+   "claim": "The chat platform shapes the failure mode",
+   "status": "killed",
+   "how": "the same bot on discord and signal is indistinguishable; within one platform the bot-to-bot spread is wider than the whole cross-platform range. It is bot deployment, not platform"
+  },
+  {
+   "claim": "Group chats fail differently than one-to-one",
+   "status": "null",
+   "how": "no significant difference (z = 0.674)"
+  },
+  {
+   "claim": "Orchestrator subagents fail more mechanically than human sessions",
+   "status": "wounded",
+   "residual_ratio": 1.85,
+   "residual_rates_pct": [
+    2.4,
+    1.3
+   ],
+   "residual_z": 2.28,
+   "residual_p": 0.02,
+   "how": "mostly a tautology \u2014 the relational detectors that cannot fire without a human message are 78% of top-level relational incidents; the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (2.4% vs 1.3%, z=2.28, p about 0.02)"
+  }
+ ],
+ "what_didnt_hold_cut_claims": [
+  "'self-initiated corrections show no significant gap (z about 1.1)' \u2014 removed. No z of 1.1 exists anywhere in the lab record. The surviving self-correction effect was significant and was killed on construct validity; the old string both invented the statistic and inverted the reason the finding died.",
+  "'4 of 6 relational detectors cannot fire without a human' \u2014 removed. The source record says 'four relational detectors' and gives their share of top-level relational incidents; it states no denominator of six. The share is published instead of the invented fraction."
+ ],
+ "mast_crosswalk": {
+  "superseded_round1_point_estimates": {
+   "sampled": 75,
+   "mapped": 16,
+   "mapped_share": 0.213,
+   "extension_share": 0.533,
+   "unclear_share": 0.253,
+   "weighted_mast_share": 0.187,
+   "weighted_infrastructure_share": 0.483
+  },
+  "mast_source_traces": 1600,
+  "mast_modes": 14,
+  "mast_categories": 3,
+  "mapped_clean": "first coding round only, superseded: 16 of 75 stratified incidents fit a real MAST mode. The publishable coverage claim is the range in mast_coverage_settled, not this point estimate",
+  "unmapped": "first coding round only, superseded: the rest split between an extension family and unclear (mostly detector false positives on successful work). The infrastructure family (quota kills, permission loops, environment faults) is the largest under every settlement rule, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
+  "structural": "MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives. Why it is absent is an open question: the earlier explanation (orchestrator fan-out over parallel stateless workers rather than conversational agent chains) was cut after the external validation round found no coding evidence for that architecture in this corpus or in either foreign corpus it checked",
+  "self_critical": "the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
+  "caveat": "about 6 incidents per mode, and our detectors are the sampling frame. Inter-rater reliability was run in a later round and lives in mast_coverage_settled",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces",
+  "superseded_by": "mast_coverage_settled",
+  "status": "superseded first coding round; kept as the correction trail"
+ },
+ "mast_coverage_settled": {
+  "raw_range_pct": [
+   21.1,
+   25.4
+  ],
+  "weighted_range_pct": [
+   16.5,
+   22.4
+  ],
+  "raw_range_display": [
+   "21%",
+   "26%"
+  ],
+  "weighted_range_display": [
+   "16%",
+   "23%"
+  ],
+  "uncovered_range_display": [
+   "74%",
+   "79%"
+  ],
+  "settlement_readings": {
+   "round1_published": {
+    "raw_pct": 21.3,
+    "weighted_pct": 18.7
+   },
+   "round1_blind_consensus": {
+    "raw_pct": 21.9,
+    "weighted_pct": 18.5
+   },
+   "enlargement_combined": {
+    "raw_pct": 21.1,
+    "weighted_pct": 16.5
+   },
+   "settled_combined": {
+    "raw_pct": 25.4,
+    "weighted_pct": 22.4
+   }
+  },
+  "combined_n": 142,
+  "kappa_bucket_irr": 0.632,
+  "kappa_bucket_enlargement": 0.516,
+  "kappa_full_label_irr": 0.536,
+  "irr_n": 73,
+  "enlargement_n": 69,
+  "recode_agreement": 0.423,
+  "rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "invariant": "Every structural claim holds across the whole range: the infrastructure family is the largest under every settlement, and the taxonomy's largest category is our smallest.",
+  "note": "Reported as a range with kappas attached. The decimals are coder-dependent and are no longer quoted as point estimates. `mast_crosswalk` above is the superseded first-round reading, kept so the correction stays visible next to the number it replaced. Both endpoints are the min and max of settlement_readings; neither is typed.",
+  "extension_families": {
+   "E1": {
+    "label": "human-in-the-loop interaction failure",
+    "raw_range_pct": [
+     15.5,
+     16.4
+    ],
+    "weighted_range_pct": [
+     6.4,
+     8.4
+    ],
+    "raw_range_display": [
+     "15%",
+     "17%"
+    ],
+    "weighted_range_display": [
+     "6%",
+     "9%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 16.0,
+      "weighted_pct": 6.4
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 16.4,
+      "weighted_pct": 8.4
+     },
+     "enlargement_combined": {
+      "raw_pct": 16.2,
+      "weighted_pct": 7.3
+     },
+     "settled_combined": {
+      "raw_pct": 15.5,
+      "weighted_pct": 7.1
+     }
+    }
+   },
+   "E2": {
+    "label": "single-session infrastructure failure",
+    "raw_range_pct": [
+     31.7,
+     37.3
+    ],
+    "weighted_range_pct": [
+     40.8,
+     48.3
+    ],
+    "raw_range_display": [
+     "31%",
+     "38%"
+    ],
+    "weighted_range_display": [
+     "40%",
+     "49%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 37.3,
+      "weighted_pct": 48.3
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 32.9,
+      "weighted_pct": 47.9
+     },
+     "enlargement_combined": {
+      "raw_pct": 34.5,
+      "weighted_pct": 47.2
+     },
+     "settled_combined": {
+      "raw_pct": 31.7,
+      "weighted_pct": 40.8
+     }
+    }
+   },
+   "E3": {
+    "label": "fan-out coordination failure",
+    "raw_range_pct": [
+     0.0,
+     0.0
+    ],
+    "weighted_range_pct": [
+     0.0,
+     0.0
+    ],
+    "raw_range_display": [
+     "0%",
+     "0%"
+    ],
+    "weighted_range_display": [
+     "0%",
+     "0%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "enlargement_combined": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "settled_combined": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     }
+    }
+   }
+  },
+  "largest_extension_family": "E2",
+  "e2_raw_range_pct": [
+   31.7,
+   37.3
+  ],
+  "e2_weighted_range_pct": [
+   40.8,
+   48.3
+  ],
+  "e2_raw_range_display": [
+   "31%",
+   "38%"
+  ],
+  "e2_weighted_range_display": [
+   "40%",
+   "49%"
+  ],
+  "extension_families_note": "Ranges are min and max over the same 4 settlement readings the coverage range above uses, including the superseded first round. Publishing the infrastructure share off a narrower settlement set would print a tighter range than the evidence supports. Render the `*_display` strings; do not re-round the decimals. The fan-out family drew nothing at all in this corpus, which is a real result and not a missing measurement."
+ },
+ "mast_chart": {
+  "n": 142,
+  "fits_mast": 36,
+  "needs_extension": 67,
+  "unclear": 39,
+  "basis": "settled labels pooled across both coding rounds"
+ },
+ "reciprocal_blindness": {
+  "n_examined": 149,
+  "n_coders": 1,
+  "by_family": {
+   "E1": 0,
+   "E2": 1,
+   "E3": 0,
+   "E4": 4,
+   "E5": 0,
+   "E6": 0
+  },
+  "any_extension_family_k": 5,
+  "any_extension_family_pct": 3.36,
+  "any_extension_family_wilson95_pct": [
+   1.44,
+   7.61
+  ],
+  "e1_e2_k": 1,
+  "e1_e2_pct": 0.67,
+  "e1_e2_wilson95_pct": [
+   0.12,
+   3.7
+  ],
+  "reading": "Run in reverse, our extension families explain 5 of the 149 benchmark traces we coded (3.36%), and the two families that carry our own corpus explain 1 (0.67%). The blindness runs both ways: their catalogue has no cell for most of what breaks here, and our extensions barely touch what breaks there.",
+  "limits": "One coder labelled all 149 traces, so there is no agreement measurement on this arm at all. The traces are a stratified sample of one public benchmark collection, not a census of anything."
+ },
+ "phantom_agent": {
+  "framework": "AG2",
+  "k": 4,
+  "n_framework_traces": 72,
+  "pct": 5.6,
+  "wilson95_pct": [
+   2.2,
+   13.4
+  ],
+  "mechanism": "The group-chat manager stamps the sandbox's execution observation with an agent's name. That agent never speaks in the trace. The verifying agent then reports it as having submitted an independent solution and closes the run on a submission that does not exist.",
+  "reading": "4 of the 72 AG2 traces we coded end this way (5.6%). The field's own benchmark corpus contains a failure its own catalogue never recorded, which is the coverage argument made against the catalogue's home ground rather than ours.",
+  "limits": "4 cases, one framework, one coder. The mechanical check (the credited agent's only turn is the execution observation, and the verifier credits it) passes on every one, so the mechanism is not in doubt; the rate is."
+ },
+ "guardrail_generalisation": {
+  "detector": "permission_friction",
+  "by_corpus": {
+   "swe_agent": 64,
+   "terminalbench": 73,
+   "tracebench": 27,
+   "cc_bench": 7
+  },
+  "total_signals": 171,
+  "n_corpora": 4,
+  "n_corpora_firing": 4,
+  "prediction": "registered in advance to return zero on all of them, because none of these harnesses has a permission, hook, or consent enforcement layer for the detector to see",
+  "reading": "The guardrail detector fired 171 times across all 4 outside corpora, having been written down in advance as certain to fire zero times, and it fired in 4 of 4. What it is matching is ordinary permission-denied text in tool output, not this harness's consent layer. A detector can be portable and wrong at the same time.",
+  "limits": "The firings on the outside corpora were not adjudicated one by one, so the mismatch is read off the marker and the corpora's structure, not off a labelled precision."
+ },
+ "anger_detector_misfire": {
+  "detector": "frustration_lex",
+  "corpus": "cc_bench, matched mode",
+  "signals": 14,
+  "units_firing": 8,
+  "distinct_markers": 1,
+  "signals_from_top_marker": 14,
+  "adjudicated": false,
+  "reading": "Every one of the 14 firings traces to a single word-ending pattern, and the inspected samples are people pasting application error logs that end with a polite request to try again. The detector is reading a machine's apology as a human's temper.",
+  "limits": "These 14 firings were NOT formally adjudicated. The source record calls the apparent precision near zero on inspection, which is an inspection, not a measurement. It is published as a marker diagnosis, and no precision figure is derived from it."
+ },
+ "adjudication": {
+  "total_labels": 185,
+  "aligned_to_current": 60,
+  "rounds": 2,
+  "detectors": 13,
+  "note": "Precision is computed per round at label time (safe). 60 labels align to the current post-improvement incident set and back the eval suite; the rest were labeled against earlier incident definitions the detector fixes changed."
+ },
+ "detector_reliability_inversion": {
+  "pairs": [
+   {
+    "detector": "abandonment",
+    "precision": 0.333,
+    "mean_severity": 2.25,
+    "n_judged": 12,
+    "n_confirmed": 4,
+    "round": 2
+   },
+   {
+    "detector": "api_error",
+    "precision": 1.0,
+    "mean_severity": 2.08,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 1
+   },
+   {
+    "detector": "error_loop",
+    "precision": 0.417,
+    "mean_severity": 2.2,
+    "n_judged": 12,
+    "n_confirmed": 5,
+    "round": 1
+   },
+   {
+    "detector": "frustration_lex",
+    "precision": 0.583,
+    "mean_severity": 2.86,
+    "n_judged": 12,
+    "n_confirmed": 7,
+    "round": 1
+   },
+   {
+    "detector": "honesty_challenge",
+    "precision": 0.25,
+    "mean_severity": 2.67,
+    "n_judged": 12,
+    "n_confirmed": 3,
+    "round": 2
+   },
+   {
+    "detector": "interagent_challenge",
+    "precision": 0.083,
+    "mean_severity": 3.0,
+    "n_judged": 12,
+    "n_confirmed": 1,
+    "round": 1
+   },
+   {
+    "detector": "model_escalation",
+    "precision": 0.417,
+    "mean_severity": 2.4,
+    "n_judged": 12,
+    "n_confirmed": 5,
+    "round": 2
+   },
+   {
+    "detector": "permission_friction",
+    "precision": 0.833,
+    "mean_severity": 2.1,
+    "n_judged": 12,
+    "n_confirmed": 10,
+    "round": 1
+   },
+   {
+    "detector": "self_correction",
+    "precision": 0.5,
+    "mean_severity": 2.5,
+    "n_judged": 12,
+    "n_confirmed": 6,
+    "round": 2
+   },
+   {
+    "detector": "stuck_repetition",
+    "precision": 0.5,
+    "mean_severity": 2.0,
+    "n_judged": 12,
+    "n_confirmed": 6,
+    "round": 1
+   },
+   {
+    "detector": "subagent_failure",
+    "precision": 1.0,
+    "mean_severity": 2.08,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 2
+   },
+   {
+    "detector": "tool_error",
+    "precision": 0.833,
+    "mean_severity": 1.8,
+    "n_judged": 12,
+    "n_confirmed": 10,
+    "round": 1
+   },
+   {
+    "detector": "user_interrupt",
+    "precision": 1.0,
+    "mean_severity": 1.83,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 1
+   }
+  ],
+  "spearman_rho": -0.706,
+  "permutation_p": 0.0089,
+  "permutation_extreme_count": 885,
+  "permutation_trials": 100000,
+  "permutation_seed": 20260807,
+  "n_detectors": 13,
+  "n_judgments": 156,
+  "n_confirmed": 93,
+  "judgments_per_detector": [
+   12
+  ],
+  "severity_scale_max": 5,
+  "severity_observed_range": [
+   1,
+   4
+  ],
+  "severity_basis": "Mean severity is averaged over the CONFIRMED judgments for that detector only, so it describes what the detector catches when it is right, not what it flags.",
+  "reading": "Across the 13 detectors, how often a detector is right runs against how much the failures it finds are worth (rho -0.706, shuffle test p 0.0089). The tripwires that almost never miss are watching for cheap mechanical breakage; the ones aimed at the failures that actually cost something are wrong most of the time.",
+  "limits": "This is 13 points. Each detector's two coordinates come from 12 judged cases by a single language-model judge, and the severity coordinate averages over fewer than that (93 confirmed cases in total across all 13 detectors). The severity scale runs to 5 and nothing was ever scored above 4, so the severity coordinate has little room to move and the ranking between adjacent detectors is not meaningful. The direction is the finding; the coefficient is not a measurement anyone should lean on."
+ },
+ "totals": {
+  "sessions": 2781,
+  "session_files": 7042,
+  "events": 709843,
+  "incidents": 4662
+ },
+ "scope": {
+  "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
+  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset and API roadmap stay private, referenced but never exposed.",
+  "shareable_layer": "aggregates + pipeline code; never transcript text."
+ },
+ "provenance": {
+  "_legend": "Every emitted figure maps to the source record and key it was derived from. Source paths are lab-relative; file extensions are omitted so the sanitation check can forbid transcript extensions outright. Entries marked block cover a whole subtree. Paths starting with _md or _text record numbers quoted out of a write-up with an anchored regex.",
+  "_rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "_md:experiments/mast-coverage:MAST arXiv id": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST arXiv id",
+   "note": "regex arXiv:([\\d.]+)"
+  },
+  "_md:experiments/mast-coverage:MAST source trace count": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "regex ~([\\d,]+) execution traces"
+  },
+  "_md:experiments/objectivity-axis-02/RESULTS:broad-grouping ratio-of-ratios (CUT)": {
+   "source": "experiments/objectivity-axis-02/RESULTS",
+   "key": "broad-grouping ratio-of-ratios (CUT)",
+   "note": "regex \\*\\*([\\d.]+)\\*\\* \\(broad grouping\\)"
+  },
+  "_md:experiments/phase2-findings:MAST taxonomy shape": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "regex (\\d+) failure modes, (\\d+) categories"
+  },
+  "_md:experiments/phase2-findings:politeness token share": {
+   "source": "experiments/phase2-findings",
+   "key": "politeness token share",
+   "note": "regex (\\d+)% of human-present self-corrections"
+  },
+  "_md:experiments/phase2-findings:residual self-initiated correction under delegation": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction under delegation",
+   "note": "regex about half as often \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+), p~(\\d+\\.\\d+)\\)"
+  },
+  "_md:experiments/phase2-findings:share of top-level relational incidents from human-required detectors": {
+   "source": "experiments/phase2-findings",
+   "key": "share of top-level relational incidents from human-required detectors",
+   "note": "regex are (\\d+)% of top-level relational incidents"
+  },
+  "_md:experiments/phase2-findings:surviving turn-adjacency effect": {
+   "source": "experiments/phase2-findings",
+   "key": "surviving turn-adjacency effect",
+   "note": "regex turn-adjacency effect \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+)\\)"
+  },
+  "_md:pipeline/adjudication_ingest:severity field name in the adjudication schema": {
+   "source": "pipeline/adjudication_ingest",
+   "key": "severity field name in the adjudication schema",
+   "note": "regex severity_1_(\\d)\\b"
+  },
+  "adjudication.aligned_to_current": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications JOIN incidents)",
+   "note": "",
+   "value": 60
+  },
+  "adjudication.detectors": {
+   "source": "data/precision",
+   "key": "key count",
+   "note": "",
+   "block": true
+  },
+  "adjudication.rounds": {
+   "source": "data/precision",
+   "key": "distinct <mode>.round values",
+   "note": "",
+   "value": 2
+  },
+  "adjudication.total_labels": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications)",
+   "note": "",
+   "value": 185
+  },
+  "anger_detector_misfire.distinct_markers": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "precision_note.frustration_lex.firings, key count",
+   "note": "",
+   "value": 1
+  },
+  "anger_detector_misfire.signals": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.matched.detectors.frustration_lex.signals",
+   "note": "",
+   "value": 14
+  },
+  "anger_detector_misfire.signals_from_top_marker": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "precision_note.frustration_lex.firings, largest value",
+   "note": "",
+   "value": 14
+  },
+  "anger_detector_misfire.units_firing": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.matched.detectors.frustration_lex.units_firing",
+   "note": "",
+   "value": 8
+  },
+  "avoidability": {
+   "source": "data/atlas",
+   "key": "adjudications.avoidable_by WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "by_model_tier": {
+   "source": "data/analysis",
+   "key": "by_model_tier",
+   "note": "",
+   "block": true
+  },
+  "confirmed_modes": {
+   "source": "data/atlas",
+   "key": "adjudications WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "cooccurrence_top": {
+   "source": "data/analysis",
+   "key": "cooccurrence_top",
+   "note": "",
+   "block": true
+  },
+  "corpus._n_chat_platforms": {
+   "source": "data/phase2-results",
+   "key": "C_cross_context keys excluding claude_code",
+   "note": "",
+   "value": 4
+  },
+  "corpus.assistant_fleet": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.claude_code": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.span": {
+   "source": "data/atlas",
+   "key": "MIN/MAX month of events.ts",
+   "note": "",
+   "value": [
+    "2026-01",
+    "2026-08"
+   ]
+  },
+  "detector_reliability_inversion.judgments_per_detector": {
+   "source": "data/precision",
+   "key": "distinct <mode>.n_judged values",
+   "note": "",
+   "value": [
+    12
+   ]
+  },
+  "detector_reliability_inversion.n_confirmed": {
+   "source": "data/precision",
+   "key": "sum of <mode>.n_valid",
+   "note": "",
+   "value": 93
+  },
+  "detector_reliability_inversion.n_detectors": {
+   "source": "data/precision",
+   "key": "key count",
+   "note": "",
+   "value": 13
+  },
+  "detector_reliability_inversion.n_judgments": {
+   "source": "data/precision",
+   "key": "sum of <mode>.n_judged",
+   "note": "",
+   "value": 156
+  },
+  "detector_reliability_inversion.pairs": {
+   "source": "data/precision",
+   "key": "<mode>.{precision,mean_severity,n_judged,n_valid,round}",
+   "note": "",
+   "block": true
+  },
+  "detector_reliability_inversion.permutation_extreme_count": {
+   "source": "data/precision",
+   "key": "shuffles with |rho| at least the observed |rho|",
+   "note": "",
+   "value": 885
+  },
+  "detector_reliability_inversion.permutation_p": {
+   "source": "data/precision",
+   "key": "two-sided Monte-Carlo permutation test on the same two columns, (extreme + 1) / (trials + 1)",
+   "note": "",
+   "value": 0.0089
+  },
+  "detector_reliability_inversion.permutation_seed": {
+   "source": "derived",
+   "key": "seed declared in this generator; random.Random(seed).shuffle",
+   "note": "",
+   "value": 20260807
+  },
+  "detector_reliability_inversion.permutation_trials": {
+   "source": "derived",
+   "key": "trial count declared in this generator",
+   "note": "",
+   "value": 100000
+  },
+  "detector_reliability_inversion.severity_observed_range": {
+   "source": "data/atlas",
+   "key": "MIN/MAX adjudications.severity WHERE valid=1",
+   "note": "",
+   "value": [
+    1,
+    4
+   ]
+  },
+  "detector_reliability_inversion.severity_scale_max": {
+   "source": "pipeline/adjudication_ingest",
+   "key": "severity scale maximum, from the schema field name",
+   "note": "",
+   "value": 5
+  },
+  "detector_reliability_inversion.spearman_rho": {
+   "source": "data/precision",
+   "key": "Spearman rank correlation of <mode>.precision against <mode>.mean_severity across every adjudicated detector, ties averaged",
+   "note": "",
+   "value": -0.706
+  },
+  "ecosystem_detector_split.denominator_reconciliation.analysis_corpus_events": {
+   "source": "data/analysis",
+   "key": "sum of corpus.*.events",
+   "note": "",
+   "value": 709843
+  },
+  "ecosystem_detector_split.denominator_reconciliation.atlas_db_events": {
+   "source": "data/atlas",
+   "key": "COUNT(events)",
+   "note": "",
+   "value": 696686
+  },
+  "ecosystem_detector_split.denominator_reconciliation.gap": {
+   "source": "derived",
+   "key": "analysis corpus events minus atlas.db event rows",
+   "note": "",
+   "value": 13157
+  },
+  "ecosystem_detector_split.detectors": {
+   "source": "data/atlas",
+   "key": "signals JOIN sessions, counted per detector and ecosystem; rates use the events denominator from the same join",
+   "note": "",
+   "block": true
+  },
+  "ecosystem_detector_split.events.assistant_fleet": {
+   "source": "data/atlas",
+   "key": "COUNT(events JOIN sessions) WHERE ecosystem=assistant_fleet",
+   "note": "",
+   "value": 97333
+  },
+  "ecosystem_detector_split.events.claude_code": {
+   "source": "data/atlas",
+   "key": "COUNT(events JOIN sessions) WHERE ecosystem=claude_code",
+   "note": "",
+   "value": 599353
+  },
+  "ecosystem_detector_split.n_detectors_compared": {
+   "source": "data/precision + data/atlas",
+   "key": "adjudicated detectors that appear in signals",
+   "note": "",
+   "value": 13
+  },
+  "ecosystem_detector_split.n_silent_on_assistant_fleet": {
+   "source": "data/atlas",
+   "key": "adjudicated detectors with zero assistant-fleet signals",
+   "note": "",
+   "value": 5
+  },
+  "ecosystem_detector_split.silent_detector_coding_signals": {
+   "source": "data/atlas",
+   "key": "sum of claude_code signals over the silent detectors",
+   "note": "",
+   "value": 1865
+  },
+  "ecosystem_mode_mix": {
+   "source": "data/atlas",
+   "key": "incidents by root class and primary_mode",
+   "note": "",
+   "block": true
+  },
+  "error_categories": {
+   "source": "data/atlas",
+   "key": "signals WHERE detector='tool_error'",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.candidates": {
+   "source": "data/escalation-bridges",
+   "key": "record count",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong": {
+   "source": "data/escalation-bridges",
+   "key": "records with score >= strong_score_threshold",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong_score_threshold": {
+   "source": "pipeline/escalation_bridge",
+   "key": "strong-bridge score cutoff",
+   "note": "",
+   "value": 0.5
+  },
+  "experiment_objectivity_axis._kill_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "kill_below",
+   "note": "",
+   "value": 1.5
+  },
+  "experiment_objectivity_axis._pass_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "pre_registered_threshold",
+   "note": "",
+   "value": 2.0
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "cross-checked against the adversarial verifier's rederived.ratios.RoR",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_range": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "min/max over every logged robustness variant",
+   "note": "",
+   "value": [
+    4.183,
+    6.15
+   ]
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.drop_largest_project": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.drop_largest_project.RoR_vs_subj",
+   "note": "",
+   "value": 4.583
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.headline": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_cohort": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow",
+   "note": "",
+   "value": 4.376
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow_weighted",
+   "note": "",
+   "value": 4.183
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_precision_weighted",
+   "note": "",
+   "value": 4.733
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.sidechains_included": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.sidechains_included.RoR",
+   "note": "",
+   "value": 6.15
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.excluded_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.excluded_sessions",
+   "note": "",
+   "value": 340
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.objective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.objective_sessions",
+   "note": "",
+   "value": 194
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.subjective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.subjective_sessions",
+   "note": "",
+   "value": 88
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.total": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.total",
+   "note": "",
+   "value": 622
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "ratio_of_ratios",
+   "note": "",
+   "value": 1.101
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.z_mechanical_share": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "z_mechanical_share",
+   "note": "",
+   "value": 0.84
+  },
+  "guardrail_generalisation.by_corpus.cc_bench": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.native.detectors.permission_friction.signals",
+   "note": "",
+   "value": 7
+  },
+  "guardrail_generalisation.by_corpus.swe_agent": {
+   "source": "data/detgen-swe-agent-results",
+   "key": "primary.permission_friction.count",
+   "note": "",
+   "value": 64
+  },
+  "guardrail_generalisation.by_corpus.terminalbench": {
+   "source": "data/detgen-terminalbench-results",
+   "key": "other_detectors_measured[permission_friction].count",
+   "note": "",
+   "value": 73
+  },
+  "guardrail_generalisation.by_corpus.tracebench": {
+   "source": "data/detgen-tracebench-results",
+   "key": "degraded.detectors.permission_friction.signals",
+   "note": "",
+   "value": 27
+  },
+  "guardrail_generalisation.n_corpora": {
+   "source": "derived",
+   "key": "count of outside corpora measured",
+   "note": "",
+   "value": 4
+  },
+  "guardrail_generalisation.n_corpora_firing": {
+   "source": "derived",
+   "key": "corpora with a non-zero count",
+   "note": "",
+   "value": 4
+  },
+  "guardrail_generalisation.total_signals": {
+   "source": "derived",
+   "key": "sum over by_corpus",
+   "note": "",
+   "value": 171
+  },
+  "incidents_by_mode": {
+   "source": "data/analysis",
+   "key": "incidents_by_mode",
+   "note": "",
+   "block": true
+  },
+  "mast_chart": {
+   "source": "data/mast-settled",
+   "key": "combined_raw x combined_n",
+   "note": "",
+   "block": true
+  },
+  "mast_coverage_settled.combined_n": {
+   "source": "data/mast-settled",
+   "key": "combined_n",
+   "note": "",
+   "value": 142
+  },
+  "mast_coverage_settled.e2_raw_range_display": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.raw_range_display",
+   "note": "",
+   "value": [
+    "31%",
+    "38%"
+   ]
+  },
+  "mast_coverage_settled.e2_raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.raw_range_pct",
+   "note": "",
+   "value": [
+    31.7,
+    37.3
+   ]
+  },
+  "mast_coverage_settled.e2_weighted_range_display": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.weighted_range_display",
+   "note": "",
+   "value": [
+    "40%",
+    "49%"
+   ]
+  },
+  "mast_coverage_settled.e2_weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.weighted_range_pct",
+   "note": "",
+   "value": [
+    40.8,
+    48.3
+   ]
+  },
+  "mast_coverage_settled.enlargement_n": {
+   "source": "data/mast-irr-ext-results",
+   "key": "n",
+   "note": "",
+   "value": 69
+  },
+  "mast_coverage_settled.extension_families.E1.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "15%",
+    "17%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E1 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    15.5,
+    16.4
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 16.2
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 7.3
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E1",
+   "note": "",
+   "value": 16.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E1",
+   "note": "",
+   "value": 8.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E1",
+   "note": "",
+   "value": 16.0
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E1",
+   "note": "",
+   "value": 6.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 15.5
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 7.1
+  },
+  "mast_coverage_settled.extension_families.E1.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "6%",
+    "9%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E1 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    6.4,
+    8.4
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "31%",
+    "38%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E2 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    31.7,
+    37.3
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 34.5
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 47.2
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E2",
+   "note": "",
+   "value": 32.9
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E2",
+   "note": "",
+   "value": 47.9
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E2",
+   "note": "",
+   "value": 37.3
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E2",
+   "note": "",
+   "value": 48.3
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 31.7
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 40.8
+  },
+  "mast_coverage_settled.extension_families.E2.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "40%",
+    "49%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E2 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    40.8,
+    48.3
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "0%",
+    "0%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E3 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    0.0,
+    0.0
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "0%",
+    "0%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E3 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    0.0,
+    0.0
+   ]
+  },
+  "mast_coverage_settled.irr_n": {
+   "source": "data/mast-irr-results",
+   "key": "n",
+   "note": "",
+   "value": 73
+  },
+  "mast_coverage_settled.kappa_bucket_enlargement": {
+   "source": "data/mast-irr-ext-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.516
+  },
+  "mast_coverage_settled.kappa_bucket_irr": {
+   "source": "data/mast-irr-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.632
+  },
+  "mast_coverage_settled.kappa_full_label_irr": {
+   "source": "data/mast-irr-results",
+   "key": "full_label.kappa",
+   "note": "",
+   "value": 0.536
+  },
+  "mast_coverage_settled.largest_extension_family": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "argmax over E1/E2/E3, checked under every settlement, raw and weighted",
+   "note": "",
+   "value": "E2"
+  },
+  "mast_coverage_settled.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "21%",
+    "26%"
+   ]
+  },
+  "mast_coverage_settled.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    21.1,
+    25.4
+   ]
+  },
+  "mast_coverage_settled.recode_agreement": {
+   "source": "data/mast-settled",
+   "key": "recode_agreement",
+   "note": "",
+   "value": 0.423
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 21.1
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 16.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 21.9
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 18.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 21.3
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 18.7
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 25.4
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 22.4
+  },
+  "mast_coverage_settled.uncovered_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "74%",
+    "79%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "16%",
+    "23%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    16.5,
+    22.4
+   ]
+  },
+  "mast_crosswalk._incidents_per_mode": {
+   "source": "data/mast-sample",
+   "key": "rows / distinct detector modes",
+   "note": "",
+   "value": 6
+  },
+  "mast_crosswalk.mast_categories": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 3
+  },
+  "mast_crosswalk.mast_modes": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 14
+  },
+  "mast_crosswalk.mast_source_traces": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "",
+   "value": 1600
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.extension_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published E1+E2+E3",
+   "note": "",
+   "value": 0.533
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST x sampled",
+   "note": "",
+   "value": 16
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST",
+   "note": "",
+   "value": 0.213
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.sampled": {
+   "source": "data/mast-sample",
+   "key": "row count",
+   "note": "",
+   "value": 75
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.unclear_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.UNCLEAR",
+   "note": "",
+   "value": 0.253
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_infrastructure_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.E2",
+   "note": "",
+   "value": 0.483
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_mast_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.MAST",
+   "note": "",
+   "value": 0.187
+  },
+  "outcomes": {
+   "source": "data/analysis",
+   "key": "outcomes",
+   "note": "",
+   "block": true
+  },
+  "phantom_agent.k": {
+   "source": "data/prereg-2026-08-06/arm1/e4-phantom-agent-check",
+   "key": "record count",
+   "note": "",
+   "value": 4
+  },
+  "phantom_agent.n_framework_traces": {
+   "source": "data/prereg-2026-08-06/arm1/sample",
+   "key": "unique coded units in the AG2 strata",
+   "note": "",
+   "value": 72
+  },
+  "phantom_agent.pct": {
+   "source": "derived",
+   "key": "k / n",
+   "note": "",
+   "value": 5.6
+  },
+  "phantom_agent.wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on k / n",
+   "note": "",
+   "value": [
+    2.2,
+    13.4
+   ]
+  },
+  "position_deciles": {
+   "source": "data/analysis",
+   "key": "position_deciles",
+   "note": "",
+   "block": true
+  },
+  "precision": {
+   "source": "data/precision",
+   "key": "<mode>.{precision,wilson95,n_judged,round}",
+   "note": "",
+   "block": true
+  },
+  "reciprocal_blindness.any_extension_family_k": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of any E-family label",
+   "note": "",
+   "value": 5
+  },
+  "reciprocal_blindness.any_extension_family_pct": {
+   "source": "derived",
+   "key": "any_extension_family_k / n_examined",
+   "note": "",
+   "value": 3.36
+  },
+  "reciprocal_blindness.any_extension_family_wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on any_extension_family_k / n_examined",
+   "note": "",
+   "value": [
+    1.44,
+    7.61
+   ]
+  },
+  "reciprocal_blindness.by_family.E1": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E1",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E2": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E2",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.by_family.E3": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E3",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E4": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E4",
+   "note": "",
+   "value": 4
+  },
+  "reciprocal_blindness.by_family.E5": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E5",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E6": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E6",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.e1_e2_k": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label in {E1, E2}",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.e1_e2_pct": {
+   "source": "derived",
+   "key": "e1_e2_k / n_examined",
+   "note": "",
+   "value": 0.67
+  },
+  "reciprocal_blindness.e1_e2_wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on e1_e2_k / n_examined",
+   "note": "",
+   "value": [
+    0.12,
+    3.7
+   ]
+  },
+  "reciprocal_blindness.n_coders": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "distinct coder values",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.n_examined": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "record count, one per unique trace",
+   "note": "",
+   "value": 149
+  },
+  "timeline": {
+   "source": "data/atlas",
+   "key": "events + incidents by month and ecosystem",
+   "note": "",
+   "block": true
+  },
+  "totals": {
+   "source": "data/analysis + data/atlas",
+   "key": "corpus sums; COUNT(incidents)",
+   "note": "",
+   "block": true
+  },
+  "what_didnt_hold[1]._autonomous_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.autonomous_rate",
+   "note": "",
+   "value": 0.029
+  },
+  "what_didnt_hold[1]._human_present_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.human_present_rate",
+   "note": "",
+   "value": 0.143
+  },
+  "what_didnt_hold[1].headline_ratio": {
+   "source": "data/phase2-results",
+   "key": "clean_self_correction.human_present_rate / autonomous_rate",
+   "note": "",
+   "value": 4.93
+  },
+  "what_didnt_hold[3].z": {
+   "source": "data/phase2-results",
+   "key": "E_group_vs_dm.z_rel_share",
+   "note": "",
+   "value": 0.674
+  },
+  "what_didnt_hold[4].residual_p": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction p",
+   "note": "",
+   "value": 0.02
+  },
+  "what_didnt_hold[4].residual_rates_pct": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates",
+   "note": "",
+   "value": [
+    2.4,
+    1.3
+   ]
+  },
+  "what_didnt_hold[4].residual_ratio": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates, ratio of the two",
+   "note": "",
+   "value": 1.85
+  },
+  "what_didnt_hold[4].residual_z": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction z",
+   "note": "",
+   "value": 2.28
+  }
+ }
+};
+
+/* ============ shared helpers ============ */
+const PAL = {green:"#2fa06b", blue:"#3d7fc4", amber:"#bd8434", rose:"#c9567e", purple:"#8a68d6"};
+const INK = {text:"#e9e3d4", soft:"#b3ac99", faint:"#767162", grid:"#23232e", surface:"#11111a", candle:"#f3c079", brightgreen:"#74e2ab"};
+const MODE_LABEL = {
+  tool_error:"Tool errors", frustration_lex:"Frustration wording", api_error:"API errors",
+  error_loop:"Error loops", self_correction:"Self-corrections", user_interrupt:"User interrupts",
+  permission_friction:"Permission friction", honesty_challenge:"Honesty challenges",
+  abandonment:"Abandonment", stuck_repetition:"Stuck repetition", subagent_failure:"Subagent failures",
+  model_escalation:"Model escalation", interagent_challenge:"Inter-agent challenges"
+};
+const fmt = n => n.toLocaleString("en-US");
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, children){
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const k in attrs) {
+    if (k === "text") e.textContent = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  if (children) children.forEach(c => c && e.appendChild(c));
+  return e;
+}
+/* horizontal bar path, rounded on the data end only */
+function barH(x, y, w, h, r, roundRight){
+  if (w <= 0.5) return "M0 0";
+  r = Math.min(r, w/2, h/2);
+  if (roundRight)
+    return `M${x} ${y} H${x+w-r} Q${x+w} ${y} ${x+w} ${y+r} V${y+h-r} Q${x+w} ${y+h} ${x+w-r} ${y+h} H${x} Z`;
+  return `M${x+w} ${y} H${x+r} Q${x} ${y} ${x} ${y+r} V${y+h-r} Q${x} ${y+h} ${x+r} ${y+h} H${x+w} Z`;
+}
+
+/* tooltip */
+const tip = document.getElementById("tip");
+let tipVisible = false;
+function showTip(html, cx, cy){
+  tip.innerHTML = html;
+  tip.style.display = "block";
+  tipVisible = true;
+  positionTip(cx, cy);
+}
+function positionTip(cx, cy){
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = cx + pad, y = cy + pad;
+  if (x + r.width > window.innerWidth - 8) x = cx - r.width - pad;
+  if (y + r.height > window.innerHeight - 8) y = cy - r.height - pad;
+  tip.style.left = Math.max(4, x) + "px";
+  tip.style.top = Math.max(4, y) + "px";
+}
+function hideTip(){ tip.style.display = "none"; tipVisible = false; }
+/* wire hover+focus tooltips onto marks: any element with data-tip */
+function wireTips(root){
+  root.querySelectorAll("[data-tip]").forEach(m => {
+    m.addEventListener("mousemove", e => showTip(m.dataset.tip, e.clientX, e.clientY));
+    m.addEventListener("mouseleave", hideTip);
+    m.addEventListener("focus", () => {
+      const r = m.getBoundingClientRect();
+      showTip(m.dataset.tip, r.left + r.width/2, r.top + r.height/2);
+    });
+    m.addEventListener("blur", hideTip);
+  });
+}
+window.addEventListener("scroll", () => { if (tipVisible) hideTip(); }, {passive:true});
+
+/* ============ CHART 1: incidents by mode + precision dots ============ */
+function renderModes(){
+  const host = document.getElementById("chart-modes");
+  const modes = Object.entries(DATA.incidents_by_mode)
+    .map(([k,v]) => ({k, ...v, prec: DATA.precision[k] || null}))
+    .sort((a,b) => b.count - a.count);
+  const rowH = 30, labelW = 168, precW = 120, valW = 52;
+  const W = 860, plotW = W - labelW - precW - valW - 30;
+  const H = modes.length * rowH + 34;
+  const maxC = Math.max(...modes.map(m => m.count));
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":`Horizontal bar chart of ${fmt(DATA.totals.incidents)} incidents across ${modes.length} failure modes, in descending count: ${modes.map(m => `${MODE_LABEL[m.k].toLowerCase()} ${fmt(m.count)}`).join(", ")}. ${MODE_LABEL[modes[0].k]} lead at ${modes[0].per_10k_events} per 10,000 events. A paired dot shows how often each detector was right when it fired, from 0 to 1; the tool-error detector was right ${DATA.precision.tool_error.precision.toFixed(2)} of the time while the honesty-challenge detector sits at ${DATA.precision.honesty_challenge.precision.toFixed(2)}.`});
+  /* gridlines */
+  const ticks = [0, 200, 400, 600, 800, 1000];
+  ticks.forEach(t => {
+    const x = labelW + (t/maxC)*plotW;
+    svg.appendChild(el("line", {x1:x, y1:6, x2:x, y2:H-28, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x, y:H-12, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:String(t)}));
+  });
+  /* precision strip axis */
+  const precX0 = labelW + plotW + valW + 18;
+  [0,1].forEach(v => {
+    svg.appendChild(el("text", {x:precX0 + v*(precW-16), y:H-12, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:String(v)}));
+  });
+  svg.appendChild(el("text", {x:precX0 + (precW-16)/2, y:16, "text-anchor":"middle", "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"PRECISION"}));
+  modes.forEach((m, i) => {
+    const y = 24 + i*rowH;
+    const w = (m.count/maxC)*plotW;
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label": `${MODE_LABEL[m.k]}: ${fmt(m.count)} incidents, ${m.per_10k_events} per 10,000 events, crowding score ${m.avg_severity}` + (m.prec ? `, detector right ${m.prec.precision} of the time` : "")});
+    g.dataset.tip = `<span class="t-h">${MODE_LABEL[m.k]}</span><br>` +
+      `<span class="t-d">n = ${fmt(m.count)} incidents · ${m.per_10k_events} per 10k events<br>` +
+      `crowding score ${m.avg_severity} · ${(m.share_sidechain*100).toFixed(0)}% happened inside a helper agent</span>` +
+      (m.prec ? `<br><span class="t-w">this detector was right ${m.prec.precision} of the time (range ${m.prec.ci[0]}–${m.prec.ci[1]}, from ${m.prec.n} judged cases)</span>` : "") +
+      (m.k === "interagent_challenge" ? `<br><span class="t-w">reclassified: orchestration protocol language, not failure</span>` : "");
+    g.appendChild(el("text", {x:labelW-10, y:y+rowH/2+3.5, "text-anchor":"end", "font-size":11, fill:INK.soft, text:MODE_LABEL[m.k] + (m.k==="interagent_challenge" ? " *" : "")}));
+    g.appendChild(el("path", {d:barH(labelW, y+5, Math.max(w,2), rowH-12, 4, true), fill:PAL.green}));
+    g.appendChild(el("text", {x:labelW + Math.max(w,2) + 7, y:y+rowH/2+3.5, "font-size":10.5, fill:INK.text, text:fmt(m.count)}));
+    /* precision dot on 0–1 track */
+    if (m.prec){
+      const tx0 = precX0, tw = precW-16;
+      g.appendChild(el("line", {x1:tx0, y1:y+rowH/2, x2:tx0+tw, y2:y+rowH/2, stroke:INK.grid, "stroke-width":1}));
+      g.appendChild(el("circle", {cx:tx0 + m.prec.precision*tw, cy:y+rowH/2, r:4.5,
+        fill: m.k==="honesty_challenge" ? INK.candle : PAL.green, stroke:INK.surface, "stroke-width":2}));
+    }
+    svg.appendChild(g);
+  });
+  svg.appendChild(el("text", {x:labelW, y:16, "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"INCIDENT COUNT"}));
+  host.appendChild(svg);
+  wireTips(host);
+}
+
+/* ============ CHART 7: error categories ============ */
+function renderErrCats(){
+  const host = document.getElementById("chart-errcats");
+  const CAT_LABEL = {exit_nonzero:"Command exited nonzero", other:"Other", not_found:"Not found",
+    edit_mismatch:"Edit no longer matches file", timeout:"Timeout", hook_block:"Safety hook fired",
+    network:"Network", user_rejected:"User rejected", permission_denied:"Permission denied", interrupt:"Interrupt"};
+  const cats = Object.entries(DATA.error_categories).map(([k,v]) => ({k, v})).sort((a,b) => b.v - a.v);
+  const total = cats.reduce((s,c) => s + c.v, 0);
+  const rowH = 27, labelW = 210, W = 860, plotW = W - labelW - 80;
+  const H = cats.length*rowH + 32;
+  const maxV = cats[0].v;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":`Horizontal bar chart of ${fmt(total)} tool errors by category, in descending count: ${cats.map(c => `${CAT_LABEL[c.k].toLowerCase()} ${fmt(c.v)}`).join(", ")}.`});
+  [0, 500, 1000, 1500, 2000].forEach(t => {
+    const x = labelW + (t/maxV)*plotW;
+    svg.appendChild(el("line", {x1:x, y1:6, x2:x, y2:H-26, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x, y:H-10, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:fmt(t)}));
+  });
+  cats.forEach((c, i) => {
+    const y = 10 + i*rowH;
+    const w = (c.v/maxV)*plotW;
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img", "aria-label":`${CAT_LABEL[c.k]}: ${fmt(c.v)} errors`});
+    g.dataset.tip = `<span class="t-h">${CAT_LABEL[c.k]}</span><br><span class="t-d">n = ${fmt(c.v)} errors · ${(c.v/total*100).toFixed(1)}% of all tool errors</span>`;
+    g.appendChild(el("text", {x:labelW-10, y:y+rowH/2+3.5, "text-anchor":"end", "font-size":11, fill:INK.soft, text:CAT_LABEL[c.k]}));
+    g.appendChild(el("path", {d:barH(labelW, y+4, Math.max(w,2), rowH-10, 4, true), fill:PAL.green}));
+    g.appendChild(el("text", {x:labelW + Math.max(w,2) + 7, y:y+rowH/2+3.5, "font-size":10.5, fill:INK.text, text:fmt(c.v)}));
+    svg.appendChild(g);
+  });
+  host.appendChild(svg);
+  wireTips(host);
+}
+
+
+/* ============ CHART 3: position-in-session heatstrips ============ */
+function renderPosition(){
+  const host = document.getElementById("chart-position");
+  const rows = Object.entries(DATA.position_deciles)
+    .map(([k, arr]) => ({k, arr, total: arr.reduce((s,v) => s+v, 0)}))
+    .sort((a,b) => b.total - a.total);
+  const rowH = 27, labelW = 168, cellGap = 2, W = 860;
+  const cellW = (W - labelW - 80 - cellGap*9)/10;
+  const H = rows.length*rowH + 44;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":`Heatstrip of where each failure mode falls within sessions, divided into tenths. Each row gives its ten counts from session opening to session end. ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()}, n=${r.total}: ${r.arr.join(", ")}`).join(". ")}.`});
+  svg.appendChild(el("text", {x:labelW, y:14, "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"SESSION START →"}));
+  svg.appendChild(el("text", {x:labelW + 10*cellW + 9*cellGap, y:14, "text-anchor":"end", "font-size":9, fill:INK.faint, "letter-spacing":"1", text:"→ SESSION END"}));
+  /* sequential green ramp, OKLCH-sampled for even lightness steps on the dark surface;
+     zero cells get a near-black well so any nonzero step reads as clearly "present" */
+  const ZERO_FILL = "#15151f";
+  const HEAT_STOPS = ["#23593d", "#377c57", "#4ba073", "#61c690", "#77edae"];
+  /* Shade encodes deviation from an EVEN spread, not share of the row's own peak.
+     Ten tenths, so an evenly-spread failure puts 10% in each. Shading against the
+     row's own maximum made every row fill the ramp, including rows that are simply
+     uniform, so most of the chart read as undifferentiated mid-green and the reader
+     had to get the finding from the caption instead of the picture. Ratio-to-uniform
+     lets a flat row look flat, which is the true thing about it, and lets the rows
+     with real structure stand out on their own. */
+  const UNIFORM = 1/10;
+  /* ratio bands: well below expected, below, about as expected, above, well above */
+  const RATIO_BANDS = [0.5, 0.8, 1.25, 2.0];
+  const stopFor = ratio => {
+    let i = 0;
+    while (i < RATIO_BANDS.length && ratio >= RATIO_BANDS[i]) i++;
+    return HEAT_STOPS[i];
+  };
+  rows.forEach((r, i) => {
+    const y = 22 + i*rowH;
+    svg.appendChild(el("text", {x:labelW-10, y:y+rowH/2+3, "text-anchor":"end", "font-size":11, fill:INK.soft, text:MODE_LABEL[r.k]}));
+    r.arr.forEach((v, d) => {
+      const x = labelW + d*(cellW+cellGap);
+      const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+        "aria-label":`${MODE_LABEL[r.k]}, tenth ${d+1} of 10: ${v} incidents`});
+      const pct = r.total ? (v/r.total*100).toFixed(0) : 0;
+      const ratio = r.total ? (v/r.total)/UNIFORM : 0;
+      const vs = ratio >= 1 ? `${ratio.toFixed(1)}× more than an even spread`
+                            : `${(1/(ratio || Infinity)).toFixed(1)}× less than an even spread`;
+      g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br><span class="t-d">tenth ${d+1} of 10 · ${v} of ${r.total} positioned incidents (${pct}% of this row)<br><span class="t-w">${v === 0 ? "none here" : vs} · an even spread would put 10% in each tenth</span></span>`;
+      g.appendChild(el("rect", {x, y:y+3, width:cellW, height:rowH-9, rx:2,
+        fill: v === 0 ? ZERO_FILL : stopFor(ratio)}));
+      svg.appendChild(g);
+    });
+    svg.appendChild(el("text", {x:labelW + 10*cellW + 9*cellGap + 8, y:y+rowH/2+3, "font-size":9.5, fill:INK.faint, text:"n=" + r.total}));
+  });
+  host.appendChild(svg);
+  wireTips(host);
+  /* scale legend: zero swatch, then the ramp labelled by what it now means —
+     how far a tenth sits above or below an even spread, with the middle stop
+     marked so "about as expected" is readable rather than inferred */
+  const leg = document.getElementById("legend-position");
+  leg.innerHTML =
+    `<span class="key"><span class="sw" style="background:${ZERO_FILL};box-shadow:inset 0 0 0 1px #2e2e3c"></span>none (0)</span>` +
+    `<span class="key" style="gap:.55rem">fewer than expected` +
+    HEAT_STOPS.map(c => `<span class="sw" style="background:${c};border-radius:2px"></span>`).join("") +
+    `more <span style="color:var(--bone-faint)">· middle = about an even spread (10% per tenth)</span></span>`;
+}
+
+/* ============ CHART 4: outcomes stacked bars ============ */
+const OUTCOME_ORDER = [
+  {k:"recovered_clean", label:"Recovered clean", color:PAL.green},
+  {k:"self_corrected", label:"Self-corrected", color:PAL.blue},
+  {k:"further_failures", label:"Further failures", color:PAL.amber},
+  {k:"session_end", label:"Session ended", color:PAL.rose},
+  {k:"escalated", label:"Escalated", color:PAL.purple}
+];
+function renderOutcomes(){
+  const host = document.getElementById("chart-outcomes");
+  const rows = Object.entries(DATA.outcomes)
+    .map(([k, o]) => ({k, o, total: Object.values(o).reduce((s,v) => s+v, 0)}))
+    .sort((a,b) => b.total - a.total);
+  const rowH = 30, labelW = 168, W = 860, plotW = W - labelW - 80;
+  const H = rows.length*rowH + 34;
+  const maxT = rows[0].total;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
+    "aria-label":`Stacked horizontal bars of what happened after each incident type, split into ${OUTCOME_ORDER.map(oc => oc.label.toLowerCase()).join(", ")}. ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()}, ${fmt(r.total)} incidents: ${OUTCOME_ORDER.filter(oc => r.o[oc.k]).map(oc => `${oc.label.toLowerCase()} ${fmt(r.o[oc.k])}`).join(", ")}`).join(". ")}.`});
+  [0, 200, 400, 600, 800, 1000].forEach(t => {
+    const x = labelW + (t/maxT)*plotW;
+    svg.appendChild(el("line", {x1:x, y1:6, x2:x, y2:H-26, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x, y:H-10, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:fmt(t)}));
+  });
+  rows.forEach((r, i) => {
+    const y = 10 + i*rowH;
+    svg.appendChild(el("text", {x:labelW-10, y:y+rowH/2+3.5, "text-anchor":"end", "font-size":11, fill:INK.soft, text:MODE_LABEL[r.k]}));
+    let cx = labelW;
+    const segs = OUTCOME_ORDER.filter(oc => r.o[oc.k]);
+    segs.forEach((oc, si) => {
+      const v = r.o[oc.k];
+      const w = (v/maxT)*plotW;
+      const last = si === segs.length-1;
+      const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+        "aria-label":`${MODE_LABEL[r.k]} → ${oc.label}: ${fmt(v)} of ${fmt(r.total)} incidents (${(v/r.total*100).toFixed(0)}%)`});
+      g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]} → ${oc.label}</span><br><span class="t-d">${fmt(v)} of ${fmt(r.total)} incidents · ${(v/r.total*100).toFixed(0)}%</span>`;
+      if (last) g.appendChild(el("path", {d:barH(cx, y+5, Math.max(w,1.5), rowH-12, 4, true), fill:oc.color}));
+      else g.appendChild(el("rect", {x:cx, y:y+5, width:Math.max(w,1.5), height:rowH-12, fill:oc.color}));
+      svg.appendChild(g);
+      cx += w + 2; /* 2px surface gap */
+    });
+    svg.appendChild(el("text", {x:cx + 5, y:y+rowH/2+3.5, "font-size":10, fill:INK.faint, text:fmt(r.total)}));
+  });
+  host.appendChild(svg);
+  wireTips(host);
+  const leg = document.getElementById("legend-outcomes");
+  leg.innerHTML = OUTCOME_ORDER.map(oc =>
+    `<span class="key"><span class="sw" style="background:${oc.color}"></span>${oc.label}</span>`).join("");
+}
+
+/* ============ CHART 5: precision dot + CI whiskers ============ */
+function renderPrecision(){
+  const host = document.getElementById("chart-precision");
+  const rows = Object.entries(DATA.precision)
+    .map(([k, p]) => ({k, ...p}))
+    .sort((a,b) => b.precision - a.precision || a.k.localeCompare(b.k));
+  const rowH = 34, labelW = 178, W = 860, plotW = W - labelW - 140;
+  const H = rows.length*rowH + 42;
+  const xFor = v => labelW + v*plotW;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
+    "aria-label":`Chart of how often each of the ${rows.length} detectors was right when it fired, highest first, each with the range its small sample allows: ${rows.map(r => `${MODE_LABEL[r.k].toLowerCase()} ${r.precision.toFixed(2)}, range ${r.ci[0]} to ${r.ci[1]}, from ${r.n} judged cases`).join("; ")}. Inter-agent challenges are counted but flagged, reclassified as orchestration protocol language rather than failure.`});
+  [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+    const x = xFor(t);
+    svg.appendChild(el("line", {x1:x, y1:8, x2:x, y2:H-30, stroke:INK.grid, "stroke-width":1}));
+    svg.appendChild(el("text", {x, y:H-14, "text-anchor":"middle", "font-size":10, fill:INK.faint, text:t.toFixed(2)}));
+  });
+  /* the axis caption's numbers are read off the data, never typed */
+  svg.appendChild(el("text", {x:labelW, y:16, "font-size":9, fill:INK.faint, "letter-spacing":"1",
+    text:`HOW OFTEN RIGHT WHEN IT FIRED → (n=${rows[0].n} judged cases each)`}));
+  rows.forEach((r, i) => {
+    const y = 26 + i*rowH + rowH/2;
+    const hero = r.k === "honesty_challenge";
+    const dot = hero ? INK.candle : PAL.green;
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${MODE_LABEL[r.k]} detector: right ${r.precision} of the time, range ${r.ci[0]} to ${r.ci[1]}, judging round ${r.round}, the agent was at fault in ${(r.agent_fault_share*100).toFixed(0)}% of the real hits`});
+    g.dataset.tip = `<span class="t-h">${MODE_LABEL[r.k]}</span><br>` +
+      `<span class="t-d">right ${r.precision} of the time · range ${r.ci[0]}–${r.ci[1]} · n = ${r.n} judged · round ${r.round}<br>` +
+      `agent at fault in ${(r.agent_fault_share*100).toFixed(0)}% of the real hits</span>` +
+      (hero ? `<br><span class="t-w">our own dishonesty detector, still ${r.precision.toFixed(2)} after a round of fixes</span>` : "") +
+      (r.k === "interagent_challenge" ? `<br><span class="t-w">reclassified: protocol language, counted but flagged</span>` : "");
+    g.appendChild(el("text", {x:labelW-10, y:y+3.5, "text-anchor":"end", "font-size":11,
+      fill: hero ? INK.candle : INK.soft, "font-weight": hero ? "600" : "400",
+      text:MODE_LABEL[r.k] + (r.k==="interagent_challenge" ? " *" : "")}));
+    g.appendChild(el("line", {x1:xFor(r.ci[0]), y1:y, x2:xFor(r.ci[1]), y2:y, stroke:dot, "stroke-width":2, "stroke-linecap":"round", opacity:.55}));
+    g.appendChild(el("line", {x1:xFor(r.ci[0]), y1:y-4, x2:xFor(r.ci[0]), y2:y+4, stroke:dot, "stroke-width":2, opacity:.55}));
+    g.appendChild(el("line", {x1:xFor(r.ci[1]), y1:y-4, x2:xFor(r.ci[1]), y2:y+4, stroke:dot, "stroke-width":2, opacity:.55}));
+    g.appendChild(el("circle", {cx:xFor(r.precision), cy:y, r:5.5, fill:dot, stroke:INK.surface, "stroke-width":2}));
+    g.appendChild(el("text", {x:W-124, y:y+3.5, "font-size":10.5, fill:INK.text, text:r.precision.toFixed(2)}));
+    g.appendChild(el("text", {x:W-76, y:y+3.5, "font-size":9.5, fill:INK.faint, text:"R" + r.round}));
+    svg.appendChild(g);
+  });
+  host.appendChild(svg);
+  wireTips(host);
+  const leg = document.getElementById("legend-precision");
+  leg.innerHTML =
+    `<span class="key"><span class="sw" style="background:${PAL.green};border-radius:50%"></span>validated detector</span>` +
+    `<span class="key"><span class="sw" style="background:${INK.candle};border-radius:50%"></span>honesty challenges: the study's own dishonesty detector, still 0.25 after a round of fixes</span>` +
+    `<span class="key">* Inter-agent challenges: reclassified detector (orchestration protocol language rather than a failure); round-1 audit only, precision ${DATA.precision.interagent_challenge.precision.toFixed(2)}, excluded from the validated set but kept in the totals</span>`;
+}
+
+/* ============ CHART 6: ecosystem mode mix, mirrored ============ */
+function renderEcosystems(){
+  const host = document.getElementById("chart-ecosystems");
+  const cc = DATA.ecosystem_mode_mix.claude_code, hm = DATA.ecosystem_mode_mix.assistant_fleet;
+  const ccTotal = Object.values(cc).reduce((s,v) => s+v, 0);
+  const hmTotal = Object.values(hm).reduce((s,v) => s+v, 0);
+  const modes = [...new Set([...Object.keys(cc), ...Object.keys(hm)])]
+    .map(k => ({k, cc: cc[k] || 0, hm: hm[k] || 0}))
+    .sort((a,b) => (b.cc/ccTotal + b.hm/hmTotal) - (a.cc/ccTotal + a.hm/hmTotal));
+  const rowH = 30, midW = 172, W = 860, side = (W - midW)/2 - 46;
+  const H = modes.length*rowH + 40;
+  const maxShare = Math.max(...modes.map(m => Math.max(m.cc/ccTotal, m.hm/hmTotal)));
+  const cxL = 46 + side, cxR = W - 46 - side;
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, role:"img", class:"needs-min",
+    "aria-label":`Mirrored bar chart comparing each ecosystem's failure-mode mix as a share of its own incidents. Coding agents, ${fmt(ccTotal)} incidents. Assistant fleet, ${fmt(hmTotal)} incidents. By mode, coding share then fleet share: ${modes.map(m => `${MODE_LABEL[m.k].toLowerCase()} ${(m.cc/ccTotal*100).toFixed(1)} percent and ${(m.hm/hmTotal*100).toFixed(1)} percent`).join(", ")}. The fleet's tool-error bar is marked with an asterisk because its logs lack a native error flag.`});
+  svg.appendChild(el("text", {x:cxL, y:16, "text-anchor":"end", "font-size":10, "letter-spacing":"1.5", fill:INK.brightgreen, "font-weight":"600", text:`CODING AGENTS · n=${fmt(ccTotal)}`}));
+  svg.appendChild(el("text", {x:cxR, y:16, "font-size":10, "letter-spacing":"1.5", fill:"#b98cff", "font-weight":"600", text:`ASSISTANT FLEET · n=${fmt(hmTotal)}`}));
+  modes.forEach((m, i) => {
+    const y = 26 + i*rowH;
+    const shL = m.cc/ccTotal, shR = m.hm/hmTotal;
+    const wL = (shL/maxShare)*side, wR = (shR/maxShare)*side;
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${MODE_LABEL[m.k]}: coding agents ${fmt(m.cc)} incidents (${(shL*100).toFixed(1)}% of their mix), assistant fleet ${fmt(m.hm)} (${(shR*100).toFixed(1)}%)`});
+    g.dataset.tip = `<span class="t-h">${MODE_LABEL[m.k]}</span><br>` +
+      `<span class="t-d">coding: ${fmt(m.cc)} incidents · ${(shL*100).toFixed(1)}% of mix<br>` +
+      `fleet: ${fmt(m.hm)} incidents · ${(shR*100).toFixed(1)}% of mix</span>` +
+      (m.k === "tool_error" ? `<br><span class="t-w">* fleet logs lack a native error flag: instrument, not world</span>` : "");
+    g.appendChild(el("text", {x:W/2, y:y+rowH/2+3.5, "text-anchor":"middle", "font-size":11, fill:INK.soft, text:MODE_LABEL[m.k]}));
+    if (m.cc > 0){
+      g.appendChild(el("path", {d:barH(cxL-Math.max(wL,2), y+5, Math.max(wL,2), rowH-12, 4, false), fill:PAL.green}));
+      g.appendChild(el("text", {x:cxL-Math.max(wL,2)-6, y:y+rowH/2+3.5, "text-anchor":"end", "font-size":9.5, fill:INK.faint, text:(shL*100).toFixed(1)+"%"}));
+    }
+    if (m.hm > 0){
+      g.appendChild(el("path", {d:barH(cxR, y+5, Math.max(wR,2), rowH-12, 4, true), fill:PAL.purple}));
+      g.appendChild(el("text", {x:cxR+Math.max(wR,2)+6, y:y+rowH/2+3.5, "font-size":9.5, fill:INK.faint,
+        text:(shR*100).toFixed(1)+"%" + (m.k==="tool_error" ? " *" : "")}));
+    }
+    svg.appendChild(g);
+  });
+  host.appendChild(svg);
+  wireTips(host);
+  const leg = document.getElementById("legend-eco");
+  leg.innerHTML =
+    `<span class="key"><span class="sw" style="background:${PAL.green}"></span>Coding agents: share of ${fmt(ccTotal)} incidents</span>` +
+    `<span class="key"><span class="sw" style="background:${PAL.purple}"></span>Assistant fleet: share of ${fmt(hmTotal)} incidents</span>` +
+    `<span class="key">* instrument difference, not world</span>`;
+}
+
+/* ============ MAST cross-walk, settled: pooled across both coding rounds ============
+   Drawn from DATA.mast_chart, which dashboard_data derives from the settled labels.
+   The chart and the surrounding caption used to describe different n; they no longer
+   can, because both read the same block. The coverage claim beside it is a range,
+   because coders disagree at the boundaries: see DATA.mast_coverage_settled. */
+function renderMast(){
+  const host = document.getElementById("chart-mast");
+  if (!host) return;
+  const mc = DATA.mast_chart;
+  const cov = DATA.mast_coverage_settled;
+  if (!mc || !cov) return;
+  const TOTAL = mc.n, MAPPED = mc.fits_mast, EXT = mc.needs_extension, UNC = mc.unclear;
+  const rawLo = Math.round(cov.raw_range_pct[0]), rawHi = Math.round(cov.raw_range_pct[1]);
+  const W = 860, padX = 8, H = 178;
+  const barY = 46, barHt = 48, plotW = W - padX*2, gap = 2;
+  const segs = [
+    {n:MAPPED, pct:Math.round(MAPPED/TOTAL*100), fill:PAL.green,  head:"FITS A MAST MODE",   hc:INK.brightgreen,
+     tip:`<span class="t-h">Fits a MAST mode</span><br><span class="t-d">${MAPPED} of ${TOTAL} settled codings · ${Math.round(MAPPED/TOTAL*100)}%<br>MAST: 14 modes, 3 categories (Cemri et al.)</span><br><span class="t-w">across every round and settlement rule, raw coverage spans ${rawLo}% to ${rawHi}%; bucket kappa ${cov.kappa_bucket_irr}</span>`},
+    {n:EXT, pct:Math.round(EXT/TOTAL*100), fill:PAL.amber, head:"NEEDS AN EXTENSION", hc:INK.candle,
+     tip:`<span class="t-h">Needs an extension family</span><br><span class="t-d">${EXT} of ${TOTAL} settled codings · ${Math.round(EXT/TOTAL*100)}%</span><br><span class="t-w">two families MAST lacks: human-in-the-loop, and single-session infrastructure</span>`},
+    {n:UNC, pct:Math.round(UNC/TOTAL*100), fill:INK.faint, head:"UNCLEAR", hc:INK.soft,
+     tip:`<span class="t-h">Unclear</span><br><span class="t-d">${UNC} of ${TOTAL} settled codings · ${Math.round(UNC/TOTAL*100)}%</span><br><span class="t-w">mostly detectors firing on work that actually succeeded</span>`},
+  ];
+  const svg = el("svg", {viewBox:`0 0 ${W} ${H}`, class:"needs-min", role:"img",
+    "aria-label":`MAST cross-walk of ${TOTAL} settled codings, pooled across both rounds: ${MAPPED} (${Math.round(MAPPED/TOTAL*100)}%) fit a MAST mode, ${EXT} (${Math.round(EXT/TOTAL*100)}%) need an extension family MAST lacks (human-in-the-loop and single-session infrastructure), ${UNC} (${Math.round(UNC/TOTAL*100)}%) are unclear, mostly detectors firing on successful work. Across every round and every way of settling the coders' disagreements, the share the list covers spans ${rawLo}% to ${rawHi}% by count, and ${cov.weighted_range_pct[0]}% to ${cov.weighted_range_pct[1]}% once weighted by how often each kind of failure actually happens.`});
+  let x = padX;
+  segs.forEach((s, i) => {
+    const w = (s.n/TOTAL)*plotW - (i < segs.length-1 ? gap : 0);
+    svg.appendChild(el("text", {x:x+w/2, y:28, "text-anchor":"middle", "font-size":9.5, "letter-spacing":"1", "font-weight":"600", fill:s.hc, text:s.head}));
+    const g = el("g", {class:"mark-focus", tabindex:0, role:"img",
+      "aria-label":`${s.head}: ${s.n} of ${TOTAL} settled codings, ${s.pct} percent.`});
+    g.dataset.tip = s.tip;
+    g.appendChild(el("path", {d:barH(x, barY, w, barHt, 5, i===segs.length-1), fill:s.fill}));
+    const anchor = i===0 ? "start" : "middle", tx = i===0 ? x+16 : x+w/2;
+    g.appendChild(el("text", {x:tx, y:barY+barHt/2+3, "text-anchor":anchor, "font-size":15, "font-weight":"600", fill:INK.surface, text:s.pct+"%"}));
+    g.appendChild(el("text", {x:tx, y:barY+barHt/2+19, "text-anchor":anchor, "font-size":9.5, fill:INK.surface, opacity:.85, text:s.n+" of "+TOTAL}));
+    svg.appendChild(g);
+    x += (s.n/TOTAL)*plotW;
+  });
+  const bY = barY + barHt + 12;
+  svg.appendChild(el("text", {x:padX, y:bY+16, "font-size":10.5, fill:INK.soft, text:"The two families MAST lacks:"}));
+  svg.appendChild(el("text", {x:padX, y:bY+32, "font-size":10.5, "font-weight":"600", fill:INK.text, text:"single-session infrastructure, the largest under every settlement rule  ·  human-in-the-loop"}));
+  host.appendChild(svg);
+  wireTips(host);
+}
+
+/* ============ section nav ============
+   The nav is a horizontal scroller. Three things tell a reader that more
+   sections exist off-screen: an alpha-mask fade on whichever edge still has
+   sections behind it, a nudge arrow on that same edge, and a position counter
+   that always shows which of how many they are on. Scroll snapping keeps a
+   half-cut tab from being the resting state. */
+const tabs = Array.from(document.querySelectorAll(".tabnav button"));
+const panels = {};
+tabs.forEach(t => panels[t.dataset.tab] = document.getElementById("panel-" + t.dataset.tab));
+const DEFAULT_TAB = tabs[0].dataset.tab;
+const rail = document.querySelector(".tabnav");
+const nudgeL = document.querySelector(".tabnudge-l");
+const nudgeR = document.querySelector(".tabnudge-r");
+const posEl = document.getElementById("tabpos");
+const totEl = document.getElementById("tabtot");
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const glide = reduceMotion ? "auto" : "smooth";
+
+totEl.textContent = String(tabs.length);
+
+/* Which edges still hide something. The 8px slack stops a sub-pixel layout
+   from flapping the arrows on and off. */
+function railState(){
+  const over = rail.scrollWidth - rail.clientWidth;
+  const scrollable = over > 8;
+  const atStart = !scrollable || rail.scrollLeft <= 4;
+  const atEnd = !scrollable || rail.scrollLeft >= over - 4;
+  rail.classList.toggle("at-start", atStart);
+  rail.classList.toggle("at-end", atEnd);
+  nudgeL.hidden = atStart;
+  nudgeR.hidden = atEnd;
+}
+function nudge(dir){
+  rail.scrollBy({left: dir * Math.max(120, rail.clientWidth * 0.62), behavior: glide});
+}
+nudgeL.addEventListener("click", () => nudge(-1));
+nudgeR.addEventListener("click", () => nudge(1));
+rail.addEventListener("scroll", railState, {passive:true});
+window.addEventListener("resize", railState);
+
+/* Bring the active tab into the scroller's own view without touching the page's
+   vertical scroll, which scrollIntoView would. */
+function revealTab(btn){
+  const b = btn.getBoundingClientRect(), r = rail.getBoundingClientRect();
+  if (b.left < r.left + 34) rail.scrollBy({left: b.left - r.left - 40, behavior: glide});
+  else if (b.right > r.right - 34) rail.scrollBy({left: b.right - r.right + 40, behavior: glide});
+}
+
+function activate(name, push){
+  if (!panels[name]) name = DEFAULT_TAB;
+  tabs.forEach((t, i) => {
+    const on = t.dataset.tab === name;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+    t.tabIndex = on ? 0 : -1;
+    panels[t.dataset.tab].classList.toggle("active", on);
+    panels[t.dataset.tab].hidden = !on;
+    if (on){ posEl.textContent = String(i + 1); revealTab(t); }
+  });
+  railState();
+  if (push !== false){
+    if (history.replaceState) history.replaceState(null, "", "#" + name);
+    else location.hash = name;
+  }
+}
+tabs.forEach((t, i) => {
+  t.addEventListener("click", () => activate(t.dataset.tab));
+  t.addEventListener("keydown", e => {
+    let j = null;
+    if (e.key === "ArrowRight") j = (i+1) % tabs.length;
+    else if (e.key === "ArrowLeft") j = (i-1+tabs.length) % tabs.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = tabs.length-1;
+    if (j !== null){ e.preventDefault(); tabs[j].focus(); activate(tabs[j].dataset.tab); }
+  });
+});
+window.addEventListener("hashchange", () => activate(location.hash.slice(1) || DEFAULT_TAB, false));
+
+/* ============ copy buttons ============ */
+document.querySelectorAll(".copybtn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const text = document.getElementById(btn.dataset.copy).textContent;
+    const done = ok => {
+      btn.textContent = ok ? "copied" : "select + copy";
+      btn.classList.add("done");
+      setTimeout(() => { btn.textContent = btn.dataset.copy === "agent-prompt" ? "copy prompt" : "copy"; btn.classList.remove("done"); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+    else done(false);
+  });
+});
+
+/* ============ init ============ */
+renderModes();
+renderErrCats();
+renderPosition();
+renderOutcomes();
+renderPrecision();
+renderEcosystems();
+renderMast();
+railState();
+activate(location.hash.slice(1) || DEFAULT_TAB, false);
+</script>
+</body>
+</html>

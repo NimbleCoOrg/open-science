@@ -1,0 +1,2519 @@
+{
+ "corpus": {
+  "claude_code": {
+   "sessions": 631,
+   "session_files": 4308,
+   "subagent_files": 3677,
+   "events": 599362
+  },
+  "assistant_fleet": {
+   "sessions": 2150,
+   "session_files": 2734,
+   "subagent_files": 584,
+   "events": 110481
+  },
+  "span": [
+   "2026-01",
+   "2026-08"
+  ],
+  "note": "'sessions' counts top-level runs a human started; 'subagent_files' are agent-spawned sidechain transcripts, not sessions. Assistant-fleet sessions span many different people talking to the bots across 4 chat platforms: genuine multi-human, multi-agent traffic, not one operator."
+ },
+ "incidents_by_mode": {
+  "abandonment": {
+   "count": 139,
+   "avg_severity": 0.967,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.96
+  },
+  "api_error": {
+   "count": 541,
+   "avg_severity": 0.36,
+   "share_sidechain": 0.547,
+   "per_10k_events": 7.62
+  },
+  "error_loop": {
+   "count": 491,
+   "avg_severity": 0.937,
+   "share_sidechain": 0.497,
+   "per_10k_events": 6.92
+  },
+  "frustration_lex": {
+   "count": 902,
+   "avg_severity": 0.456,
+   "share_sidechain": 0.0,
+   "per_10k_events": 12.71
+  },
+  "honesty_challenge": {
+   "count": 135,
+   "avg_severity": 0.678,
+   "share_sidechain": 0.0,
+   "per_10k_events": 1.9
+  },
+  "interagent_challenge": {
+   "count": 4,
+   "avg_severity": 0.595,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.06
+  },
+  "model_escalation": {
+   "count": 17,
+   "avg_severity": 0.672,
+   "share_sidechain": 0.588,
+   "per_10k_events": 0.24
+  },
+  "permission_friction": {
+   "count": 276,
+   "avg_severity": 0.713,
+   "share_sidechain": 0.562,
+   "per_10k_events": 3.89
+  },
+  "self_correction": {
+   "count": 530,
+   "avg_severity": 0.457,
+   "share_sidechain": 0.079,
+   "per_10k_events": 7.47
+  },
+  "stuck_repetition": {
+   "count": 180,
+   "avg_severity": 0.767,
+   "share_sidechain": 0.611,
+   "per_10k_events": 2.54
+  },
+  "subagent_failure": {
+   "count": 26,
+   "avg_severity": 0.917,
+   "share_sidechain": 1.0,
+   "per_10k_events": 0.37
+  },
+  "tool_error": {
+   "count": 1165,
+   "avg_severity": 0.361,
+   "share_sidechain": 0.436,
+   "per_10k_events": 16.41
+  },
+  "user_interrupt": {
+   "count": 256,
+   "avg_severity": 0.682,
+   "share_sidechain": 0.0,
+   "per_10k_events": 3.61
+  }
+ },
+ "precision": {
+  "abandonment": {
+   "precision": 0.333,
+   "ci": [
+    0.138,
+    0.609
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.25
+  },
+  "api_error": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.0
+  },
+  "error_loop": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "frustration_lex": {
+   "precision": 0.583,
+   "ci": [
+    0.32,
+    0.807
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.857
+  },
+  "honesty_challenge": {
+   "precision": 0.25,
+   "ci": [
+    0.089,
+    0.532
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "interagent_challenge": {
+   "precision": 0.083,
+   "ci": [
+    0.015,
+    0.354
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 1.0
+  },
+  "model_escalation": {
+   "precision": 0.417,
+   "ci": [
+    0.193,
+    0.68
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  },
+  "permission_friction": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.2
+  },
+  "stuck_repetition": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.833
+  },
+  "subagent_failure": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 0.083
+  },
+  "tool_error": {
+   "precision": 0.833,
+   "ci": [
+    0.552,
+    0.953
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.6
+  },
+  "user_interrupt": {
+   "precision": 1.0,
+   "ci": [
+    0.757,
+    1
+   ],
+   "n": 12,
+   "round": 1,
+   "agent_fault_share": 0.417
+  },
+  "self_correction": {
+   "precision": 0.5,
+   "ci": [
+    0.254,
+    0.746
+   ],
+   "n": 12,
+   "round": 2,
+   "agent_fault_share": 1.0
+  }
+ },
+ "outcomes": {
+  "permission_friction": {
+   "recovered_clean": 227,
+   "session_end": 18,
+   "further_failures": 27,
+   "self_corrected": 4
+  },
+  "api_error": {
+   "session_end": 284,
+   "further_failures": 66,
+   "recovered_clean": 185,
+   "self_corrected": 6
+  },
+  "tool_error": {
+   "recovered_clean": 881,
+   "session_end": 115,
+   "self_corrected": 30,
+   "further_failures": 138,
+   "escalated": 1
+  },
+  "error_loop": {
+   "further_failures": 72,
+   "recovered_clean": 333,
+   "session_end": 74,
+   "self_corrected": 12
+  },
+  "frustration_lex": {
+   "further_failures": 200,
+   "self_corrected": 38,
+   "recovered_clean": 617,
+   "session_end": 46,
+   "escalated": 1
+  },
+  "self_correction": {
+   "recovered_clean": 364,
+   "session_end": 38,
+   "further_failures": 88,
+   "self_corrected": 40
+  },
+  "user_interrupt": {
+   "session_end": 18,
+   "further_failures": 29,
+   "recovered_clean": 196,
+   "self_corrected": 13
+  },
+  "honesty_challenge": {
+   "recovered_clean": 99,
+   "self_corrected": 9,
+   "further_failures": 24,
+   "session_end": 3
+  },
+  "subagent_failure": {
+   "session_end": 26
+  },
+  "stuck_repetition": {
+   "recovered_clean": 129,
+   "session_end": 30,
+   "further_failures": 21
+  },
+  "abandonment": {
+   "session_end": 108,
+   "recovered_clean": 31
+  },
+  "model_escalation": {
+   "recovered_clean": 12,
+   "further_failures": 2,
+   "session_end": 3
+  },
+  "interagent_challenge": {
+   "recovered_clean": 3,
+   "session_end": 1
+  }
+ },
+ "position_deciles": {
+  "permission_friction": [
+   38,
+   50,
+   28,
+   17,
+   22,
+   28,
+   20,
+   19,
+   20,
+   30
+  ],
+  "api_error": [
+   30,
+   16,
+   20,
+   20,
+   22,
+   29,
+   30,
+   43,
+   36,
+   106
+  ],
+  "tool_error": [
+   113,
+   104,
+   115,
+   113,
+   119,
+   131,
+   130,
+   120,
+   105,
+   89
+  ],
+  "error_loop": [
+   79,
+   75,
+   55,
+   59,
+   34,
+   51,
+   41,
+   41,
+   22,
+   23
+  ],
+  "frustration_lex": [
+   141,
+   82,
+   74,
+   59,
+   83,
+   70,
+   110,
+   91,
+   98,
+   74
+  ],
+  "self_correction": [
+   35,
+   36,
+   41,
+   45,
+   51,
+   49,
+   72,
+   61,
+   45,
+   77
+  ],
+  "user_interrupt": [
+   37,
+   20,
+   20,
+   24,
+   16,
+   17,
+   17,
+   28,
+   40,
+   33
+  ],
+  "honesty_challenge": [
+   20,
+   13,
+   10,
+   11,
+   19,
+   12,
+   8,
+   6,
+   18,
+   15
+  ],
+  "subagent_failure": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   4
+  ],
+  "stuck_repetition": [
+   5,
+   9,
+   9,
+   17,
+   23,
+   22,
+   12,
+   25,
+   27,
+   31
+  ],
+  "abandonment": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   4,
+   16,
+   105
+  ],
+  "model_escalation": [
+   1,
+   3,
+   1,
+   1,
+   4,
+   3,
+   0,
+   1,
+   0,
+   3
+  ],
+  "interagent_challenge": [
+   1,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   0,
+   1,
+   0
+  ]
+ },
+ "cooccurrence_top": {
+  "bare_done_claim+tool_error": 627,
+  "permission_friction+tool_error": 532,
+  "error_loop+tool_error": 526,
+  "self_correction+tool_error": 268,
+  "bare_done_claim+self_correction": 238,
+  "frustration_lex+tool_error": 210,
+  "tool_error+user_interrupt": 188,
+  "bare_done_claim+frustration_lex": 187,
+  "frustration_lex+self_correction": 185,
+  "permission_friction+user_interrupt": 132,
+  "error_loop+permission_friction": 107,
+  "bare_done_claim+error_loop": 99,
+  "self_correction+user_interrupt": 89,
+  "api_error+tool_error": 80,
+  "bare_done_claim+user_interrupt": 73,
+  "bare_done_claim+permission_friction": 70,
+  "frustration_lex+user_interrupt": 68,
+  "stuck_repetition+tool_error": 61,
+  "permission_friction+self_correction": 53,
+  "frustration_lex+permission_friction": 45,
+  "interagent_challenge+tool_error": 43,
+  "frustration_lex+honesty_challenge": 41,
+  "error_loop+frustration_lex": 35,
+  "subagent_failure+tool_error": 33,
+  "error_loop+self_correction": 32
+ },
+ "by_model_tier": {
+  "0": {
+   "events": 35019,
+   "incidents": 471,
+   "per_10k_events": 134.5
+  },
+  "1": {
+   "events": 45085,
+   "incidents": 127,
+   "per_10k_events": 28.17
+  },
+  "2": {
+   "events": 116838,
+   "incidents": 788,
+   "per_10k_events": 67.44
+  },
+  "3": {
+   "events": 369410,
+   "incidents": 2400,
+   "per_10k_events": 64.97
+  },
+  "4": {
+   "events": 143491,
+   "incidents": 876,
+   "per_10k_events": 61.05
+  }
+ },
+ "timeline": {
+  "2026-01": {
+   "claude_code": {
+    "events": 704,
+    "incidents": 2,
+    "per_10k": 28.4
+   }
+  },
+  "2026-02": {
+   "claude_code": {
+    "events": 4293,
+    "incidents": 25,
+    "per_10k": 58.2
+   }
+  },
+  "2026-03": {
+   "claude_code": {
+    "events": 72044,
+    "incidents": 488,
+    "per_10k": 67.7
+   }
+  },
+  "2026-04": {
+   "assistant_fleet": {
+    "events": 533,
+    "incidents": 18,
+    "per_10k": 337.7
+   },
+   "claude_code": {
+    "events": 51011,
+    "incidents": 392,
+    "per_10k": 76.8
+   }
+  },
+  "2026-05": {
+   "assistant_fleet": {
+    "events": 11579,
+    "incidents": 126,
+    "per_10k": 108.8
+   },
+   "claude_code": {
+    "events": 102976,
+    "incidents": 889,
+    "per_10k": 86.3
+   }
+  },
+  "2026-06": {
+   "assistant_fleet": {
+    "events": 25757,
+    "incidents": 178,
+    "per_10k": 69.1
+   },
+   "claude_code": {
+    "events": 90274,
+    "incidents": 552,
+    "per_10k": 61.1
+   }
+  },
+  "2026-07": {
+   "assistant_fleet": {
+    "events": 49943,
+    "incidents": 442,
+    "per_10k": 88.5
+   },
+   "claude_code": {
+    "events": 150829,
+    "incidents": 970,
+    "per_10k": 64.3
+   }
+  },
+  "2026-08": {
+   "assistant_fleet": {
+    "events": 9521,
+    "incidents": 134,
+    "per_10k": 140.7
+   },
+   "claude_code": {
+    "events": 65003,
+    "incidents": 428,
+    "per_10k": 65.8
+   }
+  }
+ },
+ "confirmed_modes": [
+  {
+   "confirmed_mode": "guardrail_friction",
+   "n": 21,
+   "sev": 2.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "infra_api_fault",
+   "n": 11,
+   "sev": 2.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "premature_completion_claim",
+   "n": 10,
+   "sev": 2.9,
+   "fault": 10
+  },
+  {
+   "confirmed_mode": "tool_misuse",
+   "n": 6,
+   "sev": 2.33,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "other",
+   "n": 6,
+   "sev": 2.0,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "loop_no_progress",
+   "n": 6,
+   "sev": 2.5,
+   "fault": 6
+  },
+  {
+   "confirmed_mode": "wrong_edit",
+   "n": 5,
+   "sev": 3.2,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "instruction_ignored",
+   "n": 5,
+   "sev": 2.4,
+   "fault": 5
+  },
+  {
+   "confirmed_mode": "user_changed_mind",
+   "n": 4,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "hallucinated_fact",
+   "n": 4,
+   "sev": 3.0,
+   "fault": 4
+  },
+  {
+   "confirmed_mode": "context_loss",
+   "n": 3,
+   "sev": 1.67,
+   "fault": 3
+  },
+  {
+   "confirmed_mode": "benign_false_positive",
+   "n": 3,
+   "sev": 1.0,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "env_breakage",
+   "n": 2,
+   "sev": 2.5,
+   "fault": 0
+  },
+  {
+   "confirmed_mode": "subagent_noncompliance",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "spec_misunderstanding",
+   "n": 1,
+   "sev": 3.0,
+   "fault": 1
+  },
+  {
+   "confirmed_mode": "over_scope",
+   "n": 1,
+   "sev": 2.0,
+   "fault": 1
+  }
+ ],
+ "avoidability": {
+  "not_avoidable": 29,
+  "agent_should_have_verified": 26,
+  "harness_config": 12,
+  "infra_fix": 7,
+  "bigger_model": 6,
+  "agent_should_have_asked": 5,
+  "better_prompt": 4
+ },
+ "error_categories": {
+  "exit_nonzero": 2503,
+  "other": 2105,
+  "not_found": 1530,
+  "edit_mismatch": 452,
+  "timeout": 400,
+  "hook_block": 376,
+  "network": 238,
+  "user_rejected": 205,
+  "permission_denied": 184,
+  "interrupt": 6
+ },
+ "ecosystem_mode_mix": {
+  "assistant_fleet": {
+   "abandonment": 98,
+   "error_loop": 38,
+   "frustration_lex": 334,
+   "honesty_challenge": 43,
+   "interagent_challenge": 1,
+   "self_correction": 171,
+   "stuck_repetition": 153,
+   "tool_error": 60
+  },
+  "claude_code": {
+   "abandonment": 41,
+   "api_error": 541,
+   "error_loop": 453,
+   "frustration_lex": 568,
+   "honesty_challenge": 92,
+   "interagent_challenge": 3,
+   "model_escalation": 17,
+   "permission_friction": 276,
+   "self_correction": 359,
+   "stuck_repetition": 27,
+   "subagent_failure": 26,
+   "tool_error": 1105,
+   "user_interrupt": 256
+  }
+ },
+ "ecosystem_detector_split": {
+  "events": {
+   "claude_code": 599353,
+   "assistant_fleet": 97333
+  },
+  "detectors": [
+   {
+    "detector": "abandonment",
+    "claude_code_signals": 67,
+    "assistant_fleet_signals": 119,
+    "claude_code_per_10k_events": 1.12,
+    "assistant_fleet_per_10k_events": 12.23
+   },
+   {
+    "detector": "api_error",
+    "claude_code_signals": 654,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 10.91,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "error_loop",
+    "claude_code_signals": 688,
+    "assistant_fleet_signals": 68,
+    "claude_code_per_10k_events": 11.48,
+    "assistant_fleet_per_10k_events": 6.99
+   },
+   {
+    "detector": "frustration_lex",
+    "claude_code_signals": 647,
+    "assistant_fleet_signals": 488,
+    "claude_code_per_10k_events": 10.79,
+    "assistant_fleet_per_10k_events": 50.14
+   },
+   {
+    "detector": "honesty_challenge",
+    "claude_code_signals": 96,
+    "assistant_fleet_signals": 59,
+    "claude_code_per_10k_events": 1.6,
+    "assistant_fleet_per_10k_events": 6.06
+   },
+   {
+    "detector": "interagent_challenge",
+    "claude_code_signals": 245,
+    "assistant_fleet_signals": 30,
+    "claude_code_per_10k_events": 4.09,
+    "assistant_fleet_per_10k_events": 3.08
+   },
+   {
+    "detector": "model_escalation",
+    "claude_code_signals": 19,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 0.32,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "permission_friction",
+    "claude_code_signals": 758,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 12.65,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "self_correction",
+    "claude_code_signals": 864,
+    "assistant_fleet_signals": 331,
+    "claude_code_per_10k_events": 14.42,
+    "assistant_fleet_per_10k_events": 34.01
+   },
+   {
+    "detector": "stuck_repetition",
+    "claude_code_signals": 43,
+    "assistant_fleet_signals": 266,
+    "claude_code_per_10k_events": 0.72,
+    "assistant_fleet_per_10k_events": 27.33
+   },
+   {
+    "detector": "subagent_failure",
+    "claude_code_signals": 33,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 0.55,
+    "assistant_fleet_per_10k_events": 0.0
+   },
+   {
+    "detector": "tool_error",
+    "claude_code_signals": 7478,
+    "assistant_fleet_signals": 521,
+    "claude_code_per_10k_events": 124.77,
+    "assistant_fleet_per_10k_events": 53.53
+   },
+   {
+    "detector": "user_interrupt",
+    "claude_code_signals": 401,
+    "assistant_fleet_signals": 0,
+    "claude_code_per_10k_events": 6.69,
+    "assistant_fleet_per_10k_events": 0.0
+   }
+  ],
+  "silent_on_assistant_fleet": [
+   "api_error",
+   "model_escalation",
+   "permission_friction",
+   "subagent_failure",
+   "user_interrupt"
+  ],
+  "n_silent_on_assistant_fleet": 5,
+  "n_detectors_compared": 13,
+  "silent_detector_coding_signals": 1865,
+  "basis": "Detector firings (rows in signals), not incidents. Numerator and denominator come from the same atlas.db join so the rates are internally consistent.",
+  "reading": "5 of the 13 adjudicated detectors fire 1865 times across the coding-agent logs and exactly zero times across the assistant-fleet logs. The silence is structural, not a rate difference: these detectors key on events a chat transcript does not contain, so pointing this toolkit at chat logs loses those failure kinds without reporting a gap. The other detectors' rate differences between the two ecosystems are NOT evidence of anything here; the ecosystems differ in task, operator, and transcript format at the same time.",
+  "denominator_reconciliation": {
+   "atlas_db_events": 696686,
+   "analysis_corpus_events": 709843,
+   "gap": 13157,
+   "note": "data/analysis counts 13,157 more events than atlas.db stores (709,843 against 696,686), almost all of it on the assistant-fleet side. The published corpus totals use the data/analysis figure; the rates in this block use the atlas.db figure, because that is where the detector firings come from. The cause of the disagreement has not been established and is not claimed here. Any rate that mixes the two sources is wrong."
+  }
+ },
+ "experiment_objectivity_axis": {
+  "run_01_keyword_cohorts": {
+   "ratio_of_ratios": 4.96,
+   "sensitivity_variants": {
+    "headline": 4.96,
+    "narrow_cohort": 4.376,
+    "precision_weighted": 4.733,
+    "narrow_precision_weighted": 4.183,
+    "drop_largest_project": 4.583,
+    "sidechains_included": 6.15
+   },
+   "sensitivity_range": [
+    4.183,
+    6.15
+   ],
+   "verdict": "supported-but-superseded",
+   "flaw": "cohorts defined by hand-picked project-name keywords; the split measured project type, not objectivity"
+  },
+  "run_02_behavioral_cohorts": {
+   "ratio_of_ratios": 1.101,
+   "z_mechanical_share": 0.84,
+   "verdict": "killed",
+   "cohorts": {
+    "objective_sessions": 194,
+    "subjective_sessions": 88,
+    "excluded_sessions": 340,
+    "total": 622
+   },
+   "rule": "objective = session ran at least one test command; subjective = prose edits, zero test runs (pre-registered before counts seen)"
+  },
+  "criterion": ">= 2.0 pass, < 1.5 kill (pre-registered both runs)",
+  "takeaway": "The headline 5.0x effect did not survive a clean cohort definition. The study's own tightening killed its own finding. That is the method working on itself.",
+  "cut_claims": [
+   "ratio_of_ratios_broad_grouping (was 1.23): CUT. The value appears only in the run's write-up prose. Neither the pre-registered spec nor the run script defines a 'broad grouping', and the script computes and logs exactly one grouping, so the figure cannot be reproduced or checked from any record. Removed rather than re-typed."
+  ]
+ },
+ "escalation_bridges": {
+  "candidates": 596,
+  "strong": 86,
+  "strong_score_threshold": 0.5
+ },
+ "what_didnt_hold": [
+  {
+   "claim": "Objective work fails mechanically 5.0x more than subjective work",
+   "status": "killed",
+   "how": "behavioral cohorts (did the session run a test) give 1.1x, below the 1.5 kill line; the keyword run measured project type"
+  },
+  {
+   "claim": "Agents self-correct 4.9x more with a human in the loop",
+   "status": "killed",
+   "headline_ratio": 4.93,
+   "how": "79% of human-present self-corrections fire on one politeness token that requires a preceding interlocutor by construction, and the autonomous arm produces the same token to its orchestrator. Drop that token and an effect does survive \u2014 a turn-adjacency gap of 3.0% vs 1.4%, z=3.0, which is significant. It is killed on construct validity, not on significance: it appears in BOTH arms and measures interlocutor adjacency rather than a human-vs-delegation disposition"
+  },
+  {
+   "claim": "The chat platform shapes the failure mode",
+   "status": "killed",
+   "how": "the same bot on discord and signal is indistinguishable; within one platform the bot-to-bot spread is wider than the whole cross-platform range. It is bot deployment, not platform"
+  },
+  {
+   "claim": "Group chats fail differently than one-to-one",
+   "status": "null",
+   "how": "no significant difference (z = 0.674)"
+  },
+  {
+   "claim": "Orchestrator subagents fail more mechanically than human sessions",
+   "status": "wounded",
+   "residual_ratio": 1.85,
+   "residual_rates_pct": [
+    2.4,
+    1.3
+   ],
+   "residual_z": 2.28,
+   "residual_p": 0.02,
+   "how": "mostly a tautology \u2014 the relational detectors that cannot fire without a human message are 78% of top-level relational incidents; the honest residual is a marginal ~1.9x lower self-initiated correction under delegation (2.4% vs 1.3%, z=2.28, p about 0.02)"
+  }
+ ],
+ "what_didnt_hold_cut_claims": [
+  "'self-initiated corrections show no significant gap (z about 1.1)' \u2014 removed. No z of 1.1 exists anywhere in the lab record. The surviving self-correction effect was significant and was killed on construct validity; the old string both invented the statistic and inverted the reason the finding died.",
+  "'4 of 6 relational detectors cannot fire without a human' \u2014 removed. The source record says 'four relational detectors' and gives their share of top-level relational incidents; it states no denominator of six. The share is published instead of the invented fraction."
+ ],
+ "mast_crosswalk": {
+  "superseded_round1_point_estimates": {
+   "sampled": 75,
+   "mapped": 16,
+   "mapped_share": 0.213,
+   "extension_share": 0.533,
+   "unclear_share": 0.253,
+   "weighted_mast_share": 0.187,
+   "weighted_infrastructure_share": 0.483
+  },
+  "mast_source_traces": 1600,
+  "mast_modes": 14,
+  "mast_categories": 3,
+  "mapped_clean": "first coding round only, superseded: 16 of 75 stratified incidents fit a real MAST mode. The publishable coverage claim is the range in mast_coverage_settled, not this point estimate",
+  "unmapped": "first coding round only, superseded: the rest split between an extension family and unclear (mostly detector false positives on successful work). The infrastructure family (quota kills, permission loops, environment faults) is the largest under every settlement rule, because our two largest detectors, tool_error and api_error, are environment faults MAST has no cell for",
+  "structural": "MAST's largest category, inter-agent misalignment, is nearly absent here; only its verification/termination category survives. Why it is absent is an open question: the earlier explanation (orchestrator fan-out over parallel stateless workers rather than conversational agent chains) was cut after the external validation round found no coding evidence for that architecture in this corpus or in either foreign corpus it checked",
+  "self_critical": "the real gap is two families MAST lacks, human-in-the-loop and single-session infrastructure",
+  "caveat": "about 6 incidents per mode, and our detectors are the sampling frame. Inter-rater reliability was run in a later round and lives in mast_coverage_settled",
+  "reference": "MAST (Cemri et al., arXiv:2503.13657), 14 modes, 3 categories, built from ~1,600 conversational multi-agent traces",
+  "superseded_by": "mast_coverage_settled",
+  "status": "superseded first coding round; kept as the correction trail"
+ },
+ "mast_coverage_settled": {
+  "raw_range_pct": [
+   21.1,
+   25.4
+  ],
+  "weighted_range_pct": [
+   16.5,
+   22.4
+  ],
+  "raw_range_display": [
+   "21%",
+   "26%"
+  ],
+  "weighted_range_display": [
+   "16%",
+   "23%"
+  ],
+  "uncovered_range_display": [
+   "74%",
+   "79%"
+  ],
+  "settlement_readings": {
+   "round1_published": {
+    "raw_pct": 21.3,
+    "weighted_pct": 18.7
+   },
+   "round1_blind_consensus": {
+    "raw_pct": 21.9,
+    "weighted_pct": 18.5
+   },
+   "enlargement_combined": {
+    "raw_pct": 21.1,
+    "weighted_pct": 16.5
+   },
+   "settled_combined": {
+    "raw_pct": 25.4,
+    "weighted_pct": 22.4
+   }
+  },
+  "combined_n": 142,
+  "kappa_bucket_irr": 0.632,
+  "kappa_bucket_enlargement": 0.516,
+  "kappa_full_label_irr": 0.536,
+  "irr_n": 73,
+  "enlargement_n": 69,
+  "recode_agreement": 0.423,
+  "rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "invariant": "Every structural claim holds across the whole range: the infrastructure family is the largest under every settlement, and the taxonomy's largest category is our smallest.",
+  "note": "Reported as a range with kappas attached. The decimals are coder-dependent and are no longer quoted as point estimates. `mast_crosswalk` above is the superseded first-round reading, kept so the correction stays visible next to the number it replaced. Both endpoints are the min and max of settlement_readings; neither is typed.",
+  "extension_families": {
+   "E1": {
+    "label": "human-in-the-loop interaction failure",
+    "raw_range_pct": [
+     15.5,
+     16.4
+    ],
+    "weighted_range_pct": [
+     6.4,
+     8.4
+    ],
+    "raw_range_display": [
+     "15%",
+     "17%"
+    ],
+    "weighted_range_display": [
+     "6%",
+     "9%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 16.0,
+      "weighted_pct": 6.4
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 16.4,
+      "weighted_pct": 8.4
+     },
+     "enlargement_combined": {
+      "raw_pct": 16.2,
+      "weighted_pct": 7.3
+     },
+     "settled_combined": {
+      "raw_pct": 15.5,
+      "weighted_pct": 7.1
+     }
+    }
+   },
+   "E2": {
+    "label": "single-session infrastructure failure",
+    "raw_range_pct": [
+     31.7,
+     37.3
+    ],
+    "weighted_range_pct": [
+     40.8,
+     48.3
+    ],
+    "raw_range_display": [
+     "31%",
+     "38%"
+    ],
+    "weighted_range_display": [
+     "40%",
+     "49%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 37.3,
+      "weighted_pct": 48.3
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 32.9,
+      "weighted_pct": 47.9
+     },
+     "enlargement_combined": {
+      "raw_pct": 34.5,
+      "weighted_pct": 47.2
+     },
+     "settled_combined": {
+      "raw_pct": 31.7,
+      "weighted_pct": 40.8
+     }
+    }
+   },
+   "E3": {
+    "label": "fan-out coordination failure",
+    "raw_range_pct": [
+     0.0,
+     0.0
+    ],
+    "weighted_range_pct": [
+     0.0,
+     0.0
+    ],
+    "raw_range_display": [
+     "0%",
+     "0%"
+    ],
+    "weighted_range_display": [
+     "0%",
+     "0%"
+    ],
+    "settlement_readings": {
+     "round1_published": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "round1_blind_consensus": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "enlargement_combined": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     },
+     "settled_combined": {
+      "raw_pct": 0.0,
+      "weighted_pct": 0.0
+     }
+    }
+   }
+  },
+  "largest_extension_family": "E2",
+  "e2_raw_range_pct": [
+   31.7,
+   37.3
+  ],
+  "e2_weighted_range_pct": [
+   40.8,
+   48.3
+  ],
+  "e2_raw_range_display": [
+   "31%",
+   "38%"
+  ],
+  "e2_weighted_range_display": [
+   "40%",
+   "49%"
+  ],
+  "extension_families_note": "Ranges are min and max over the same 4 settlement readings the coverage range above uses, including the superseded first round. Publishing the infrastructure share off a narrower settlement set would print a tighter range than the evidence supports. Render the `*_display` strings; do not re-round the decimals. The fan-out family drew nothing at all in this corpus, which is a real result and not a missing measurement."
+ },
+ "mast_chart": {
+  "n": 142,
+  "fits_mast": 36,
+  "needs_extension": 67,
+  "unclear": 39,
+  "basis": "settled labels pooled across both coding rounds"
+ },
+ "reciprocal_blindness": {
+  "n_examined": 149,
+  "n_coders": 1,
+  "by_family": {
+   "E1": 0,
+   "E2": 1,
+   "E3": 0,
+   "E4": 4,
+   "E5": 0,
+   "E6": 0
+  },
+  "any_extension_family_k": 5,
+  "any_extension_family_pct": 3.36,
+  "any_extension_family_wilson95_pct": [
+   1.44,
+   7.61
+  ],
+  "e1_e2_k": 1,
+  "e1_e2_pct": 0.67,
+  "e1_e2_wilson95_pct": [
+   0.12,
+   3.7
+  ],
+  "reading": "Run in reverse, our extension families explain 5 of the 149 benchmark traces we coded (3.36%), and the two families that carry our own corpus explain 1 (0.67%). The blindness runs both ways: their catalogue has no cell for most of what breaks here, and our extensions barely touch what breaks there.",
+  "limits": "One coder labelled all 149 traces, so there is no agreement measurement on this arm at all. The traces are a stratified sample of one public benchmark collection, not a census of anything."
+ },
+ "phantom_agent": {
+  "framework": "AG2",
+  "k": 4,
+  "n_framework_traces": 72,
+  "pct": 5.6,
+  "wilson95_pct": [
+   2.2,
+   13.4
+  ],
+  "mechanism": "The group-chat manager stamps the sandbox's execution observation with an agent's name. That agent never speaks in the trace. The verifying agent then reports it as having submitted an independent solution and closes the run on a submission that does not exist.",
+  "reading": "4 of the 72 AG2 traces we coded end this way (5.6%). The field's own benchmark corpus contains a failure its own catalogue never recorded, which is the coverage argument made against the catalogue's home ground rather than ours.",
+  "limits": "4 cases, one framework, one coder. The mechanical check (the credited agent's only turn is the execution observation, and the verifier credits it) passes on every one, so the mechanism is not in doubt; the rate is."
+ },
+ "guardrail_generalisation": {
+  "detector": "permission_friction",
+  "by_corpus": {
+   "swe_agent": 64,
+   "terminalbench": 73,
+   "tracebench": 27,
+   "cc_bench": 7
+  },
+  "total_signals": 171,
+  "n_corpora": 4,
+  "n_corpora_firing": 4,
+  "prediction": "registered in advance to return zero on all of them, because none of these harnesses has a permission, hook, or consent enforcement layer for the detector to see",
+  "reading": "The guardrail detector fired 171 times across all 4 outside corpora, having been written down in advance as certain to fire zero times, and it fired in 4 of 4. What it is matching is ordinary permission-denied text in tool output, not this harness's consent layer. A detector can be portable and wrong at the same time.",
+  "limits": "The firings on the outside corpora were not adjudicated one by one, so the mismatch is read off the marker and the corpora's structure, not off a labelled precision."
+ },
+ "anger_detector_misfire": {
+  "detector": "frustration_lex",
+  "corpus": "cc_bench, matched mode",
+  "signals": 14,
+  "units_firing": 8,
+  "distinct_markers": 1,
+  "signals_from_top_marker": 14,
+  "adjudicated": false,
+  "reading": "Every one of the 14 firings traces to a single word-ending pattern, and the inspected samples are people pasting application error logs that end with a polite request to try again. The detector is reading a machine's apology as a human's temper.",
+  "limits": "These 14 firings were NOT formally adjudicated. The source record calls the apparent precision near zero on inspection, which is an inspection, not a measurement. It is published as a marker diagnosis, and no precision figure is derived from it."
+ },
+ "adjudication": {
+  "total_labels": 185,
+  "aligned_to_current": 60,
+  "rounds": 2,
+  "detectors": 13,
+  "note": "Precision is computed per round at label time (safe). 60 labels align to the current post-improvement incident set and back the eval suite; the rest were labeled against earlier incident definitions the detector fixes changed."
+ },
+ "detector_reliability_inversion": {
+  "pairs": [
+   {
+    "detector": "abandonment",
+    "precision": 0.333,
+    "mean_severity": 2.25,
+    "n_judged": 12,
+    "n_confirmed": 4,
+    "round": 2
+   },
+   {
+    "detector": "api_error",
+    "precision": 1.0,
+    "mean_severity": 2.08,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 1
+   },
+   {
+    "detector": "error_loop",
+    "precision": 0.417,
+    "mean_severity": 2.2,
+    "n_judged": 12,
+    "n_confirmed": 5,
+    "round": 1
+   },
+   {
+    "detector": "frustration_lex",
+    "precision": 0.583,
+    "mean_severity": 2.86,
+    "n_judged": 12,
+    "n_confirmed": 7,
+    "round": 1
+   },
+   {
+    "detector": "honesty_challenge",
+    "precision": 0.25,
+    "mean_severity": 2.67,
+    "n_judged": 12,
+    "n_confirmed": 3,
+    "round": 2
+   },
+   {
+    "detector": "interagent_challenge",
+    "precision": 0.083,
+    "mean_severity": 3.0,
+    "n_judged": 12,
+    "n_confirmed": 1,
+    "round": 1
+   },
+   {
+    "detector": "model_escalation",
+    "precision": 0.417,
+    "mean_severity": 2.4,
+    "n_judged": 12,
+    "n_confirmed": 5,
+    "round": 2
+   },
+   {
+    "detector": "permission_friction",
+    "precision": 0.833,
+    "mean_severity": 2.1,
+    "n_judged": 12,
+    "n_confirmed": 10,
+    "round": 1
+   },
+   {
+    "detector": "self_correction",
+    "precision": 0.5,
+    "mean_severity": 2.5,
+    "n_judged": 12,
+    "n_confirmed": 6,
+    "round": 2
+   },
+   {
+    "detector": "stuck_repetition",
+    "precision": 0.5,
+    "mean_severity": 2.0,
+    "n_judged": 12,
+    "n_confirmed": 6,
+    "round": 1
+   },
+   {
+    "detector": "subagent_failure",
+    "precision": 1.0,
+    "mean_severity": 2.08,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 2
+   },
+   {
+    "detector": "tool_error",
+    "precision": 0.833,
+    "mean_severity": 1.8,
+    "n_judged": 12,
+    "n_confirmed": 10,
+    "round": 1
+   },
+   {
+    "detector": "user_interrupt",
+    "precision": 1.0,
+    "mean_severity": 1.83,
+    "n_judged": 12,
+    "n_confirmed": 12,
+    "round": 1
+   }
+  ],
+  "spearman_rho": -0.706,
+  "permutation_p": 0.0089,
+  "permutation_extreme_count": 885,
+  "permutation_trials": 100000,
+  "permutation_seed": 20260807,
+  "n_detectors": 13,
+  "n_judgments": 156,
+  "n_confirmed": 93,
+  "judgments_per_detector": [
+   12
+  ],
+  "severity_scale_max": 5,
+  "severity_observed_range": [
+   1,
+   4
+  ],
+  "severity_basis": "Mean severity is averaged over the CONFIRMED judgments for that detector only, so it describes what the detector catches when it is right, not what it flags.",
+  "reading": "Across the 13 detectors, how often a detector is right runs against how much the failures it finds are worth (rho -0.706, shuffle test p 0.0089). The tripwires that almost never miss are watching for cheap mechanical breakage; the ones aimed at the failures that actually cost something are wrong most of the time.",
+  "limits": "This is 13 points. Each detector's two coordinates come from 12 judged cases by a single language-model judge, and the severity coordinate averages over fewer than that (93 confirmed cases in total across all 13 detectors). The severity scale runs to 5 and nothing was ever scored above 4, so the severity coordinate has little room to move and the ranking between adjacent detectors is not meaningful. The direction is the finding; the coefficient is not a measurement anyone should lean on."
+ },
+ "totals": {
+  "sessions": 2781,
+  "session_files": 7042,
+  "events": 709843,
+  "incidents": 4662
+ },
+ "scope": {
+  "is": "A safe public representation of one operator's own agent logs, as aggregate statistics only, plus the reproducible method.",
+  "is_not": "The raw transcripts, the literature review, and the larger aggregate dataset and API roadmap stay private, referenced but never exposed.",
+  "shareable_layer": "aggregates + pipeline code; never transcript text."
+ },
+ "provenance": {
+  "_legend": "Every emitted figure maps to the source record and key it was derived from. Source paths are lab-relative; file extensions are omitted so the sanitation check can forbid transcript extensions outright. Entries marked block cover a whole subtree. Paths starting with _md or _text record numbers quoted out of a write-up with an anchored regex.",
+  "_rounding_rule": "Shares are converted to percentages and rounded half-up to one decimal place. Range endpoints are additionally published as integers rounded OUTWARD \u2014 the low end floored, the high end ceiled \u2014 so a displayed range can never look tighter than the evidence behind it, and the complement range is derived from those same endpoints rather than rounded independently. Consumers must render the `*_display` strings and must not re-round the decimal endpoints themselves.",
+  "_md:experiments/mast-coverage:MAST arXiv id": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST arXiv id",
+   "note": "regex arXiv:([\\d.]+)"
+  },
+  "_md:experiments/mast-coverage:MAST source trace count": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "regex ~([\\d,]+) execution traces"
+  },
+  "_md:experiments/objectivity-axis-02/RESULTS:broad-grouping ratio-of-ratios (CUT)": {
+   "source": "experiments/objectivity-axis-02/RESULTS",
+   "key": "broad-grouping ratio-of-ratios (CUT)",
+   "note": "regex \\*\\*([\\d.]+)\\*\\* \\(broad grouping\\)"
+  },
+  "_md:experiments/phase2-findings:MAST taxonomy shape": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "regex (\\d+) failure modes, (\\d+) categories"
+  },
+  "_md:experiments/phase2-findings:politeness token share": {
+   "source": "experiments/phase2-findings",
+   "key": "politeness token share",
+   "note": "regex (\\d+)% of human-present self-corrections"
+  },
+  "_md:experiments/phase2-findings:residual self-initiated correction under delegation": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction under delegation",
+   "note": "regex about half as often \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+), p~(\\d+\\.\\d+)\\)"
+  },
+  "_md:experiments/phase2-findings:share of top-level relational incidents from human-required detectors": {
+   "source": "experiments/phase2-findings",
+   "key": "share of top-level relational incidents from human-required detectors",
+   "note": "regex are (\\d+)% of top-level relational incidents"
+  },
+  "_md:experiments/phase2-findings:surviving turn-adjacency effect": {
+   "source": "experiments/phase2-findings",
+   "key": "surviving turn-adjacency effect",
+   "note": "regex turn-adjacency effect \\((\\d+\\.\\d+)% vs (\\d+\\.\\d+)%, z=(\\d+\\.\\d+)\\)"
+  },
+  "_md:pipeline/adjudication_ingest:severity field name in the adjudication schema": {
+   "source": "pipeline/adjudication_ingest",
+   "key": "severity field name in the adjudication schema",
+   "note": "regex severity_1_(\\d)\\b"
+  },
+  "adjudication.aligned_to_current": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications JOIN incidents)",
+   "note": "",
+   "value": 60
+  },
+  "adjudication.detectors": {
+   "source": "data/precision",
+   "key": "key count",
+   "note": "",
+   "block": true
+  },
+  "adjudication.rounds": {
+   "source": "data/precision",
+   "key": "distinct <mode>.round values",
+   "note": "",
+   "value": 2
+  },
+  "adjudication.total_labels": {
+   "source": "data/atlas",
+   "key": "COUNT(adjudications)",
+   "note": "",
+   "value": 185
+  },
+  "anger_detector_misfire.distinct_markers": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "precision_note.frustration_lex.firings, key count",
+   "note": "",
+   "value": 1
+  },
+  "anger_detector_misfire.signals": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.matched.detectors.frustration_lex.signals",
+   "note": "",
+   "value": 14
+  },
+  "anger_detector_misfire.signals_from_top_marker": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "precision_note.frustration_lex.firings, largest value",
+   "note": "",
+   "value": 14
+  },
+  "anger_detector_misfire.units_firing": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.matched.detectors.frustration_lex.units_firing",
+   "note": "",
+   "value": 8
+  },
+  "avoidability": {
+   "source": "data/atlas",
+   "key": "adjudications.avoidable_by WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "by_model_tier": {
+   "source": "data/analysis",
+   "key": "by_model_tier",
+   "note": "",
+   "block": true
+  },
+  "confirmed_modes": {
+   "source": "data/atlas",
+   "key": "adjudications WHERE valid=1",
+   "note": "",
+   "block": true
+  },
+  "cooccurrence_top": {
+   "source": "data/analysis",
+   "key": "cooccurrence_top",
+   "note": "",
+   "block": true
+  },
+  "corpus._n_chat_platforms": {
+   "source": "data/phase2-results",
+   "key": "C_cross_context keys excluding claude_code",
+   "note": "",
+   "value": 4
+  },
+  "corpus.assistant_fleet": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.claude_code": {
+   "source": "data/analysis",
+   "key": "corpus.*",
+   "note": "",
+   "block": true
+  },
+  "corpus.span": {
+   "source": "data/atlas",
+   "key": "MIN/MAX month of events.ts",
+   "note": "",
+   "value": [
+    "2026-01",
+    "2026-08"
+   ]
+  },
+  "detector_reliability_inversion.judgments_per_detector": {
+   "source": "data/precision",
+   "key": "distinct <mode>.n_judged values",
+   "note": "",
+   "value": [
+    12
+   ]
+  },
+  "detector_reliability_inversion.n_confirmed": {
+   "source": "data/precision",
+   "key": "sum of <mode>.n_valid",
+   "note": "",
+   "value": 93
+  },
+  "detector_reliability_inversion.n_detectors": {
+   "source": "data/precision",
+   "key": "key count",
+   "note": "",
+   "value": 13
+  },
+  "detector_reliability_inversion.n_judgments": {
+   "source": "data/precision",
+   "key": "sum of <mode>.n_judged",
+   "note": "",
+   "value": 156
+  },
+  "detector_reliability_inversion.pairs": {
+   "source": "data/precision",
+   "key": "<mode>.{precision,mean_severity,n_judged,n_valid,round}",
+   "note": "",
+   "block": true
+  },
+  "detector_reliability_inversion.permutation_extreme_count": {
+   "source": "data/precision",
+   "key": "shuffles with |rho| at least the observed |rho|",
+   "note": "",
+   "value": 885
+  },
+  "detector_reliability_inversion.permutation_p": {
+   "source": "data/precision",
+   "key": "two-sided Monte-Carlo permutation test on the same two columns, (extreme + 1) / (trials + 1)",
+   "note": "",
+   "value": 0.0089
+  },
+  "detector_reliability_inversion.permutation_seed": {
+   "source": "derived",
+   "key": "seed declared in this generator; random.Random(seed).shuffle",
+   "note": "",
+   "value": 20260807
+  },
+  "detector_reliability_inversion.permutation_trials": {
+   "source": "derived",
+   "key": "trial count declared in this generator",
+   "note": "",
+   "value": 100000
+  },
+  "detector_reliability_inversion.severity_observed_range": {
+   "source": "data/atlas",
+   "key": "MIN/MAX adjudications.severity WHERE valid=1",
+   "note": "",
+   "value": [
+    1,
+    4
+   ]
+  },
+  "detector_reliability_inversion.severity_scale_max": {
+   "source": "pipeline/adjudication_ingest",
+   "key": "severity scale maximum, from the schema field name",
+   "note": "",
+   "value": 5
+  },
+  "detector_reliability_inversion.spearman_rho": {
+   "source": "data/precision",
+   "key": "Spearman rank correlation of <mode>.precision against <mode>.mean_severity across every adjudicated detector, ties averaged",
+   "note": "",
+   "value": -0.706
+  },
+  "ecosystem_detector_split.denominator_reconciliation.analysis_corpus_events": {
+   "source": "data/analysis",
+   "key": "sum of corpus.*.events",
+   "note": "",
+   "value": 709843
+  },
+  "ecosystem_detector_split.denominator_reconciliation.atlas_db_events": {
+   "source": "data/atlas",
+   "key": "COUNT(events)",
+   "note": "",
+   "value": 696686
+  },
+  "ecosystem_detector_split.denominator_reconciliation.gap": {
+   "source": "derived",
+   "key": "analysis corpus events minus atlas.db event rows",
+   "note": "",
+   "value": 13157
+  },
+  "ecosystem_detector_split.detectors": {
+   "source": "data/atlas",
+   "key": "signals JOIN sessions, counted per detector and ecosystem; rates use the events denominator from the same join",
+   "note": "",
+   "block": true
+  },
+  "ecosystem_detector_split.events.assistant_fleet": {
+   "source": "data/atlas",
+   "key": "COUNT(events JOIN sessions) WHERE ecosystem=assistant_fleet",
+   "note": "",
+   "value": 97333
+  },
+  "ecosystem_detector_split.events.claude_code": {
+   "source": "data/atlas",
+   "key": "COUNT(events JOIN sessions) WHERE ecosystem=claude_code",
+   "note": "",
+   "value": 599353
+  },
+  "ecosystem_detector_split.n_detectors_compared": {
+   "source": "data/precision + data/atlas",
+   "key": "adjudicated detectors that appear in signals",
+   "note": "",
+   "value": 13
+  },
+  "ecosystem_detector_split.n_silent_on_assistant_fleet": {
+   "source": "data/atlas",
+   "key": "adjudicated detectors with zero assistant-fleet signals",
+   "note": "",
+   "value": 5
+  },
+  "ecosystem_detector_split.silent_detector_coding_signals": {
+   "source": "data/atlas",
+   "key": "sum of claude_code signals over the silent detectors",
+   "note": "",
+   "value": 1865
+  },
+  "ecosystem_mode_mix": {
+   "source": "data/atlas",
+   "key": "incidents by root class and primary_mode",
+   "note": "",
+   "block": true
+  },
+  "error_categories": {
+   "source": "data/atlas",
+   "key": "signals WHERE detector='tool_error'",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.candidates": {
+   "source": "data/escalation-bridges",
+   "key": "record count",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong": {
+   "source": "data/escalation-bridges",
+   "key": "records with score >= strong_score_threshold",
+   "note": "",
+   "block": true
+  },
+  "escalation_bridges.strong_score_threshold": {
+   "source": "pipeline/escalation_bridge",
+   "key": "strong-bridge score cutoff",
+   "note": "",
+   "value": 0.5
+  },
+  "experiment_objectivity_axis._kill_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "kill_below",
+   "note": "",
+   "value": 1.5
+  },
+  "experiment_objectivity_axis._pass_threshold": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "pre_registered_threshold",
+   "note": "",
+   "value": 2.0
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "cross-checked against the adversarial verifier's rederived.ratios.RoR",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_range": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "min/max over every logged robustness variant",
+   "note": "",
+   "value": [
+    4.183,
+    6.15
+   ]
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.drop_largest_project": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.drop_largest_project.RoR_vs_subj",
+   "note": "",
+   "value": 4.583
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.headline": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios",
+   "note": "",
+   "value": 4.96
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_cohort": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow",
+   "note": "",
+   "value": 4.376
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.narrow_precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_narrow_weighted",
+   "note": "",
+   "value": 4.183
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.precision_weighted": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "computed_statistics.results.ratio_of_ratios_precision_weighted",
+   "note": "",
+   "value": 4.733
+  },
+  "experiment_objectivity_axis.run_01_keyword_cohorts.sensitivity_variants.sidechains_included": {
+   "source": "experiments/objectivity-axis-01/log",
+   "key": "adversarial_verifier.attacks.sidechains_included.RoR",
+   "note": "",
+   "value": 6.15
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.excluded_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.excluded_sessions",
+   "note": "",
+   "value": 340
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.objective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.objective_sessions",
+   "note": "",
+   "value": 194
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.subjective_sessions": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.subjective_sessions",
+   "note": "",
+   "value": 88
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.cohorts.total": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "cohorts.total",
+   "note": "",
+   "value": 622
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.ratio_of_ratios": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "ratio_of_ratios",
+   "note": "",
+   "value": 1.101
+  },
+  "experiment_objectivity_axis.run_02_behavioral_cohorts.z_mechanical_share": {
+   "source": "experiments/objectivity-axis-02/result",
+   "key": "z_mechanical_share",
+   "note": "",
+   "value": 0.84
+  },
+  "guardrail_generalisation.by_corpus.cc_bench": {
+   "source": "data/detgen-cc-bench-results",
+   "key": "modes.native.detectors.permission_friction.signals",
+   "note": "",
+   "value": 7
+  },
+  "guardrail_generalisation.by_corpus.swe_agent": {
+   "source": "data/detgen-swe-agent-results",
+   "key": "primary.permission_friction.count",
+   "note": "",
+   "value": 64
+  },
+  "guardrail_generalisation.by_corpus.terminalbench": {
+   "source": "data/detgen-terminalbench-results",
+   "key": "other_detectors_measured[permission_friction].count",
+   "note": "",
+   "value": 73
+  },
+  "guardrail_generalisation.by_corpus.tracebench": {
+   "source": "data/detgen-tracebench-results",
+   "key": "degraded.detectors.permission_friction.signals",
+   "note": "",
+   "value": 27
+  },
+  "guardrail_generalisation.n_corpora": {
+   "source": "derived",
+   "key": "count of outside corpora measured",
+   "note": "",
+   "value": 4
+  },
+  "guardrail_generalisation.n_corpora_firing": {
+   "source": "derived",
+   "key": "corpora with a non-zero count",
+   "note": "",
+   "value": 4
+  },
+  "guardrail_generalisation.total_signals": {
+   "source": "derived",
+   "key": "sum over by_corpus",
+   "note": "",
+   "value": 171
+  },
+  "incidents_by_mode": {
+   "source": "data/analysis",
+   "key": "incidents_by_mode",
+   "note": "",
+   "block": true
+  },
+  "mast_chart": {
+   "source": "data/mast-settled",
+   "key": "combined_raw x combined_n",
+   "note": "",
+   "block": true
+  },
+  "mast_coverage_settled.combined_n": {
+   "source": "data/mast-settled",
+   "key": "combined_n",
+   "note": "",
+   "value": 142
+  },
+  "mast_coverage_settled.e2_raw_range_display": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.raw_range_display",
+   "note": "",
+   "value": [
+    "31%",
+    "38%"
+   ]
+  },
+  "mast_coverage_settled.e2_raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.raw_range_pct",
+   "note": "",
+   "value": [
+    31.7,
+    37.3
+   ]
+  },
+  "mast_coverage_settled.e2_weighted_range_display": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.weighted_range_display",
+   "note": "",
+   "value": [
+    "40%",
+    "49%"
+   ]
+  },
+  "mast_coverage_settled.e2_weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "alias of extension_families.E2.weighted_range_pct",
+   "note": "",
+   "value": [
+    40.8,
+    48.3
+   ]
+  },
+  "mast_coverage_settled.enlargement_n": {
+   "source": "data/mast-irr-ext-results",
+   "key": "n",
+   "note": "",
+   "value": 69
+  },
+  "mast_coverage_settled.extension_families.E1.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "15%",
+    "17%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E1 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    15.5,
+    16.4
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 16.2
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 7.3
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E1",
+   "note": "",
+   "value": 16.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E1",
+   "note": "",
+   "value": 8.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E1",
+   "note": "",
+   "value": 16.0
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E1",
+   "note": "",
+   "value": 6.4
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 15.5
+  },
+  "mast_coverage_settled.extension_families.E1.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E1",
+   "note": "",
+   "value": 7.1
+  },
+  "mast_coverage_settled.extension_families.E1.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "6%",
+    "9%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E1.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E1 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    6.4,
+    8.4
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "31%",
+    "38%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E2 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    31.7,
+    37.3
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 34.5
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 47.2
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E2",
+   "note": "",
+   "value": 32.9
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E2",
+   "note": "",
+   "value": 47.9
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E2",
+   "note": "",
+   "value": 37.3
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E2",
+   "note": "",
+   "value": 48.3
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 31.7
+  },
+  "mast_coverage_settled.extension_families.E2.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E2",
+   "note": "",
+   "value": 40.8
+  },
+  "mast_coverage_settled.extension_families.E2.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "40%",
+    "49%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E2.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E2 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    40.8,
+    48.3
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "0%",
+    "0%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E3 raw share over every settlement reading",
+   "note": "",
+   "value": [
+    0.0,
+    0.0
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw / weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw / combined_weighted.E3",
+   "note": "",
+   "value": 0.0
+  },
+  "mast_coverage_settled.extension_families.E3.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "0%",
+    "0%"
+   ]
+  },
+  "mast_coverage_settled.extension_families.E3.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max of E3 weighted share over every settlement reading",
+   "note": "",
+   "value": [
+    0.0,
+    0.0
+   ]
+  },
+  "mast_coverage_settled.irr_n": {
+   "source": "data/mast-irr-results",
+   "key": "n",
+   "note": "",
+   "value": 73
+  },
+  "mast_coverage_settled.kappa_bucket_enlargement": {
+   "source": "data/mast-irr-ext-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.516
+  },
+  "mast_coverage_settled.kappa_bucket_irr": {
+   "source": "data/mast-irr-results",
+   "key": "bucket.kappa",
+   "note": "",
+   "value": 0.632
+  },
+  "mast_coverage_settled.kappa_full_label_irr": {
+   "source": "data/mast-irr-results",
+   "key": "full_label.kappa",
+   "note": "",
+   "value": 0.536
+  },
+  "mast_coverage_settled.largest_extension_family": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "argmax over E1/E2/E3, checked under every settlement, raw and weighted",
+   "note": "",
+   "value": "E2"
+  },
+  "mast_coverage_settled.raw_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "21%",
+    "26%"
+   ]
+  },
+  "mast_coverage_settled.raw_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    21.1,
+    25.4
+   ]
+  },
+  "mast_coverage_settled.recode_agreement": {
+   "source": "data/mast-settled",
+   "key": "recode_agreement",
+   "note": "",
+   "value": 0.423
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.raw_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 21.1
+  },
+  "mast_coverage_settled.settlement_readings.enlargement_combined.weighted_pct": {
+   "source": "data/mast-combined",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 16.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.raw_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 21.9
+  },
+  "mast_coverage_settled.settlement_readings.round1_blind_consensus.weighted_pct": {
+   "source": "data/mast-consensus",
+   "key": "raw.MAST / weighted.MAST",
+   "note": "",
+   "value": 18.5
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.raw_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 21.3
+  },
+  "mast_coverage_settled.settlement_readings.round1_published.weighted_pct": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published[_weighted].MAST",
+   "note": "",
+   "value": 18.7
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.raw_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 25.4
+  },
+  "mast_coverage_settled.settlement_readings.settled_combined.weighted_pct": {
+   "source": "data/mast-settled",
+   "key": "combined_raw.MAST / combined_weighted.MAST",
+   "note": "",
+   "value": 22.4
+  },
+  "mast_coverage_settled.uncovered_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "74%",
+    "79%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_display": {
+   "source": "derived",
+   "key": "outward rounding of the corresponding decimal range",
+   "note": "",
+   "value": [
+    "16%",
+    "23%"
+   ]
+  },
+  "mast_coverage_settled.weighted_range_pct": {
+   "source": "data/mast-{irr-results,consensus,combined,settled}",
+   "key": "min/max over every settlement reading",
+   "note": "",
+   "value": [
+    16.5,
+    22.4
+   ]
+  },
+  "mast_crosswalk._incidents_per_mode": {
+   "source": "data/mast-sample",
+   "key": "rows / distinct detector modes",
+   "note": "",
+   "value": 6
+  },
+  "mast_crosswalk.mast_categories": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 3
+  },
+  "mast_crosswalk.mast_modes": {
+   "source": "experiments/phase2-findings",
+   "key": "MAST taxonomy shape",
+   "note": "",
+   "value": 14
+  },
+  "mast_crosswalk.mast_source_traces": {
+   "source": "experiments/mast-coverage",
+   "key": "MAST source trace count",
+   "note": "",
+   "value": 1600
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.extension_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published E1+E2+E3",
+   "note": "",
+   "value": 0.533
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST x sampled",
+   "note": "",
+   "value": 16
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.mapped_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.MAST",
+   "note": "",
+   "value": 0.213
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.sampled": {
+   "source": "data/mast-sample",
+   "key": "row count",
+   "note": "",
+   "value": 75
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.unclear_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published.UNCLEAR",
+   "note": "",
+   "value": 0.253
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_infrastructure_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.E2",
+   "note": "",
+   "value": 0.483
+  },
+  "mast_crosswalk.superseded_round1_point_estimates.weighted_mast_share": {
+   "source": "data/mast-irr-results",
+   "key": "marginals.coder1_published_weighted.MAST",
+   "note": "",
+   "value": 0.187
+  },
+  "outcomes": {
+   "source": "data/analysis",
+   "key": "outcomes",
+   "note": "",
+   "block": true
+  },
+  "phantom_agent.k": {
+   "source": "data/prereg-2026-08-06/arm1/e4-phantom-agent-check",
+   "key": "record count",
+   "note": "",
+   "value": 4
+  },
+  "phantom_agent.n_framework_traces": {
+   "source": "data/prereg-2026-08-06/arm1/sample",
+   "key": "unique coded units in the AG2 strata",
+   "note": "",
+   "value": 72
+  },
+  "phantom_agent.pct": {
+   "source": "derived",
+   "key": "k / n",
+   "note": "",
+   "value": 5.6
+  },
+  "phantom_agent.wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on k / n",
+   "note": "",
+   "value": [
+    2.2,
+    13.4
+   ]
+  },
+  "position_deciles": {
+   "source": "data/analysis",
+   "key": "position_deciles",
+   "note": "",
+   "block": true
+  },
+  "precision": {
+   "source": "data/precision",
+   "key": "<mode>.{precision,wilson95,n_judged,round}",
+   "note": "",
+   "block": true
+  },
+  "reciprocal_blindness.any_extension_family_k": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of any E-family label",
+   "note": "",
+   "value": 5
+  },
+  "reciprocal_blindness.any_extension_family_pct": {
+   "source": "derived",
+   "key": "any_extension_family_k / n_examined",
+   "note": "",
+   "value": 3.36
+  },
+  "reciprocal_blindness.any_extension_family_wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on any_extension_family_k / n_examined",
+   "note": "",
+   "value": [
+    1.44,
+    7.61
+   ]
+  },
+  "reciprocal_blindness.by_family.E1": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E1",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E2": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E2",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.by_family.E3": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E3",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E4": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E4",
+   "note": "",
+   "value": 4
+  },
+  "reciprocal_blindness.by_family.E5": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E5",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.by_family.E6": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label == E6",
+   "note": "",
+   "value": 0
+  },
+  "reciprocal_blindness.e1_e2_k": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "count of label in {E1, E2}",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.e1_e2_pct": {
+   "source": "derived",
+   "key": "e1_e2_k / n_examined",
+   "note": "",
+   "value": 0.67
+  },
+  "reciprocal_blindness.e1_e2_wilson95_pct": {
+   "source": "derived",
+   "key": "Wilson 95% interval on e1_e2_k / n_examined",
+   "note": "",
+   "value": [
+    0.12,
+    3.7
+   ]
+  },
+  "reciprocal_blindness.n_coders": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "distinct coder values",
+   "note": "",
+   "value": 1
+  },
+  "reciprocal_blindness.n_examined": {
+   "source": "data/reciprocal-mast-codings",
+   "key": "record count, one per unique trace",
+   "note": "",
+   "value": 149
+  },
+  "timeline": {
+   "source": "data/atlas",
+   "key": "events + incidents by month and ecosystem",
+   "note": "",
+   "block": true
+  },
+  "totals": {
+   "source": "data/analysis + data/atlas",
+   "key": "corpus sums; COUNT(incidents)",
+   "note": "",
+   "block": true
+  },
+  "what_didnt_hold[1]._autonomous_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.autonomous_rate",
+   "note": "",
+   "value": 0.029
+  },
+  "what_didnt_hold[1]._human_present_rate": {
+   "source": "data/phase2-results",
+   "key": "A_human_vs_autonomous.clean_self_correction.human_present_rate",
+   "note": "",
+   "value": 0.143
+  },
+  "what_didnt_hold[1].headline_ratio": {
+   "source": "data/phase2-results",
+   "key": "clean_self_correction.human_present_rate / autonomous_rate",
+   "note": "",
+   "value": 4.93
+  },
+  "what_didnt_hold[3].z": {
+   "source": "data/phase2-results",
+   "key": "E_group_vs_dm.z_rel_share",
+   "note": "",
+   "value": 0.674
+  },
+  "what_didnt_hold[4].residual_p": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction p",
+   "note": "",
+   "value": 0.02
+  },
+  "what_didnt_hold[4].residual_rates_pct": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates",
+   "note": "",
+   "value": [
+    2.4,
+    1.3
+   ]
+  },
+  "what_didnt_hold[4].residual_ratio": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction rates, ratio of the two",
+   "note": "",
+   "value": 1.85
+  },
+  "what_didnt_hold[4].residual_z": {
+   "source": "experiments/phase2-findings",
+   "key": "residual self-initiated correction z",
+   "note": "",
+   "value": 2.28
+  }
+ }
+}

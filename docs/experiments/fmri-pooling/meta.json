@@ -1,7 +1,7 @@
 {
   "slug": "fmri-pooling",
   "title": "Pooling Small-N fMRI",
-  "blurb": "Can many small open fMRI studies be merged into one shared space? Same pipeline, two films, opposite answers: alignment hurt on a non-narrative tone-poem (N=93) and helped on a narrative film (N=19 × 8 runs) — a measured map of where pooling works",
+  "blurb": "Can many small open fMRI studies be merged into one shared space? Same pipeline, two naturalistic stimuli, opposite answers: alignment hurt on a non-narrative visual tone-poem (N=93) and helped on a heard narrative (19 × 8 runs) — a measured map of where pooling works, with the confounds stated",
   "emoji": "\ud83e\udde0",
   "status": "published",
   "updated": "2026-08-09",
