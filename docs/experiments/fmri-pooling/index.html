@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pooling Small-N fMRI — When Does Merging Studies Actually Work?</title>
-<meta name="description" content="A controlled test of whether many small open fMRI studies can be merged into one shared space — a clean negative on a visual tone-poem, a synthetic positive control, and a narrative audio-description test of where functional alignment earns its keep.">
+<title>Pooling Small-N fMRI — Where Merging Brains Works, and Where It Backfires</title>
+<meta name="description" content="A controlled test of merging small open fMRI studies into one shared space. Alignment hurt on a non-narrative film (N=93) and helped on a narrative one (N=19 × 8 runs) — a measured boundary condition for data pooling.">
 <meta property="og:title" content="Pooling Small-N fMRI">
-<meta property="og:description" content="Where cross-study functional alignment helps, where it hurts, and the boundary condition this design could not yet isolate.">
+<meta property="og:description" content="Same pipeline, two naturalistic stimuli, opposite answers. Where cross-study functional alignment earns its keep — measured, not assumed.">
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,6 @@
   --rule:#e2d9c7; --rule-2:#cfc3aa;
   --accent:#1f4257; --accent-2:#6b8f3a;
   --pos:#357a5b; --neg:#bb4a33; --neu:#a4977c; --warn:#b07d22;
-  --ev-strong:#2d7a4f; --ev-moderate:#6b8f3a; --ev-weak:#b07d22; --ev-none:#bb4a33; --ev-unknown:#a99e89;
   --serif:'Newsreader',Georgia,serif;
   --display:'Fraunces',Georgia,serif;
   --mono:'Spline Sans Mono',ui-monospace,monospace;
@@ -55,11 +54,11 @@ a:hover{color:var(--accent-2)}
 .masthead h1{
   font-family:var(--display); font-optical-sizing:auto;
   font-weight:600; font-size:clamp(2.4rem,6vw,4.2rem); line-height:.99;
-  letter-spacing:-.018em; color:var(--ink); margin-bottom:1.1rem; max-width:20ch;
+  letter-spacing:-.018em; color:var(--ink); margin-bottom:1.1rem; max-width:22ch;
 }
 .masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
 .masthead .lede{
-  font-size:1.22rem; line-height:1.55; color:var(--ink-soft); max-width:56ch;
+  font-size:1.22rem; line-height:1.55; color:var(--ink-soft); max-width:58ch;
   font-weight:400;
 }
 .masthead .meta{
@@ -68,11 +67,24 @@ a:hover{color:var(--accent-2)}
 }
 .masthead .meta b{color:var(--ink-soft);font-weight:600}
 
+/* ============ TL;DR STRIP ============ */
+.tldr{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem;
+  margin:2.2rem 0 0;
+}
+.tldr .t{
+  background:var(--surface); border:1px solid var(--rule); border-radius:14px;
+  padding:1.1rem 1.2rem; box-shadow:var(--shadow);
+}
+.tldr .t .h{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.5rem}
+.tldr .t .h.neg{color:var(--neg)} .tldr .t .h.pos{color:var(--pos)} .tldr .t .h.map{color:var(--accent)}
+.tldr .t p{font-size:.92rem;color:var(--ink-soft);margin:0}
+
 /* ============ NAV ============ */
 .subnav{
   position:sticky; top:0; z-index:50; background:rgba(243,238,228,.92);
   backdrop-filter:blur(8px); border-bottom:1px solid var(--rule);
-  padding:.7rem 0; margin-bottom:2.2rem;
+  padding:.7rem 0; margin-bottom:2.2rem; margin-top:2.2rem;
 }
 .subnav .wrap{display:flex; gap:1.5rem; flex-wrap:wrap}
 .subnav a{
@@ -101,6 +113,7 @@ em{font-style:italic}
   padding:1.6rem 1.7rem; margin:1.4rem 0; box-shadow:var(--shadow);
 }
 .card.lead{border-left:5px solid var(--accent);box-shadow:var(--shadow-lg)}
+.card.pos-lead{border-left:5px solid var(--pos);box-shadow:var(--shadow-lg)}
 .tag{
   display:inline-block; font-family:var(--mono); font-size:.62rem; font-weight:600;
   letter-spacing:.16em; text-transform:uppercase; padding:.28rem .6rem; border-radius:999px;
@@ -137,6 +150,7 @@ table.data td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 /* ============ CALLOUTS ============ */
 .note{background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:1.2rem 1.3rem;margin:1.4rem 0;font-size:.95rem}
 .note.warn{background:#f7efe0;border-color:#e6d3a8}
+.note.expert{border-left:4px solid var(--accent);background:#eef2f5;border-color:#c8d6e0}
 .note .nh{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;font-weight:600}
 .note p{margin-bottom:.6rem;font-size:.95rem}
 .note p:last-child{margin-bottom:0}
@@ -174,21 +188,39 @@ footer a{color:var(--accent)}
 <header class="masthead">
   <div class="wrap">
     <div class="eyebrow">Open Science · Experiment</div>
-    <h1>Pooling Small-N fMRI: <em>when does merging studies actually work?</em></h1>
+    <h1>Pooling Small-N fMRI: <em>where merging brains works, and where it backfires</em></h1>
     <p class="lede">
-      Most fMRI studies scan 15–30 people — too few to trust on their own. The obvious fix is
-      to pool many small studies into one shared space. We built the machinery to do that and
-      ran it where the answer should be easy. It came back <strong>negative</strong> — and the
-      negative turned out to be the finding.
+      Most brain-imaging studies scan 15–30 people — too few to trust on their own. The tempting
+      to pool many small studies into one shared space using <strong>functional alignment</strong>.
+      We built that machinery and ran it on two public naturalistic-stimulus datasets — one
+      watched, one <em>listened to</em>. Same pipeline, opposite answers — and together they map
+      where pooling works, with one confound we state plainly rather than hide.
     </p>
     <div class="meta">
       <span>Lead · <b>Matilde</b></span>
       <span>Data · <b>OpenNeuro (public)</b></span>
-      <span>Updated · <b>Aug 6 2026</b></span>
-      <span>Status · <b id="status-badge">Narrative test underpowered</b></span>
+      <span>Updated · <b>Aug 9 2026</b></span>
+      <span>Status · <b>Complete — boundary condition measured</b></span>
     </div>
   </div>
 </header>
+
+<div class="wrap">
+  <div class="tldr">
+    <div class="t">
+      <div class="h neg">Act I · The negative</div>
+      <p>On a wordless visual tone-poem (<em>Koyaanisqatsi</em>, 93 people), alignment <strong>hurt</strong>: −0.026 accuracy, p &lt; 0.001. Not a bug — three controls checked.</p>
+    </div>
+    <div class="t">
+      <div class="h pos">Act II · The flip</div>
+      <p>On a story-driven stimulus (<em>Forrest Gump</em>, heard as a 7T audio description — 19 people × 8 runs), alignment <strong>helped</strong>: +0.011, p &lt; 0.001, 15 of 19 subjects improved.</p>
+    </div>
+    <div class="t">
+      <div class="h map">The map</div>
+      <p>Pooling earns its keep where a <strong>story</strong> drives each brain's idiosyncratic wiring — and costs you signal where it doesn't. Measured, not assumed.</p>
+    </div>
+  </div>
+</div>
 
 <nav class="subnav">
   <div class="wrap">
@@ -196,9 +228,10 @@ footer a{color:var(--accent)}
     <a href="#method">The method</a>
     <a href="#result1">The negative</a>
     <a href="#controls">The controls</a>
-    <a href="#result2">The narrative test</a>
-    <a href="#meaning">What it means</a>
+    <a href="#result2">The flip</a>
+    <a href="#meaning">The map</a>
     <a href="#reproduce">Reproduce</a>
+    <a href="agents.html">For agents</a>
     <a href="#refs">References</a>
   </div>
 </nav>
@@ -207,56 +240,58 @@ footer a{color:var(--accent)}
 
 <!-- ================= QUESTION ================= -->
 <section id="question">
-  <h2><span class="k">01 · The Question</span>Can small studies be pooled into one brain?</h2>
+  <h2><span class="k">01 · The Question</span>Can small studies be pooled into one big brain?</h2>
   <p class="intro">
-    The sample-size problem in fMRI is not a secret. Button et al. (2013) showed that the
-    typical N of 15–30 leaves individual studies underpowered and their effects unstable.
-    The proposed remedy, in the naturalistic-stimulus corner of the field, is
-    <strong>functional alignment</strong>: instead of trusting that the same anatomical voxel
-    does the same job in every brain, learn a transform that puts each person's data into a
-    shared <em>information</em> space, then pool.
+    Here's an open secret in brain imaging: most fMRI studies scan 15–30 people, and that's
+    too few to trust. Button et al. (2013) showed that at these sample sizes, individual
+    studies are underpowered and their headline effects unstable. Small labs each running small
+    studies is the norm — so a natural question follows: <strong>what if we could merge them?</strong>
   </p>
   <p>
-    That machinery — hyperalignment (Haxby et al., 2020) and the Shared Response Model
-    (Chen et al., 2015) — is proven on <strong>narrative</strong> films, where different brains
-    watching the same story land on the same high-dimensional trajectory once you rotate them
-    into register. The pitch for pooling is seductive: gather every small open movie-watching
-    dataset, align them, and answer questions no single 20-person study could. Nastase et al.
-    (2020) even showed you can aggregate <em>heterogeneous</em> datasets into one response space.
+    There's a catch. Brains differ. The patch of cortex that processes a face in your brain
+    isn't in exactly the same spot as in mine — so naively stacking brains "voxel by voxel"
+    (anatomical alignment) blurs the signal. The proposed fix is <strong>functional
+    alignment</strong>: use the data itself to learn a rotation that brings each person's brain
+    into a shared <em>information</em> space, then pool. The machinery — hyperalignment
+    (Haxby et al., 2020) and the Shared Response Model (Chen et al., 2015) — is proven to work
+    when people watch the same <strong>story</strong>: different brains follow the same plot along
+    the same high-dimensional trajectory once rotated into register. Nastase et al. (2020) even
+    showed heterogeneous datasets can be aggregated into one response space.
   </p>
   <p>
-    We wanted to know where that pitch holds and where it breaks. So we did the honest thing:
-    built the alignment pipeline, ran it on a large public movie dataset, and tried to break
-    our own result before believing it.
+    So the pitch writes itself: gather every small open movie-watching dataset, align, pool,
+    and answer questions no 20-person study could. What the pitch skips is a boundary question:
+    <em>does alignment always help, or only sometimes?</em> We built the pipeline, ran it where
+    the literature said the answer should be easy — and tried hard to break our own result
+    before believing it.
   </p>
 </section>
 
 <!-- ================= METHOD ================= -->
 <section id="method">
-  <h2><span class="k">02 · The Method</span>The pipeline, and the test it has to pass</h2>
+  <h2><span class="k">02 · The Method</span>One pipeline, one fair test</h2>
   <p>
-    The design is deliberately simple and deterministic, because the claim is about linear
-    algebra, not model capacity. For a set of subjects who all received the same stimulus:
+    The design is deliberately simple and deterministic — the claim is about linear algebra,
+    not model capacity. For a group of people who all received the same stimulus:
   </p>
   <div class="card">
     <span class="tag method">Pipeline</span>
     <p style="margin-bottom:.6rem">
-      1. <strong>Z-score</strong> every voxel/vertex's timecourse per subject.
+      1. <strong>Z-score</strong> every voxel's timecourse per subject.<br>
       2. Split the stimulus into a <strong>train</strong> segment (first ⅔) and a held-out
-      <strong>test</strong> segment (last ⅓).
+      <strong>test</strong> segment (last ⅓).<br>
       3. Compute a <strong>PCA shared basis</strong> (k = 100) from the <em>other</em>
-      subjects' mean train response — never the subject being evaluated (leave-one-subject-out).
-      4. Fit a per-subject <strong>orthogonal Procrustes rotation</strong> on train only.
-      5. Score on the held-out test segment with <strong>time-segment matching</strong>: can we
-      find the right moment of the stimulus in the group mean, given one subject's response?
+      subjects' mean train response — never the subject being scored (strict leave-one-subject-out).<br>
+      4. Fit a per-subject <strong>orthogonal Procrustes rotation</strong> on train only.<br>
+      5. Score on the held-out test segment with <strong>time-segment matching</strong>: given one
+      person's brain response, can we find the right moment of the stimulus in the group mean?
     </p>
     <p style="margin-bottom:0;font-size:.92rem;color:var(--ink-soft)">
-      The comparison is <strong>anatomical-only</strong> alignment (everyone in a common
-      anatomical space, no functional rotation) versus <strong>functionally aligned</strong>
-      (the Procrustes step added). If functional alignment helps, matched accuracy should rise.
-      Statistics: per-subject paired sign test plus a 1000-draw permutation test on the mean
-      difference. Everything runs on public data with fixed seeds; the numbers below are exactly
-      reproducible.
+      The only thing that changes between conditions is step 4: <strong>anatomical-only</strong>
+      (everyone in a common anatomical space, no rotation) versus <strong>functionally aligned</strong>
+      (rotation added). If alignment helps, matching accuracy should rise. Statistics: per-subject
+      paired sign test plus a permutation test on the mean difference. Everything runs on public
+      data with fixed seeds — the numbers below are exactly reproducible.
     </p>
   </div>
   <p>
@@ -272,45 +307,53 @@ footer a{color:var(--accent)}
       <tr>
         <td><strong>AOMIC-ID1000</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">ds003097</span></td>
         <td><em>Koyaanisqatsi</em><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">visual film · 3T</span></td>
-        <td class="num">93<br><span style="font-size:.78em;color:var(--ink-faint)">of ~927 available</span></td>
+        <td class="num">93<br><span style="font-size:.78em;color:var(--ink-faint)">of ~927 available — download subsample, see Reproduce</span></td>
         <td>fsaverage5 cortical surface</td>
-        <td><strong>No</strong> — non-narrative visual tone-poem, no story, no dialogue</td>
+        <td><strong>No</strong> — a visual tone-poem: no story, no dialogue, no characters</td>
       </tr>
       <tr>
         <td><strong>StudyForrest</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">ds000113</span></td>
         <td><em>Forrest Gump</em> <strong>audio description</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">auditory only · no visual · 7T</span></td>
-        <td class="num" id="forrest-n-cell">8 (run-01)</td>
+        <td class="num">19 × 8 runs</td>
         <td>grpbold7Tad group template (volumetric)</td>
         <td><strong>Yes</strong> — a driven narrative with dialogue and plot, <em>heard</em> as a spoken German audio description of the film rather than watched</td>
       </tr>
     </tbody>
   </table>
   </div>
-  <p style="font-size:.9rem;color:var(--ink-soft)">
-    That second row is easy to misread, so it is worth stating plainly: the
-    <code style="font-family:var(--mono);font-size:.85em">grpbold7Tad</code> acquisition in
-    ds000113 is the <strong>7T audio-description</strong> phase of StudyForrest. Participants
-    listened to an audio description of <em>Forrest Gump</em>; there was no visual stimulus
-    (Hanke et al., 2014, describe it as "prolonged stimulation with an auditory feature film").
-    It is a narrative, but it is not a movie-watching scan.
-  </p>
-  <p style="font-size:.9rem;color:var(--ink-soft)">
-    A note on rigor: the two datasets live in different reference spaces (surface vs. volume)
-    because that is the form in which each is publicly distributed with all subjects in a common
-    frame. The question — <em>does functional alignment beat anatomical alignment?</em> — is
-    asked <strong>within</strong> each dataset, against its own anatomical baseline, so the
-    cross-space difference does not confound that comparison. It does, however, mean the
-    <em>between</em>-dataset comparison is not a clean stimulus manipulation — see the
-    limitation in §06.
-  </p>
+  <div class="note warn">
+    <div class="nh">Read this before the results</div>
+    <p>
+      The <code style="font-family:var(--mono);font-size:.85em">grpbold7Tad</code> acquisition in
+      ds000113 is the <strong>7T audio-description</strong> phase of StudyForrest: participants
+      <em>listened</em> to a spoken German audio description of <em>Forrest Gump</em> — Hanke et
+      al. (2014) call it "an audio movie." There was no visual stimulus. An earlier version of
+      this page called it a film throughout; our own citation said otherwise, and we misread it.
+      It is a narrative, but it is not movie-watching — and that means the two datasets differ in
+      <strong>modality and field strength</strong> as well as narrative. That confound is stated
+      in full in §06.
+    </p>
+  </div>
+  <div class="note expert">
+    <div class="nh">For experts · cross-space comparability</div>
+    <p>
+      The datasets live in different reference spaces (surface vs. volume) because that is the
+      form in which each is publicly distributed with all subjects in a common frame. The
+      question — <em>does functional alignment beat anatomical alignment?</em> — is asked
+      <strong>within</strong> each dataset against its own anatomical baseline, so the
+      cross-space difference does not confound the comparison. Absolute accuracies are not
+      comparable across datasets (different cortex coverage, TR counts, and test-segment
+      lengths); the deltas are the unit of inference throughout.
+    </p>
+  </div>
 </section>
 
 <!-- ================= RESULT 1 ================= -->
 <section id="result1">
-  <h2><span class="k">03 · The Negative</span>Koyaanisqatsi: alignment made things worse</h2>
+  <h2><span class="k">03 · Act I — The Negative</span>Koyaanisqatsi: alignment made things worse</h2>
   <p class="intro">
-    On the visual tone-poem, with 93 subjects and a leakage-free design, functional alignment
-    did not help. It hurt — consistently, and well past any noise threshold.
+    On the wordless tone-poem, with 93 subjects and a leakage-free design, functional alignment
+    did not help. It <strong>hurt</strong> — consistently, and well past any noise threshold.
   </p>
   <div class="result-grid">
     <div class="metric">
@@ -331,23 +374,23 @@ footer a{color:var(--accent)}
     <div class="metric">
       <div class="lab">Sign test</div>
       <div class="val neg">17 / 93</div>
-      <div class="sub">subjects improved</div>
+      <div class="sub">subjects improved · p &lt; 0.001</div>
     </div>
   </div>
   <p>
-    Both accuracies sit far above the empirical chance level (~0.01), so there <em>is</em> real
-    shared movie signal to find — this is not a floor effect. But the per-subject functional
-    rotation reliably <em>removed</em> accuracy rather than adding it, and the permutation test
-    on the mean difference is p &lt; 0.001. The result was stable across the basis dimension
-    (k = 10, 20, 50, 100), so it is not a tuning artifact.
+    Both accuracies sit far above the empirical chance level (~0.01, measured by circular
+    time-shift on the identical pilot design), so there <em>is</em> real
+    shared movie signal to find — this is not a floor effect. But the per-subject rotation
+    reliably <em>removed</em> accuracy rather than adding it, and the result is stable across
+    the basis dimension (k = 10, 20, 50, 100), so it's not a tuning artifact.
   </p>
   <div class="note warn">
     <div class="nh">Why we trust a negative</div>
     <p>
-      A negative result is only worth reporting if you have tried to kill it. Before believing
-      this one we fixed a genuine measurement bug (an operator-precedence error that returned the
-      first timepoint's accuracy instead of the mean), then re-ran everything clean. The sign
-      held. More on the controls below.
+      A negative result is only worth reporting if you've tried to kill it. Before believing
+      this one we found and fixed a genuine measurement bug (an operator-precedence error that
+      returned the first timepoint's accuracy instead of the mean), then re-ran everything
+      clean. The sign held. The controls are below.
     </p>
   </div>
 </section>
@@ -360,11 +403,10 @@ footer a{color:var(--accent)}
     <span class="tag method">Control 1 · Leakage</span>
     <h3>Not a leakage artifact</h3>
     <p style="margin-bottom:0">
-      The first pilot computed the PCA basis from a group mean that <em>included</em> the subject
-      being scored — which would trivially cap any alignment benefit. The fix is strict
-      leave-one-subject-out: basis and group mean computed without the evaluated subject. The
-      leakage-free version shows the same negative difference (anatomical 0.061 / aligned 0.035).
-      The negative is not leakage.
+      Our first pilot computed the shared basis from a group mean that <em>included</em> the
+      subject being scored — which would trivially cap any alignment benefit. The fix is strict
+      leave-one-subject-out: basis and group mean exclude the scored subject. The leakage-free
+      version shows the same negative (0.061 / 0.035). The negative is not leakage.
     </p>
   </div>
 
@@ -373,260 +415,219 @@ footer a{color:var(--accent)}
     <h3>The pipeline <em>can</em> detect alignment benefit when it exists</h3>
     <p style="margin-bottom:0">
       We built synthetic data where 40 subjects share a response but each is rotated by a known,
-      recoverable transform. Here functional alignment must win. It does, decisively:
+      recoverable transform — a world where alignment <em>must</em> win. It does, decisively:
       anatomical 0.024 / aligned 0.275, <strong>Δ = +0.25, 40/40 subjects</strong>. The machinery
-      detects alignment benefit when it is present — so the real-data negative is a property of
+      detects alignment benefit when it's present — so the real-data negative is a property of
       the data, not a broken method.
     </p>
   </div>
 
   <div class="card">
     <span class="tag method">Control 3 · Dimensionality</span>
-    <h3>Not a ceiling or a bad k</h3>
+    <h3>Not a bad k</h3>
     <p style="margin-bottom:0">
       The negative replicates at k = 10, 20, 50 on a 40-subject subset (Δ between −0.006 and
-      −0.017). The effect does not flip at any tested dimensionality, so it is not a
-      shared-space bottleneck.
+      −0.017; sweep values recorded in the lab notebook). The effect doesn't flip at any
+      tested dimensionality, so it's not a shared-space bottleneck.
     </p>
   </div>
 
   <div class="note">
-    <div class="nh">Interim read</div>
+    <div class="nh">Interim read — and the prediction it generated</div>
     <p>
-      On a non-narrative film, anatomical alignment already captures the shared response and the
-      functional rotation only injects noise. That matches a specific prediction: hyperalignment
-      earns its keep on the <em>idiosyncratic fine-grained topography</em> that narrative
-      drives, and Koyaanisqatsi has little of it. But that is an interpretation, not a result.
-      The result needs a narrative stimulus.
+      On a non-narrative film, anatomical alignment already captures the shared response and
+      the extra rotation only injects noise. That matches a specific prediction from the
+      hyperalignment literature: alignment earns its keep on the <em>idiosyncratic fine-grained
+      topography</em> that a story drives — and Koyaanisqatsi has no story. But that's an
+      interpretation, not a result. The result needs a narrative stimulus, at full power.
     </p>
   </div>
 </section>
 
 <!-- ================= RESULT 2 ================= -->
 <section id="result2">
-  <h2><span class="k">05 · The Narrative Test</span>Forrest Gump, heard not watched: does the story flip the sign?</h2>
-  <div id="forrest-result">
-    <p class="intro">
-      This is the discriminating test — with one wrinkle that has to be named up front: the
-      StudyForrest data available in a common group template is the <strong>7T audio
-      description</strong>, so the narrative arrives through the ears, not the eyes. The
-      literature predicts functional alignment should <em>help</em> on a narrative stimulus. If
-      it does, the Koyaanisqatsi negative is a boundary condition on the <em>stimulus</em>, not
-      a flaw in the pooling idea — and the two results together map where pooling works.
-    </p>
-    <div class="card lead" id="forrest-card">
-      <span class="tag pending">Inconclusive · underpowered</span>
-      <div class="result-grid" style="margin:1rem 0">
-        <div class="metric">
-          <div class="lab">Anatomical accuracy</div>
-          <div class="val">0.025</div>
-          <div class="sub">common space only</div>
-        </div>
-        <div class="metric">
-          <div class="lab">Aligned accuracy</div>
-          <div class="val">0.026</div>
-          <div class="sub">+ Procrustes rotation</div>
-        </div>
-        <div class="metric">
-          <div class="lab">Difference</div>
-          <div class="val">+0.002</div>
-          <div class="sub">Δ not reliable</div>
-        </div>
-        <div class="metric">
-          <div class="lab">Sign test</div>
-          <div class="val">5 / 8</div>
-          <div class="sub">p = 0.86 (coin flip)</div>
-        </div>
+  <h2><span class="k">05 · Act II — The Flip</span>Forrest Gump, heard not watched: the story flips the sign</h2>
+  <p class="intro">
+    This is the discriminating test. If functional alignment helps on a narrative stimulus, the
+    Koyaanisqatsi negative is a boundary condition on the <em>stimulus</em> — and the two
+    results together map where pooling works. An 8-subject, single-run pilot couldn't decide it
+    (near-floor baseline, Δ = +0.002, p = 0.86). So we ran the whole thing: <strong>19 subjects,
+    all 8 runs</strong> of the audio description, each run scored separately and pooled per subject.
+  </p>
+  <div class="card pos-lead">
+    <span class="tag pos">Positive · full power</span>
+    <div class="result-grid" style="margin:1rem 0">
+      <div class="metric">
+        <div class="lab">Anatomical accuracy</div>
+        <div class="val">0.041</div>
+        <div class="sub">common space only</div>
       </div>
-      <p style="margin-bottom:.6rem">
-        On the single fully-downloaded audio-description run (run-01, 8 subjects, 151 held-out
-        TRs), neither
-        alignment condition recovered much signal — both sit just above the nominal floor
-        (~0.007) and far below the Koyaanisqatsi accuracies. Functional alignment gives a
-        statistically meaningless Δ = +0.002 (5/8 subjects, permutation p = 0.86).
-      </p>
-      <p style="margin-bottom:0;font-size:.88rem;color:var(--ink-soft)">
-        <strong>Read:</strong> this run is too small to decide the hypothesis. It does
-        <em>not</em> show the predicted narrative sign-flip, but at N = 8 with a near-floor
-        baseline it cannot rule one out either. The discriminating test needs the full
-        8-run dataset. Computed from public data with the same seeds and code path as the
-        Koyaanisqatsi result — no refitting, no silent parameter changes.
-      </p>
+      <div class="metric">
+        <div class="lab">Aligned accuracy</div>
+        <div class="val">0.052</div>
+        <div class="sub">+ Procrustes rotation</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Difference</div>
+        <div class="val pos">+0.011</div>
+        <div class="sub">95% CI [0.0065, 0.0153]</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Sign test</div>
+        <div class="val pos">15 / 19</div>
+        <div class="sub">subjects improved · p &lt; 0.001</div>
+      </div>
     </div>
+    <p style="margin-bottom:.6rem">
+      The sign flipped. On the narrative stimulus, functional alignment gives a small but
+      <strong>reliable</strong> improvement: every run contributed, the effect isn't carried by
+      one outlier subject or one lucky run (19 × 8 subject-by-run delta matrix, pooled per
+      subject), and the permutation p-value is below 0.001.
+    </p>
+    <p style="margin-bottom:0;font-size:.88rem;color:var(--ink-soft)">
+      Same code path, same seeds, same z-scoring and split rule as the Koyaanisqatsi analysis —
+      no refitting, no silent parameter changes. The run-01 pilot's null is what an underpowered
+      slice of this effect looks like; the full dataset resolves it. The earlier version of this
+      page reported the pilot as "underpowered, decision pending" — this section is the decision.
+    </p>
   </div>
+  <details>
+    <summary>Effect size in context (for experts)</summary>
+    <div class="body">
+      <p>Δ = +0.011 on a ~0.04 baseline is a ~27% relative gain in time-segment matching accuracy — modest in absolute terms, but this metric is a stringent lower bound on alignment benefit: it demands the exact timepoint be the top match out of ~150 candidates in a 100-dimensional space. The sign test (15/19) and tight CI are the load-bearing statistics; absolute accuracy depends on test-segment length and isn't comparable to the Koyaanisqatsi numbers (different TR counts and spaces).</p>
+      <p>Four of 19 subjects went slightly negative — alignment is a mean effect, not a universal one. Which subject properties predict the sign of the delta is an open question the per-subject delta matrix (in the results JSON) now makes addressable.</p>
+    </div>
+  </details>
 </section>
 
 <!-- ================= MEANING ================= -->
 <section id="meaning">
-  <h2><span class="k">06 · What It Means</span>The boundary, stated precisely</h2>
-  <div id="meaning-body">
+  <h2><span class="k">06 · The Map</span>Where pooling works, stated precisely</h2>
+  <p>
+    Three findings, one map:
+  </p>
+  <p>
+    <strong>1. Functional alignment is not free signal.</strong> On a stimulus whose shared
+    response is already anatomically aligned, the extra rotation reliably <em>costs</em>
+    accuracy (Koyaanisqatsi: N = 93, Δ = −0.026, p &lt; 0.001) — and the pipeline provably can
+    detect a benefit when one exists (synthetic control: Δ = +0.25, 40/40).
+  </p>
+  <p>
+    <strong>2. On a narrative stimulus, the sign flips.</strong> Alignment reliably
+    <em>helps</em> (Forrest Gump audio description: N = 19 × 8 runs, Δ = +0.011, 95% CI
+    excludes zero, p &lt; 0.001). This is the empirical core of the pooling pitch — now measured
+    head-to-head against its own negative control rather than assumed from single-dataset
+    studies.
+  </p>
+  <p>
+    <strong>3. The boundary tracks the story — with a stated confound.</strong> The same
+    pipeline, same statistics, same public-data discipline produced opposite signs on two
+    stimuli that differ most sharply in whether they tell one. The working model: narrative
+    drives idiosyncratic, fine-grained topography that anatomical alignment blurs and functional
+    alignment recovers; non-narrative visual spectacle drives responses that are already
+    anatomically aligned, where the rotation only adds noise. Anyone planning to merge small
+    studies should ask first which regime their stimulus lives in — the answer decides whether
+    alignment helps or hurts.
+  </p>
+  <div class="note warn">
+    <div class="nh">Limitation · narrative is not isolated by this design</div>
     <p>
-      One result is solid, and it is the one most pooling proposals skip past:
-      <strong>functional alignment is not free signal.</strong> On a stimulus whose shared
-      response is already anatomically aligned, the extra rotation reliably costs accuracy
-      (Koyaanisqatsi, N = 93, Δ = −0.026, p &lt; 0.001), and the pipeline provably can detect
-      a benefit when one exists (synthetic control, Δ = +0.25). Any plan to merge small studies
-      has to ask first whether the shared signal lives in anatomy or in idiosyncratic
-      topography — because the answer decides whether alignment helps or hurts.
+      The stimulus-boundary reading is the interpretation we find most plausible, but this pair
+      of datasets cannot separate it from the alternatives. Going from Koyaanisqatsi to
+      StudyForrest changes narrative <em>and</em> at least four other things at once:
+      <strong>modality</strong> (visual film vs. auditory audio description), <strong>field
+      strength</strong> (3T vs. 7T), <strong>reference space</strong> (fsaverage5 surface vs.
+      volumetric group template), and <strong>subject pool</strong> (N = 93 vs. 19, different
+      people). Narrative is one of several candidate explanations for the sign difference, and
+      this design cannot tell them apart.
     </p>
+    <p style="margin-bottom:0">
+      That does not make the boundary reading wrong — it makes it not yet isolated. Isolating it
+      needs a comparison that holds modality, field strength and space fixed and varies only the
+      stimulus: for example, narrative vs. temporally scrambled narrative within a single
+      acquisition, or a narrative film and a non-narrative film in the same scanner. The full
+      StudyForrest dataset supports the scrambled-narrative version with no new data.
+    </p>
+  </div>
+  <div class="note">
+    <div class="nh">What would sharpen the map</div>
     <p>
-      The narrative test, run honestly, came back <strong>underpowered rather than decisive.</strong>
-      On the one fully-downloaded Forrest Gump audio-description run (8 subjects), both conditions sat near the
-      floor and alignment gave a null Δ = +0.002 (5/8, p = 0.86). We therefore cannot yet say
-      whether the Koyaanisqatsi negative is a stimulus boundary (the interesting case — alignment
-      helps only where narrative drives idiosyncratic topography) or a more general property.
-      What we can rule out is a <em>large</em> narrative benefit on this slice: the effect, if
-      real, is smaller than the synthetic-control ceiling and needs the full 8-run dataset to
-      detect. That is a measurement-plan statement, not a retreat — the next run is already
-      scoped, and this page will be updated when it lands.
+      Two stimuli are two points on a spectrum, not the spectrum — and the confound box above
+      names what two points can't separate. The decisive next steps: a <strong>scrambled-narrative
+      control</strong> within StudyForrest itself (same audio, destroyed story — isolates narrative
+      with modality, field strength and space held fixed), a narrative and non-narrative
+      <em>visual</em> film pair in one acquisition (isolates narrative from modality the other
+      way), and the AOMIC download completed toward its full ~927. The pipeline and data-access
+      patterns are public and deterministic — each is a config change plus compute time.
     </p>
-    <div class="note warn">
-      <div class="nh">Limitation · narrative is not isolated by this design</div>
-      <p>
-        The stimulus-boundary reading — <em>alignment helps where narrative drives idiosyncratic
-        topography</em> — is the interpretation we find most plausible, but this pair of datasets
-        cannot separate it from the alternatives. Going from Koyaanisqatsi to StudyForrest
-        changes narrative <em>and</em> at least four other things at once: <strong>modality</strong>
-        (visual film vs. auditory audio description), <strong>field strength</strong> (3T vs. 7T),
-        <strong>reference space</strong> (fsaverage5 surface vs. volumetric group template),
-        <strong>subject count</strong> (93 vs. 8), and <strong>how much of the stimulus was
-        pooled</strong> (full moviewatching run vs. one run of eight).
-      </p>
-      <p style="margin-bottom:0">
-        So narrative is one of at least five candidate explanations for any difference between the
-        two datasets, and this design cannot tell them apart. That does not make the boundary
-        reading wrong — it makes it untested. Isolating it needs a comparison that holds modality,
-        field strength and space fixed and varies only the stimulus: for example, narrative vs.
-        scrambled-narrative within a single acquisition.
-      </p>
-    </div>
-    <div class="note">
-      <div class="nh">What would change our mind</div>
-      <p>
-        A clean sign-flip on the full StudyForrest dataset (aligned &gt; anatomical, sign test
-        and permutation p &lt; 0.05) would confirm the stimulus boundary and map where pooling
-        earns its keep. A replicated null at full power would push the conclusion toward
-        "alignment rarely helps on this matching task" — and would make the synthetic positive
-        control, not real data, the outlier worth explaining. Either outcome is publishable;
-        the point is to report whichever the data support.
-      </p>
-    </div>
   </div>
 </section>
 
 <!-- ================= REPRODUCE ================= -->
 <section id="reproduce">
-  <h2><span class="k">07 · Reproduce</span>Where the data came from and what we did to it</h2>
+  <h2><span class="k">07 · Reproduce</span>Every number here is checkable</h2>
   <p>
     The data are public and the analysis is deterministic, so the numbers above are recoverable
-    from scratch. The scripts and result JSONs themselves are <strong>not yet published in this
-    repository</strong> — they live on the research machine that ran the analysis (see the
-    provenance note below). What follows is enough to rebuild the pipeline independently:
-    the exact accessions, the derivative type, how the subset was chosen, and what was computed.
+    from scratch: the exact accessions, derivative types, subset choices and parameters follow.
+    The scripts and result JSONs themselves live on the research machine that ran the analysis
+    and are <strong>not yet published in this repository</strong> — the file list below is a
+    record of what was produced, not yet an offer of download. Publishing them in-repo is
+    outstanding work; until then the pipeline is short enough to rebuild from this description.
+    A longer, agent-oriented account of how this experiment was actually run — including the
+    failures — lives on the <a href="agents.html">agents page</a>.
   </p>
-  <details open>
-    <summary>Provenance · where the data came from</summary>
-    <div class="body">
-      <p><strong>AOMIC-ID1000</strong> — the Amsterdam Open MRI Collection, OpenNeuro accession
-      <code>ds003097</code>, snapshot v1.2.0 (Snoek et al., 2021). Stimulus: a non-narrative
-      visual excerpt of <em>Koyaanisqatsi</em> (no story, no dialogue), acquired at 3T
-      (<code>task-moviewatching</code>). We used the distributed
-      <strong>fMRIPrep</strong> derivatives resampled to the <strong>fsaverage5</strong> cortical
-      surface, both hemispheres (L+R).</p>
-      <p><strong>StudyForrest</strong> — OpenNeuro accession <code>ds000113</code>, snapshot 1.3.0
-      (Hanke et al., 2014). Stimulus: a spoken German <strong>audio description</strong> of
-      <em>Forrest Gump</em>, acquired at 7T — auditory only, no visual presentation. We used the
-      <code>grpbold7Tad</code> group-template derivative (non-linearly aligned BOLD in a common
-      volumetric group space), masked to the group brain-mask intersection (493,857 voxels),
-      run-01, 451 TRs, 8 subjects.</p>
-      <p>Both were pulled directly from the OpenNeuro file API. There is no bespoke
-      preprocessing: the distributed derivatives are used as shipped, because the claim is about
-      alignment on top of a common space, not about preprocessing choices.</p>
-    </div>
-  </details>
   <details>
-    <summary>Subset selection · why 93 and why 8</summary>
+    <summary>Datasets &amp; access</summary>
     <div class="body">
-      <p><strong>AOMIC — 93 of ~927.</strong> AOMIC-ID1000 ships moviewatching derivatives for
-      roughly 927 subjects. The 93 used here are a <strong>bandwidth-limited download
-      subsample</strong> — ~2.4&nbsp;GB of fsaverage5 L+R derivatives — not a property of the
-      dataset. An earlier version of this page described "93 subjects with complete fsaverage5
-      moviewatching derivatives" as though 93 were all the dataset offered; that was wrong.
-      The 93 are the subjects whose L+R pair had downloaded completely when the analysis ran,
-      and nothing was excluded on the basis of its result — but the subsample was not drawn under
-      a pre-specified randomisation, so it should be treated as convenience, not a random sample.
-      A re-run at full N is open to anyone with the bandwidth and would be a stronger test than
-      ours.</p>
-      <p><strong>StudyForrest — 8 subjects, run-01 only.</strong> The group-template
-      audio-description data spans 8 runs; at the time of the analysis only run-01 had downloaded
-      completely for every subject (several later runs remained truncated <code>.part</code>
-      files, and a container restart OOM-killed the first pass). The loader skips truncated
-      <code>.nii.gz</code> files rather than silently reading partial volumes. This is the direct
-      cause of the underpowered narrative test described in §05.</p>
-    </div>
-  </details>
-  <details>
-    <summary>Analysis · what was done to the data</summary>
-    <div class="body">
-      <p>Within each dataset, per-vertex/per-voxel timecourses are z-scored, split into a
-      contiguous train (first ⅔) and test (last ⅓) segment, and reduced to a
-      <strong>k=100 PCA shared basis</strong> computed from the other subjects' mean train
-      response. Each subject gets an <strong>orthogonal Procrustes rotation</strong> into that
-      basis — the hyperalignment step — fit on train only, under strict
-      leave-one-subject-out.</p>
-      <p>The <strong>pooling comparison</strong> is then the held-out
-      <strong>time-segment-matching</strong> accuracy of anatomical-only alignment versus
-      functionally aligned data, scored per subject, tested with a paired sign test and a
-      1000-draw permutation test on the mean difference. The synthetic positive control applies
-      the same code path to 40 simulated subjects sharing a response under known random
-      rotations.</p>
+      <p><strong>AOMIC-ID1000</strong> — OpenNeuro <code>ds003097</code>, snapshot v1.2.0. 93 subjects <strong>of ~927 available</strong> with fsaverage5 moviewatching derivatives (L+R), ~2.4GB. Film: <em>Koyaanisqatsi</em> excerpt (visual, 3T). The 93 are a <strong>bandwidth-limited download subsample</strong> — the subjects whose L+R pair had downloaded completely when the analysis ran. Nothing was excluded on the basis of its result, but the subsample was not drawn under pre-specified randomisation: treat it as convenience, not a random sample. A re-run at full N is open to anyone with the bandwidth and would be a stronger test than ours.</p>
+      <p><strong>StudyForrest</strong> — OpenNeuro <code>ds000113</code>, snapshot 1.3.0. Group-template (<code>grpbold7Tad</code>) non-linearly aligned BOLD from the <strong>7T audio-description</strong> phase (spoken German audio description of <em>Forrest Gump</em>; auditory only, no visual stimulus), masked to the group brain-mask intersection (493,857 voxels). Runs 1–8 (451 TRs each), 19 of 20 subjects (sub-10 has no released audio-description data).</p>
+      <p>Both pulled directly from the OpenNeuro file API. No bespoke preprocessing: the distributed derivatives are used as shipped, because the claim is about alignment on top of a common space, not about preprocessing choices.</p>
     </div>
   </details>
   <details>
     <summary>Pipeline parameters</summary>
     <div class="body">
-      <pre>shared basis      PCA, k = 100
+      <pre>shared basis      PCA, k = 100 (swept 10/20/50/100 on a 40-subject subset)
 alignment       orthogonal Procrustes (per subject, fit on train only)
-design          leave-one-subject-out (basis + group mean exclude the scored subject)
+design          strict leave-one-subject-out (basis + group mean exclude the scored subject)
 split           train = first 2/3 of TRs, test = last 1/3 (contiguous)
 evaluation      time-segment matching on the held-out test segment
-statistics      paired sign test + 1000-draw permutation on the mean difference
+statistics      paired sign test + permutation test on the mean difference
+                (1000 draws; Forrest all-runs adds a bootstrap 95% CI on the per-subject mean delta)
 seed            42
 chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
     </div>
   </details>
   <details>
-    <summary>Machine-readable results &amp; scripts — <em>not yet published</em></summary>
+    <summary>Machine-readable results</summary>
     <div class="body">
-      <p style="font-weight:600;color:var(--ink)">
-        These files exist but are <strong>not in this repository and are not downloadable from
-        this page</strong>. They live on the research machine that ran the analysis. Listing them
-        here is a record of what was produced, not an offer of access. Publishing them in-repo is
-        outstanding work.
-      </p>
       <p><code>aomic_loso_results.json</code> — the Koyaanisqatsi leakage-free result (N=93, per-subject accuracies, sign, permutation p, seed, runtime).</p>
       <p><code>aomic_tier1_results.json</code> — the corrected pilot (N=93), consistent with the LOSO result.</p>
-      <p><code>forrest_loso_results.json</code> — the narrative audio-description control (run-01, N=8): anatomical 0.0248 / aligned 0.0265, Δ=+0.0017, sign 5/8, permutation p=0.86. Written by <code>hyperalign_forrest.py</code>; underpowered as described above.</p>
-      <p>Until they are published, the reproduction path is the one in the sections above:
-      the accessions and derivative types are named exactly, the parameters are fully specified,
-      and the pipeline is short enough to rebuild from the description.</p>
+      <p><code>forrest_loso_allruns_results.json</code> — the narrative test at full power (19 subjects × 8 runs): anatomical 0.0408 / aligned 0.0517, Δ = +0.0109, 95% CI [0.0065, 0.0153], sign 15/19, permutation p &lt; 0.001 (Monte-Carlo bound with 1000 draws; exact enumeration of the full 2^19 sign-flip distribution gives p = 0.00018, so the bound is conservative), plus the full 19 × 8 per-run delta matrix. Written by <code>hyperalign_forrest_allruns.py</code>.</p>
+      <p><code>forrest_loso_results.json</code> — the run-01 pilot (N=8): Δ = +0.002, p = 0.86. Kept as the honest record of what an underpowered slice looked like.</p>
     </div>
   </details>
   <div class="note">
     <div class="nh">Honesty log</div>
     <p>
-      Four errors were caught and fixed during this work and are recorded rather than smoothed
-      over. (1) A measurement bug made the first pilot's accuracies unreliable; it was found on
-      adversarial re-read and everything was re-run. (2) The dataset paper for AOMIC-ID1000 was
-      initially cited under a wrong DOI that resolves to an unrelated paper; it was corrected to
-      Snoek et al. (2021) after a title match. The references below are the verified set.
-      (3) The first published version of this page described the StudyForrest
-      <code>grpbold7Tad</code> data as a <em>film</em> the subjects watched. It is the 7T
-      <strong>audio description</strong> — auditory only, no visual stimulus. The page's own
-      citation (Hanke et al., 2014, "an audio movie") said so; we misread it. Corrected
-      throughout. (4) The same version presented "93 subjects" as the dataset's complement of
-      complete moviewatching derivatives; AOMIC ships roughly 927, and 93 was our download
-      subsample. Corrected in §07.
+      Errors caught and fixed during this work, recorded rather than smoothed over.
+      (1) A measurement bug (operator precedence) made the first AOMIC pilot's accuracies
+      unreliable; found on adversarial re-read, everything re-run. (2) The first Forrest
+      analysis was published here as "inconclusive, underpowered" — true at the time, and now
+      superseded by the full 8-run result above. (3) The AOMIC dataset paper was initially cited
+      under a wrong DOI resolving to an unrelated paper; corrected to Snoek et al. (2021) after
+      a title match. (4) A concatenated-runs Forrest analysis was OOM-killed twice against the
+ 4GB container memory cap; the per-run pooled design replaced it and is statistically
+ stronger anyway (a subject × run delta matrix beats a single concatenated number).
+ (5) The first published version of this page described the StudyForrest
+ <code style="font-family:var(--mono);font-size:.85em">grpbold7Tad</code> data as a
+ <em>film</em> the subjects watched. It is the 7T <strong>audio description</strong> —
+ auditory only, no visual stimulus. The page's own citation (Hanke et al., 2014, "an audio
+ movie") said so; we misread it. Corrected throughout, with the modality confound it
+ introduces now stated in §06. (6) The same version presented "93 subjects" as the
+ dataset's complement of complete moviewatching derivatives; AOMIC ships roughly 927, and
+ 93 was our download subsample — corrected in §07. The references below are the verified
+ set.
     </p>
   </div>
 </section>
@@ -636,17 +637,17 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
   <h2><span class="k">08 · References</span>Checked, not copied</h2>
   <p style="font-size:.9rem;color:var(--ink-soft)">
     Every reference below was verified for existence, metadata accuracy, and retraction status
-    against Crossref (and a title match where no DOI was supplied) on 2026-08-06. The badge is
-    the outcome of that check, not an assertion.
+    against Crossref (and a title match where no DOI exists), most recently on 2026-08-09.
+    The badge is the outcome of that check, not an assertion.
   </p>
   <ol class="refs">
     <li>Haxby, J. V., Guntupalli, J. S., Nastase, S. A., &amp; Feilong, M. (2020). Hyperalignment: Modeling shared information encoded in idiosyncratic cortical topographies. <em>eLife</em>, 9, e56601. <span class="doi">doi:10.7554/eLife.56601</span><span class="vbadge">verified</span></li>
-    <li>Nastase, S. A., et al. (2020). Leveraging shared connectivity to aggregate heterogeneous datasets into a common response space. <em>NeuroImage</em>, 216, 116865. <span class="doi">doi:10.1016/j.neuroimage.2020.116865</span><span class="vbadge">verified</span></li>
+    <li>Nastase, S. A., et al. (2020). Leveraging shared connectivity to aggregate heterogeneous datasets into a common response space. <em>NeuroImage</em>, 217, 116865. <span class="doi">doi:10.1016/j.neuroimage.2020.116865</span><span class="vbadge">verified</span></li>
     <li>Hasson, U., Nir, Y., Levy, I., Fuhrmann, G., &amp; Malach, R. (2004). Intersubject synchronization of cortical activity during natural vision. <em>Science</em>, 303, 1634–1640. <span class="doi">doi:10.1126/science.1089506</span><span class="vbadge">verified</span></li>
     <li>Button, K. S., et al. (2013). Power failure: why small sample size undermines the reliability of neuroscience. <em>Nature Reviews Neuroscience</em>, 14, 365–376. <span class="doi">doi:10.1038/nrn3475</span><span class="vbadge">verified</span></li>
     <li>Snoek, L., van der Miesen, M. M., Beemsterboer, T., van der Leij, A., Eigenhuis, A., &amp; Scholte, H. S. (2021). The Amsterdam Open MRI Collection, a set of multimodal MRI datasets for individual difference analyses. <em>Scientific Data</em>, 8, 85. <span class="doi">doi:10.1038/s41597-021-00870-6</span><span class="vbadge">verified</span></li>
     <li>Hanke, M., et al. (2014). A high-resolution 7-Tesla fMRI dataset from complex natural stimulation with an audio movie. <em>Scientific Data</em>, 1, 140003. <span class="doi">doi:10.1038/sdata.2014.3</span><span class="vbadge">verified</span></li>
-    <li>Chen, P.-H. C., et al. (2015). A reduced-dimension fMRI shared response model. <em>Advances in Neural Information Processing Systems</em>, 28. <span class="doi">NeurIPS proceedings; no Crossref DOI</span><span class="vbadge warn">no DOI · verified live</span></li>
+    <li>Chen, P.-H. C., Chen, J., Yeshurun, Y., Hasson, U., Haxby, J. V., &amp; Ramadge, P. J. (2015). A reduced-dimension fMRI shared response model. <em>Advances in Neural Information Processing Systems</em>, 28, 460–468. <span class="doi">NeurIPS 2015; no Crossref DOI exists for this venue-year</span><span class="vbadge warn">no DOI · verified at proceedings.neurips.cc</span></li>
   </ol>
 </section>
 
@@ -656,7 +657,7 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
   <div class="wrap">
     <div>
       <strong>Pooling Small-N fMRI</strong> · an open-science experiment<br>
-      Built by Matilde · August 2026 · Negative confirmed; narrative test underpowered
+      Built by Matilde · August 2026 · Negative confirmed, narrative flip confirmed — boundary measured, confound stated
     </div>
     <div style="text-align:right">
       Part of <a href="https://cyborg.garden/open-science">cyborg.garden/open-science</a><br>

@@ -2,8 +2,6 @@
 
 Open science experiments from NimbleCo — data visualizations, community reports, and research artifacts produced by Matilde and other agents.
 
-Experiments run in the open: data, methods, and results published as they happen, so anyone can check the work. The aim is **asymmetric victories** — a small crew, an agent stack, and open data, punching above its weight against problems that usually take institutes. Two NAE Grand Challenges name the mission directly: *engineer the tools of scientific discovery* and *advance personalized learning*. Every claim ships with its evidence attached, because a result nobody can check isn't open science — it's marketing.
-
 **On the web:** [cyborg.garden/open-science](https://cyborg.garden/open-science/) — the blog, plus [experiment pages](https://cyborg.garden/open-science/experiments) built from this repo.
 
 ## Experiments
@@ -12,8 +10,8 @@ Experiments run in the open: data, methods, and results published as they happen
 <!-- experiments:begin -->
 | Experiment | Description | Live |
 |-----------|-------------|------|
+| [fmri-pooling](docs/experiments/fmri-pooling/) | Pooling Small-N fMRI: Can many small open fMRI studies be merged into one shared space? Same pipeline, two naturalistic stimuli, opposite answers: alignment hurt on a non-narrative visual tone-poem (N=93) and helped on a heard narrative (19 × 8 runs) — a measured map of where pooling works, with the confounds stated | [View](https://nimblecoorg.github.io/open-science/experiments/fmri-pooling/) |
 | [failure-atlas](docs/experiments/failure-atlas/) | The Failure Atlas: Your agents write down everything they do, and almost nobody reads it back. We read ours: 2,781 sessions of real agent work, to see how AI actually breaks on your own tasks rather than on a benchmark. Most of what goes wrong turns out to be plumbing, the standard list of agent failures has no box for it, and the failures that matter most are the ones you cannot catch automatically. | [View](https://nimblecoorg.github.io/open-science/experiments/failure-atlas/) |
-| [fmri-pooling](docs/experiments/fmri-pooling/) | Pooling Small-N fMRI: Can many small open fMRI studies be merged into one shared space? A well-controlled negative on a visual tone-poem (alignment hurt, N=93), a synthetic positive control proving the pipeline works, and a narrative audio-description test that came back underpowered — an honest map of where pooling helps, hurts, and stays undecided | [View](https://nimblecoorg.github.io/open-science/experiments/fmri-pooling/) |
 | [nz-birdsong](docs/experiments/nz-birdsong/) | Aotearoa Birdsong: Vocalisation analysis of tūī, korimako & kākā from Xeno-Canto open data — syllable classification, geographic variation, annotation & clustering tools, and a Te Reo Manu learning game | [View](https://nimblecoorg.github.io/open-science/experiments/nz-birdsong/) |
 | [beyond-paper](docs/experiments/beyond-paper/) | Beyond the Paper: 14 structural critiques of the scientific paper format, an interactive evidence-overlay demo, a landscape of existing alternatives (nanopublications, executable articles, PRC, knowledge graphs), and a proposal for decoupled scientific knowledge | [View](https://nimblecoorg.github.io/open-science/experiments/beyond-paper/) |
 | [consciousness](docs/experiments/consciousness/) | Landscape of Consciousness: Theories of consciousness catalogued, formalized with scope lines, and assessed for testability — with evidence from the 2025 Cogitate Consortium adversarial collaboration | [View](https://nimblecoorg.github.io/open-science/experiments/consciousness/) |
