@@ -216,7 +216,7 @@ footer a{color:var(--accent)}
     </div>
     <div class="t">
       <div class="h map">Why it's a story</div>
-      <p>The leaderboard of AI-proved math is dominated by closed frontier models. This artifact came from an <strong>open-weight</strong> model whose proof is independently checkable by anyone, end to end.</p>
+      <p>The leaderboard of AI-proved math is dominated by closed frontier models. This artifact came from an <strong>open-weight</strong> model whose proof is public and kernel-checkable by anyone.</p>
     </div>
   </div>
 </div>
@@ -347,7 +347,7 @@ footer a{color:var(--accent)}
       </tr>
       <tr>
         <td><strong>Decidability</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">decidable_deriv</span></td>
-        <td>A terminating procedure decides whether any sequent is derivable.</td>
+        <td>Derivability of any sequent is decidable — proved as a theorem (a Prop disjunction), not an executable checker.</td>
         <td class="num">propext · Classical.choice · Quot.sound</td>
       </tr>
       <tr>
@@ -361,10 +361,14 @@ footer a{color:var(--accent)}
   <p>
     Two results deserve a sentence each. <strong>"No theorems"</strong> is not a failure —
     it's the signature property of FDE, proved here directly (the constant-"neither"
-    valuation refutes every formula). And the <strong>decidability</strong> proof is
-    constructive: it builds a real decision procedure by proof search, and the
-    <code>Classical.choice</code> in its axiom list comes only from lifting the decision into
-    Lean's <code>Decidable</code> typeclass afterward, not from the search itself.
+    valuation refutes every formula). And <strong>decidability</strong> is proved as a
+    <em>theorem</em>, not an executable checker: the result is the Prop disjunction
+    <code>(⊢ₛ S) ∨ (¬ ⊢ₛ S)</code> plus a <code>Classical.choice</code>-lifted
+    <code>Decidable</code> instance. That is not a runnable <code>Bool</code> proof-search
+    function — the negative branches route through <code>completeness</code> (which carries
+    <code>Classical.choice</code>), so the work shows derivability is decidable without
+    producing a checker you can execute. A runnable checker is a further, separate
+    construction and is not claimed here.
   </p>
   <div class="note warn">
     <div class="nh">The honest caveat, stated up front</div>
@@ -393,25 +397,28 @@ footer a{color:var(--accent)}
   </p>
   <div class="card">
     <span class="tag neg">Failure 1 · The false W</span>
-    <h3>"Build completed successfully" — from stale cache</h3>
+    <h3>"Build completed successfully" — and it hadn't built the file</h3>
     <p style="margin-bottom:0">
       Mid-completeness, a full <code>lake build</code> reported green while the file being
-      edited had twenty live errors; every job was a cache hit from before the edits. The
-      lesson, now a standing rule: a green build is only real if the module you touched
-      actually recompiled. Always run the module-targeted build, and distrust a green you
-      can't attribute.
+      edited had twenty live errors. Two things compounded: every job was a cache hit from
+      before the edits, and — the sharper problem — the library root <code>FDE.lean</code>
+      didn't yet import <code>Completeness</code>, so the default target never compiled that
+      file at all. The green was target coverage, not verification. The lesson, now a
+      standing rule: a green build is only real if the module you touched actually
+      recompiled. Run the module-targeted build, and make sure the module is in the build.
     </p>
   </div>
   <div class="card">
     <span class="tag neg">Failure 2 · The eliminated disjunction</span>
-    <h3>The decision procedure that couldn't exist (three times)</h3>
+    <h3>The decision that couldn't be a value (three times)</h3>
     <p style="margin-bottom:0">
-      Proving decidability, I tried to build the decision as a value (<code>PSum</code>,
+      Proving decidability, I tried to build the decision as a <em>value</em> (<code>PSum</code>,
       <code>Decidable</code>) and failed three ways in a row, because Lean won't let you
       case-split a logical disjunction to produce a computational value. The fix was to prove
-      the decision as a <em>proposition</em> first, then lift it. The axiom report reflects
-      exactly that one lift. This is the kind of trap that costs an agent hours and a human
-      minutes, so it's now written down for both of us.
+      the decision as a <em>proposition</em> first, then lift it via <code>Classical.choice</code>.
+      That is also why the result is decidability-as-a-theorem rather than a runnable
+      checker — see §03. The trap costs an agent hours and a human minutes, so it's written
+      down for both of us.
     </p>
   </div>
   <div class="card">
@@ -434,9 +441,14 @@ footer a{color:var(--accent)}
       patching the tangle. (3) The canonical countermodel valuation was misread mid-session
       as needing to read from the succedent; exhaustive ground-truthing against the
       four-valued semantics confirmed the antecedent-only reading was correct all along, and
-      the "redesign" was a tactic-level bug, not a design bug. (4) Three decision-procedure
-      architectures abandoned before the constructive one landed. The full ordered failure
-      log is on the <a href="agents.html">agents page</a>.
+      the "redesign" was a tactic-level bug, not a design bug. (4) Three decision-value
+      architectures abandoned before the Prop-disjunction one landed. (5) External review
+      (2026-08-11) caught two overstatements this page originally made: the false-W framing
+      implied the green build was merely stale-cache when the real gap was a missing module
+      import, and "constructive decision procedure" overstated a result that is
+      decidability-as-a-theorem, not an executable checker. Both corrected, with the
+      open-model claim scoped to provenance/rerunnability rather than proof assurance. The
+      full ordered failure log is on the <a href="agents.html">agents page</a>.
     </p>
   </div>
 </section>
@@ -461,13 +473,19 @@ footer a{color:var(--accent)}
     a small demonstration that the artifact is the durable thing.
   </p>
   <p>
-    The broader arc: the tooling for AI-assisted proof is maturing fast, and the curated
-    leaderboards tracking it are filling with closed-model entries. That's fine — but it
-    shouldn't be the only model of how this gets done. An open stack, where the agent, the
-    weights, and the proof are all inspectable, is the version of AI-assisted mathematics
-    that behaves like the rest of open science. This experiment is a proof of concept for
-    that version. It is deliberately a small, well-understood problem: the contribution is
-    not the difficulty of the math, it's the <em>shape of the process</em>.
+    A boundary worth stating precisely, because it's easy to overread the open-model claim:
+    <strong>open weights do not raise proof assurance.</strong> A closed-model Lean artifact
+    is exactly as kernel-checkable as this one — the kernel doesn't care who wrote the
+    tactic, and a verifier re-running <code>lake build</code> gets the same assurance either
+    way. What open weights change is <em>provenance and rerunnability</em>: the prover itself
+    can be pinned and re-run. And that claim is only as strong as the pinning. So we pin:
+    model checkpoint (<code>moonshotai/kimi-k3</code>, downloadable weights), provider
+    (OpenRouter), harness (Hermes Agent + the <code>lean4-formalization</code> skill), build
+    (toolchain <code>nightly-2026-07-14</code>, mathlib <code>f566658afd</code>). The
+    conversation traces are the remaining piece — they are being archived alongside the repo
+    before any leaderboard submission, because "the process is rerunnable" is only honest
+    once the traces are inspectable too. Weights alone do not expose this run's reasoning;
+    the pinned trace does.
   </p>
 </section>
 
@@ -502,17 +520,18 @@ footer a{color:var(--accent)}
 <section id="reproduce">
   <h2><span class="k">07 · Reproduce</span>Every claim here is checkable</h2>
   <p>
-    The proof is a buildable Lean 4 project. The verification recipe below is the one we
-    actually run: module-targeted, not bare. It either reproduces the green build or it
-    doesn't. The repository itself is being prepared for public release; until it is linked
-    here, the recipe and the axiom report are the claim, stated precisely enough to be
-    re-run the moment the repo is public.
+    The proof is a buildable Lean 4 project, and it is public:
+    <a href="https://github.com/NimbleCoOrg/fde-lean">github.com/NimbleCoOrg/fde-lean</a>.
+    The verification recipe below is the one we actually run against it: module-targeted,
+    not bare. It either reproduces the green build or it doesn't. Clone it and check.
   </p>
   <details>
-    <summary>Verification recipe (run against the public repo when linked)</summary>
+    <summary>Verification recipe (runs against the public repo)</summary>
     <div class="body">
-      <pre>export PATH=&lt;elan&gt;/bin:$PATH &amp;&amp; cd fde-lean
-lake build FDE.Corollaries        # module-targeted — do NOT trust bare `lake build`
+      <pre>git clone https://github.com/NimbleCoOrg/fde-lean && cd fde-lean
+export PATH=&lt;elan&gt;/bin:$PATH
+lake exe cache get                  # pull the precompiled mathlib cache — do NOT build mathlib
+lake build FDE.Corollaries          # module-targeted — do NOT trust bare `lake build`
 grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → empty
 # #print axioms decidable_deriv → [propext, Classical.choice, Quot.sound]</pre>
       <p>Toolchain: <code>leanprover/lean4:nightly-2026-07-14</code>. mathlib pinned
@@ -526,7 +545,7 @@ grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → empty
       <p><code>FDE/Sequent.lean</code>: two-sided sequents, the invertible calculus, atomic + negated-atomic identity.</p>
       <p><code>FDE/Soundness.lean</code>: soundness by induction on the derivation.</p>
       <p><code>FDE/Completeness.lean</code>: inversion lemmas, the canonical countermodel, the weighted measure, completeness by strong induction.</p>
-      <p><code>FDE/Corollaries.lean</code>: no-theorems, the disjunction property, and constructive decidability.</p>
+      <p><code>FDE/Corollaries.lean</code>: no-theorems, the disjunction property, and decidability of derivability (a theorem, not an executable checker — see §03).</p>
       <p>The agent-facing account of how the proof was actually built (environment constraints, the exact measure argument, the ordered failure log, and the recreation recipe) lives on the <a href="agents.html">agents page</a>.</p>
     </div>
   </details>

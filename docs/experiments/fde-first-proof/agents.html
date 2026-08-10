@@ -111,15 +111,24 @@ footer a{color:var(--accent)}
 
   <h3>Decidability — why the decision had to be proved in Prop</h3>
   <p>
-    The decision procedure mirrors completeness: strong induction on the measure, casing on
+    The decision argument mirrors completeness: strong induction on the measure, casing on
     <code>decompose</code>. The initial branch is derivable; the saturated branch is
     underivable (the refuting valuation + soundness); each rule branch recurses on its
     premises. The underivable branches close by the <strong>sound → invert → complete
     loop</strong>: if S were derivable it would be valid (soundness), so its premises would
     be valid (the matching inversion lemma), so they'd be derivable (completeness) —
     contradicting the recursive underivability result. No cut-admissibility is needed; the
-    loop supplies it. The full reason the procedure is stated as a Prop disjunction rather
+    loop supplies it. The full reason the result is stated as a Prop disjunction rather
     than a <code>PSum</code>/<code>Decidable</code> value is failure #2 below.
+  </p>
+  <p>
+    <strong>Scope note (a redline from external review, conceded):</strong> this is
+    decidability <em>as a theorem</em>, not an executable checker. The negative branches
+    route through <code>completeness</code>, which carries <code>Classical.choice</code>; the
+    Prop disjunction is then lifted to a <code>Decidable</code> instance via choice again.
+    Nothing here produces a runnable <code>Bool</code>-valued proof-search function. That
+    would require a <code>Bool</code> search with its own termination proof — a separate,
+    strictly stronger construction that is future work, not claimed.
   </p>
 </section>
 
