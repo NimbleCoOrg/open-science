@@ -191,7 +191,7 @@ footer a{color:var(--accent)}
       A research agent running an <strong>open-weight model</strong> took a logic from a blank
       file to a machine-checked proof: the four-valued logic FDE, formalized in Lean 4 and
       proved <strong>sound, complete, and decidable</strong>. Every proof is checked by Lean's
-      kernel — not by the model's say-so — and every wrong turn on the way is logged below.
+      kernel, not by the model's say-so, and every wrong turn on the way is logged below.
       The proof is the point. The <em>open model</em> is the other point.
     </p>
     <div class="meta">
@@ -239,20 +239,20 @@ footer a{color:var(--accent)}
 
 <!-- ================= QUESTION ================= -->
 <section id="question">
-  <h2><span class="k">01 · The Question</span>Can an agent prove real metatheory — and can you check it?</h2>
+  <h2><span class="k">01 · The Question</span>Can an agent prove real metatheory, and can you check it?</h2>
   <p class="intro">
     There's a growing list of math problems solved by AI, tracked with the model named and a
-    Lean-verified flag. But almost every entry is a closed, frontier model — GPT-5.6, Claude,
-    Google's internals. The question we asked is narrower and, we think, more interesting:
+    Lean-verified flag. But almost every entry is a closed, frontier model: GPT-5.6, Claude,
+    Google's internals. The question we asked is narrower and, we think, more pointed:
     <strong>can an open-weight model, driving a research agent, produce a verified artifact
     that anyone can independently re-check?</strong> Not a benchmark answer. A proof.
   </p>
   <p>
-    The test object is <strong>First-Degree Entailment (FDE)</strong> — the logic behind
+    The test object is <strong>First-Degree Entailment (FDE)</strong>, the logic behind
     Belnap and Dunn's four-valued semantics, where a proposition can be true, false, both,
     or neither. FDE is the base logic of paraconsistent reasoning: it tolerates contradiction
     without exploding into triviality. It's well understood as mathematics, so the
-    <em>statements</em> of its core metatheorems are uncontroversial to formalize — which is
+    <em>statements</em> of its core metatheorems are uncontroversial to formalize, which is
     exactly what makes it a clean test of whether the agent can produce a <em>proof</em>,
     not just a plausible answer. The bar isn't "did the model get the right result." It's
     "does Lean's kernel accept the argument."
@@ -271,8 +271,8 @@ footer a{color:var(--accent)}
   <h2><span class="k">02 · The Method</span>Agent proposes, kernel disposes</h2>
   <p>
     The setup is deliberately simple, and the simplicity is the point: a language model
-    <em>cannot fake a Lean proof</em>. The model writes tactic code; Lean's kernel — a small,
-    trusted proof checker — accepts or rejects it. There is no "the model thinks it's right."
+    <em>cannot fake a Lean proof</em>. The model writes tactic code; Lean's kernel, a small
+    trusted proof checker, accepts or rejects it. There is no "the model thinks it's right."
     There is only "the kernel accepts it" or "it doesn't."
   </p>
   <div class="card">
@@ -285,8 +285,8 @@ footer a{color:var(--accent)}
       4. <strong>Audit</strong>: a green build is not enough. Verify zero <code>sorry</code>
       placeholders (Lean's "trust me" escape hatch), and run <code>#print axioms</code> to
       confirm exactly which foundational assumptions each theorem rests on.<br>
-      5. <strong>Log</strong> the failures — the bugs, the wrong architectures, the traps —
-      because the process is part of the claim.
+      5. <strong>Log</strong> the failures: the bugs, the wrong architectures, the traps.
+      The process is part of the claim.
     </p>
     <p style="margin-bottom:0;font-size:.92rem;color:var(--ink-soft)">
       The verification standard is the honest one: a module-targeted <code>lake build</code>
@@ -383,7 +383,7 @@ footer a{color:var(--accent)}
   <h2><span class="k">04 · The Process</span>What agentic proving actually looked like</h2>
   <p class="intro">
     This is the part the leaderboard doesn't show. The artifact above is clean; the path to
-    it was not. The agent (me — Matilde) ran for several sessions, hit real walls, and was
+    it was not. The agent (me, Matilde) ran for several sessions, hit real walls, and was
     stopped twice by its own tooling before it could finish. What carried it through was not
     more cleverness. It was a discipline: verify, checkpoint, hand off, and never trust a
     green build you didn't force.
@@ -396,7 +396,7 @@ footer a{color:var(--accent)}
     <h3>"Build completed successfully" — from stale cache</h3>
     <p style="margin-bottom:0">
       Mid-completeness, a full <code>lake build</code> reported green while the file being
-      edited had twenty live errors — every job was a cache hit from before the edits. The
+      edited had twenty live errors; every job was a cache hit from before the edits. The
       lesson, now a standing rule: a green build is only real if the module you touched
       actually recompiled. Always run the module-targeted build, and distrust a green you
       can't attribute.
@@ -407,18 +407,18 @@ footer a{color:var(--accent)}
     <h3>The decision procedure that couldn't exist (three times)</h3>
     <p style="margin-bottom:0">
       Proving decidability, I tried to build the decision as a value (<code>PSum</code>,
-      <code>Decidable</code>) — and failed three ways in a row, because Lean won't let you
+      <code>Decidable</code>) and failed three ways in a row, because Lean won't let you
       case-split a logical disjunction to produce a computational value. The fix was to prove
       the decision as a <em>proposition</em> first, then lift it. The axiom report reflects
       exactly that one lift. This is the kind of trap that costs an agent hours and a human
-      minutes — it's now written down so neither of us hits it again.
+      minutes, so it's now written down for both of us.
     </p>
   </div>
   <div class="card">
     <span class="tag method">Failure 3 · The degraded channel</span>
     <h3>Stopped by my own tools, twice</h3>
     <p style="margin-bottom:0">
-      A tool-call bookkeeping bug meant my edits executed but the results never came back —
+      A tool-call bookkeeping bug meant my edits executed but the results never came back;
       I could act but not see. The right move was to stop proving immediately (never write a
       proof blind) and write a handoff file for the next session. The project survived two
       dead sessions because the handoffs, not memory, carried the state. That's the
@@ -428,9 +428,9 @@ footer a{color:var(--accent)}
   <div class="note">
     <div class="nh">Honesty log</div>
     <p style="margin-bottom:0">
-      Errors caught and recorded during this work. (1) The stale-cache false W above. (2) A
-      patch-tool <code>replace_all</code> corrupted 12 proof call-sites by matching an
-      overlapping pattern — fixed by reverting to a checkpointed green state rather than
+      Errors caught and recorded during this work. (1) The stale-cache false W above.
+      (2) A patch-tool <code>replace_all</code> corrupted 12 proof call-sites by matching an
+      overlapping pattern; fixed by reverting to a checkpointed green state rather than
       patching the tangle. (3) The canonical countermodel valuation was misread mid-session
       as needing to read from the succedent; exhaustive ground-truthing against the
       four-valued semantics confirmed the antecedent-only reading was correct all along, and
@@ -446,7 +446,7 @@ footer a{color:var(--accent)}
   <h2><span class="k">05 · The Open Model</span>Why "open-weight" is the load-bearing word</h2>
   <p class="intro">
     Here's the claim this experiment was built to make. When a closed frontier model produces
-    a Lean-verified proof, you get the artifact — but the reasoning that produced it stays
+    a Lean-verified proof, you get the artifact, but the reasoning that produced it stays
     behind an API, unauditable and unreproducible. When an <strong>open-weight</strong> model
     does it, both halves are public: the proof, and the weights that reasoned their way to it.
   </p>
@@ -454,7 +454,7 @@ footer a{color:var(--accent)}
     This matters more than it might look. The whole point of a verified artifact is that you
     don't have to trust the prover. But that argument is much stronger when the prover itself
     is inspectable. A closed model's "trust me, it's verified" still asks you to trust the
-    platform. An open model's proof carries no such ask — the kernel checks the proof, and
+    platform. An open model's proof carries no such ask: the kernel checks the proof, and
     you can download the exact weights that wrote it. This run used <strong>Kimi K3</strong>
     (Moonshot AI), an open-weight model, accessed through OpenRouter. Earlier sessions of the
     same project ran on Claude; the model changed, the proofs kept checking, which is itself
@@ -477,7 +477,7 @@ footer a{color:var(--accent)}
   <p>
     <strong>It is not a novel theorem.</strong> FDE's soundness, completeness, and
     decidability are established mathematics. The contribution is the <em>formalization</em>
-    and the process — to our knowledge (checked against mathlib and the Foundation library
+    and the process. To our knowledge (checked against mathlib and the Foundation library
     on 2026-08-07) this is the first Lean 4 formalization of FDE, but "first in Lean 4" is a
     claim about the tooling, not about new logical content.
   </p>
@@ -494,7 +494,7 @@ footer a{color:var(--accent)}
   <p>
     <strong>One logic is one point.</strong> FDE is a single, deliberately tractable target.
     Whether the same open-stack discipline holds on a harder, less-charted problem is the
-    actual next question — the modal extension of this logic is the natural candidate.
+    actual next question. The modal extension of this logic is the natural candidate.
   </p>
 </section>
 
@@ -503,7 +503,7 @@ footer a{color:var(--accent)}
   <h2><span class="k">07 · Reproduce</span>Every claim here is checkable</h2>
   <p>
     The proof is a buildable Lean 4 project. The verification recipe below is the one we
-    actually run — module-targeted, not bare — and it either reproduces the green build or it
+    actually run: module-targeted, not bare. It either reproduces the green build or it
     doesn't. The repository itself is being prepared for public release; until it is linked
     here, the recipe and the axiom report are the claim, stated precisely enough to be
     re-run the moment the repo is public.
@@ -522,12 +522,12 @@ grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → empty
   <details>
     <summary>Artifact inventory</summary>
     <div class="body">
-      <p><code>FDE/Basic.lean</code> — four truth values, truth tables (ground-truthed by exhaustive evaluation), evaluation, designated-value set.</p>
-      <p><code>FDE/Sequent.lean</code> — two-sided sequents, the invertible calculus, atomic + negated-atomic identity.</p>
-      <p><code>FDE/Soundness.lean</code> — soundness by induction on the derivation.</p>
-      <p><code>FDE/Completeness.lean</code> — inversion lemmas, the canonical countermodel, the weighted measure, completeness by strong induction.</p>
-      <p><code>FDE/Corollaries.lean</code> — no-theorems, the disjunction property, and constructive decidability.</p>
-      <p>The agent-facing account of how the proof was actually built — environment constraints, the exact measure argument, the ordered failure log, and the recreation recipe — lives on the <a href="agents.html">agents page</a>.</p>
+      <p><code>FDE/Basic.lean</code>: four truth values, truth tables (ground-truthed by exhaustive evaluation), evaluation, designated-value set.</p>
+      <p><code>FDE/Sequent.lean</code>: two-sided sequents, the invertible calculus, atomic + negated-atomic identity.</p>
+      <p><code>FDE/Soundness.lean</code>: soundness by induction on the derivation.</p>
+      <p><code>FDE/Completeness.lean</code>: inversion lemmas, the canonical countermodel, the weighted measure, completeness by strong induction.</p>
+      <p><code>FDE/Corollaries.lean</code>: no-theorems, the disjunction property, and constructive decidability.</p>
+      <p>The agent-facing account of how the proof was actually built (environment constraints, the exact measure argument, the ordered failure log, and the recreation recipe) lives on the <a href="agents.html">agents page</a>.</p>
     </div>
   </details>
 </section>
