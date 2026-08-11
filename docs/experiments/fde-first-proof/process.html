@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The process — FDE first proof</title>
+<meta name="description" content="How the FDE proof was actually built: the failure modes, the honesty log, the build timeline, and what it cost. Every failure and recovery in the public record.">
+<meta property="og:title" content="The process — FDE first proof">
+<meta property="og:description" content="Five days, one theorem, every failure on the record — with the build timeline and the real cost.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --paper-2:#ece4d4; --surface:#fffdf8; --surface-2:#faf6ed;
+  --ink:#211c16; --ink-soft:#675e4f; --ink-faint:#a99e89;
+  --rule:#e2d9c7; --rule-2:#cfc3aa;
+  --accent:#1f4257; --accent-2:#6b8f3a;
+  --pos:#357a5b; --neg:#bb4a33; --neu:#a4977c; --warn:#b07d22;
+  --self:#1f4257; --human:#6b8f3a; --external:#8a5a9e;
+  --serif:'Newsreader',Georgia,serif; --display:'Fraunces',Georgia,serif;
+  --mono:'Spline Sans Mono',ui-monospace,monospace;
+  --shadow:0 1px 1px rgba(33,28,22,.03),0 10px 30px -16px rgba(33,28,22,.22);
+  --shadow-lg:0 2px 4px rgba(33,28,22,.05),0 24px 60px -28px rgba(33,28,22,.32);
+  --maxw:1060px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.62;font-size:18px;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");mix-blend-mode:multiply}
+::selection{background:#d9c9a8;color:#221c14}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+a:hover{color:var(--accent-2)}
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+
+/* ============ MASTHEAD ============ */
+.masthead{padding:3.4rem 0 1.4rem;border-bottom:1.5px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule-2)}
+.masthead h1{font-family:var(--display);font-optical-sizing:auto;font-weight:600;font-size:clamp(2rem,5vw,3.4rem);line-height:.99;letter-spacing:-.018em;color:var(--ink);margin-bottom:1rem;max-width:24ch}
+.masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.masthead .lede{font-size:1.18rem;line-height:1.55;color:var(--ink-soft);max-width:60ch}
+/* ============ PAGE SWITCHER (persistent, level 1) ============ */
+.pageswitch{
+  position:sticky;top:0;z-index:60;background:var(--ink);color:var(--paper);
+  padding:.55rem 0;
+}
+.pageswitch .wrap{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.pageswitch .crumb{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#a99e89;margin-right:.8rem}
+.pageswitch a{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#cfc3aa;text-decoration:none;padding:.32rem .8rem;border-radius:999px;
+  border:1px solid transparent;
+}
+.pageswitch a:hover{color:#fff;border-color:#675e4f}
+.pageswitch a[aria-current="page"]{background:var(--paper);color:var(--ink);font-weight:600}
+/* ============ SECTION STRIP (per-page, level 2) ============ */
+.subnav{
+  position:sticky;top:34px;z-index:50;background:rgba(243,238,228,.94);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);
+  padding:.6rem 0;margin-bottom:2.2rem;
+}
+.subnav .wrap{display:flex;gap:1.4rem;flex-wrap:wrap}
+.subnav a{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.2rem 0;border-bottom:2px solid transparent}
+.subnav a:hover{color:var(--accent);border-bottom-color:var(--accent-2)}
+/* ============ SECTIONS ============ */
+section{margin-bottom:3rem}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3.2vw,2.2rem);letter-spacing:-.012em;line-height:1.05;margin-bottom:1rem;color:var(--ink)}
+h2 .k{display:block;font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.7rem}
+h3{font-family:var(--display);font-weight:600;font-size:1.22rem;margin:1.6rem 0 .5rem;color:var(--ink)}
+p{margin-bottom:1rem;max-width:68ch}
+p.intro{font-size:1.12rem;color:var(--ink-soft)}
+strong{font-weight:600;color:var(--ink)}
+em{font-style:italic}
+/* ============ CARDS / NOTES ============ */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:1.5rem 1.6rem;margin:1.2rem 0;box-shadow:var(--shadow)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:.28rem .6rem;border-radius:999px;margin-bottom:.7rem}
+.tag.neg{background:#f6e3dd;color:var(--neg);border:1px solid #e5bda9}
+.tag.method{background:#dde7ee;color:var(--accent);border:1px solid #bccfdb}
+.note{background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:1.1rem 1.25rem;margin:1.2rem 0;font-size:.95rem}
+.note.warn{background:#f7efe0;border-color:#e6d3a8}
+.note.expert{border-left:4px solid var(--accent);background:#eef2f5;border-color:#c8d6e0}
+.note .nh{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;font-weight:600}
+.note p{margin-bottom:.6rem;font-size:.95rem}
+.note p:last-child{margin-bottom:0}
+details{margin:1rem 0;border:1px solid var(--rule);border-radius:12px;background:var(--surface);overflow:hidden}
+details summary{cursor:pointer;padding:.9rem 1.2rem;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:var(--accent);font-weight:600;list-style:none;user-select:none}
+details summary::before{content:"+ ";color:var(--accent-2);font-weight:700}
+details[open] summary::before{content:"– "}
+details summary:hover{background:var(--surface-2)}
+details .body{padding:0 1.2rem 1.2rem;font-size:.92rem;color:var(--ink-soft)}
+details .body pre{font-family:var(--mono);font-size:.78rem;background:var(--surface-2);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow-x:auto;margin:.7rem 0;line-height:1.5}
+details .body code{font-family:var(--mono);font-size:.85em;background:var(--surface-2);padding:.1em .35em;border-radius:4px}
+/* ============ FIGURE FRAMES ============ */
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:1.3rem 1.3rem .9rem;margin:1.2rem 0;box-shadow:var(--shadow)}
+.fig .fighead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.6rem;margin-bottom:.9rem}
+.fig .figtitle{font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.fig .figcap{font-size:.82rem;color:var(--ink-faint);font-family:var(--mono)}
+.fig svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:1.2rem;margin-top:.8rem;padding-top:.75rem;border-top:1px solid var(--rule);font-family:var(--mono);font-size:.7rem;color:var(--ink-soft)}
+.legend .li{display:flex;align-items:center;gap:.45rem}
+.legend .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.legend .sw.tri{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.legend .sw.rtri{clip-path:polygon(0 0,100% 0,50% 100%)}
+.legend .sw.ring{border-radius:50%;background:transparent;border:2.5px solid var(--neg)}
+#tip{position:fixed;z-index:100;pointer-events:none;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:.72rem;line-height:1.45;padding:.6rem .75rem;border-radius:8px;max-width:290px;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .12s}
+#tip .t1{font-weight:600}
+#tip .t2{color:#cfc3aa;margin-top:.15rem}
+#tip .t3{color:#a99e89;margin-top:.3rem;font-size:.64rem}
+.actband{display:flex;align-items:flex-end;gap:8%;height:120px;margin-top:.4rem}
+.actcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.actbar{width:100%;border-radius:3px 3px 0 0}
+.actbar.m{background:var(--self)}
+.actbar.j{background:var(--human)}
+.actlab{text-align:center;font-family:var(--mono);font-size:.64rem;color:var(--ink-faint);margin-top:.5rem}
+/* ============ COST ============ */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.2rem 0}
+.metric{background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:1.1rem 1.2rem}
+.metric .lab{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem}
+.metric .val{font-family:var(--display);font-weight:700;font-size:1.9rem;line-height:1;color:var(--ink)}
+.metric .sub{font-size:.82rem;color:var(--ink-soft);margin-top:.4rem;font-family:var(--mono)}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.2rem 0}
+table.data{width:100%;border-collapse:collapse;font-size:.92rem;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--rule)}
+table.data caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding:.6rem .8rem;background:var(--surface-2)}
+table.data th{background:var(--surface-2);font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--rule)}
+table.data td{padding:.55rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.data tr:last-child td{border-bottom:none}
+table.data td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* ============ FOOTER ============ */
+footer{border-top:1.5px solid var(--ink);margin-top:3.4rem;padding:2rem 0 2.6rem;font-size:.9rem;color:var(--ink-soft)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.4rem}
+footer a{color:var(--accent)}
+@media(max-width:640px){body{font-size:16.5px}.pageswitch .crumb{display:none}.subnav{top:0}.result-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+
+<!-- ============ PAGE SWITCHER (level 1, persistent) ============ -->
+<nav class="pageswitch"><div class="wrap">
+  <span class="crumb">FDE first proof</span>
+  <a href="./">The experiment</a>
+  <a href="process.html" aria-current="page">The process</a>
+  <a href="agents.html">For agents</a>
+</div></nav>
+
+<header class="masthead"><div class="wrap">
+  <div class="eyebrow">The process · how it was actually built</div>
+  <h1>Every failure <em>on the record</em></h1>
+  <p class="lede">
+    The artifact is clean; the path to it was not. This is the part the leaderboard doesn't
+    show: the failure modes, the honesty log, the build timeline, and what it cost. Every
+    point traces to a message in the public archive.
+  </p>
+</div></header>
+
+<!-- ============ SECTION STRIP (level 2, this page) ============ -->
+<nav class="subnav"><div class="wrap">
+  <a href="#failures">the failure modes</a>
+  <a href="#honesty">honesty log</a>
+  <a href="#timeline">build timeline</a>
+  <a href="#lane">who caught it</a>
+  <a href="#activity">activity</a>
+  <a href="#cost">cost</a>
+  <a href="#reproduce">reproduce</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- ================= FAILURE MODES ================= -->
+<section id="failures">
+  <h2><span class="k">01 · the failure modes</span>What carried it through wasn't cleverness</h2>
+  <p class="intro">
+    The agent ran for several sessions, hit real walls, and was stopped twice by its own
+    tooling. What carried it through was a discipline: verify, checkpoint, hand off, and never
+    trust a green build you didn't force. Three failure modes, recorded because they're the
+    transferable part.
+  </p>
+  <div class="card">
+    <span class="tag neg">Failure 1 · The false W</span>
+    <h3>"Build completed successfully" — and it hadn't built the file</h3>
+    <p style="margin-bottom:0">
+      A full <code>lake build</code> reported green while the file being edited had twenty live
+      errors. The sharper truth (an external reviewer made us reconcile it) is that the library
+      root didn't yet import the module, so the default target never compiled it. The green was
+      <strong>target coverage, not verification</strong>. The rule: a green build is only real
+      if the module you touched actually recompiled <em>and</em> is in the build graph.
+    </p>
+  </div>
+  <div class="card">
+    <span class="tag neg">Failure 2 · The eliminated disjunction</span>
+    <h3>The decision that couldn't be a value (three times)</h3>
+    <p style="margin-bottom:0">
+      Proving decidability, the agent tried to build the decision as a <em>value</em> three
+      ways in a row — Lean won't case-split a logical disjunction to produce a computational
+      value. The fix was to prove it as a <em>proposition</em>, then lift via
+      <code>Classical.choice</code>. That's why the result is decidability-as-a-theorem, not a
+      runnable checker. The trap costs an agent hours and a human minutes, so it's written down
+      for both.
+    </p>
+  </div>
+  <div class="card">
+    <span class="tag method">Failure 3 · The degraded channel</span>
+    <h3>Stopped by its own tools, twice</h3>
+    <p style="margin-bottom:0">
+      A tool-call bookkeeping bug meant edits executed but results never came back — the agent
+      could act but not see. The right move was to stop proving immediately (never write a
+      proof blind) and hand off state to the next session. The project survived two dead
+      sessions because handoffs, not memory, carried it.
+    </p>
+  </div>
+</section>
+
+<!-- ================= HONESTY LOG ================= -->
+<section id="honesty">
+  <h2><span class="k">02 · the honesty log</span>Errors caught and recorded</h2>
+  <div class="note">
+    <div class="nh">every correction, dated</div>
+    <p style="margin-bottom:0">
+      (1) The stale-cache false W. (2) A <code>replace_all</code> corrupted 12 proof call-sites
+      on an overlapping pattern; fixed by reverting to a checkpoint, not patching the tangle.
+      (3) The canonical countermodel valuation was misread as needing to read from the
+      succedent; ground-truthing against the four-valued semantics confirmed the antecedent-only
+      reading was right all along — a tactic bug, not a design bug. (4) Three decision-value
+      architectures abandoned before the Prop-disjunction one landed. (5) External review
+      (2026-08-11) caught two overstatements: the false-W framing, and "constructive decision
+      procedure" for a result that is decidability-as-a-theorem. (6) A second artifact-audit
+      caught the <code>Classical.choice</code> attribution (factually wrong — inherited from
+      <code>completeness</code>, not the lift), an over-flat novelty claim, and a leaky
+      sorry-grep. All corrected; the reviewer confirmed the math holds. The full ordered log is
+      on the <a href="agents.html">agents page</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ================= BUILD TIMELINE ================= -->
+<section id="timeline">
+  <h2><span class="k">03 · the build timeline</span>Greens are rare and earned</h2>
+  <p>
+    Every reported <code>lake build</code> result across the five days. Upward ticks are green;
+    downward are red. The ringed tick is the one that matters most: a build that reported green
+    from stale cache while the source was broken — caught before the result was claimed.
+  </p>
+  <div class="fig">
+    <div class="fighead"><span class="figtitle">reported builds · aug 7–11</span><span class="figcap" id="tl-cap"></span></div>
+    <svg id="tl" viewBox="0 0 1000 240" role="img" aria-label="Build timeline"></svg>
+    <div class="legend">
+      <span class="li"><span class="sw tri" style="background:var(--pos)"></span>green build</span>
+      <span class="li"><span class="sw rtri" style="background:var(--neg)"></span>red build</span>
+      <span class="li"><span class="sw ring"></span>false green (stale cache, caught)</span>
+      <span class="li" style="margin-left:auto;color:var(--ink-faint)">hover / tap a tick for the source message</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHO CAUGHT IT ================= -->
+<section id="lane">
+  <h2><span class="k">04 · who caught it</span>Discipline, and openness, in one visual</h2>
+  <p>
+    Every failure, pitfall, and review catch, colored by who caught it. Most errors were caught
+    by the agent's own verification discipline (dark); the external-review catches (violet) are
+    the openness claim working in public. This is Kimi K3's proof; Rey and the second reviewer
+    are peer reviewers, strengthening the artifact — not co-authors.
+  </p>
+  <div class="fig">
+    <div class="fighead"><span class="figtitle">failures, pitfalls &amp; reviews · aug 7–11</span><span class="figcap" id="fr-cap"></span></div>
+    <svg id="fr" viewBox="0 0 1000 300" role="img" aria-label="Failure and recovery lane"></svg>
+    <div class="legend">
+      <span class="li"><span class="sw" style="background:var(--self)"></span>self-caught (discipline)</span>
+      <span class="li"><span class="sw" style="background:var(--human)"></span>human-caught (Juni)</span>
+      <span class="li"><span class="sw" style="background:var(--external)"></span>external review (Rey · 2nd reviewer)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACTIVITY ================= -->
+<section id="activity">
+  <h2><span class="k">05 · activity</span>Not one lucky run</h2>
+  <p>
+    Message volume per day — the dense completeness-repair day, the tool-outage trough, the
+    publication-and-review tail. Texture, not headline; the build and failure lanes are the
+    substance.
+  </p>
+  <div class="fig">
+    <div class="fighead"><span class="figtitle">messages per day (status pings excluded)</span></div>
+    <div class="actband" id="act"></div>
+    <div class="legend">
+      <span class="li"><span class="sw" style="background:var(--self)"></span>Matilde (agent)</span>
+      <span class="li"><span class="sw" style="background:var(--human)"></span>Juni (operator)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COST ================= -->
+<section id="cost">
+  <h2><span class="k">06 · what it cost</span>The number everyone asks</h2>
+  <p>
+    The token spend for the proof, from real session telemetry (OpenRouter, Kimi K3) — the
+    marginal cost of a formally verified result on an open-weight model, within reach of an
+    individual researcher, not a lab.
+  </p>
+  <div class="result-grid">
+    <div class="metric"><div class="lab">estimated cost</div><div class="val" id="c-cost"></div><div class="sub">≈ estimated, not actual</div></div>
+    <div class="metric"><div class="lab">input tokens</div><div class="val" id="c-in"></div><div class="sub">fresh (billable)</div></div>
+    <div class="metric"><div class="lab">output tokens</div><div class="val" id="c-out"></div><div class="sub">generated</div></div>
+    <div class="metric"><div class="lab">cache-read tokens</div><div class="val" id="c-cache"></div><div class="sub">discounted</div></div>
+  </div>
+  <div class="table-scroll"><table class="data" id="cost-table">
+    <caption>cost by phase · openrouter, kimi k3 · estimated</caption>
+    <thead><tr><th>phase</th><th>sessions</th><th>input</th><th>output</th><th>cache-read</th><th>est. cost</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+  <div class="note expert">
+    <div class="nh">Why the raw number needs three framings</div>
+    <p><strong>It's estimated, not actual.</strong> The provider didn't return per-session actuals; read it as "≈ $63," not a precise invoice.</p>
+    <p><strong>Cache is the real story.</strong> ~100M cache-read tokens (steep discount) against ~9.4M fresh input — without prompt caching this would have cost several times more.</p>
+    <p><strong>The inefficiency is fixable.</strong> Half the total cost is one Aug 10 session where the 1M-token context re-ingests whole files. A more established setup — the lean4 skill that now exists didn't on Aug 7 — cuts it substantially.</p>
+  </div>
+</section>
+
+<!-- ================= REPRODUCE ================= -->
+<section id="reproduce">
+  <h2><span class="k">07 · reproduce</span>Every claim here is checkable</h2>
+  <p>
+    The proof is a buildable Lean 4 project, and it is public:
+    <a href="https://github.com/NimbleCoOrg/fde-lean">github.com/NimbleCoOrg/fde-lean</a>. The
+    verification recipe is the one actually run against it: module-targeted, not bare. It
+    either reproduces the green build or it doesn't. Clone it and check.
+  </p>
+  <details>
+    <summary>Verification recipe (runs against the public repo)</summary>
+    <div class="body">
+      <pre>git clone https://github.com/NimbleCoOrg/fde-lean && cd fde-lean
+export PATH=&lt;elan&gt;/bin:$PATH
+lake exe cache get                  # pull the precompiled mathlib cache — do NOT build mathlib
+lake build FDE.Corollaries          # module-targeted — do NOT trust bare `lake build`
+grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → empty
+# #print axioms decidable_deriv → [propext, Classical.choice, Quot.sound]</pre>
+      <p>Toolchain: <code>leanprover/lean4:nightly-2026-07-14</code>. mathlib pinned <code>f566658afd</code>. Platform: aarch64-linux.</p>
+    </div>
+  </details>
+  <div class="note warn">
+    <div class="nh">audit the numbers yourself</div>
+    <p style="margin-bottom:0">
+      Every anchor in the figures carries the Discord message it was sourced from; the dataset
+      is generated by <code>scripts/build-traces-data.mjs</code> in the repo. The scrubbed
+      reasoning-traces archive — the full derivation record — lives alongside this page in
+      <a href="https://github.com/NimbleCoOrg/open-science/tree/main/docs/experiments/fde-first-proof/traces"><code>traces/</code></a>.
+      The Lean proof itself is a separate repository (<a href="https://github.com/NimbleCoOrg/fde-lean"><code>NimbleCoOrg/fde-lean</code></a>),
+      a live Lake project, not a docs artifact.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <div>FDE first proof · <a href="./">the experiment</a> · the process · <a href="agents.html">for agents</a></div>
+  <div>checked, not copied · every number sourced</div>
+</div></footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n,attrs={}) => { const e=document.createElementNS(NS,n); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; };
+const tip = $('#tip');
+function showTip(x,y,t1,t2,t3){ tip.innerHTML=`<div class="t1">${t1}</div><div class="t2">${t2}</div><div class="t3">${t3}</div>`; tip.style.opacity=1; const w=tip.offsetWidth,h=tip.offsetHeight; tip.style.left=Math.min(x+14,innerWidth-w-12)+'px'; tip.style.top=Math.max(y-h-14,12)+'px'; }
+function hideTip(){ tip.style.opacity=0; }
+const fmt = n => n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':''+n;
+const money = n => '$'+n.toFixed(2);
+
+function render(D){
+  const t0=Date.parse(D.window.start), t1=Date.parse(D.window.end);
+  const X=iso=>60+(Date.parse(iso)-t0)/(t1-t0)*880;
+  /* Fig 1 */
+  { const svg=$('#tl'),yAxis=150,yTop=52,yBot=198;
+    svg.appendChild(el('line',{x1:60,y1:yAxis,x2:940,y2:yAxis,stroke:'#a99e89','stroke-width':1.5}));
+    for(let d=0;d<=4;d++){const gx=60+d/4*880;svg.appendChild(el('line',{x1:gx,y1:30,x2:gx,y2:212,stroke:'#e2d9c7','stroke-width':1}));const lab=el('text',{x:gx,y:226,'text-anchor':'middle','font-size':11,'font-family':'Spline Sans Mono',fill:'#a99e89'});lab.textContent='Aug '+(7+d);svg.appendChild(lab);}
+    let g=0,r=0;
+    D.buildEvents.forEach(e=>{const x=X(e.t),gr=e.result==='green',fg=e.result==='false-green';if(e.result==='green')g++;if(e.result==='red')r++;const col=gr?'#357a5b':'#bb4a33';const yy=gr?yTop:yBot;
+      const tri=fg?el('polygon',{points:`${x},${yTop} ${x-11},${yTop+20} ${x+11},${yTop+20}`,fill:'#357a5b',stroke:'#bb4a33','stroke-width':2.5}):gr?el('polygon',{points:`${x},${yy-14} ${x-11},${yy+8} ${x+11},${yy+8}`,fill:col}):el('polygon',{points:`${x},${yy+14} ${x-11},${yy-8} ${x+11},${yy-8}`,fill:col});
+      tri.style.cursor='pointer';const cap=(gr?'▲ green':'▼ red')+(fg?' (stale)':'');
+      tri.addEventListener('mousemove',ev=>showTip(ev.clientX,ev.clientY,cap,e.label+(e.jobs?' · '+e.jobs+' jobs':''),e.note));
+      tri.addEventListener('mouseleave',hideTip);tri.addEventListener('click',ev=>showTip(ev.clientX,ev.clientY,cap,e.label+(e.jobs?' · '+e.jobs+' jobs':''),e.note));
+      svg.appendChild(tri);svg.appendChild(el('line',{x1:x,y1:gr?yy+8:yy-8,x2:x,y2:yAxis,stroke:col,'stroke-width':1,opacity:.35}));});
+    $('#tl-cap').textContent=`${g} green · ${r} red · 1 false green`;
+  }
+  /* Fig 2 */
+  { const svg=$('#fr'),laneY={self:70,human:150,external:230},colMap={self:'#1f4257',human:'#6b8f3a',external:'#8a5a9e'};
+    [['self',70,'self-caught'],['human',150,'human-caught'],['external',230,'external review']].forEach(([k,y,lab])=>{const t=el('text',{x:60,y:y-24,'font-size':11,'font-family':'Spline Sans Mono',fill:colMap[k],'font-weight':600});t.textContent=lab;svg.appendChild(t);svg.appendChild(el('line',{x1:60,y1:y,x2:940,y2:y,stroke:'#e2d9c7','stroke-width':1}));});
+    for(let d=0;d<=4;d++){const gx=60+d/4*880;svg.appendChild(el('line',{x1:gx,y1:30,x2:gx,y2:270,stroke:'#efe8d8','stroke-width':1}));const lab=el('text',{x:gx,y:288,'text-anchor':'middle','font-size':11,'font-family':'Spline Sans Mono',fill:'#a99e89'});lab.textContent='Aug '+(7+d);svg.appendChild(lab);}
+    let counts={self:0,human:0,external:0};
+    D.processEvents.forEach(e=>{counts[e.caughtBy]++;const x=X(e.t),y=laneY[e.caughtBy],col=colMap[e.caughtBy];const dot=el('rect',{x:x-7,y:y-7,width:14,height:14,rx:3,fill:col});dot.style.cursor='pointer';
+      dot.addEventListener('mousemove',ev=>showTip(ev.clientX,ev.clientY,e.label,e.kind+' · '+e.caughtBy+'-caught',e.note));
+      dot.addEventListener('mouseleave',hideTip);dot.addEventListener('click',ev=>showTip(ev.clientX,ev.clientY,e.label,e.kind+' · '+e.caughtBy+'-caught',e.note));
+      svg.appendChild(dot);});
+    $('#fr-cap').textContent=`${counts.self} self · ${counts.human} human · ${counts.external} external`;
+  }
+  /* Fig 3 */
+  { const wrap=$('#act');const max=Math.max(...D.messageVolume.map(d=>d.matilde+d.juni));
+    D.messageVolume.forEach(d=>{const col=document.createElement('div');col.className='actcol';const mh=(d.matilde/max*110),jh=(d.juni/max*110);col.innerHTML=`<div class="actbar j" style="height:${jh}px" title="Juni ${d.juni}"></div><div class="actbar m" style="height:${mh}px" title="Matilde ${d.matilde}"></div><div class="actlab">${d.day.slice(5)}</div>`;wrap.appendChild(col);});
+  }
+  /* Cost */
+  { $('#c-cost').textContent=money(D.cost.estimatedCostUsd);$('#c-in').textContent=fmt(D.cost.inputTokens);$('#c-out').textContent=fmt(D.cost.outputTokens);$('#c-cache').textContent=fmt(D.cost.cacheReadTokens);
+    const tb=$('#cost-table tbody');D.cost.phases.forEach(p=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${p.label}</td><td class="num">${p.sessions}</td><td class="num">${fmt(p.inputTokens)}</td><td class="num">${fmt(p.outputTokens)}</td><td class="num">${fmt(p.cacheReadTokens)}</td><td class="num">${money(p.estimatedCostUsd)}</td>`;tb.appendChild(tr);});
+    const tr=document.createElement('tr');tr.style.fontWeight='600';tr.innerHTML=`<td>total</td><td class="num">${D.cost.sessions}</td><td class="num">${fmt(D.cost.inputTokens)}</td><td class="num">${fmt(D.cost.outputTokens)}</td><td class="num">${fmt(D.cost.cacheReadTokens)}</td><td class="num">${money(D.cost.estimatedCostUsd)}</td>`;tb.appendChild(tr);
+  }
+}
+fetch('traces-data.json').then(r=>{if(!r.ok)throw new Error('http '+r.status);return r.json();}).then(render).catch(e=>{
+  document.querySelector('main').insertAdjacentHTML('afterbegin',`<div class="note warn"><div class="nh">data failed to load</div><p>traces-data.json did not load (${e.message}).</p></div>`);
+});
+</script>
+</body>
+</html>
