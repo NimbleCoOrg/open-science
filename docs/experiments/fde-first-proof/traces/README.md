@@ -1,21 +1,22 @@
-# FDE Proof — Conversation Traces (LOCAL ONLY)
+# FDE Proof — Conversation Traces (public, scrubbed)
 
-**Status: private working archive. Do NOT commit to any public repo until Juni has done a redaction pass ("alembic clean").**
+**Status: public.** The redaction pass (`scrub.py`, below) has been run and the output
+verified clean. This archive shipped alongside the experiment as the durable record behind
+the claim "the process is rerunnable."
 
-These are the raw session transcripts for the FDE formalization work that the
-open-science experiment page references. They are the durable record behind the
-claim "the process is rerunnable" — but they contain operational detail (tool
-calls, internal reasoning, infra paths, auth-mechanics references) that must be
-reviewed before any public release.
+These are the session transcripts for the FDE formalization work the open-science experiment
+page references. They preserve the texture of the work — tool calls, builds, the failures and
+recoveries — with operational detail (infra paths, IDs, tokens, hostnames) deterministically
+scrubbed.
 
 ## What's here
 
-- `fde-lean-proof-thread.md` — the main "FDE LEAN Proof" Discord thread
-  (Cyborg.Garden #open-science, thread `<id>`), covering the
-  completeness assembly, corollaries, both external-review cycles, and the
-  repo/publication work.
-- `ARCHIVE_MANIFEST.md` — what was captured, from where, when, and what's still
-  missing.
+- `fde-lean-proof-thread.SCRUBBED.md` — the complete "FDE LEAN Proof" record
+  (Cyborg.Garden #open-science), covering the completeness assembly, corollaries, both
+  external-review cycles, and the repo/publication work. This is the public, scrubbed file
+  (the `.SCRUBBED` suffix marks it as the redacted version — the only one shipped).
+- `ARCHIVE_MANIFEST.md` — what was captured, from where, when, and the redaction standard.
+- `scrub.py` — the deterministic redaction script, so the scrub is auditable and re-runnable.
 
 ## Provenance
 
@@ -31,17 +32,19 @@ degraded-channel outage, corollaries (Aug 9–10), publication, and both externa
 cycles (Aug 10–11). Sourced from the two Lean threads (the corrupted/v1 thread and the main
 FDE thread).
 
-## Redaction standard (per Juni, 2026-08-11)
+## Redaction standard (per Juni, 2026-08-11) — applied
+
+The scrub has been run and verified. The standard it applied:
 
 KEEP — these are part of the honest record:
 - Names: Juni and Matilde are fine to appear.
 - Human steering and our interactions, including the encouraging/funny moments.
 - The tool-calling problems that happened mid-proof — that's useful, realistic context.
 
-STRIP before any public release — anything vulnerable or personal:
+STRIPPED before publication — anything vulnerable or personal:
 - Port numbers, device names, internal links / hostnames.
 - Private repo references that aren't meant to be public.
 - The Discord thread / channel IDs and the Discord link itself.
 - Any keys, tokens, or credential mechanics.
 - User IDs / snowflakes.
-- Internal filesystem paths (`<repo>`) — genericize.
+- Internal filesystem paths (→ `<repo>` etc.) — genericized.
