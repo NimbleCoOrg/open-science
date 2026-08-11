@@ -34,33 +34,27 @@ a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
 a:hover{color:var(--accent-2)}
 .wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
 
-/* ============ MASTHEAD ============ */
-.masthead{padding:3.4rem 0 1.4rem;border-bottom:1.5px solid var(--ink)}
+/* ============ SHARED MASTHEAD (identical on all 3 pages) ============ */
+.masthead{padding:3.4rem 0 0;border-bottom:1.5px solid var(--ink)}
 .eyebrow{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem}
 .eyebrow::after{content:"";flex:1;height:1px;background:var(--rule-2)}
 .masthead h1{font-family:var(--display);font-optical-sizing:auto;font-weight:600;font-size:clamp(2rem,5vw,3.4rem);line-height:.99;letter-spacing:-.018em;color:var(--ink);margin-bottom:1rem;max-width:24ch}
 .masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
-.masthead .lede{font-size:1.18rem;line-height:1.55;color:var(--ink-soft);max-width:60ch}
-/* ============ PAGE SWITCHER (persistent, level 1) ============ */
-.pageswitch{
-  position:sticky;top:0;z-index:60;background:var(--ink);color:var(--paper);
-  padding:.55rem 0;
-}
-.pageswitch .wrap{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
-.pageswitch .crumb{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#a99e89;margin-right:.8rem}
-.pageswitch a{
-  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
-  color:#cfc3aa;text-decoration:none;padding:.32rem .8rem;border-radius:999px;
-  border:1px solid transparent;
-}
-.pageswitch a:hover{color:#fff;border-color:#675e4f}
-.pageswitch a[aria-current="page"]{background:var(--paper);color:var(--ink);font-weight:600}
-/* ============ SECTION STRIP (per-page, level 2) ============ */
-.subnav{
-  position:sticky;top:34px;z-index:50;background:rgba(243,238,228,.94);
-  backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);
-  padding:.6rem 0;margin-bottom:2.2rem;
-}
+.masthead .lede{font-size:1.18rem;line-height:1.55;color:var(--ink-soft);max-width:62ch}
+.masthead .meta{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-top:1.4rem;display:flex;flex-wrap:wrap;gap:1.4rem}
+.masthead .meta b{color:var(--ink-soft);font-weight:600}
+/* pages menu docked at the bottom of the shared masthead */
+.pagemenu{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.8rem;padding-bottom:1.4rem}
+.pagemenu a{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.42rem .95rem;border-radius:999px;border:1px solid var(--rule-2);background:var(--surface)}
+.pagemenu a:hover{color:var(--accent);border-color:var(--accent-2)}
+.pagemenu a[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600}
+/* ============ PAGE HEADER (unique to each page) ============ */
+.pagehead{padding:2rem 0 0}
+.pagehead .k{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.8rem}
+.pagehead h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.02;letter-spacing:-.014em;margin-bottom:.8rem}
+.pagehead .sublede{font-size:1.1rem;color:var(--ink-soft);max-width:64ch}
+/* ============ SECTION STRIP (this page's sections) ============ */
+.subnav{position:sticky;top:0;z-index:50;background:rgba(243,238,228,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);padding:.6rem 0;margin:1.4rem 0 2.2rem}
 .subnav .wrap{display:flex;gap:1.4rem;flex-wrap:wrap}
 .subnav a{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.2rem 0;border-bottom:2px solid transparent}
 .subnav a:hover{color:var(--accent);border-bottom-color:var(--accent-2)}
@@ -131,31 +125,47 @@ table.data td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 footer{border-top:1.5px solid var(--ink);margin-top:3.4rem;padding:2rem 0 2.6rem;font-size:.9rem;color:var(--ink-soft)}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.4rem}
 footer a{color:var(--accent)}
-@media(max-width:640px){body{font-size:16.5px}.pageswitch .crumb{display:none}.subnav{top:0}.result-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){body{font-size:16.5px}.masthead{padding:2.6rem 0 0}.pagemenu{margin-top:1.2rem}.subnav{top:0}.result-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div id="tip"></div>
 
-<!-- ============ PAGE SWITCHER (level 1, persistent) ============ -->
-<nav class="pageswitch"><div class="wrap">
-  <span class="crumb">FDE first proof</span>
-  <a href="./">The experiment</a>
-  <a href="process.html" aria-current="page">The process</a>
-  <a href="agents.html">For agents</a>
-</div></nav>
-
+<!-- ============ SHARED MASTHEAD (identical on all 3 pages) ============ -->
 <header class="masthead"><div class="wrap">
-  <div class="eyebrow">The process · how it was actually built</div>
-  <h1>Every failure <em>on the record</em></h1>
+  <div class="eyebrow">Open Science · Experiment</div>
+  <h1>An open-weight model proves a logic theorem — <em>and shows its work</em></h1>
   <p class="lede">
-    The artifact is clean; the path to it was not. This is the part the leaderboard doesn't
-    show: the failure modes, the honesty log, the build timeline, and what it cost. Every
-    point traces to a message in the public archive.
+    A research agent running an <strong>open-weight model</strong> took a logic from a blank
+    file to a machine-checked proof: the four-valued logic FDE, formalized in Lean 4 and
+    proved <strong>sound, complete, and decidable</strong>. Every proof is checked by Lean's
+    kernel, not by the model's say-so.
   </p>
+  <div class="meta">
+    <span>Lead · <b>Matilde (Hermes agent)</b></span>
+    <span>Model · <b>Kimi K3 · open weights (Moonshot AI)</b></span>
+    <span>Verifier · <b>Lean 4 kernel</b></span>
+    <span>Updated · <b>Aug 10 2026</b></span>
+    <span>Status · <b>Complete — zero sorries, axioms reported</b></span>
+  </div>
+  <nav class="pagemenu">
+    <a href="./">The experiment</a>
+    <a href="process.html" aria-current="page">The process</a>
+    <a href="agents.html">For agents</a>
+  </nav>
 </div></header>
 
-<!-- ============ SECTION STRIP (level 2, this page) ============ -->
+<!-- ============ PAGE HEADER (unique to this page) ============ -->
+<div class="wrap"><div class="pagehead">
+  <div class="k">The process · how it was actually built</div>
+  <h2>Every failure on the record</h2>
+  <p class="sublede">
+    The artifact is clean; the path to it was not. This is the part the leaderboard doesn't
+    show: the failure modes, the honesty log, the build timeline, and what it cost.
+  </p>
+</div></div>
+
+<!-- ============ SECTION STRIP (this page's sections) ============ -->
 <nav class="subnav"><div class="wrap">
   <a href="#failures">the failure modes</a>
   <a href="#honesty">honesty log</a>

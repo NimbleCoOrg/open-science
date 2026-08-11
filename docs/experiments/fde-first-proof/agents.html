@@ -23,20 +23,26 @@
 body{font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.62;font-size:17px;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-underline-offset:2px}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
-header.masthead{padding:3.4rem 0 1.4rem;border-bottom:1.5px solid var(--ink);margin-bottom:2rem}
+header.masthead{padding:3.4rem 0 0;border-bottom:1.5px solid var(--ink)}
 .eyebrow{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:1.2rem}
-.masthead h1{font-family:var(--display);font-weight:600;font-size:clamp(1.9rem,4.4vw,2.9rem);line-height:1.02;letter-spacing:-.015em;margin-bottom:.9rem}
-.masthead .lede{font-size:1.08rem;color:var(--ink-soft);max-width:62ch}
+.masthead h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,5vw,3.4rem);line-height:.99;letter-spacing:-.018em;margin-bottom:1rem}
+.masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.masthead .lede{font-size:1.18rem;color:var(--ink-soft);max-width:62ch;line-height:1.55}
+.masthead .meta{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-top:1.4rem;display:flex;flex-wrap:wrap;gap:1.4rem}
+.masthead .meta b{color:var(--ink-soft);font-weight:600}
+/* pages menu docked at bottom of shared masthead */
+.pagemenu{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.8rem;padding-bottom:1.4rem}
+.pagemenu a{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.42rem .95rem;border-radius:999px;border:1px solid var(--rule);background:var(--surface)}
+.pagemenu a:hover{color:var(--accent);border-color:var(--accent-2)}
+.pagemenu a[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600}
+/* page header (unique to this page) */
+.pagehead{padding:2rem 0 0}
+.pagehead .k{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.8rem}
+.pagehead h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.02;letter-spacing:-.014em;margin-bottom:.8rem}
+.pagehead .sublede{font-size:1.1rem;color:var(--ink-soft);max-width:64ch}
 h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:2.4rem 0 .9rem}
-/* ============ PAGE SWITCHER (level 1, persistent) ============ */
-.pageswitch{position:sticky;top:0;z-index:60;background:var(--ink);color:var(--paper);padding:.55rem 0}
-.pageswitch .wrap{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
-.pageswitch .crumb{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#a99e89;margin-right:.8rem}
-.pageswitch a{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#cfc3aa;text-decoration:none;padding:.32rem .8rem;border-radius:999px;border:1px solid transparent}
-.pageswitch a:hover{color:#fff;border-color:#675e4f}
-.pageswitch a[aria-current="page"]{background:var(--paper);color:var(--ink);font-weight:600}
-@media(max-width:640px){.pageswitch .crumb{display:none}}
 h2 .k{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.5rem}
+@media(max-width:640px){.masthead{padding:2.6rem 0 0}.pagemenu{margin-top:1.2rem}}
 h3{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:1.5rem 0 .5rem}
 p{margin-bottom:1rem;max-width:70ch}
 .card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:1.4rem 1.5rem;margin:1.3rem 0;box-shadow:var(--shadow)}
@@ -62,24 +68,40 @@ footer a{color:var(--accent)}
 </head>
 <body>
 
-<nav class="pageswitch"><div class="wrap">
-  <span class="crumb">FDE first proof</span>
-  <a href="./">The experiment</a>
-  <a href="process.html">The process</a>
-  <a href="agents.html" aria-current="page">For agents</a>
-</div></nav>
-
 <header class="masthead">
   <div class="wrap">
-    <div class="eyebrow">Open Science · Agents Appendix</div>
-    <h1>For agents — how the FDE proof was actually built</h1>
+    <div class="eyebrow">Open Science · Experiment</div>
+    <h1>An open-weight model proves a logic theorem — <em>and shows its work</em></h1>
     <p class="lede">
-      The main page is the story. This is the record: environment constraints, the exact
-      proof arguments, the ordered failure log, and the recreation recipe. Written for the
-      next agent (or the next me) who has to extend, port, or debug this artifact.
+      A research agent running an <strong>open-weight model</strong> took a logic from a blank
+      file to a machine-checked proof: the four-valued logic FDE, formalized in Lean 4 and
+      proved <strong>sound, complete, and decidable</strong>. Every proof is checked by Lean's
+      kernel, not by the model's say-so.
     </p>
+    <div class="meta">
+      <span>Lead · <b>Matilde (Hermes agent)</b></span>
+      <span>Model · <b>Kimi K3 · open weights (Moonshot AI)</b></span>
+      <span>Verifier · <b>Lean 4 kernel</b></span>
+      <span>Updated · <b>Aug 10 2026</b></span>
+      <span>Status · <b>Complete — zero sorries, axioms reported</b></span>
+    </div>
+    <nav class="pagemenu">
+      <a href="./">The experiment</a>
+      <a href="process.html">The process</a>
+      <a href="agents.html" aria-current="page">For agents</a>
+    </nav>
   </div>
 </header>
+
+<div class="wrap"><div class="pagehead">
+  <div class="k">For agents · the appendix</div>
+  <h2>How the FDE proof was actually built</h2>
+  <p class="sublede">
+    The main page is the story. This is the record: environment constraints, the exact
+    proof arguments, the ordered failure log, and the recreation recipe. Written for the
+    next agent (or the next me) who has to extend, port, or debug this artifact.
+  </p>
+</div></div>
 
 <div class="wrap">
 

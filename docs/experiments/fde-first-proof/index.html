@@ -80,18 +80,21 @@ a:hover{color:var(--accent-2)}
 .tldr .t .h.neg{color:var(--neg)} .tldr .t .h.pos{color:var(--pos)} .tldr .t .h.map{color:var(--accent)}
 .tldr .t p{font-size:.92rem;color:var(--ink-soft);margin:0}
 
-/* ============ PAGE SWITCHER (level 1, persistent) ============ */
-.pageswitch{position:sticky;top:0;z-index:60;background:var(--ink);color:var(--paper);padding:.55rem 0}
-.pageswitch .wrap{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
-.pageswitch .crumb{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#a99e89;margin-right:.8rem}
-.pageswitch a{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#cfc3aa;text-decoration:none;padding:.32rem .8rem;border-radius:999px;border:1px solid transparent}
-.pageswitch a:hover{color:#fff;border-color:#675e4f}
-.pageswitch a[aria-current="page"]{background:var(--paper);color:var(--ink);font-weight:600}
+/* ============ PAGES MENU (docked at bottom of the shared masthead) ============ */
+.pagemenu{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.8rem}
+.pagemenu a{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.42rem .95rem;border-radius:999px;border:1px solid var(--rule-2);background:var(--surface)}
+.pagemenu a:hover{color:var(--accent);border-color:var(--accent-2)}
+.pagemenu a[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600}
+/* ============ PAGE HEADER (unique to each page) ============ */
+.pagehead{padding:2rem 0 0}
+.pagehead .k{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.8rem}
+.pagehead h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.02;letter-spacing:-.014em;margin-bottom:.8rem}
+.pagehead .sublede{font-size:1.1rem;color:var(--ink-soft);max-width:64ch}
 /* ============ SECTION STRIP (level 2, this page) ============ */
 .subnav{
-  position:sticky; top:34px; z-index:50; background:rgba(243,238,228,.94);
+  position:sticky; top:0; z-index:50; background:rgba(243,238,228,.94);
   backdrop-filter:blur(8px); border-bottom:1px solid var(--rule);
-  padding:.6rem 0; margin-bottom:2.2rem;
+  padding:.6rem 0; margin:1.4rem 0 2.2rem;
 }
 .subnav .wrap{display:flex; gap:1.5rem; flex-wrap:wrap}
 .subnav a{
@@ -184,21 +187,13 @@ footer a{color:var(--accent)}
 @media(max-width:640px){
   body{font-size:16.5px}
   .masthead{padding:3rem 0 1.2rem}
-  .pageswitch .crumb{display:none}
+  .pagemenu{margin-top:1.2rem}
   .subnav{top:0}
   .result-grid{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
 <body>
-
-<!-- ============ PAGE SWITCHER (level 1, persistent) ============ -->
-<nav class="pageswitch"><div class="wrap">
-  <span class="crumb">FDE first proof</span>
-  <a href="./" aria-current="page">The experiment</a>
-  <a href="process.html">The process</a>
-  <a href="agents.html">For agents</a>
-</div></nav>
 
 <header class="masthead">
   <div class="wrap">
@@ -208,9 +203,7 @@ footer a{color:var(--accent)}
       A research agent running an <strong>open-weight model</strong> took a logic from a blank
       file to a machine-checked proof: the four-valued logic FDE, formalized in Lean 4 and
       proved <strong>sound, complete, and decidable</strong>. Every proof is checked by Lean's
-      kernel, not by the model's say-so. The proof is the point. The <em>open model</em> is
-      the other point. How it was actually built — every wrong turn, the timeline, the cost —
-      is on the <a href="process.html">process page</a>.
+      kernel, not by the model's say-so.
     </p>
     <div class="meta">
       <span>Lead · <b>Matilde (Hermes agent)</b></span>
@@ -219,8 +212,22 @@ footer a{color:var(--accent)}
       <span>Updated · <b>Aug 10 2026</b></span>
       <span>Status · <b>Complete — zero sorries, axioms reported</b></span>
     </div>
+    <nav class="pagemenu">
+      <a href="./" aria-current="page">The experiment</a>
+      <a href="process.html">The process</a>
+      <a href="agents.html">For agents</a>
+    </nav>
   </div>
 </header>
+
+<div class="wrap"><div class="pagehead">
+  <div class="k">The experiment</div>
+  <h2>Can an agent prove real metatheory, and can you check it?</h2>
+  <p class="sublede">
+    The proof is the point. The <em>open model</em> is the other point. How it was actually
+    built — every wrong turn, the timeline, the cost — is on the <a href="process.html">process page</a>.
+  </p>
+</div></div>
 
 <div class="wrap">
   <div class="tldr">
