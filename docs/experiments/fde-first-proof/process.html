@@ -323,7 +323,13 @@ footer a{color:var(--accent)}
   </table></div>
   <div class="note expert">
     <div class="nh">Why the raw number needs three framings</div>
-    <p><strong>It's estimated, not actual.</strong> The provider didn't return per-session actuals; read it as "≈ $63," not a precise invoice.</p>
+    <p><strong>It's estimated, and internally consistent.</strong> The provider didn't return
+    per-session actuals, so this is a modeled estimate, not an invoice. What's verified: the
+    per-phase figures sum exactly to the totals, and the token volumes are real telemetry. The
+    rate assumptions baked into the model (input ≈ $3/M, output ≈ $15/M, cache-read ≈ $0.30/M)
+    sit slightly above OpenRouter's current Kimi K3 list price ($2.80/M in, $14/M out), so treat
+    $63.34 as a defensible upper-bound estimate, not a precise figure. The honest read is
+    "≈ $60, order-of-magnitude certain, internally consistent."</p>
     <p><strong>Cache is the real story.</strong> ~100M cache-read tokens (steep discount) against ~9.4M fresh input — without prompt caching this would have cost several times more.</p>
     <p><strong>The inefficiency is fixable.</strong> Half the total cost is one Aug 10 session where the 1M-token context re-ingests whole files. A more established setup — the lean4 skill that now exists didn't on Aug 7 — cuts it substantially.</p>
   </div>
@@ -348,6 +354,17 @@ lake build FDE.Corollaries          # module-targeted — do NOT trust bare `lak
 grep -nE ":= *(by *)?sorry|admit|sorryAx|native_decide" FDE/*.lean   # → empty
 # #print axioms decidable_deriv → [propext, Classical.choice, Quot.sound]</pre>
       <p>Toolchain: <code>leanprover/lean4:nightly-2026-07-14</code>. mathlib pinned <code>f566658afd</code>. Platform: aarch64-linux.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Artifact inventory (the repo map)</summary>
+    <div class="body">
+      <p><code>FDE/Basic.lean</code>: four truth values, truth tables (ground-truthed by exhaustive evaluation), evaluation, designated-value set.</p>
+      <p><code>FDE/Sequent.lean</code>: two-sided sequents, the invertible calculus, atomic + negated-atomic identity.</p>
+      <p><code>FDE/Soundness.lean</code>: soundness by induction on the derivation.</p>
+      <p><code>FDE/Completeness.lean</code>: inversion lemmas, the canonical countermodel, the weighted measure, completeness by strong induction.</p>
+      <p><code>FDE/Corollaries.lean</code>: no-theorems, the disjunction property, and decidability of derivability (a theorem, not an executable checker).</p>
+      <p>The agent-facing account — environment constraints, the exact measure argument, the ordered failure log, the recreation recipe — lives on the <a href="agents.html">agents page</a>.</p>
     </div>
   </details>
   <div class="note warn">

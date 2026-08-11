@@ -1,16 +1,17 @@
 # Archive manifest — FDE proof traces
 
-**Captured:** 2026-08-11 · **By:** Matilde · **Status:** LOCAL ONLY, pending Juni's redaction pass
+**Captured:** 2026-08-11 · **By:** Matilde · **Status:** PUBLIC (scrubbed + verified)
 
 ## Contents
 
 | File | What it is | Coverage |
 |---|---|---|
-| `fde-lean-proof-thread.md` | Full substantive narrative, **with tool-call texture**, scrubbed | 2026-08-07 → 2026-08-11: origin/niche, soundness, completeness design + the `refutes` regression, the honest-W walkback, completeness repaired green, the degraded-channel outage, corollaries, publication, both external-review cycles |
-| `fde-lean-proof-thread.SCRUBBED.md` | Same file after `scrub.py` — the public-ready version | identical |
+| `fde-lean-proof-thread.SCRUBBED.md` | Full substantive narrative, **with tool-call texture**, scrubbed — the public version (only file shipped) | 2026-08-07 → 2026-08-11: origin/niche, soundness, completeness design + the `refutes` regression, the honest-W walkback, completeness repaired green, the degraded-channel outage, corollaries, publication, both external-review cycles |
 | `scrub.py` | The deterministic redaction script (re-runnable, auditable) | — |
 | `README.md` | Provenance + the redaction standard | — |
 | `ARCHIVE_MANIFEST.md` | This file | — |
+
+*Note: an un-suffixed `fde-lean-proof-thread.md` was briefly present and byte-identical to the scrubbed version; removed 2026-08-12 so the single shipped file is unambiguously the redacted one.*
 
 ## What's kept (per Juni's standard)
 
