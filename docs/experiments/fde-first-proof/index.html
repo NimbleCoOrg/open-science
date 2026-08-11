@@ -291,8 +291,12 @@ footer a{color:var(--accent)}
     <p style="margin-bottom:0;font-size:.92rem;color:var(--ink-soft)">
       The verification standard is the honest one: a module-targeted <code>lake build</code>
       must recompile the file that changed (a bare <code>lake build</code> can report green
-      from stale cache), the sorry-scan must be empty, and the axiom list must be reported
-      alongside every theorem. "Kernel-checked" and "the encoding is faithful to the source
+      from stale cache), the axiom list must be reported alongside every theorem, and
+      <code>#print axioms</code> is the primary sorry-check — not the grep. A
+      <code>grep ":= sorry"</code> scan is leaky: alternation binds loosest, so an indented
+      <code>· sorry</code> inside a tactic block passes silently. The grep is a convenience;
+      the kernel's own axiom report (no <code>sorryAx</code>) is the check that can't be
+      gamed by formatting. "Kernel-checked" and "the encoding is faithful to the source
       logic" are stated separately, because they are separate claims.
     </p>
   </div>
@@ -363,13 +367,23 @@ footer a{color:var(--accent)}
     it's the signature property of FDE, proved here directly (the constant-"neither"
     valuation refutes every formula). And <strong>decidability</strong> is proved as a
     <em>theorem</em>, not an executable checker: the result is the Prop disjunction
-    <code>(⊢ₛ S) ∨ (¬ ⊢ₛ S)</code> plus a <code>Classical.choice</code>-lifted
-    <code>Decidable</code> instance. That is not a runnable <code>Bool</code> proof-search
-    function — the negative branches route through <code>completeness</code> (which carries
-    <code>Classical.choice</code>), so the work shows derivability is decidable without
-    producing a checker you can execute. A runnable checker is a further, separate
-    construction and is not claimed here.
+    <code>(⊢ₛ S) ∨ (¬ ⊢ₛ S)</code>, proved by terminating measure induction, plus a
+    <code>Decidable</code> instance that is <code>noncomputable</code> and does not execute
+    (<code>Deriv</code> is <code>Prop</code>-valued, so no search is extractable). A runnable
+    checker would require <code>Deriv</code> in <code>Type</code> with its own termination
+    proof — a further, separate construction, not claimed here.
   </p>
+  <div class="note warn">
+    <div class="nh">Correction · where the choice axiom actually comes from</div>
+    <p>
+      An earlier version of this page (and the repo README) said the <code>Classical.choice</code>
+      in <code>decidable_deriv</code> came solely from lifting the decision into a
+      <code>Decidable</code> instance. That is wrong, and the axiom report contradicts it:
+      the underlying Prop proof already carries <code>Classical.choice</code> because its
+      negative branches call <code>completeness</code>, which carries the same three axioms.
+      The lift adds nothing. We state the corrected attribution here rather than edit it away.
+    </p>
+  </div>
   <div class="note warn">
     <div class="nh">The honest caveat, stated up front</div>
     <p>
@@ -400,12 +414,14 @@ footer a{color:var(--accent)}
     <h3>"Build completed successfully" — and it hadn't built the file</h3>
     <p style="margin-bottom:0">
       Mid-completeness, a full <code>lake build</code> reported green while the file being
-      edited had twenty live errors. Two things compounded: every job was a cache hit from
-      before the edits, and — the sharper problem — the library root <code>FDE.lean</code>
-      didn't yet import <code>Completeness</code>, so the default target never compiled that
-      file at all. The green was target coverage, not verification. The lesson, now a
-      standing rule: a green build is only real if the module you touched actually
-      recompiled. Run the module-targeted build, and make sure the module is in the build.
+      edited had twenty live errors. The first explanation we reached for was stale cache —
+      but the sharper truth (which an external reviewer made us reconcile) is that the library
+      root <code>FDE.lean</code> didn't yet import <code>Completeness</code>, so the default
+      target never compiled that file at all. The green was <strong>target coverage, not
+      verification</strong> — the module wasn't in the build graph. The standing rule this
+      teaches: a green build is only real if the module you touched actually recompiled,
+      <em>and</em> the module is in the build. Run the module-targeted build; check the import
+      graph.
     </p>
   </div>
   <div class="card">
@@ -447,8 +463,15 @@ footer a{color:var(--accent)}
       implied the green build was merely stale-cache when the real gap was a missing module
       import, and "constructive decision procedure" overstated a result that is
       decidability-as-a-theorem, not an executable checker. Both corrected, with the
-      open-model claim scoped to provenance/rerunnability rather than proof assurance. The
-      full ordered failure log is on the <a href="agents.html">agents page</a>.
+      open-model claim scoped to provenance/rerunnability rather than proof assurance. (6) A
+      second external review (2026-08-11, a different reviewer) audited against the artifact
+      itself, not the page, and caught three more: the <code>Classical.choice</code> attribution
+      was factually wrong (the choice is inherited from <code>completeness</code>, not the
+      <code>Decidable</code> lift), the "first Lean 4 formalization of FDE" claim didn't survive
+      a GitHub search beyond mathlib/Foundation, and the published sorry-grep was leaky. All
+      corrected; the reviewer also confirmed the math (all 16 truth-table cells, the measure
+      argument, the countermodel) holds. The full ordered failure log is on the
+      <a href="agents.html">agents page</a>.
     </p>
   </div>
 </section>
@@ -495,9 +518,14 @@ footer a{color:var(--accent)}
   <p>
     <strong>It is not a novel theorem.</strong> FDE's soundness, completeness, and
     decidability are established mathematics. The contribution is the <em>formalization</em>
-    and the process. To our knowledge (checked against mathlib and the Foundation library
-    on 2026-08-07) this is the first Lean 4 formalization of FDE, but "first in Lean 4" is a
-    claim about the tooling, not about new logical content.
+    and the process. The novelty claim is scoped precisely: to our knowledge this is the
+    first Lean 4 <strong>proof-theoretic formalization of FDE with its metatheorems</strong>
+    (a sequent calculus proved sound, complete, and decidable). It is not the first Lean 4
+    code to mention Belnap's four values — a GitHub search surfaces
+    <code>umpolungfish/p4rakernel</code> (created 2026-06-02), which has the four-valued type
+    and paraconsistent operators but no FDE sequent calculus, soundness, or completeness.
+    Our earlier, flatter "first Lean 4 formalization of FDE" was checked only against mathlib
+    and Foundation, and does not survive a broader search; the scoped claim does.
   </p>
   <p>
     <strong>It is not evidence that the model "understands" logic.</strong> The kernel checks
