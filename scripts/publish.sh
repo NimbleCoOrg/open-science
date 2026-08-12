@@ -24,7 +24,7 @@ set -euo pipefail
 
 MAX_BYTES=$((95 * 1024 * 1024))
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DISPATCH_REPO="NimbleCoOrg/cyborg-garden-site"
+DISPATCH_REPO="cyborg-garden/cyborg-garden-site"
 
 die() { printf 'publish: %s\n' "$*" >&2; exit 1; }
 info() { printf '→ %s\n' "$*"; }
