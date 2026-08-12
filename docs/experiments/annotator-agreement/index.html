@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Who Agrees About How Agents Fail — annotator agreement on a failure taxonomy</title>
-<meta name="description" content="Agreement on MAST's multi-agent failure taxonomy scales with annotator model size — 0.173 at 2-12B, 0.598 at frontier — and the published reference labels score 0.047 against themselves.">
+<title>Who Agrees About How Agents Fail: annotator agreement on a failure taxonomy</title>
+<meta name="description" content="Agreement on MAST's multi-agent failure taxonomy scales with annotator model size, from 0.173 at 2-12B to 0.598 at frontier. The published reference labels score 0.047 against themselves.">
 <meta property="og:title" content="Who Agrees About How Agents Fail">
 <meta property="og:description" content="Three pre-registered findings: the reference labels do not reproduce against themselves, annotator agreement scales with model size, and frontier coders converge on something that is not those labels.">
 <meta property="og:type" content="article">
@@ -202,7 +202,7 @@ footer a{color:var(--accent)}
     <p class="lede">
       There is a published taxonomy of the fourteen ways multi-agent AI systems break.
       We asked whether language models apply it consistently. The first answer was
-      <strong>no</strong> — and the first answer was wrong. Agreement turns out to scale
+      <strong>no</strong>. The first answer was wrong. Agreement turns out to scale
       with annotator size, and the reference labels everyone is measured against
       <strong>do not agree with themselves</strong>.
     </p>
@@ -211,7 +211,7 @@ footer a{color:var(--accent)}
       <span>Annotators · <b>12 models · 2B → frontier</b></span>
       <span>Verifiers · <b>rev3_score.py · rev4_score.py</b></span>
       <span>Updated · <b>Aug 13 2026</b></span>
-      <span>Status · <b>Complete — pre-registered, raw output committed</b></span>
+      <span>Status · <b>Complete · pre-registered, raw output committed</b></span>
     </div>
   </div>
 </header>
@@ -261,9 +261,9 @@ footer a{color:var(--accent)}
   <h2>The question</h2>
   <p>
     A taxonomy of failure is only worth something if two annotators applying it to the
-    same transcript land in roughly the same place. MAST's taxonomy — fourteen cells
-    covering specification failures, inter-agent misalignment, and verification failures —
-    is a genuinely useful piece of work, and it is increasingly used as a reference. So
+    same transcript land in roughly the same place. MAST's taxonomy sorts failures into
+    fourteen cells covering specification, inter-agent misalignment, and verification. It
+    is a useful piece of work and it is increasingly used as a reference. So
     the narrow question is worth asking directly: <strong>do language models agree with
     each other when they apply it?</strong>
   </p>
@@ -285,7 +285,7 @@ footer a{color:var(--accent)}
   </p>
   <p>
     It could not rule out the plainest confound: every coder was small. Rev 4 ran the
-    identical frame, prompt and parser — reused as literal objects, not rewritten —
+    identical frame, prompt and parser, reused as literal objects rather than rewritten,
     against larger models.
   </p>
 
@@ -294,14 +294,14 @@ footer a{color:var(--accent)}
     <p>
       <strong>The null was about model scale, not about the taxonomy.</strong> Nothing in
       rev 3.1 is retracted; every clause of it still holds. But the sentence a reader
-      would take from it — <em>this taxonomy cannot be annotated reliably</em> — is not
+      would take from it, <em>this taxonomy cannot be annotated reliably</em>, is not
       supported by the data and is refuted by rev 4. The rev 3.1 write-up now opens with
       a correction banner.
     </p>
   </div>
 
   <div class="note expert">
-    <div class="nh">Why this is the interesting part</div>
+    <div class="nh">Why the correction is the result</div>
     <p>
       Scale was named in rev 3.1's own limitations section, written down, and not treated
       as urgent. One variable the study had already noticed overturned its headline two
@@ -312,14 +312,14 @@ footer a{color:var(--accent)}
 </section>
 
 <section id="scale">
-  <h2>Finding 2 — agreement scales with annotator size</h2>
+  <h2>Finding 2: agreement scales with annotator size</h2>
 
   <div class="table-scroll">
   <table class="data">
     <thead><tr><th>Tier</th><th>Coders</th><th>Pooled α</th><th>95% CI</th></tr></thead>
     <tbody>
       <tr><td>T1 open-weight small (2–12B)</td><td>6</td><td><b>0.173</b></td><td>[0.127, 0.207]</td></tr>
-      <tr><td>T2 open-weight large (70B-class)</td><td>2</td><td><b>0.360</b></td><td>—</td></tr>
+      <tr><td>T2 open-weight large (70B-class)</td><td>2</td><td><b>0.360</b></td><td>n/a</td></tr>
       <tr><td>T3 frontier</td><td>4</td><td><b>0.598</b></td><td>[0.499, 0.670]</td></tr>
     </tbody>
   </table>
@@ -355,7 +355,7 @@ footer a{color:var(--accent)}
     <div class="nh">This compares annotators, not instruction-followers</div>
     <p>
       Every frontier coder passed the same framing gate, with shifts of
-      <strong>0.000–0.029</strong> against a 0.30 bar fixed before collection — markedly
+      <strong>0.000–0.029</strong> against a 0.30 bar fixed before collection, markedly
       <em>less</em> frame-sensitive than the small models. Without rev 3.1's gate and
       instrument work, this result would be ambiguous between "frontier models are better
       annotators" and "frontier models follow instructions better."
@@ -364,7 +364,7 @@ footer a{color:var(--accent)}
 </section>
 
 <section id="reference">
-  <h2>Findings 1 and 3 — the reference is the unstable thing</h2>
+  <h2>Findings 1 and 3: the reference is the unstable thing</h2>
   <p>
     MAST's released dataset contains duplicated trace payloads carrying
     <strong>conflicting annotations</strong>: the same trace, annotated more than once,
@@ -399,14 +399,14 @@ footer a{color:var(--accent)}
     The self-agreement interval <strong>contains zero</strong>: on the file's own repeats,
     the published annotation is not distinguishable from chance agreement with itself.
     Meanwhile four frontier models, annotating independently, agree with each other
-    substantially — and with those labels not at all.
+    substantially, and with those labels not at all.
   </p>
 
   <div class="note expert">
     <div class="nh">Concordance, never accuracy</div>
     <p>
       This is <strong>not</strong> a claim that the models are right. There is no ground
-      truth here, by construction — that is precisely what makes the taxonomy hard. It is
+      truth here, by construction, which is precisely what makes the taxonomy hard. It is
       a claim about which reference is more <em>stable</em>, and its useful property is
       that it is measurable without any human ground truth at all. You only need the same
       annotators to look twice.
@@ -426,7 +426,7 @@ footer a{color:var(--accent)}
 
   <p>
     No coder was excluded by the marginal-rate gate. Marking rates ran
-    <strong>0.146–0.229</strong> — a tight band, and much closer to the corpus's own ~0.16
+    <strong>0.146–0.229</strong>, a tight band and much closer to the corpus's own ~0.16
     than the open-weight roster's 16-fold spread. The convergence is not an artifact of
     coders marking wildly different amounts of the taxonomy.
   </p>
@@ -436,7 +436,7 @@ footer a{color:var(--accent)}
   <h2>What is not claimed</h2>
   <ul>
     <li><strong>Not</strong> that frontier models annotate this taxonomy correctly. There is no ground truth here.</li>
-    <li><strong>Not</strong> that the taxonomy is reliable. 0.598 is below the 0.667 conventional floor. This is not solved — it is a different world from 0.173, which is a different claim.</li>
+    <li><strong>Not</strong> that the taxonomy is reliable. 0.598 is below the 0.667 conventional floor. This is not solved. It is a different world from 0.173, which is a different claim.</li>
     <li><strong>Not</strong> that MAST's annotators were careless. Finding 1 is a measurement on a released artifact; the mechanism behind it is not established here.</li>
     <li><strong>Not</strong> a general claim about LLM annotation. One taxonomy, one corpus, short-to-medium traces.</li>
   </ul>
@@ -446,7 +446,7 @@ footer a{color:var(--accent)}
   <h2>Limits</h2>
   <p>
     <strong>No Google coder.</strong> The pre-registered <code>gemini-3.6-flash</code> was
-    recorded UNAVAILABLE — its endpoint refuses <code>reasoning.enabled=false</code>, which
+    recorded UNAVAILABLE, because its endpoint refuses <code>reasoning.enabled=false</code>, which
     the instrument requires. It was not substituted: swapping in a different Google model
     after the other coders' numbers were visible is exactly the researcher discretion
     pre-registration exists to prevent. T3 keeps four coders across <strong>two</strong>
@@ -454,7 +454,7 @@ footer a{color:var(--accent)}
   </p>
   <p>
     <strong>The family effect is under-powered at both scales.</strong> Within-family α
-    0.642 against between-family 0.428 at frontier — but on two pairs, reported with no
+    0.642 against between-family 0.428 at frontier, but on two pairs, reported with no
     verdict. Rev 3.1's equivalent was AMBIGUOUS at 0.127 after its admission gate excluded
     both members of one family. Future rosters need three members per family so a gate can
     take one and still leave a pair. The strongest pair in the study is
@@ -471,8 +471,8 @@ footer a{color:var(--accent)}
 <section id="harness">
   <h2>The harness bug that nearly became a finding</h2>
   <p>
-    The first admission run reported frontier models <em>failing the output-format gate</em>
-    — one at 20% parseability, one returning no content at all. It would have been written
+    The first admission run reported frontier models <em>failing the output-format gate</em>:
+    one at 20% parseability, one returning no content at all. It would have been written
     up as <em>frontier models cannot follow this format</em>.
   </p>
   <p>
@@ -487,7 +487,7 @@ footer a{color:var(--accent)}
     <p>
       <strong>1.</strong> <code>finish_reason == "length"</code> is a failed call, not a
       parsed one. A truncated list otherwise parses into a shorter cell vector and quietly
-      lowers α — indistinguishable from a coder that marked fewer cells.
+      lowers α, indistinguishable from a coder that marked fewer cells.
     </p>
     <p>
       <strong>2.</strong> Reasoning is disabled explicitly on every call for every coder,
@@ -509,11 +509,11 @@ footer a{color:var(--accent)}
     alongside every statistic, and both scorers are in the repository.
   </p>
   <ul class="refs">
-    <li><a href="data/prereg-rev4.md">Pre-registration — rev 4</a> <span class="doi">frontier annotator agreement, 2026-08-12</span></li>
-    <li><a href="data/prereg-rev3.md">Pre-registration — rev 3.1</a> <span class="doi">open-weight annotator agreement, 2026-08-10</span></li>
-    <li><a href="data/rev4-results.md">Results — rev 4</a> <span class="doi">D1, D2, D4 scored</span></li>
-    <li><a href="data/rev3-results.md">Results — rev 3.1</a> <span class="doi">carries the correction banner</span></li>
-    <li><a href="data/writeup.md">Synthesis — the three findings</a></li>
+    <li><a href="data/prereg-rev4.md">Pre-registration · rev 4</a> <span class="doi">frontier annotator agreement, 2026-08-12</span></li>
+    <li><a href="data/prereg-rev3.md">Pre-registration · rev 3.1</a> <span class="doi">open-weight annotator agreement, 2026-08-10</span></li>
+    <li><a href="data/rev4-results.md">Results · rev 4</a> <span class="doi">D1, D2, D4 scored</span></li>
+    <li><a href="data/rev3-results.md">Results · rev 3.1</a> <span class="doi">carries the correction banner</span></li>
+    <li><a href="data/writeup.md">Synthesis · the three findings</a></li>
     <li><a href="data/results-rev4.json">results-rev4.json</a> <span class="doi">scorer output, machine readable</span></li>
     <li><a href="data/results-rev3.json">results-rev3.json</a> <span class="doi">scorer output, machine readable</span></li>
   </ul>
@@ -530,7 +530,7 @@ footer a{color:var(--accent)}
 
 <footer>
   <div class="wrap">
-    <p>Cyborg Garden · Open Science — the bench publishes protocols, data and results as they happen.</p>
+    <p>Cyborg Garden · Open Science · the bench publishes protocols, data and results as they happen.</p>
     <p><a href="../../">All experiments</a> · <a href="https://cyborg.garden/open-science/">Open science at cyborg.garden</a></p>
   </div>
 </footer>
