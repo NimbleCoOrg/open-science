@@ -32,7 +32,7 @@ const INDEX_HTML = join(ROOT, 'docs', 'index.html');
 const README = join(ROOT, 'README.md');
 const BEGIN = '<!-- experiments:begin -->';
 const END = '<!-- experiments:end -->';
-const PAGES_BASE = 'https://nimblecoorg.github.io/open-science/experiments';
+const PAGES_BASE = 'https://cyborg-garden.github.io/open-science/experiments';
 
 function loadManifests() {
   const entries = [];
