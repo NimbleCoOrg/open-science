@@ -81,9 +81,9 @@ footer{border-top:1.5px solid var(--ink);padding:2rem 0 3rem;font-size:.88rem;co
 <div class="vbanner">
   <div class="vh">How this was checked</div>
   <p style="margin-bottom:.4rem">
-    16 citations located via web search (never recalled from memory), each verified with a
+    18 citations located via web search (never recalled from memory), each verified with a
     structured checker (existence, metadata match, retraction, URL liveness). 8 code
-    repositories confirmed live (HTTP 200). <strong>No retracted works found.</strong> 12 verified
+    repositories confirmed live (HTTP 200). <strong>No retracted works found.</strong> 14 verified
     clean; 4 carry a disclosed caveat — no Crossref DOI for NeurIPS/arXiv items, a first-author-only
     Crossref record, and one title that verification caught us misremembering. Nothing here is
     asserted on memory alone.
@@ -138,6 +138,16 @@ footer{border-top:1.5px solid var(--ink);padding:2rem 0 3rem;font-size:.88rem;co
   <p><span class="lab">Helps / fails</span> <em>Validation (Guntupalli, Feilong &amp; Haxby 2018, PLoS Comput Biol):</em> yielded higher inter-subject correlation of dense connectivity profiles than response-based hyperalignment, enabling alignment without a shared stimulus. (Verification caught and corrected a misremembered title here: the real title is <em>"A computational model of shared fine-scale structure in the human connectome."</em>)</p>
   <p><span class="lab">Reference</span> Guntupalli, Feilong &amp; Haxby (2018), <em>PLoS Comput Biol</em>. doi:10.1371/journal.pcbi.1006120 · <span class="lab">Code</span> PyMVPA / Haxby lab (live).</p>
 </div>
+<div class="method">
+  <div class="mhead"><span class="mname">Aggregating heterogeneous datasets via shared connectivity</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Does</span> the exact operation our pooling goal needs: folds <em>different studies with different stimuli</em> into one common response space by leveraging shared connectivity — the bridge from a single-stimulus cohort to a many-study pooled dataset.</p>
+  <p><span class="lab">Reference</span> Nastase et al. (2020), <em>NeuroImage</em>. doi:10.1016/j.neuroimage.2020.116865 · preprint: bioRxiv 741975.</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Functional connectome fingerprinting</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Why it matters</span> evidence that connectivity-defined functional architecture is real, stable, and individual — a person's connectivity pattern identifies them from a group. That individuality is why anatomical warping alone cannot align function, and why functional alignment must sit under any discovery layer.</p>
+  <p><span class="lab">Reference</span> Finn et al. (2015), <em>Nature Neuroscience</em>. doi:10.1038/nn.4135.</p>
+</div>
 
 <h3>5 · Representational similarity <span class="vbadge nc">outcome measure</span></h3>
 <div class="method">
@@ -163,7 +173,9 @@ footer{border-top:1.5px solid var(--ink);padding:2rem 0 3rem;font-size:.88rem;co
   </p>
   <p style="margin-bottom:.5rem">
     <strong>2. Match the method to the data.</strong> With a shared naturalistic stimulus,
-    response-based hyperalignment or SRM; without one (resting state), connectivity hyperalignment.
+    response-based hyperalignment or SRM; without one (resting state, or pooling across
+    <em>different</em> stimuli), connectivity hyperalignment — the Nastase 2020 shared-connectivity
+    aggregation is the direct precedent for folding heterogeneous studies into one space.
   </p>
   <p style="margin-bottom:.5rem">
     <strong>3. Anatomical warping is the baseline, not the solution.</strong> Report the ANTs-style
