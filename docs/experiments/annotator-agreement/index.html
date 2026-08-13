@@ -519,10 +519,13 @@ footer a{color:var(--accent)}
 <section id="data">
   <h2>Protocols &amp; data</h2>
   <p>
-    Both studies were pre-registered before collection. Every statistic on this page
-    ships with the raw model output it was computed from and with the scorer that
-    computed it, both below. Clone this directory and you can recompute every number
-    here without asking us for anything.
+    Both studies were pre-registered before collection. Every statistic on this
+    page ships with the raw model output it was computed from, the scorer that
+    computed it, and that scorer's committed output, so each number can be
+    checked against the artifact it was computed from. Recomputing a statistic
+    end-to-end from the raw model calls additionally needs the lab's collector
+    stack (the modules that build the frame and admission files and call the
+    model APIs), which is not shipped in this repository.
   </p>
   <ul class="refs">
     <li><a href="data/prereg-rev4.md">Pre-registration · rev 4</a> <span class="doi">frontier annotator agreement, 2026-08-12</span></li>
