@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Agrees About How Agents Fail: annotator agreement on a failure taxonomy</title>
+<meta name="description" content="Agreement on MAST's multi-agent failure taxonomy scales with annotator model size, from 0.173 at 2-12B to 0.598 at frontier. The published reference labels score 0.047 against themselves.">
+<meta property="og:title" content="Who Agrees About How Agents Fail">
+<meta property="og:description" content="Three pre-registered findings: the reference labels do not reproduce against themselves, annotator agreement scales with model size, and frontier coders converge on something that is not those labels.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --paper-2:#ece4d4; --surface:#fffdf8; --surface-2:#faf6ed;
+  --ink:#211c16; --ink-soft:#675e4f; --ink-faint:#a99e89;
+  --rule:#e2d9c7; --rule-2:#cfc3aa;
+  --accent:#1f4257; --accent-2:#6b8f3a;
+  --pos:#357a5b; --neg:#bb4a33; --neu:#a4977c; --warn:#b07d22;
+  --serif:'Newsreader',Georgia,serif;
+  --display:'Fraunces',Georgia,serif;
+  --mono:'Spline Sans Mono',ui-monospace,monospace;
+  --shadow:0 1px 1px rgba(33,28,22,.03),0 10px 30px -16px rgba(33,28,22,.22);
+  --shadow-lg:0 2px 4px rgba(33,28,22,.05),0 24px 60px -28px rgba(33,28,22,.32);
+  --maxw:1060px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif); background:var(--paper); color:var(--ink);
+  line-height:1.62; font-size:18px; font-weight:400;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+::selection{background:#d9c9a8;color:#221c14}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+a:hover{color:var(--accent-2)}
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+
+/* ============ MASTHEAD ============ */
+.masthead{padding:4.5rem 0 1.6rem;border-bottom:1.5px solid var(--ink);margin-bottom:0}
+.eyebrow{
+  font-family:var(--mono); font-size:.72rem; font-weight:500; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent-2); display:flex; align-items:center; gap:.7rem;
+  margin-bottom:1.4rem;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--rule-2)}
+.masthead h1{
+  font-family:var(--display); font-optical-sizing:auto;
+  font-weight:600; font-size:clamp(2.3rem,5.6vw,3.9rem); line-height:.99;
+  letter-spacing:-.018em; color:var(--ink); margin-bottom:1.1rem; max-width:24ch;
+}
+.masthead h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.masthead .lede{
+  font-size:1.22rem; line-height:1.55; color:var(--ink-soft); max-width:58ch;
+  font-weight:400;
+}
+.masthead .meta{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-faint); margin-top:1.6rem; display:flex; flex-wrap:wrap; gap:1.4rem;
+}
+.masthead .meta b{color:var(--ink-soft);font-weight:600}
+
+/* ============ TL;DR STRIP ============ */
+.tldr{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem;
+  margin:2.2rem 0 0;
+}
+.tldr .t{
+  background:var(--surface); border:1px solid var(--rule); border-radius:14px;
+  padding:1.1rem 1.2rem; box-shadow:var(--shadow);
+}
+.tldr .t .h{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.5rem}
+.tldr .t .h.neg{color:var(--neg)} .tldr .t .h.pos{color:var(--pos)} .tldr .t .h.map{color:var(--accent)}
+.tldr .t p{font-size:.92rem;color:var(--ink-soft);margin:0}
+
+/* ============ PAGES MENU (docked at bottom of the shared masthead) ============ */
+.pagemenu{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.8rem}
+.pagemenu a{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:.42rem .95rem;border-radius:999px;border:1px solid var(--rule-2);background:var(--surface)}
+.pagemenu a:hover{color:var(--accent);border-color:var(--accent-2)}
+.pagemenu a[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600}
+/* ============ PAGE HEADER (unique to each page) ============ */
+.pagehead{padding:2rem 0 0}
+.pagehead .k{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.8rem}
+.pagehead h2{font-family:var(--display);font-weight:600;font-size:clamp(1.7rem,3.6vw,2.5rem);line-height:1.02;letter-spacing:-.014em;margin-bottom:.8rem}
+.pagehead .sublede{font-size:1.1rem;color:var(--ink-soft);max-width:64ch}
+/* ============ SECTION STRIP (level 2, this page) ============ */
+.subnav{
+  position:sticky; top:0; z-index:50; background:rgba(243,238,228,.94);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--rule);
+  padding:.6rem 0; margin:1.4rem 0 2.2rem;
+}
+.subnav .wrap{display:flex; gap:1.5rem; flex-wrap:wrap}
+.subnav a{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-soft); text-decoration:none; padding:.2rem 0; border-bottom:2px solid transparent;
+}
+.subnav a:hover{color:var(--accent);border-bottom-color:var(--accent-2)}
+
+/* ============ SECTIONS ============ */
+section{margin-bottom:3.2rem}
+h2{
+  font-family:var(--display); font-weight:600; font-size:clamp(1.7rem,3.4vw,2.4rem);
+  letter-spacing:-.012em; line-height:1.05; margin-bottom:1.1rem; color:var(--ink);
+}
+h2 .k{display:block;font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--accent-2);margin-bottom:.7rem}
+h3{font-family:var(--display);font-weight:600;font-size:1.25rem;margin:1.8rem 0 .6rem;color:var(--ink)}
+p{margin-bottom:1rem;max-width:68ch}
+p.intro{font-size:1.12rem;color:var(--ink-soft)}
+strong{font-weight:600;color:var(--ink)}
+em{font-style:italic}
+
+/* ============ FINDING CARDS ============ */
+.card{
+  background:var(--surface); border:1px solid var(--rule); border-radius:14px;
+  padding:1.6rem 1.7rem; margin:1.4rem 0; box-shadow:var(--shadow);
+}
+.card.lead{border-left:5px solid var(--accent);box-shadow:var(--shadow-lg)}
+.card.pos-lead{border-left:5px solid var(--pos);box-shadow:var(--shadow-lg)}
+.tag{
+  display:inline-block; font-family:var(--mono); font-size:.62rem; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; padding:.28rem .6rem; border-radius:999px;
+  margin-bottom:.8rem;
+}
+.tag.neg{background:#f6e3dd;color:var(--neg);border:1px solid #e5bda9}
+.tag.pos{background:#e2efe0;color:var(--pos);border:1px solid #b8d9b0}
+.tag.pending{background:#f3ead2;color:var(--warn);border:1px solid #e0cba0}
+.tag.method{background:#dde7ee;color:var(--accent);border:1px solid #bccfdb}
+
+/* ============ RESULT TABLE ============ */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.2rem 0}
+.metric{
+  background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;
+  padding:1.1rem 1.2rem;text-align:left;
+}
+.metric .lab{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem}
+.metric .val{font-family:var(--display);font-weight:700;font-size:1.9rem;line-height:1;color:var(--ink)}
+.metric .val.neg{color:var(--neg)}
+.metric .val.pos{color:var(--pos)}
+.metric .sub{font-size:.82rem;color:var(--ink-soft);margin-top:.4rem;font-family:var(--mono)}
+
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:1.2rem 0}
+.table-scroll table.data{margin:0}
+table.data{width:100%;border-collapse:collapse;font-size:.92rem;margin:1.2rem 0;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--rule)}
+table.data caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);padding:.6rem .8rem;background:var(--surface-2)}
+table.data th{background:var(--surface-2);font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--rule)}
+table.data td{padding:.55rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.data tr:last-child td{border-bottom:none}
+table.data td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ============ CALLOUTS ============ */
+.note{background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:1.2rem 1.3rem;margin:1.4rem 0;font-size:.95rem}
+.note.warn{background:#f7efe0;border-color:#e6d3a8}
+.note.expert{border-left:4px solid var(--accent);background:#eef2f5;border-color:#c8d6e0}
+.note .nh{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;font-weight:600}
+.note p{margin-bottom:.6rem;font-size:.95rem}
+.note p:last-child{margin-bottom:0}
+
+details{margin:1rem 0;border:1px solid var(--rule);border-radius:12px;background:var(--surface);overflow:hidden}
+details summary{cursor:pointer;padding:.95rem 1.2rem;font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:var(--accent);font-weight:600;list-style:none;user-select:none}
+details summary::before{content:"+ ";color:var(--accent-2);font-weight:700}
+details[open] summary::before{content:"– "}
+details summary:hover{background:var(--surface-2)}
+details .body{padding:0 1.2rem 1.2rem;font-size:.92rem;color:var(--ink-soft)}
+details .body code{font-family:var(--mono);font-size:.85em;background:var(--surface-2);padding:.1em .35em;border-radius:4px}
+details .body pre{font-family:var(--mono);font-size:.78rem;background:var(--surface-2);border:1px solid var(--rule);border-radius:8px;padding:.9rem 1rem;overflow-x:auto;margin:.7rem 0;line-height:1.5}
+
+/* ============ REFERENCES ============ */
+.refs{font-size:.92rem}
+.refs li{margin-bottom:.85rem;max-width:70ch}
+.refs .doi{font-family:var(--mono);font-size:.82em;color:var(--ink-faint)}
+.refs .vbadge{font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.14rem .45rem;border-radius:999px;background:#e2efe0;color:var(--pos);border:1px solid #b8d9b0;margin-left:.5rem;white-space:nowrap}
+.refs .vbadge.warn{background:#f3ead2;color:var(--warn);border-color:#e0cba0}
+
+/* ============ FOOTER ============ */
+footer{border-top:1.5px solid var(--ink);margin-top:4rem;padding:2.2rem 0 3rem;font-size:.9rem;color:var(--ink-soft)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.4rem}
+footer a{color:var(--accent)}
+
+@media(max-width:640px){
+  body{font-size:16.5px}
+  .masthead{padding:3rem 0 1.2rem}
+  .pagemenu{margin-top:1.2rem}
+  .subnav{top:0}
+  .result-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Open Science · Experiment</div>
+    <h1>Who agrees about <em>how agents fail?</em></h1>
+    <p class="lede">
+      There is a published taxonomy of the fourteen ways multi-agent AI systems break.
+      We asked whether language models apply it consistently. The first answer was
+      <strong>no</strong>. The first answer was wrong. Agreement turns out to scale
+      with annotator size, and the reference labels everyone is measured against
+      <strong>do not agree with themselves</strong>.
+    </p>
+    <div class="meta">
+      <span>Lead · <b>Cyborg Garden lab</b></span>
+      <span>Annotators · <b>12 models · 2B → frontier</b></span>
+      <span>Verifiers · <b>rev3_score.py · rev4_score.py</b></span>
+      <span>Updated · <b>Aug 13 2026</b></span>
+      <span>Status · <b>Complete · pre-registered, raw output committed</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap"><div class="pagehead">
+  <div class="k">The experiment</div>
+  <h2>Three findings, none of which depends on the other two</h2>
+  <p class="sublede">
+    Both studies were pre-registered before any model was called. Where a result was
+    corrected, the original stays in the record underneath the correction.
+  </p>
+</div></div>
+
+<div class="wrap">
+  <div class="tldr">
+    <div class="t">
+      <div class="h neg">1 · The reference doesn't reproduce</div>
+      <p>The published labels score <strong>α = 0.047</strong>, CI <strong>[−0.065, 0.157]</strong>, against themselves on the file's own duplicated traces. The interval contains zero.</p>
+    </div>
+    <div class="t">
+      <div class="h map">2 · Agreement scales with size</div>
+      <p><strong>0.173</strong> at 2–12B, <strong>0.360</strong> at 70B, <strong>0.598</strong> at frontier. The tier gap is <strong>0.425</strong>, CI [0.326, 0.497]. Smooth, not stepped.</p>
+    </div>
+    <div class="t">
+      <div class="h pos">3 · They converge elsewhere</div>
+      <p>Four frontier models agree with <em>each other</em> at 0.598 and with the published labels at <strong>−0.014</strong>. Chance.</p>
+    </div>
+  </div>
+</div>
+
+<nav class="subnav">
+  <div class="wrap">
+    <a href="#question">The question</a>
+    <a href="#correction">The correction</a>
+    <a href="#scale">Scale</a>
+    <a href="#reference">The reference</a>
+    <a href="#not">Not claimed</a>
+    <a href="#limits">Limits</a>
+    <a href="#harness">The harness bug</a>
+    <a href="#data">Protocols &amp; data</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="question">
+  <h2>The question</h2>
+  <p>
+    A taxonomy of failure is only worth something if two annotators applying it to the
+    same transcript land in roughly the same place. MAST's taxonomy sorts failures into
+    fourteen cells covering specification, inter-agent misalignment, and verification. It
+    is a useful piece of work and it is increasingly used as a reference. So
+    the narrow question is worth asking directly: <strong>do language models agree with
+    each other when they apply it?</strong>
+  </p>
+  <p>
+    Agreement is measured with Krippendorff's α throughout, cluster-bootstrapped over
+    traces. 1.0 is perfect; 0 is chance. The field convention treats <strong>0.667</strong>
+    as the floor for annotation you would build on.
+  </p>
+</section>
+
+<section id="correction">
+  <h2>The correction, first</h2>
+  <p>
+    Rev 3.1 ran six open-weight coders at 2–12B parameters and found
+    <strong>α = 0.173</strong>. It controlled the obvious confounds and controlled them
+    well: every coder passed a framing-sensitivity gate <em>before</em> any trace was
+    coded, and a pre-registered instrument comparison showed the shape of the question
+    moved α by only <strong>0.103</strong> (free-form 0.149 against per-cell 0.046).
+  </p>
+  <p>
+    It could not rule out the plainest confound: every coder was small. Rev 4 ran the
+    identical frame, prompt and parser, reused as literal objects rather than rewritten,
+    against larger models.
+  </p>
+
+  <div class="note warn">
+    <div class="nh">What changed</div>
+    <p>
+      <strong>The null was about model scale, not about the taxonomy.</strong> Nothing in
+      rev 3.1 is retracted; every clause of it still holds. But the sentence a reader
+      would take from it, <em>this taxonomy cannot be annotated reliably</em>, is not
+      supported by the data and is refuted by rev 4. The rev 3.1 write-up now opens with
+      a correction banner.
+    </p>
+  </div>
+
+  <div class="note expert">
+    <div class="nh">Why the correction is the result</div>
+    <p>
+      Scale was named in rev 3.1's own limitations section, written down, and not treated
+      as urgent. One variable the study had already noticed overturned its headline two
+      days later. The limitations section is where the next experiment is, not where the
+      caveats go to die.
+    </p>
+  </div>
+</section>
+
+<section id="scale">
+  <h2>Finding 2: agreement scales with annotator size</h2>
+
+  <div class="table-scroll">
+  <table class="data">
+    <thead><tr><th>Tier</th><th>Coders</th><th>Pooled α</th><th>95% CI</th></tr></thead>
+    <tbody>
+      <tr><td>T1 open-weight small (2–12B)</td><td>6</td><td><b>0.173</b></td><td>[0.127, 0.207]</td></tr>
+      <tr><td>T2 open-weight large (70B-class)</td><td>2</td><td><b>0.360</b></td><td>n/a</td></tr>
+      <tr><td>T3 frontier</td><td>4</td><td><b>0.598</b></td><td>[0.499, 0.670]</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="result-grid">
+    <div class="metric">
+      <div class="lab">D2 · tier gap</div>
+      <div class="val pos">0.425</div>
+      <div class="sub">[0.326, 0.497] · CONFIRMED</div>
+    </div>
+    <div class="metric">
+      <div class="lab">D1 · frontier pooled</div>
+      <div class="val">0.598</div>
+      <div class="sub">[0.499, 0.670] · CONFIRMED</div>
+    </div>
+    <div class="metric">
+      <div class="lab">Cross-tier T2 × T3</div>
+      <div class="val">0.362</div>
+      <div class="sub">between the tiers, not at either end</div>
+    </div>
+  </div>
+
+  <p>
+    <strong>The gradient is smooth, not stepped.</strong> Agreement roughly doubles from
+    T1 to T2 and rises again to T3, with no discontinuity that would suggest a capability
+    threshold. The middle tier earns its place: it turns <em>small models fail, frontier
+    models work</em> into a continuum. Cross-tier agreement sitting at 0.362 says the tiers
+    are annotating the same thing at different precision, not annotating past each other.
+  </p>
+
+  <div class="note">
+    <div class="nh">This compares annotators, not instruction-followers</div>
+    <p>
+      Every frontier coder passed the same framing gate, with shifts of
+      <strong>0.000–0.029</strong> against a 0.30 bar fixed before collection, markedly
+      <em>less</em> frame-sensitive than the small models. Without rev 3.1's gate and
+      instrument work, this result would be ambiguous between "frontier models are better
+      annotators" and "frontier models follow instructions better."
+    </p>
+  </div>
+</section>
+
+<section id="reference">
+  <h2>Findings 1 and 3: the reference is the unstable thing</h2>
+  <p>
+    MAST's released dataset contains duplicated trace payloads carrying
+    <strong>conflicting annotations</strong>: the same trace, annotated more than once,
+    with the annotations disagreeing. Nobody designed that as a reliability experiment,
+    but structurally it is one, and it can be scored.
+  </p>
+
+  <div class="result-grid">
+    <div class="metric">
+      <div class="lab">Published labels vs themselves</div>
+      <div class="val neg">0.047</div>
+      <div class="sub">[−0.065, 0.157] · 434 units</div>
+    </div>
+    <div class="metric">
+      <div class="lab">Frontier coders vs each other</div>
+      <div class="val pos">0.598</div>
+      <div class="sub">[0.499, 0.670]</div>
+    </div>
+    <div class="metric">
+      <div class="lab">Frontier coders vs published labels</div>
+      <div class="val neg">−0.014</div>
+      <div class="sub">mean concordance · chance</div>
+    </div>
+    <div class="metric">
+      <div class="lab">D4 · the gap</div>
+      <div class="val pos">0.612</div>
+      <div class="sub">[0.502, 0.710] · CONFIRMED</div>
+    </div>
+  </div>
+
+  <p>
+    The self-agreement interval <strong>contains zero</strong>: on the file's own repeats,
+    the published annotation is not distinguishable from chance agreement with itself.
+    Meanwhile four frontier models, annotating independently, agree with each other
+    substantially, and with those labels not at all.
+  </p>
+
+  <p>
+    The construction gives the published labels their best case. All 31 duplicated
+    groups are included, one of which agrees perfectly, and that pair pulls the figure
+    up. Scored on the 30 conflicting groups alone the reference drops to
+    <strong>α = 0.041</strong>. We report the higher number.
+  </p>
+
+  <div class="note expert">
+    <div class="nh">Concordance, never accuracy</div>
+    <p>
+      This is <strong>not</strong> a claim that the models are right. There is no ground
+      truth here, by construction, which is precisely what makes the taxonomy hard. It is
+      a claim about which reference is more <em>stable</em>, and its useful property is
+      that it is measurable without any human ground truth at all. You only need the same
+      annotators to look twice.
+    </p>
+  </div>
+
+  <div class="note">
+    <div class="nh">A caveat that has to travel with finding 1</div>
+    <p>
+      The human reference material is <strong>8 annotation blocks across 19 records</strong>,
+      not 19 independent annotations. Any inter-rater claim built on it must establish
+      substrate independence first, or it is measuring copied columns. The α above is
+      computed over duplicated <em>trace</em> units precisely to avoid that trap, and the
+      bootstrap clusters on traces.
+    </p>
+    <p>
+      The second limit is n. The figure rests on <strong>31 duplicated traces</strong>,
+      roughly 5% of the corpus, almost all Magentic/GAIA plus one AppWorld pair. That
+      subset is not a random sample of systems. It does not change the ceiling reading,
+      because a ceiling is a statement about what the file reproduces, but the number
+      should not be quoted as a corpus-wide property.
+    </p>
+  </div>
+
+  <p>
+    No coder was excluded by the marginal-rate gate. Marking rates ran
+    <strong>0.146–0.229</strong>, a tight band and much closer to the corpus's own ~0.16
+    than the open-weight roster's 16-fold spread. The convergence is not an artifact of
+    coders marking wildly different amounts of the taxonomy.
+  </p>
+</section>
+
+<section id="not">
+  <h2>What is not claimed</h2>
+  <ul>
+    <li><strong>Not</strong> that frontier models annotate this taxonomy correctly. There is no ground truth here.</li>
+    <li><strong>Not</strong> that the taxonomy is reliable. 0.598 is below the 0.667 conventional floor. This is not solved. It is a different world from 0.173, which is a different claim.</li>
+    <li><strong>Not</strong> that MAST's annotators were careless. Finding 1 is a measurement on a released artifact; the mechanism behind it is not established here.</li>
+    <li><strong>Not</strong> a general claim about LLM annotation. One taxonomy, one corpus, short-to-medium traces.</li>
+  </ul>
+</section>
+
+<section id="limits">
+  <h2>Limits</h2>
+  <p>
+    <strong>No Google coder.</strong> The pre-registered <code>gemini-3.6-flash</code> was
+    recorded UNAVAILABLE, because its endpoint refuses <code>reasoning.enabled=false</code>, which
+    the instrument requires. It was not substituted: swapping in a different Google model
+    after the other coders' numbers were visible is exactly the researcher discretion
+    pre-registration exists to prevent. T3 keeps four coders across <strong>two</strong>
+    vendors, so the decisive test remains scoreable, but vendor coverage is a real gap.
+  </p>
+  <p>
+    <strong>The family effect is under-powered at both scales.</strong> Within-family α
+    0.642 against between-family 0.428 at frontier, but on two pairs, reported with no
+    verdict. Rev 3.1's equivalent was AMBIGUOUS at 0.127 after its admission gate excluded
+    both members of one family. Future rosters need three members per family so a gate can
+    take one and still leave a pair. The strongest pair in the study is
+    <code>gpt-5.6-sol</code> against <code>gpt-5.6-terra</code> at 0.735; the weakest
+    frontier pairing is <code>claude-opus-5</code> against <code>llama-3.3-70b</code> at 0.212.
+  </p>
+  <p>
+    <strong>n = 24 traces</strong>, short-to-medium only (≤8,000 tokens), three strata.
+    Total collection cost <strong>$3.00</strong> across 324 calls, against a pre-registered
+    $75 cap.
+  </p>
+</section>
+
+<section id="harness">
+  <h2>The harness bug that nearly became a finding</h2>
+  <p>
+    The first admission run reported frontier models <em>failing the output-format gate</em>:
+    one at 20% parseability, one returning no content at all. It would have been written
+    up as <em>frontier models cannot follow this format</em>.
+  </p>
+  <p>
+    It was wrong. <code>max_tokens=300</code> was being consumed entirely by reasoning
+    tokens: <code>finish_reason=length</code>, <code>completion_tokens=300</code>, empty
+    content. The same call with reasoning disabled answers in <strong>five tokens</strong>.
+    All data collected on the pre-fix instrument was discarded before any statistic was
+    computed.
+  </p>
+  <div class="note warn">
+    <div class="nh">Two guardrails came out of it</div>
+    <p>
+      <strong>1.</strong> <code>finish_reason == "length"</code> is a failed call, not a
+      parsed one. A truncated list otherwise parses into a shorter cell vector and quietly
+      lowers α, indistinguishable from a coder that marked fewer cells.
+    </p>
+    <p>
+      <strong>2.</strong> Reasoning is disabled explicitly on every call for every coder,
+      which the tier comparison requires anyway: comparing tiers across different reasoning
+      settings is not comparing like with like.
+    </p>
+  </div>
+  <p>
+    This is the third appearance of one failure mode in this lab, each time in a different
+    costume. The cheap check is to open one raw payload before believing any claim about a
+    model's competence.
+  </p>
+</section>
+
+<section id="data">
+  <h2>Protocols &amp; data</h2>
+  <p>
+    Both studies were pre-registered before collection. Every statistic on this
+    page ships with the raw model output it was computed from, the scorer that
+    computed it, and that scorer's committed output, so each number can be
+    checked against the artifact it was computed from. Recomputing a statistic
+    end-to-end from the raw model calls additionally needs the lab's collector
+    stack (the modules that build the frame and admission files and call the
+    model APIs), which is not shipped in this repository.
+  </p>
+  <ul class="refs">
+    <li><a href="data/prereg-rev4.md">Pre-registration · rev 4</a> <span class="doi">frontier annotator agreement, 2026-08-12</span></li>
+    <li><a href="data/prereg-rev3.md">Pre-registration · rev 3.1</a> <span class="doi">open-weight annotator agreement, 2026-08-10</span></li>
+    <li><a href="data/rev4-results.md">Results · rev 4</a> <span class="doi">D1, D2, D4 scored</span></li>
+    <li><a href="data/rev3-results.md">Results · rev 3.1</a> <span class="doi">carries the correction banner</span></li>
+    <li><a href="data/writeup.md">Synthesis · the three findings</a></li>
+    <li><a href="data/results-rev4.json">results-rev4.json</a> <span class="doi">scorer output, machine readable</span></li>
+    <li><a href="data/results-rev3.json">results-rev3.json</a> <span class="doi">scorer output, machine readable</span></li>
+    <li><a href="data/pipeline/rev4_score.py">rev4_score.py</a> · <a href="data/pipeline/rev3_score.py">rev3_score.py</a> · <a href="data/pipeline/kripp.py">kripp.py</a> <span class="doi">the scorers, and the α implementation they call</span></li>
+    <li><a href="data/raw/">raw/</a> <span class="doi">57 JSONL files, every model call behind every statistic</span></li>
+  </ul>
+  <div class="note">
+    <div class="nh">Provenance</div>
+    <p>
+      All three findings rest on MAST's public released dataset (AG2 and Magentic traces)
+      plus model output generated for these studies. No private corpus is involved.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Cyborg Garden · Open Science · the bench publishes protocols, data and results as they happen.</p>
+    <p><a href="../../">All experiments</a> · <a href="https://cyborg.garden/open-science/">Open science at cyborg.garden</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

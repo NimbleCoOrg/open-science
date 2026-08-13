@@ -1,0 +1,10 @@
+{
+  "slug": "annotator-agreement",
+  "title": "Who Agrees About How Agents Fail",
+  "blurb": "There is a published taxonomy of the fourteen ways multi-agent AI systems break. We asked whether language models apply it consistently, found that they do not, and then found that our own answer was wrong: agreement scales with annotator size, from 0.173 at 2-12B to 0.598 at frontier. Underneath that sits the sharper result — the reference labels score 0.047 against themselves, while four frontier models agree with each other and not with those labels.",
+  "emoji": "📐",
+  "status": "published",
+  "updated": "2026-08-13",
+  "order": 1,
+  "source": "labs/failure-atlas; MAST's public released dataset plus hosted model APIs. Pre-registered, raw output committed."
+}

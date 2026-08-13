@@ -1,0 +1,123 @@
+{
+ "coders": [
+  "F1",
+  "F3",
+  "F4",
+  "F5",
+  "F6",
+  "F7"
+ ],
+ "by_tier": {
+  "T2": [
+   "F1",
+   "F3"
+  ],
+  "T3": [
+   "F4",
+   "F5",
+   "F6",
+   "F7"
+  ]
+ },
+ "audit": {
+  "n_traces": 24,
+  "n_distinct_annotation_blocks": 21,
+  "surprising_blocks": [],
+  "duplicate_content_groups": [],
+  "duplicate_label_groups": [
+   [
+    703,
+    859,
+    876,
+    911
+   ]
+  ],
+  "dominant_existence_pattern": 9,
+  "valid": true,
+  "failures": [],
+  "warnings": []
+ },
+ "n_traces": 24,
+ "hypotheses": {
+  "D1": {
+   "statistic": 0.5977780084646203,
+   "ci": [
+    0.4986722571628236,
+    0.6700430715905955
+   ],
+   "coders": [
+    "F4",
+    "F5",
+    "F6",
+    "F7"
+   ],
+   "verdict": "CONFIRMED"
+  },
+  "D2": {
+   "statistic": 0.42490040892673275,
+   "ci": [
+    0.3257946576249361,
+    0.497165472052708
+   ],
+   "alpha_T3": 0.5977780084646203,
+   "alpha_T1_rev3": 0.1728775995378875,
+   "verdict": "CONFIRMED",
+   "reading": "CONFIRMED means the rev 3.1 null is about SCALE; REFUTED means it is about the TAXONOMY"
+  },
+  "D3": {
+   "tier_alphas": {
+    "T1 (rev 3.1, open-weight small)": 0.1728775995378875,
+    "T2 (2 coders)": 0.36,
+    "T3 (4 coders)": 0.5977780084646203
+   },
+   "verdict": "DESCRIPTIVE \u2014 no threshold"
+  },
+  "D4": {
+   "statistic": 0.6115366083649759,
+   "ci": [
+    0.502448770816988,
+    0.7095045114721685
+   ],
+   "coders_included": [
+    "F4",
+    "F5",
+    "F6",
+    "F7"
+   ],
+   "excluded_by_marginal": {},
+   "marginals": {
+    "F1": 0.21726190476190474,
+    "F3": 0.14583333333333334,
+    "F4": 0.22916666666666666,
+    "F5": 0.1636904761904762,
+    "F6": 0.2083333333333333,
+    "F7": 0.1636904761904762
+   },
+   "verdict": "CONFIRMED",
+   "bound": "concordance with a label set scoring alpha=0.047 against itself; never accuracy"
+  }
+ },
+ "secondary": {
+  "D5_cross_tier_T2_T3": 0.36206546192581035,
+  "family_within": 0.6415914415329407,
+  "family_between": 0.4281590711947217,
+  "family_n_within_pairs": 2,
+  "pairwise": {
+   "F1-F3": 0.36,
+   "F1-F4": 0.21159642401021717,
+   "F1-F5": 0.28690831801470584,
+   "F1-F6": 0.38795986622073575,
+   "F1-F7": 0.3254538143382353,
+   "F3-F4": 0.35627071341357053,
+   "F3-F5": 0.409330985915493,
+   "F3-F6": 0.4188004315650311,
+   "F3-F7": 0.500203141928494,
+   "F4-F5": 0.5481481481481482,
+   "F4-F6": 0.5565792031098153,
+   "F4-F7": 0.5481481481481482,
+   "F5-F6": 0.61727239488117,
+   "F5-F7": 0.5875444839857651,
+   "F6-F7": 0.7350347349177331
+  }
+ }
+}

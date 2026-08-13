@@ -543,14 +543,14 @@ footer{border-top:1px solid var(--rule-2);padding:3rem 0 4rem;position:relative;
   <p>Everything above was computed by six plain Python files in the open-science repo under <code style="font-family:var(--mono);font-size:.85em;color:var(--green)">docs/experiments/failure-atlas/pipeline/</code>. Standard library only, so <b>if you have Python 3 you have the pipeline</b>. Clone the repo, or read each file first on GitHub:</p>
 
   <div class="filelist" aria-label="Pipeline source files on GitHub">
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/extract.py">extract.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/detectors.py">detectors.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/incidents.py">incidents.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/analyze.py">analyze.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/context_window.py">context_window.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/test_pipeline.py">test_pipeline.py</a>
-    <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/pipeline/README.md">README.md</a>
-    <a href="https://github.com/cyborg-garden/open-science/tree/main/docs/experiments/failure-atlas/pipeline">pipeline/ on GitHub</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/extract.py">extract.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/detectors.py">detectors.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/incidents.py">incidents.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/analyze.py">analyze.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/context_window.py">context_window.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/test_pipeline.py">test_pipeline.py</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/pipeline/README.md">README.md</a>
+    <a href="https://github.com/NimbleCoOrg/open-science/tree/main/docs/experiments/failure-atlas/pipeline">pipeline/ on GitHub</a>
   </div>
 
   <p>Four commands, from a working directory of your choice:</p>
@@ -580,7 +580,7 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   <p>Or hand the job to your agent. Copy this and paste it at your own bot:</p>
   <div class="codewrap prompt">
     <button class="copybtn" data-copy="agent-prompt">copy prompt</button>
-<pre id="agent-prompt">Fetch the pipeline files from the cyborg-garden/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,165 tool-error incidents at 16.4/10k; giving up concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
+<pre id="agent-prompt">Fetch the pipeline files from the NimbleCoOrg/open-science repo, under docs/experiments/failure-atlas/pipeline/, into a local folder (clone the repo, or pull the raw files). Run, in order: extract.py --roots ~/.claude --db data/atlas.db, then detectors.py, incidents.py, and analyze.py against that same database. They are stdlib-only Python 3, so install nothing. When they finish, read data/analysis.json and report: my total sessions and events; my top five failure modes per 10k events; and where failures fall within my sessions. Then compare each against the reference numbers on this page (1,165 tool-error incidents at 16.4/10k; giving up concentrated in the final tenth of sessions) and tell me where my logs differ most. Do not send, publish, or quote any transcript text; share data/analysis.json only.</pre>
   </div>
 
   <div class="pitch">
@@ -611,7 +611,7 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
   <p>Two limits sit under everything on this page. Every judgement is single-pass, one model, no second opinion, and that judge shares a model family with the agents it graded, a bias toward going easy on its own kind whose size nobody has measured. And while we were measuring failures, our own judging runs kept getting killed by the same API-overload failure that ranks among the modes we catalogued <b>(infra_api_fault, n=11)</b>. The instrument exhibited the phenomenon mid-measurement.</p>
 
   <div class="deeper">
-    <p>Everything above is the short version. The detectors and what each one looks for, how the judging worked, the full cross-walk against the field's list, every prediction we registered and what happened to it, and everything we know is wrong with this study, are written out in the companion document: <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">Every method and every caveat, in full</a>.</p>
+    <p>Everything above is the short version. The detectors and what each one looks for, how the judging worked, the full cross-walk against the field's list, every prediction we registered and what happened to it, and everything we know is wrong with this study, are written out in the companion document: <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">Every method and every caveat, in full</a>.</p>
   </div>
 </section>
 
@@ -620,7 +620,7 @@ python3 pipeline/analyze.py   --db data/atlas.db --outdir data</pre>
 <footer>
   <div class="wrap">
     <div class="colophon-end">
-      Built by agents studying agents, operator recused from judging · <b>2,781</b> sessions · <b>709,843</b> events · <b>185</b> failures judged in full · <b>13</b> detectors · a cyborg.garden open-science experiment. The dataset stays private; the pipeline and every aggregate here are published, so the method runs on anyone's logs. Full method and every caveat: <a href="https://github.com/cyborg-garden/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">the companion document</a>.
+      Built by agents studying agents, operator recused from judging · <b>2,781</b> sessions · <b>709,843</b> events · <b>185</b> failures judged in full · <b>13</b> detectors · a cyborg.garden open-science experiment. The dataset stays private; the pipeline and every aggregate here are published, so the method runs on anyone's logs. Full method and every caveat: <a href="https://github.com/NimbleCoOrg/open-science/blob/main/docs/experiments/failure-atlas/METHOD.md">the companion document</a>.
     </div>
   </div>
 </footer>

@@ -1,0 +1,143 @@
+{
+ "coders": [
+  "C1",
+  "C2",
+  "C3",
+  "C6",
+  "C7",
+  "C8"
+ ],
+ "n_traces": 24,
+ "underpowered_coders": [],
+ "audit": {
+  "n_traces": 24,
+  "n_distinct_annotation_blocks": 24,
+  "surprising_blocks": [],
+  "duplicate_content_groups": [],
+  "duplicate_label_groups": [],
+  "dominant_existence_pattern": 6,
+  "valid": true,
+  "failures": [],
+  "warnings": []
+ },
+ "hypotheses": {
+  "B1": {
+   "statistic": 0.1728775995378875,
+   "ci": [
+    0.12657749431603094,
+    0.2071581356340182
+   ],
+   "verdict": "REFUTED"
+  },
+  "B2": {
+   "statistic": 0.1274786696807803,
+   "ci": [
+    0.03454153688510095,
+    0.20829626887401786
+   ],
+   "between_family_mean": 0.12081646013515839,
+   "per_family": {
+    "Alibaba": {
+     "n_pairs": 0,
+     "mean_alpha": null,
+     "clears_bar": false
+    },
+    "Google": {
+     "n_pairs": 1,
+     "mean_alpha": 0.2148707584299543,
+     "clears_bar": false
+    },
+    "Meta": {
+     "n_pairs": 1,
+     "mean_alpha": 0.28171950120192313,
+     "clears_bar": true
+    },
+    "Mistral": {
+     "n_pairs": 0,
+     "mean_alpha": null,
+     "clears_bar": false
+    }
+   },
+   "families_clearing": 1,
+   "verdict": "AMBIGUOUS"
+  },
+  "B3": {
+   "alpha_freeform": 0.1484803078232243,
+   "alpha_percell": 0.04597156398104396,
+   "gap": 0.10250874384218034,
+   "coders": [
+    "C1",
+    "C2",
+    "C6",
+    "C7"
+   ],
+   "verdict": "CONFIRMED"
+  },
+  "B4": {
+   "statistic": 0.1495935097310174,
+   "ci": [
+    0.08218124326929287,
+    0.22191357383163515
+   ],
+   "coders_included": [
+    "C1",
+    "C2",
+    "C3",
+    "C6",
+    "C7",
+    "C8"
+   ],
+   "excluded_by_marginal": {},
+   "marginals": {
+    "C1": 0.1101190476190476,
+    "C2": 0.24404761904761899,
+    "C3": 0.05059523809523809,
+    "C6": 0.2142857142857143,
+    "C7": 0.43749999999999994,
+    "C8": 0.3244047619047618
+   },
+   "verdict": "AMBIGUOUS",
+   "bound": "concordance with a published label set, never accuracy; that label set scores alpha=0.047 against itself on the file's repeats"
+  },
+  "B5": {
+   "statistic": 0.07637939754652537,
+   "ci": [
+    0.04693680332330663,
+    0.16952287900993213
+   ],
+   "per_cell": {
+    "1.1": -0.04641975308641744,
+    "1.2": -0.11222222222222045,
+    "1.3": 0.08464195256735185,
+    "1.4": -0.11852697687696034,
+    "1.5": -0.0198449612403091,
+    "2.1": 0.07549530761209622,
+    "2.2": 0.03285024154589389,
+    "2.3": 0.05714285714285805,
+    "2.4": -0.0198449612403091,
+    "2.5": 0.0011029411764708064,
+    "2.6": 0.00015800908552321413,
+    "3.1": 0.03140394088670151,
+    "3.2": -0.03446808510638144,
+    "3.3": 0.019204389574760672
+   },
+   "verdict": "REFUTED"
+  }
+ },
+ "secondary": {
+  "length_system_matched_S1_vs_S2": {
+   "S1_short_AG2": 0.18628731343282834,
+   "S2_long_AG2": 0.16231386139601878
+  },
+  "system_length_matched_S2_vs_S3": {
+   "S2_AG2_long": 0.16231386139601878,
+   "S3_Magentic_long": 0.07355001259762428
+  },
+  "B4_with_contaminated_contrast_set": {
+   "n_traces": 30,
+   "statistic": 0.14813524040730883,
+   "clean_only_statistic": 0.1495935097310174,
+   "note": "demonstration only \u2014 no verdict attaches to this number"
+  }
+ }
+}
