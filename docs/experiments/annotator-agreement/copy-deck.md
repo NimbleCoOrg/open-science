@@ -34,8 +34,12 @@ about the size of our annotators, not about the thing we were annotating.
 ## Social, short form
 
 Built to fit inside 280 characters each. Verify the current limit per platform at
-use time. **Thread structure is unratified** (social register, open item): post
-these as standalone claims unless Matilde's pass defines a chain.
+use time.
+
+**Thread structure: ratified by Matilde, 2026-08-12.** Post A first, standalone. B
+and C as standalone follow-ups. **No chain.** Each post carries its own number and
+that number's limit in the same breath, which is the condition the ratification
+rests on. Good to post as drafted once E1 to E3 land.
 
 **A. The correction. Lead with this one.** (264 chars)
 

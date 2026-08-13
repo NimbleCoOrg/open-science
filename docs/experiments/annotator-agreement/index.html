@@ -402,6 +402,13 @@ footer a{color:var(--accent)}
     substantially, and with those labels not at all.
   </p>
 
+  <p>
+    The construction gives the published labels their best case. All 31 duplicated
+    groups are included, one of which agrees perfectly, and that pair pulls the figure
+    up. Scored on the 30 conflicting groups alone the reference drops to
+    <strong>α = 0.041</strong>. We report the higher number.
+  </p>
+
   <div class="note expert">
     <div class="nh">Concordance, never accuracy</div>
     <p>
@@ -421,6 +428,13 @@ footer a{color:var(--accent)}
       substrate independence first, or it is measuring copied columns. The α above is
       computed over duplicated <em>trace</em> units precisely to avoid that trap, and the
       bootstrap clusters on traces.
+    </p>
+    <p>
+      The second limit is n. The figure rests on <strong>31 duplicated traces</strong>,
+      roughly 5% of the corpus, almost all Magentic/GAIA plus one AppWorld pair. That
+      subset is not a random sample of systems. It does not change the ceiling reading,
+      because a ceiling is a statement about what the file reproduces, but the number
+      should not be quoted as a corpus-wide property.
     </p>
   </div>
 
@@ -505,8 +519,10 @@ footer a{color:var(--accent)}
 <section id="data">
   <h2>Protocols &amp; data</h2>
   <p>
-    Both studies were pre-registered before collection. Raw model output is committed
-    alongside every statistic, and both scorers are in the repository.
+    Both studies were pre-registered before collection. Every statistic on this page
+    ships with the raw model output it was computed from and with the scorer that
+    computed it, both below. Clone this directory and you can recompute every number
+    here without asking us for anything.
   </p>
   <ul class="refs">
     <li><a href="data/prereg-rev4.md">Pre-registration · rev 4</a> <span class="doi">frontier annotator agreement, 2026-08-12</span></li>
@@ -516,6 +532,8 @@ footer a{color:var(--accent)}
     <li><a href="data/writeup.md">Synthesis · the three findings</a></li>
     <li><a href="data/results-rev4.json">results-rev4.json</a> <span class="doi">scorer output, machine readable</span></li>
     <li><a href="data/results-rev3.json">results-rev3.json</a> <span class="doi">scorer output, machine readable</span></li>
+    <li><a href="data/pipeline/rev4_score.py">rev4_score.py</a> · <a href="data/pipeline/rev3_score.py">rev3_score.py</a> · <a href="data/pipeline/kripp.py">kripp.py</a> <span class="doi">the scorers, and the α implementation they call</span></li>
+    <li><a href="data/raw/">raw/</a> <span class="doi">57 JSONL files, every model call behind every statistic</span></li>
   </ul>
   <div class="note">
     <div class="nh">Provenance</div>
