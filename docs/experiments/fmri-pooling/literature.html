@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literature Considered — Alignment &amp; Pooling · Pooling Small-N fMRI</title>
+<meta name="description" content="The papers we've considered for inter-subject / cross-study fMRI alignment: hyperalignment, shared-response models, connectivity hyperalignment, RSA, and the toolboxes — every citation verified, every repo checked live.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3eee4; --surface:#fffdf8; --surface-2:#faf6ed;
+  --ink:#211c16; --ink-soft:#675e4f; --ink-faint:#a99e89;
+  --rule:#e2d9c7; --rule-2:#cfc3aa;
+  --accent:#1f4257; --accent-2:#6b8f3a;
+  --pos:#357a5b; --neg:#bb4a33; --warn:#b07d22;
+  --serif:'Newsreader',Georgia,serif; --display:'Fraunces',Georgia,serif;
+  --mono:'Spline Sans Mono',ui-monospace,monospace;
+  --maxw:1060px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.62;font-size:17px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+a{color:var(--accent)}
+header{padding:3.5rem 0 1.4rem;border-bottom:1.5px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:1.2rem}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,5vw,3.2rem);line-height:1.02;letter-spacing:-.015em;margin-bottom:1rem}
+.lede{font-size:1.12rem;color:var(--ink-soft);max-width:62ch}
+nav.back{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:1.4rem}
+nav.back a{color:var(--ink-soft);text-decoration:none}
+nav.back a:hover{color:var(--accent)}
+main{padding:2.2rem 0 3rem}
+h2{font-family:var(--display);font-weight:600;font-size:1.6rem;margin:2.4rem 0 .7rem}
+h2 .k{display:block;font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.5rem}
+h3{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:1.6rem 0 .5rem;color:var(--accent)}
+p{margin-bottom:1rem;max-width:72ch}
+
+/* verification banner */
+.vbanner{background:var(--surface-2);border:1px solid var(--rule);border-left:4px solid var(--pos);border-radius:0 12px 12px 0;padding:1.1rem 1.2rem;margin:1.6rem 0;font-size:.95rem}
+.vbanner .vh{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--pos);margin-bottom:.4rem;font-weight:600}
+
+/* method blocks */
+.method{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:1.2rem 1.3rem;margin:1.1rem 0}
+.method .mhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+.method .mname{font-family:var(--display);font-weight:600;font-size:1.05rem}
+.method .cat{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+.method p{font-size:.9rem;color:var(--ink-soft);margin-bottom:.4rem}
+.method .lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.method code{font-family:var(--mono);font-size:.8em;background:var(--surface-2);padding:.08em .3em;border-radius:4px}
+.vbadge{font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.16rem .5rem;border-radius:999px;white-space:nowrap}
+.vbadge.ok{background:#e2efe0;color:var(--pos);border:1px solid #b8d9b0}
+.vbadge.warn{background:#f3ead2;color:var(--warn);border:1px solid #e0cba0}
+.vbadge.nc{background:#ece5d6;color:var(--ink-soft);border:1px solid var(--rule-2)}
+
+/* takeaway */
+.take{border-left:4px solid var(--accent);background:#eef2f5;border-radius:0 12px 12px 0;padding:1.1rem 1.2rem;margin:1.4rem 0;font-size:.95rem}
+.take .nh{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem;font-weight:600}
+
+footer{border-top:1.5px solid var(--ink);padding:2rem 0 3rem;font-size:.88rem;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Pooling Small-N fMRI · Literature Considered</div>
+  <h1>The alignment landscape, verified</h1>
+  <p class="lede">
+    Pooling studies is inter-subject alignment extended one step further — and that problem has
+    decades of prior art. This is the catalog of the methods we considered before building, so
+    the pipeline stands on validated wheels rather than reinvented ones. Every citation was
+    found by search, confirmed against Crossref, and screened for retraction; every code link
+    was checked live.
+  </p>
+  <nav class="back"><a href="index.html">← back to the experiment</a></nav>
+</header>
+
+<main>
+
+<div class="vbanner">
+  <div class="vh">How this was checked</div>
+  <p style="margin-bottom:.4rem">
+    18 citations located via web search (never recalled from memory), each verified with a
+    structured checker (existence, metadata match, retraction, URL liveness). 8 code
+    repositories confirmed live (HTTP 200). <strong>No retracted works found.</strong> 14 verified
+    clean; 4 carry a disclosed caveat — no Crossref DOI for NeurIPS/arXiv items, a first-author-only
+    Crossref record, and one title that verification caught us misremembering. Nothing here is
+    asserted on memory alone.
+  </p>
+</div>
+
+<h2><span class="k">I · The methods</span>Six families of alignment</h2>
+
+<h3>1 · Anatomical warping <span class="vbadge nc">the baseline</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">Nonlinear volumetric registration — ANTs (SyN)</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Assumes</span> anatomy is a sufficient proxy for function; diffeomorphic warps put homologous anatomy in correspondence.</p>
+  <p><span class="lab">Helps / fails</span> the strong default baseline every functional method is compared against — but residual <em>functional</em> misalignment survives even a perfect anatomical warp. That residual is the entire motivation for hyperalignment.</p>
+  <p><span class="lab">Reference</span> Avants et al. (2011), <em>NeuroImage</em>. doi:10.1016/j.neuroimage.2010.09.025 · <span class="lab">Code</span> <code>ANTsX/ANTs</code> (live). (Legacy baseline: Talairach &amp; Tournoux 1988, a monograph — real, not Crossref-verifiable.)</p>
+</div>
+
+<h3>2 · Functional alignment — hyperalignment <span class="vbadge nc">response-based</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">Searchlight / ROI hyperalignment</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Assumes</span> shared information is encoded in idiosyncratic fine-scale topographies; a common high-dimensional space is recoverable by iterative Procrustes on local response patterns.</p>
+  <p><span class="lab">Helps / fails</span> between-subject classification improves severalfold over anatomical alignment — but it needs a rich shared stimulus to estimate the transforms. <em>Validation (Haxby et al. 2011, Neuron, the Raiders of the Lost Ark movie dataset):</em> between-subject movie-timepoint classification in the common space beat within-subject anatomical classification, and generalized to held-out subjects and a separate category-perception task.</p>
+  <p><span class="lab">Reference</span> Haxby et al. (2011), <em>Neuron</em>. doi:10.1016/j.neuron.2011.08.026 · <span class="lab">Code</span> PyMVPA <code>mvpa2.algorithms.hyperalignment</code> (live).</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Whole-cortex hyperalignment</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Assumes / does</span> generalizes the common model across the whole cortex via overlapping searchlights. <em>Validation (Guntupalli et al. 2016, Cerebral Cortex):</em> improved between-subject classification and inter-subject correlation of representational geometry across occipital, temporal, parietal, and prefrontal cortices — the shared fine structure is cortex-wide, not just ventral temporal.</p>
+  <p><span class="lab">Reference</span> Guntupalli et al. (2016), <em>Cerebral Cortex</em>. doi:10.1093/cercor/bhw068 · <span class="lab">Code</span> PyMVPA (live).</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Conceptual framework / review</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Does</span> the reference framing: it is information <em>content</em>, not local topography, that is preserved across brains. Not a method — the why behind all of the above.</p>
+  <p><span class="lab">Reference</span> Haxby, Guntupalli, Nastase &amp; Feilong (2020), <em>eLife</em>. doi:10.7554/eLife.56601.</p>
+</div>
+
+<h3>3 · Probabilistic shared-response models <span class="vbadge nc">SRM family</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">SRM — Shared Response Model</span><span class="vbadge warn">no Crossref DOI · live</span></div>
+  <p><span class="lab">Assumes</span> multi-subject data factor as X<sub>i</sub> ≈ W<sub>i</sub>·S — a low-rank shared timecourse S plus subject-specific orthogonal bases W<sub>i</sub>.</p>
+  <p><span class="lab">Helps / fails</span> denoises via dimensionality reduction and projects held-out subjects into the shared space. <em>Validation (Chen et al. 2015):</em> across several naturalistic datasets and anatomical ROIs, the reduced-dimension SRM improved detection of the shared response over anatomical alignment, and removing it improved detection of group differences. Vanilla SRM discards subject-specific signal; needs an identifiable constraint.</p>
+  <p><span class="lab">Reference</span> Chen et al. (2015), <em>NeurIPS 28</em>. (NeurIPS proceedings have no Crossref DOI — verified live at proceedings.neurips.cc.) · <span class="lab">Code</span> BrainIAK <code>funcalign.srm</code> (live).</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Variants — SSSRM · idiosyncratic-SRM · FastSRM</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Why they exist</span> SSSRM (Turek et al. 2017, ICASSP) uses a labeled subset to supervise alignment. The idiosyncratic variant (Turek et al. 2018, ICASSP) models the individual component SRM normally discards — relevant when individual differences are the object of study. FastSRM (Richard et al. 2019, arXiv) projects onto an intermediate atlas so SRM scales to many subjects and limited RAM — the practical choice at our scale, and implemented in BrainIAK.</p>
+  <p><span class="lab">References</span> Turek 2017 doi:10.1109/ICASSP.2017.7952326 · Turek 2018 doi:10.1109/ICASSP.2018.8462175 · Richard 2019 arXiv:1909.12537 (no version of record; live) · also Chen 2014 joint-SVD doi:10.1109/MLSP.2014.6958912. <span class="lab">Code</span> BrainIAK <code>funcalign</code>, <code>hugorichard/FastSRM</code> (both live).</p>
+</div>
+
+<h3>4 · Connectivity hyperalignment <span class="vbadge nc">no shared stimulus needed</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">Connectivity hyperalignment (CHA)</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Assumes</span> voxels can be aligned by their whole-brain connectivity fingerprints rather than stimulus responses — so it works on resting state, no movie required.</p>
+  <p><span class="lab">Helps / fails</span> <em>Validation (Guntupalli, Feilong &amp; Haxby 2018, PLoS Comput Biol):</em> yielded higher inter-subject correlation of dense connectivity profiles than response-based hyperalignment, enabling alignment without a shared stimulus. (Verification caught and corrected a misremembered title here: the real title is <em>"A computational model of shared fine-scale structure in the human connectome."</em>)</p>
+  <p><span class="lab">Reference</span> Guntupalli, Feilong &amp; Haxby (2018), <em>PLoS Comput Biol</em>. doi:10.1371/journal.pcbi.1006120 · <span class="lab">Code</span> PyMVPA / Haxby lab (live).</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Aggregating heterogeneous datasets via shared connectivity</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Does</span> the exact operation our pooling goal needs: folds <em>different studies with different stimuli</em> into one common response space by leveraging shared connectivity — the bridge from a single-stimulus cohort to a many-study pooled dataset.</p>
+  <p><span class="lab">Reference</span> Nastase et al. (2020), <em>NeuroImage</em>. doi:10.1016/j.neuroimage.2020.116865 · preprint: bioRxiv 741975.</p>
+</div>
+<div class="method">
+  <div class="mhead"><span class="mname">Functional connectome fingerprinting</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">Why it matters</span> evidence that connectivity-defined functional architecture is real, stable, and individual — a person's connectivity pattern identifies them from a group. That individuality is why anatomical warping alone cannot align function, and why functional alignment must sit under any discovery layer.</p>
+  <p><span class="lab">Reference</span> Finn et al. (2015), <em>Nature Neuroscience</em>. doi:10.1038/nn.4135.</p>
+</div>
+
+<h3>5 · Representational similarity <span class="vbadge nc">outcome measure</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">Representational Similarity Analysis (RSA)</span><span class="vbadge warn">first-author-only record</span></div>
+  <p><span class="lab">Does</span> compares representational <em>geometries</em> (RDMs) across subjects and models without voxelwise correspondence — alignment happens in similarity space. For our purposes it is a downstream outcome measure after alignment, not a substitute for it.</p>
+  <p><span class="lab">Reference</span> Kriegeskorte, Mur &amp; Bandettini (2008), <em>Front. Syst. Neurosci.</em> doi:10.3389/neuro.06.004.2008 (Crossref lists only the first author; the 3-author list is correct per the journal page — disclosed) · toolbox: Nili et al. (2014), <em>PLoS Comput Biol</em> doi:10.1371/journal.pcbi.1003553. <span class="lab">Code</span> <code>rsagroup/rsatoolbox</code> (live).</p>
+</div>
+
+<h3>6 · Mature toolboxes <span class="vbadge nc">don't reinvent the wheel</span></h3>
+<div class="method">
+  <div class="mhead"><span class="mname">BrainIAK · PyMVPA · nilearn</span><span class="vbadge ok">verified</span></div>
+  <p><span class="lab">BrainIAK</span> — HPC-ready SRM, FastSRM, SSSRM, ISC/ISFC, event segmentation (HMM), and more; the go-to for functional alignment and naturalistic analysis. Kumar et al. (2022), <em>Aperture Neuro</em> doi:10.52294/31bb5b68-2184-411b-8c00-a1dacb61e1da (record year 2022, vol. 2021 — corrected). Module: <code>brainiak.funcalign</code>.</p>
+  <p><span class="lab">PyMVPA</span> — the original hyperalignment implementation plus a full MVPA pipeline. Hanke et al. (2009), <em>Neuroinformatics</em> doi:10.1007/s12021-008-9041-y. Module: <code>mvpa2.algorithms.hyperalignment</code>.</p>
+  <p><span class="lab">nilearn</span> — the standard scikit-learn-style entry point for decoding and connectivity; pairs with BrainIAK for the alignment step. Abraham et al. (2014), <em>Front. Neuroinform.</em> doi:10.3389/fninf.2014.00014. All three repos confirmed live.</p>
+</div>
+
+<h2><span class="k">II · What this changes</span>Five takeaways for the pooling pipeline</h2>
+<div class="take">
+  <div class="nh">Read before building</div>
+  <p style="margin-bottom:.5rem">
+    <strong>1. Don't reimplement alignment.</strong> SRM/FastSRM (BrainIAK <code>funcalign</code>) and
+    hyperalignment (PyMVPA) are mature, tested, documented. Use them.
+  </p>
+  <p style="margin-bottom:.5rem">
+    <strong>2. Match the method to the data.</strong> With a shared naturalistic stimulus,
+    response-based hyperalignment or SRM; without one (resting state, or pooling across
+    <em>different</em> stimuli), connectivity hyperalignment — the Nastase 2020 shared-connectivity
+    aggregation is the direct precedent for folding heterogeneous studies into one space.
+  </p>
+  <p style="margin-bottom:.5rem">
+    <strong>3. Anatomical warping is the baseline, not the solution.</strong> Report the ANTs-style
+    comparison against every functional method — that is exactly the delta our experiment measures.
+  </p>
+  <p style="margin-bottom:.5rem">
+    <strong>4. Keep idiosyncratic signal if individual differences matter.</strong> Vanilla SRM
+    discards it; the Turek 2018 variant models it explicitly.
+  </p>
+  <p style="margin-bottom:0">
+    <strong>5. RSA is the readout.</strong> It compares representational geometry without voxelwise
+    correspondence — the natural way to ask <em>what</em> the aligned, pooled data encodes.
+  </p>
+</div>
+
+<p style="font-size:.85rem;color:var(--ink-faint);margin-top:2rem">
+  Compiled and verified 2026-08-12. Full verification log (per-citation verdicts, scores, and the
+  repo-liveness table) is kept in the project record; this page shows the outcome, not the audit trail.
+</p>
+
+</main>
+
+<footer>
+  Literature appendix for <a href="index.html">Pooling Small-N fMRI</a> · compiled by Matilde, Aug 12 2026 ·
+  part of <a href="https://cyborg.garden/open-science">cyborg.garden/open-science</a>
+</footer>
+
+</div>
+</body>
+</html>

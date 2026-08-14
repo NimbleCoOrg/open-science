@@ -191,10 +191,10 @@ footer a{color:var(--accent)}
     <h1>Pooling Small-N fMRI: <em>where merging brains works, and where it backfires</em></h1>
     <p class="lede">
       Most brain-imaging studies scan 15–30 people — too few to trust on their own. The tempting
-      to pool many small studies into one shared space using <strong>functional alignment</strong>.
-      We built that machinery and ran it on two public naturalistic-stimulus datasets — one
-      watched, one <em>listened to</em>. Same pipeline, opposite answers — and together they map
-      where pooling works, with one confound we state plainly rather than hide.
+      fix is to <strong>pool many small studies into one shared space</strong>. We tested that fix
+      on two public datasets where people heard or watched the same stimulus — and got opposite
+      answers. Together they map the one thing anyone pooling brain data needs to know:
+      <em>when it helps, and when it quietly makes things worse.</em>
     </p>
     <div class="meta">
       <span>Lead · <b>Matilde</b></span>
@@ -230,7 +230,9 @@ footer a{color:var(--accent)}
     <a href="#controls">The controls</a>
     <a href="#result2">The flip</a>
     <a href="#meaning">The map</a>
+    <a href="#next">What's next</a>
     <a href="#reproduce">Reproduce</a>
+    <a href="literature.html">Literature</a>
     <a href="agents.html">For agents</a>
     <a href="#refs">References</a>
   </div>
@@ -271,9 +273,16 @@ footer a{color:var(--accent)}
 <section id="method">
   <h2><span class="k">02 · The Method</span>One pipeline, one fair test</h2>
   <p>
-    The design is deliberately simple and deterministic — the claim is about linear algebra,
-    not model capacity. For a group of people who all received the same stimulus:
+    The idea, in one sentence: take people who all experienced the same stimulus, line their
+    brains up two different ways, and ask which way lets us recover more of what they were
+    experiencing. Everything is deterministic and public — the claim is about linear algebra,
+    not model capacity. The full recipe lives in the panel below; the short version is that
+    only one step changes between conditions, so any difference in accuracy is caused by the
+    alignment and nothing else.
   </p>
+  <details>
+    <summary>Method panel — the exact pipeline, step by step</summary>
+    <div class="body">
   <div class="card">
     <span class="tag method">Pipeline</span>
     <p style="margin-bottom:.6rem">
@@ -294,10 +303,13 @@ footer a{color:var(--accent)}
       data with fixed seeds — the numbers below are exactly reproducible.
     </p>
   </div>
+    </div>
+  </details>
   <p>
-    Both datasets are public on OpenNeuro and both use long, continuous naturalistic
-    stimulation. They differ in the way the hypothesis cares about — narrative vs. no narrative
-    — and, unavoidably, in several other ways as well:
+    We ran this identical pipeline on two public OpenNeuro datasets — one where people
+    <em>watched</em> a film without a story, one where people <em>listened</em> to a story
+    without pictures. They differ in the way the hypothesis cares about — narrative vs. no
+    narrative — and, unavoidably, in several other ways as well:
   </p>
   <div class="table-scroll">
   <table class="data">
@@ -314,38 +326,25 @@ footer a{color:var(--accent)}
       <tr>
         <td><strong>StudyForrest</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">ds000113</span></td>
         <td><em>Forrest Gump</em> <strong>audio description</strong><br><span style="font-family:var(--mono);font-size:.78em;color:var(--ink-faint)">auditory only · no visual · 7T</span></td>
-        <td class="num">19 × 8 runs</td>
+        <td class="num">19 people<br><span style="font-size:.78em;color:var(--ink-faint)">× 8 runs each = 152 recordings</span></td>
         <td>grpbold7Tad group template (volumetric)</td>
         <td><strong>Yes</strong> — a driven narrative with dialogue and plot, <em>heard</em> as a spoken German audio description of the film rather than watched</td>
       </tr>
     </tbody>
   </table>
   </div>
-  <div class="note warn">
-    <div class="nh">Read this before the results</div>
-    <p>
-      The <code style="font-family:var(--mono);font-size:.85em">grpbold7Tad</code> acquisition in
-      ds000113 is the <strong>7T audio-description</strong> phase of StudyForrest: participants
-      <em>listened</em> to a spoken German audio description of <em>Forrest Gump</em> — Hanke et
-      al. (2014) call it "an audio movie." There was no visual stimulus. An earlier version of
-      this page called it a film throughout; our own citation said otherwise, and we misread it.
-      It is a narrative, but it is not movie-watching — and that means the two datasets differ in
-      <strong>modality and field strength</strong> as well as narrative. That confound is stated
-      in full in §06.
-    </p>
-  </div>
-  <div class="note expert">
-    <div class="nh">For experts · cross-space comparability</div>
-    <p>
-      The datasets live in different reference spaces (surface vs. volume) because that is the
-      form in which each is publicly distributed with all subjects in a common frame. The
-      question — <em>does functional alignment beat anatomical alignment?</em> — is asked
-      <strong>within</strong> each dataset against its own anatomical baseline, so the
-      cross-space difference does not confound the comparison. Absolute accuracies are not
-      comparable across datasets (different cortex coverage, TR counts, and test-segment
-      lengths); the deltas are the unit of inference throughout.
-    </p>
-  </div>
+  <p style="font-size:1.05rem">
+    One thing to hold onto before the results: nobody <em>watched</em> Forrest Gump here. People
+    <em>listened</em> to a spoken audio description of it. So the two datasets differ in more
+    than story-vs-no-story — and being honest about that changes how the results should be read.
+  </p>
+  <details>
+    <summary>Method panel — the modality confound, stated precisely</summary>
+    <div class="body">
+      <p>The <code>grpbold7Tad</code> acquisition in ds000113 is the <strong>7T audio-description</strong> phase of StudyForrest: participants listened to a spoken German audio description of <em>Forrest Gump</em> — Hanke et al. (2014) call it "an audio movie." There was no visual stimulus. An earlier version of this page called it a film throughout; our own citation said otherwise, and we misread it. It is a narrative, but not movie-watching — the two datasets differ in <strong>modality (visual vs. auditory), field strength (3T vs. 7T), reference space (surface vs. volumetric template), and subject pool</strong>, as well as narrative. That confound is stated in full in §07.</p>
+      <p><strong>Cross-space comparability:</strong> the datasets live in different reference spaces because that is the form in which each is publicly distributed. The question — does functional alignment beat anatomical alignment? — is asked <strong>within</strong> each dataset against its own anatomical baseline, so the cross-space difference does not confound the comparison. Absolute accuracies are not comparable across datasets (different cortex coverage, TR counts, test-segment lengths); the within-dataset <em>deltas</em> are the unit of inference throughout.</p>
+    </div>
+  </details>
 </section>
 
 <!-- ================= RESULT 1 ================= -->
@@ -384,15 +383,11 @@ footer a{color:var(--accent)}
     reliably <em>removed</em> accuracy rather than adding it, and the result is stable across
     the basis dimension (k = 10, 20, 50, 100), so it's not a tuning artifact.
   </p>
-  <div class="note warn">
-    <div class="nh">Why we trust a negative</div>
-    <p>
-      A negative result is only worth reporting if you've tried to kill it. Before believing
-      this one we found and fixed a genuine measurement bug (an operator-precedence error that
-      returned the first timepoint's accuracy instead of the mean), then re-ran everything
-      clean. The sign held. The controls are below.
-    </p>
-  </div>
+  <p>
+    A negative result is only worth reporting if you've tried to kill it. Before believing this
+    one we found and fixed a genuine measurement bug, then re-ran everything clean. The sign
+    held. Three further checks are below.
+  </p>
 </section>
 
 <!-- ================= CONTROLS ================= -->
@@ -500,9 +495,46 @@ footer a{color:var(--accent)}
   </details>
 </section>
 
+<!-- ================= NEXT ================= -->
+<section id="next">
+  <h2><span class="k">06 · What's Next</span>Past the plumbing, to the discovery</h2>
+  <p>
+    Everything above is plumbing — it tells you <em>when</em> pooling is safe, not what pooled
+    data is <em>for</em>. The point of merging studies is discovering things no 20-person study
+    could see. Three directions, in the order we intend to run them:
+  </p>
+  <h3>1. Don't reinvent alignment — toggle it</h3>
+  <p>
+    Cross-study pooling is a special case of the inter-subject alignment problem mature fMRI
+    toolboxes already solve. Rather than one hand-rolled rotation, the pipeline should treat
+    alignment as a <strong>variable</strong>: anatomical warping (the field's default), the linear
+    functional rotation used here, and probabilistic shared-response models — all implemented in
+    maintained packages with the validation literature attached — and then show the
+    <em>same figures</em> computed under each. If a pooled result changes sign when the alignment
+    method changes, it was never a finding about brains; it was a finding about preprocessing.
+    A literature table of the alignment landscape — what each method assumes, when it fails, who
+    validated it, and where the code lives — is on the <a href="literature.html">Literature
+    considered</a> tab. Every citation there was verified, not recalled.
+  </p>
+  <h3>2. Functional connectivity across a merged cohort</h3>
+  <p>
+    The first real payoff: with ~110 people who experienced a story, compute network-level
+    functional connectivity in the shared space — which regions talk to which, when, and how
+    that differs from the non-narrative cohort. This is exactly the question individual 20-person
+    studies are too noisy to answer, and exactly what pooling exists for.
+  </p>
+  <h3>3. Higher-dimensional structure</h3>
+  <p>
+    The shared basis the alignment already produces is a low-dimensional embedding of the
+    stimulus-evoked response. Representational similarity and trajectory analyses on that
+    embedding — how the group-wide brain state moves through the story, and where individual
+    people depart from it — are the natural next layer up from time-segment matching.
+  </p>
+</section>
+
 <!-- ================= MEANING ================= -->
 <section id="meaning">
-  <h2><span class="k">06 · The Map</span>Where pooling works, stated precisely</h2>
+  <h2><span class="k">07 · The Map</span>Where pooling works, stated precisely</h2>
   <p>
     Three findings, one map:
   </p>
@@ -565,7 +597,7 @@ footer a{color:var(--accent)}
 
 <!-- ================= REPRODUCE ================= -->
 <section id="reproduce">
-  <h2><span class="k">07 · Reproduce</span>Every number here is checkable</h2>
+  <h2><span class="k">08 · Reproduce</span>Every number here is checkable</h2>
   <p>
     The data are public and the analysis is deterministic, so the numbers above are recoverable
     from scratch: the exact accessions, derivative types, subset choices and parameters follow.
@@ -624,9 +656,12 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
  <em>film</em> the subjects watched. It is the 7T <strong>audio description</strong> —
  auditory only, no visual stimulus. The page's own citation (Hanke et al., 2014, "an audio
  movie") said so; we misread it. Corrected throughout, with the modality confound it
- introduces now stated in §06. (6) The same version presented "93 subjects" as the
+ introduces now stated in §07. (6)
  dataset's complement of complete moviewatching derivatives; AOMIC ships roughly 927, and
- 93 was our download subsample — corrected in §07. The references below are the verified
+ 93 was our download subsample — corrected in §08. (7) On reader feedback (Jules, 2026-08-12)
+ the page was restructured for a general audience: method detail moved into collapsible panels,
+ a broken lede sentence repaired, the 19 × 8 notation clarified, and a "What's next" section
+ added covering alignment-as-a-toggle and the post-alignment analyses. The references below are the verified
  set.
     </p>
   </div>
@@ -634,7 +669,7 @@ chance          empirical (autocorrelation-aware) ≈ 0.01; nominal 1/nTR</pre>
 
 <!-- ================= REFERENCES ================= -->
 <section id="refs">
-  <h2><span class="k">08 · References</span>Checked, not copied</h2>
+  <h2><span class="k">09 · References</span>Checked, not copied</h2>
   <p style="font-size:.9rem;color:var(--ink-soft)">
     Every reference below was verified for existence, metadata accuracy, and retraction status
     against Crossref (and a title match where no DOI exists), most recently on 2026-08-09.
