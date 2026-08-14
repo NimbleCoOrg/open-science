@@ -1207,6 +1207,24 @@ tr:hover td{background:var(--surface-2)}
         which may be sufficient for proof-of-concept but would benefit from more recordings
         across longer time spans.</div>
       </div>
+
+    <div class="section-label" style="margin-top:2rem">3D Acoustic Manifold — Interactive</div>
+    <div class="card">
+      <p style="font-size:.88rem;color:var(--ink-soft);margin:0 0 .75rem;line-height:1.6">
+        Each point is one tūī syllable, embedded in 3D by acoustic similarity (UMAP over the spectral
+        descriptors from our pipeline). Islands of points are the bird's syllabic textures — an acoustic
+        signature you can orbit. <b>Click any point to hear that syllable</b>, or play the whole song
+        through the manifold. Drag to orbit, scroll to zoom.
+      </p>
+      <div style="position:relative;width:100%;height:620px;border-radius:8px;overflow:hidden;border:1px solid var(--rule)">
+        <iframe src="manifold/index.html" style="width:100%;height:100%;border:0" loading="lazy"
+                title="3D acoustic manifold of tūī syllables"></iframe>
+      </div>
+      <div style="margin-top:.5rem;font-size:.78rem;color:var(--ink-faint);font-family:var(--mono)">
+        Independent open reimplementation of the "Seeing Birdsong" concept (L. Arese), built on our own
+        descriptor pipeline + UMAP. Embedding trustworthiness 0.94–0.98 across the three featured recordings.
+      </div>
+    </div>
     </div>
   </div>
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birdsong Acoustic Manifold — 3D</title>
+<style>
+  :root{
+    --bg:#1a1712; --panel:#241f18; --ink:#e8e0cf; --muted:#a99e89; --line:#3a332a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:'Spline Sans Mono',ui-monospace,Menlo,monospace;font-size:13px}
+  #wrap{display:flex;height:100vh}
+  #side{width:270px;min-width:270px;background:var(--panel);border-right:1px solid var(--line);
+        padding:16px;overflow-y:auto}
+  #scene{flex:1;position:relative}
+  canvas{display:block}
+  h1{font-size:14px;margin:0 0 4px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:11px;margin-bottom:14px;line-height:1.5}
+  select,button{background:var(--bg);color:var(--ink);border:1px solid var(--line);
+        border-radius:4px;padding:6px 8px;font:inherit;font-size:12px;width:100%;margin-bottom:8px;cursor:pointer}
+  .legend{margin:12px 0}
+  .legend div{display:flex;align-items:center;gap:8px;margin:4px 0;cursor:pointer;opacity:.9}
+  .legend div.off{opacity:.25}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .stats{color:var(--muted);font-size:11px;line-height:1.7;border-top:1px solid var(--line);
+         padding-top:10px;margin-top:10px}
+  .stats b{color:var(--ink);font-weight:600}
+  #tip{position:absolute;pointer-events:none;background:#000d;padding:5px 8px;border-radius:4px;
+       font-size:11px;display:none;border:1px solid var(--line);z-index:5}
+  #hud{position:absolute;left:10px;bottom:10px;color:var(--muted);font-size:11px;
+       background:#0008;padding:4px 8px;border-radius:4px}
+  .toggle{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12px;cursor:pointer}
+  .toggle input{accent-color:#8a7f66}
+  #nowPlaying{margin-top:10px;padding:8px;background:var(--bg);border:1px solid var(--line);
+       border-radius:4px;font-size:11px;color:var(--muted);min-height:34px}
+  #nowPlaying b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="side">
+    <h1>ACOUSTIC MANIFOLD</h1>
+    <div class="sub">Each point is one syllable, placed by acoustic similarity (UMAP of
+      spectral descriptors). Islands = the bird's syllabic textures. Click a point to hear it.</div>
+    <select id="recSel"></select>
+    <label class="toggle"><input type="checkbox" id="traj"> show song trajectory</label>
+    <label class="toggle"><input type="checkbox" id="spin"> auto-rotate</label>
+    <button id="playSong">▶ play song through the manifold</button>
+    <div class="legend" id="legend"></div>
+    <div id="nowPlaying">—</div>
+    <div class="stats" id="stats"></div>
+  </div>
+  <div id="scene"><div id="tip"></div><div id="hud">drag to orbit · scroll to zoom · click point to play</div></div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const TYPE_COLORS = {low_frequency:0x5f7a3a, harmonic:0x2c6c8c, high_frequency:0xbb4a33,
+                     rmnr:0xb07d22, trill:0x7c5784};
+const TYPE_LABELS = {low_frequency:'Low-freq', harmonic:'Harmonic', high_frequency:'High-freq',
+                     rmnr:'RMNR', trill:'Trill'};
+const RECS = ['XC1090728','XC1104055','XC975461'];
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1712);
+scene.fog = new THREE.Fog(0x1a1712, 3.5, 9);
+const cam = new THREE.PerspectiveCamera(55, 1, 0.01, 100);
+cam.position.set(1.7, 1.4, 2.1);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+document.getElementById('scene').appendChild(renderer.domElement);
+const controls = new OrbitControls(cam, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.06;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const dl = new THREE.DirectionalLight(0xffffff, 0.6); dl.position.set(2,3,4); scene.add(dl);
+
+// soft round sprite for points
+function makeSprite(){
+  const c = document.createElement('canvas'); c.width=c.height=64;
+  const g = c.getContext('2d');
+  const grad = g.createRadialGradient(32,32,0,32,32,32);
+  grad.addColorStop(0,'rgba(255,255,255,1)');
+  grad.addColorStop(0.55,'rgba(255,255,255,0.85)');
+  grad.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=grad; g.beginPath(); g.arc(32,32,32,0,7); g.fill();
+  const t = new THREE.CanvasTexture(c); return t;
+}
+const SPRITE = makeSprite();
+
+let cloudGroup = new THREE.Group(); scene.add(cloudGroup);
+let pointsData = [], pickMesh = null, trajLine = null, audio = new Audio();
+let activeRec = null, hiddenTypes = new Set();
+
+function resize(){
+  const el = document.getElementById('scene');
+  const w = el.clientWidth, h = el.clientHeight;
+  renderer.setSize(w, h); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  cam.aspect = w/h; cam.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+async function load(rec){
+  const r = await fetch(`${rec}_manifold3d.json`);
+  const data = await r.json();
+  activeRec = data; pointsData = data.points;
+  buildCloud(); buildLegend(); buildStats();
+}
+
+function buildCloud(){
+  while(cloudGroup.children.length) cloudGroup.remove(cloudGroup.children[0]);
+  pickMesh = null; trajLine = null;
+  const byType = {};
+  for(const p of pointsData){ (byType[p.type] ||= []).push(p); }
+  for(const [type, pts] of Object.entries(byType)){
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(pts.length*3);
+    pts.forEach((p,i)=>{ pos[i*3]=p.x; pos[i*3+1]=p.y; pos[i*3+2]=p.z; });
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    const m = new THREE.PointsMaterial({color:TYPE_COLORS[type]||0x888888, size:0.045,
+        map:SPRITE, alphaTest:0.15, sizeAttenuation:true, transparent:true, opacity:0.95,
+        depthWrite:false});
+    const cloud = new THREE.Points(g, m);
+    cloud.userData.type = type;
+    cloudGroup.add(cloud);
+  }
+  // trajectory: connect syllables in time order
+  const sorted = [...pointsData].sort((a,b)=>a.start_ms-b.start_ms);
+  const tg = new THREE.BufferGeometry();
+  const tp = new Float32Array(sorted.length*3);
+  sorted.forEach((p,i)=>{ tp[i*3]=p.x; tp[i*3+1]=p.y; tp[i*3+2]=p.z; });
+  tg.setAttribute('position', new THREE.BufferAttribute(tp,3));
+  trajLine = new THREE.Line(tg, new THREE.LineBasicMaterial({color:0x9a8f76, transparent:true, opacity:0.14}));
+  trajLine.visible = document.getElementById('traj').checked;
+  cloudGroup.add(trajLine);
+  // invisible larger pick targets
+  const pg = new THREE.BufferGeometry();
+  const pp = new Float32Array(pointsData.length*3);
+  pointsData.forEach((p,i)=>{ pp[i*3]=p.x; pp[i*3+1]=p.y; pp[i*3+2]=p.z; });
+  pg.setAttribute('position', new THREE.BufferAttribute(pp,3));
+  pickMesh = new THREE.Points(pg, new THREE.PointsMaterial({size:0.09, visible:false}));
+  cloudGroup.add(pickMesh);
+}
+
+function buildLegend(){
+  const el = document.getElementById('legend'); el.innerHTML='';
+  const counts = {};
+  pointsData.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);
+  for(const [t,c] of Object.entries(TYPE_COLORS)){
+    if(!counts[t]) continue;
+    const row = document.createElement('div');
+    row.innerHTML = `<span class="dot" style="background:#${c.toString(16).padStart(6,'0')}"></span>
+                     ${TYPE_LABELS[t]} <span style="color:var(--muted)">(${counts[t]})</span>`;
+    row.onclick = ()=>{
+      hiddenTypes.has(t) ? hiddenTypes.delete(t) : hiddenTypes.add(t);
+      row.classList.toggle('off');
+      cloudGroup.children.forEach(ch=>{ if(ch.userData.type===t) ch.visible = !hiddenTypes.has(t); });
+    };
+    el.appendChild(row);
+  }
+}
+
+function buildStats(){
+  const d = activeRec.diagnostics;
+  document.getElementById('stats').innerHTML =
+    `<b>${activeRec.recording_id}</b> · ${activeRec.n_syllables} syllables · ${activeRec.duration_s.toFixed(0)}s<br>`+
+    `embedding trustworthiness <b>${d.trustworthiness.toFixed(3)}</b><br>`+
+    `neighbour type-agreement <b>${d.knn_type_agreement.toFixed(2)}</b><br>`+
+    `<span style="opacity:.75">tūī · Aotearoa NZ · xeno-canto</span>`;
+}
+
+// picking
+const ray = new THREE.Raycaster(); ray.params.Points.threshold = 0.05;
+const mouse = new THREE.Vector2(); const tip = document.getElementById('tip');
+let hoverIdx = -1;
+function castPoints(e){
+  const r = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX-r.left)/r.width)*2-1;
+  mouse.y = -((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(mouse, cam);
+  if(!pickMesh) return -1;
+  const hits = ray.intersectObject(pickMesh);
+  return hits.length ? hits[0].index : -1;
+}
+renderer.domElement.addEventListener('pointermove', e=>{
+  hoverIdx = castPoints(e);
+  if(hoverIdx>=0){
+    const p = pointsData[hoverIdx];
+    tip.style.display='block';
+    tip.style.left=(e.clientX+12)+'px'; tip.style.top=(e.clientY+12)+'px';
+    tip.textContent = `${TYPE_LABELS[p.type]||p.type} · ${(p.start_ms/1000).toFixed(2)}s · ${(p.end_ms-p.start_ms).toFixed(0)}ms`;
+    renderer.domElement.style.cursor='pointer';
+  } else { tip.style.display='none'; renderer.domElement.style.cursor='grab'; }
+});
+renderer.domElement.addEventListener('click', e=>{
+  const i = castPoints(e);
+  if(i<0) return;
+  const p = pointsData[i];
+  audio.src = p.audio; audio.play();
+  flash(p);
+  document.getElementById('nowPlaying').innerHTML =
+    `▶ <b>${TYPE_LABELS[p.type]||p.type}</b> @ ${(p.start_ms/1000).toFixed(2)}s (${(p.end_ms-p.start_ms).toFixed(0)} ms)`;
+});
+
+document.getElementById('traj').onchange = e=>{ if(trajLine) trajLine.visible = e.target.checked; };
+document.getElementById('spin').onchange = e=>{ controls.autoRotate = e.target.checked; controls.autoRotateSpeed = 1.2; };
+
+// highlight marker
+const hl = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16),
+    new THREE.MeshBasicMaterial({color:0xfff4d6, transparent:true, opacity:0.9}));
+hl.visible = false; scene.add(hl);
+function flash(p){
+  hl.position.set(p.x,p.y,p.z); hl.visible = true;
+  hl.scale.set(1,1,1);
+}
+
+// play the whole song: walk syllables in time order, play audio + pulse marker
+let playing = false, playTimers = [];
+document.getElementById('playSong').onclick = ()=>{
+  if(playing){ playing=false; playTimers.forEach(clearTimeout); playTimers=[]; audio.pause();
+    document.getElementById('playSong').textContent='▶ play song through the manifold';
+    hl.visible=false; return; }
+  playing = true;
+  document.getElementById('playSong').textContent='■ stop';
+  const sorted = [...pointsData].sort((a,b)=>a.start_ms-b.start_ms);
+  const t0 = sorted[0].start_ms;
+  const SPEED = 1.0; // realtime
+  sorted.forEach(p=>{
+    const dt = (p.start_ms - t0)/SPEED;
+    playTimers.push(setTimeout(()=>{
+      if(!playing) return;
+      flash(p);
+      audio.src = p.audio; audio.play().catch(()=>{});
+      document.getElementById('nowPlaying').innerHTML =
+        `▶ <b>${TYPE_LABELS[p.type]||p.type}</b> @ ${(p.start_ms/1000).toFixed(2)}s`;
+    }, dt));
+  });
+  playTimers.push(setTimeout(()=>{ playing=false; hl.visible=false;
+    document.getElementById('playSong').textContent='▶ play song through the manifold'; },
+    (sorted[sorted.length-1].start_ms - t0)/SPEED + 600));
+};
+const sel = document.getElementById('recSel');
+RECS.forEach(r=>{ const o=document.createElement('option'); o.value=r; o.textContent=r; sel.appendChild(o); });
+sel.onchange = ()=>load(sel.value);
+
+(function loop(){ requestAnimationFrame(loop); controls.update(); renderer.render(scene, cam); })();
+resize();
+load(RECS[0]);
+</script>
+</body>
+</html>
